@@ -1,0 +1,11 @@
+{
+  "name": "identification_worker",
+  "version": "1.0.0",
+  "description": "The worker in the shabam project responsible for audio snippet recognition",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Greff",
+  "license": "ISC"
+}

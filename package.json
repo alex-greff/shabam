@@ -1,0 +1,19 @@
+{
+  "name": "shabam",
+  "version": "1.0.0",
+  "description": "A replica of the popular music-recognition app Shazam",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-greff/shabam.git"
+  },
+  "author": "Alexander Greff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alex-greff/shabam/issues"
+  },
+  "homepage": "https://github.com/alex-greff/shabam#readme"
+}
