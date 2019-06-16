@@ -16,7 +16,11 @@ services:
             - /app/node_modules
             - ./server:/app
         environment:
-            - SOMETHING=temp
+            - "PG_HOST=${SHABAM_PG_HOST}"
+            - "PG_DATABASE=${SHABAM_PG_DATABASE}"
+            - "PG_USER=${SHABAM_PG_USER}"
+            - "PG_PORT=${SHABAM_PG_PORT}"
+            - "PG_PASSWORD=${SHABAM_PG_PASSWORD}"
     client:
         build:
             dockerfile: Dockerfile
@@ -24,3 +28,5 @@ services:
         volumes: 
             - /app/node_modules
             - ./client:/app
+        environment: 
+            - CHOKIDAR_USEPOLLING=true
