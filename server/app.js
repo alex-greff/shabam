@@ -3,11 +3,21 @@ const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const expressValidator = require("express-validator");
+const { Pool } = require("pg");
+const graphqlHttp = require("express-graphql");
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
 const KEYS = require("./keys");
 
-// Import routes
-const searchRoutes = require("./api/routes/search");
-const catalogueRoutes = require("./api/routes/catalogue");
+// Postgress client connection setup
+const pgClient = new Pool({
+    user: KEYS.pgUser,
+    host: KEYS.pgHost,
+    database: KEYS.pgDatabase,
+    password: KEYS.pgPassword,
+    port: KEYS.pgPort
+});
+pgClient.on("error", () => console.log("ERROR: lost connection to postgress database"));
 
 // Setup morgan
 app.use(morgan("dev"));
@@ -36,9 +46,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Setup routes
-app.use("/api/search", searchRoutes);
-app.use("/api/catalogue", catalogueRoutes);
+// Setup graphql
+app.use('/graphql', graphqlHttp({
+    shema: graphqlSchema,
+    rootValue: graphqlResolver,
+    graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production
+}));
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
