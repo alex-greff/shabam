@@ -1,0 +1,28 @@
+# Sets up the development environment
+version: "3.2"
+services: 
+    nginx:
+        restart: always
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./nginx
+        ports:
+            - "3050:80"
+    api:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./server
+        volumes:
+            - /app/node_modules
+            - ./server:/app
+        environment:
+            - SOMETHING=temp
+    client:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./client
+        volumes: 
+            - /app/node_modules
+            - ./client:/app
+        environment:
+            - SOMETHING=temp
