@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const expressValidator = require("express-validator");
 const { Pool } = require("pg");
 const graphqlHttp = require("express-graphql");
 const graphqlSchema = require("./graphql/schema");
@@ -28,9 +27,6 @@ app.use("/uploads", express.static("uploads"));
 // Setup body parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// Setup express validator
-app.use(expressValidator());
 
 // Setup headers
 app.use((req, res, next) => {

@@ -1,6 +1,6 @@
-const { buildSchema } = require("graphql");
+const gql = require("graphql-tag");
 
-module.exports = buildSchema(`
+module.exports = gql`
     type TrackMetaData {
         title: String!
         artists: [String!]!
@@ -16,33 +16,28 @@ module.exports = buildSchema(`
         metaData: TrackMetaData!
     }
 
-    type TrackAddInputData {
+    input TrackAddInputData {
         title: String!
         artists: [String!]!
         coverImage: String
         releaseDate: String
     }
 
-    type TrackEditInputData {
+    input TrackEditInputData {
         title: String
         artists: [String]
         coverImage: String
         releaseDate: String
     }
 
-    type RootQuery {
+    type Query {
         getAllTracks: [Track!]!
         getTrack(trackID: String!): Track!
     }
 
-    type RootMutation {
+    type Mutation {
         addTrack(trackData: TrackAddInputData): Track!
         editTrack(trackData: TrackEditInputData): Track!
         deleteTrack(trackID: Int!): Boolean
     }
-
-    schema {
-        query: RootQuery
-        mutation: RootMutation
-    }
-`);
+`;
