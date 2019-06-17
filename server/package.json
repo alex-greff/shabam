@@ -12,6 +12,7 @@
     "author": "Alexander Greff",
     "license": "ISC",
     "dependencies": {
+        "@graphql-modules/core": "^0.7.5",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
         "express": "^4.17.1",
