@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 
 // Setup graphql
 app.use('/graphql', graphqlHttp({
-    shema: graphqlSchema,
+    schema: graphqlSchema,
     rootValue: graphqlResolver,
     graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production
 }));

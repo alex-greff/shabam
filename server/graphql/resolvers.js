@@ -1,8 +1,17 @@
 module.exports = {
-    hello() {
-        return {
-            text: "Hello World!",
-            views: 1234
-        }
+    getAllTracks(args, req) {
+
+    },
+    getTrack({ trackID }, req) {
+
+    },
+    addTrack({ trackData }, req) {
+
+    },
+    editTrack({ trackData }, req) {
+
+    },
+    deleteTrack({ trackID }, req) {
+        
     }
 }
