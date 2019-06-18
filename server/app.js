@@ -4,9 +4,9 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const graphqlHttp = require("express-graphql");
-const graphqlSchema = require("./graphql/schema");
-const graphqlResolver = require("./graphql/resolvers");
 const KEYS = require("./keys");
+const AppModule = require("./graphql/modules");
+
 
 // Postgress client connection setup
 const pgClient = new Pool({
@@ -44,10 +44,9 @@ app.use((req, res, next) => {
 
 // Setup graphql
 app.use('/graphql', graphqlHttp({
-    schema: graphqlSchema,
-    rootValue: graphqlResolver,
-    graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production
-}));
+    schema: AppModule.schema,
+    graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production    
+}))
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request

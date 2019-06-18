@@ -1,7 +1,26 @@
+// TODO: implement
 module.exports = {
-    getAllTracks(args, req) {
+    getAllTracks() {
         return [
             {
+                _id: "fe3f32wfwesd",
+                fingerprintID: "adffwf2er2w34",
+                metaData: {
+                    title: "temp",
+                    artists: ["artist1", "artist2"],
+                    coverImage: "some image link",
+                    releaseDate: "some date",
+                    createdDate: "some date",
+                    updatedDate: "some date"
+                }
+            }
+        ]
+    },
+    getTrack(trackID) {
+        return {
+            _id: "fe3f32wfwesd",
+            fingerprintID: "adffwf2er2w34",
+            metaData: {
                 title: "temp",
                 artists: ["artist1", "artist2"],
                 coverImage: "some image link",
@@ -9,9 +28,9 @@ module.exports = {
                 createdDate: "some date",
                 updatedDate: "some date"
             }
-        ]
+        }
     },
-    getTrack({ trackID }, req) {
+    addTrack(trackData) {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
@@ -21,7 +40,7 @@ module.exports = {
             updatedDate: "some date"
         }
     },
-    addTrack({ trackData }, req) {
+    editTrack(trackData) {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
@@ -30,18 +49,5 @@ module.exports = {
             createdDate: "some date",
             updatedDate: "some date"
         }
-    },
-    editTrack({ trackData }, req) {
-        return {
-            title: "temp",
-            artists: ["artist1", "artist2"],
-            coverImage: "some image link",
-            releaseDate: "some date",
-            createdDate: "some date",
-            updatedDate: "some date"
-        }
-    },
-    deleteTrack({ trackID }, req) {
-        return true;
-    }
-}
+    }    
+};
