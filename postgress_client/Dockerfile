@@ -1,4 +1,4 @@
 FROM alpine
 
 RUN apk update
-RUN apk add --update postgresql postgresql-contrib
+RUN apk add --update bash postgresql postgresql-contrib
