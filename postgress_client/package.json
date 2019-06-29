@@ -9,8 +9,5 @@
         "start:it": "bash ./scripts/start_it.sh"
     },
     "author": "Alexander Greff",
-    "license": "ISC",
-    "dependencies": {
-        "cross-var": "^1.1.0"
-    }
+    "license": "ISC"
 }
