@@ -1,4 +1,6 @@
 FROM alpine
 
 RUN apk update
-RUN apk add --update bash postgresql postgresql-contrib
+
+# Install bash, psql and dos2unix
+RUN apk add --update bash postgresql postgresql-contrib dos2unix
