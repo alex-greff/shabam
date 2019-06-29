@@ -6,3 +6,5 @@ SCRIPT_DIR="$(dirname "$0")"
 source "$SCRIPT_DIR/functions/run_query.sh"
 
 # TODO: initialize schema using run_query
+
+echo "TODO: complete"

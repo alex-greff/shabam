@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "bash ./scripts/build.sh",
-        "start:it": "bash ./scripts/start_it.sh"
+        "start:it": "bash ./scripts/start_it.sh",
+        "initialize:shema": "bash ./scripts/start_init_schema.sh"
     },
     "author": "Alexander Greff",
     "license": "ISC"
