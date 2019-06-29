@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "docker build -t alexgreff/postgres_client .",
-        "start:it": "cross-var docker run -it alexgreff/postgres_client /bin/bash -c \"export PG_HOST=$SHABAM_PG_HOST PG_DATABASE=$SHABAM_PG_DATABASE PG_PORT=$SHABAM_PG_PORT PG_USER=$SHABAM_PG_USER PG_PASSWORD=$SHABAM_PG_PASSWORD; bash\""
+        "build": "bash ./scripts/build.sh",
+        "start:it": "bash ./scripts/start_it.sh"
     },
     "author": "Alexander Greff",
     "license": "ISC",
