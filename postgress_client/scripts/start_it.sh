@@ -1,12 +1,15 @@
-IMAGE_NAME="alexgreff/postgres_client"
-CURR_DIR=`pwd`
+#!/bin/bash
 
-# The environment setter
-SET_ENV="export PG_HOST=$SHABAM_PG_HOST PG_DATABASE=$SHABAM_PG_DATABASE PG_PORT=$SHABAM_PG_PORT PG_USER=$SHABAM_PG_USER PG_PASSWORD=$SHABAM_PG_PASSWORD"
+CURR_DIR=`pwd`
+SCRIPT_DIR="$(dirname "$0")"
+
+# Include the common env script
+source "$SCRIPT_DIR/common_env.sh"
+
 
 # Start command
 read -d '' START_CMD << EOF
-    $SET_ENV;
+    $SET_CONTAINER_ENV;
     bash
 EOF
 
