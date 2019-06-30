@@ -8,7 +8,7 @@
         "build": "bash ./scripts/build.sh",
         "start:it": "bash ./scripts/start_it.sh",
         "start:psql": "bash ./scripts/start_psql.sh",
-        "exec:initialize-shema": "bash ./scripts/start_init_schema.sh"
+        "exec:init-schema": "bash ./scripts/exec_init_schema.sh"
     },
     "author": "Alexander Greff",
     "license": "ISC"

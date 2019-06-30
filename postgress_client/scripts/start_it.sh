@@ -2,7 +2,7 @@
 
 SCRIPT_DIR="$(dirname "$0")"
 
-# Include the common env script
+# Include the run_container function
 source "$SCRIPT_DIR/functions/run_container.sh"
 
 # Start up the container with the bash running interactively
