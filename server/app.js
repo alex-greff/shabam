@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const { Pool } = require("pg");
 const graphqlHttp = require("express-graphql");
 const KEYS = require("./keys");
+
 const AppModule = require("./graphql/modules");
 
 
@@ -28,19 +30,31 @@ app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Setup headers
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    if (req.method === "OPTIONS") {
-        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-        return res.status(200).json({});
-    }
-    next();
-});
+// Setup CORS headers
+const corsOptions = {
+    origin: "*",
+    methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+    optionsSuccessStatus: 200
+};
+// Handle CORS preflight options request
+app.options(cors(corsOptions));
+// Enable CORS
+app.use(cors(corsOptions));
+
+// Setup CORS headers manually
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header(
+//         "Access-Control-Allow-Headers",
+//         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//     );
+//     if (req.method === "OPTIONS") { // Preflight request
+//         res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+//         return res.status(200).json({});
+//     }
+//     next();
+// });
 
 // Setup graphql
 app.use('/graphql', graphqlHttp({
