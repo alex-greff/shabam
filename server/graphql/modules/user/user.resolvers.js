@@ -1,13 +1,13 @@
 const UserOperations = require("./user.operations");
-const GraphQLUtilities = require("../../utilities");
+const Utilities = require("../../utilities");
 
 module.exports = {
     Query: {
-        login: GraphQLUtilities.middlewareChain()(UserOperations.login),
+        login: Utilities.middlewareChain()(UserOperations.login),
     },
     Mutation: { 
-        signup: GraphQLUtilities.middlewareChain()(UserOperations.signup),
-        editUser: GraphQLUtilities.middlewareChain()(UserOperations.editUser),
-        removeUser: GraphQLUtilities.middlewareChain()(UserOperations.removeUser),
+        signup: Utilities.middlewareChain()(UserOperations.signup),
+        editUser: Utilities.middlewareChain()(UserOperations.editUser),
+        removeUser: Utilities.middlewareChain()(UserOperations.removeUser),
     }
 }

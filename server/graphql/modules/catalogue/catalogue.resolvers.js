@@ -1,14 +1,14 @@
 const CatalogueOperations = require("./catalogue.operations");
-const GraphQLUtilities = require("../../utilities");
+const Utilities = require("../../utilities");
 
 module.exports = {
     Query: {
-        getAllTracks: GraphQLUtilities.middlewareChain()(CatalogueOperations.getAllTracks),
-        getTrack: GraphQLUtilities.middlewareChain()(CatalogueOperations.getTrack),
+        getAllTracks: Utilities.middlewareChain()(CatalogueOperations.getAllTracks),
+        getTrack: Utilities.middlewareChain()(CatalogueOperations.getTrack),
     },
     Mutation: {
-        addTrack: GraphQLUtilities.middlewareChain()(CatalogueOperations.addTrack),
-        editTrack: GraphQLUtilities.middlewareChain()(CatalogueOperations.editTrack),
-        deleteTrack: GraphQLUtilities.middlewareChain()(CatalogueOperations.deleteTrack),
+        addTrack: Utilities.middlewareChain()(CatalogueOperations.addTrack),
+        editTrack: Utilities.middlewareChain()(CatalogueOperations.editTrack),
+        deleteTrack: Utilities.middlewareChain()(CatalogueOperations.deleteTrack),
     }
 };  
