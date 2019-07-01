@@ -13,7 +13,7 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     DROP TABLE IF EXISTS user_account CASCADE;
     CREATE TABLE user_account(
         user_account_id serial PRIMARY KEY,
-        password VARCHAR (50) NOT NULL,
+        password CHAR (60) NOT NULL,
         email VARCHAR (355) UNIQUE NOT NULL,
         role VARCHAR (50) NOT NULL,
         signup_date TIMESTAMP NOT NULL,
