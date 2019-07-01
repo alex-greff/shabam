@@ -6,7 +6,7 @@ const cors = require("cors");
 const KEYS = require("./keys");
 
 // Import routes
-const rootRoute = require("./worker/routes/root");
+const rootRoute = require("./worker/routes");
 
 // Setup body parser
 worker.use(bodyParser.urlencoded({ extended: false }));
@@ -27,7 +27,8 @@ worker.options(cors(corsOptions));
 // Enable CORS
 worker.use(cors(corsOptions));
 
-worker.use("/generate_fingerprint", rootRoute);
+// Setup routes
+worker.use("/", rootRoute);
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
