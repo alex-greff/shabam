@@ -37,3 +37,10 @@ services:
         volumes: 
             - /app/node_modules
             - ./fingerprint_worker:/app
+    identification_worker:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./identification_worker
+        volumes: 
+            - /app/node_modules
+            - ./identification_worker:/app
