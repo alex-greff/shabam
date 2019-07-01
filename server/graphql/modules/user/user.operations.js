@@ -1,17 +1,17 @@
 // TODO: implement
 module.exports = {
-    login(userCredentials) {
+    login(root, { userCredentials }, context) {
         return {
             token: "r23wrfes32rtw3esrw3ef32wrw3rt3wtw3rw"
         }
     },
-    signup(userCredentials) {
+    signup(root, { userCredentials}, context) {
         return true;
     },
-    editUser(userID, updatedUserCredentails) {
+    editUser(root, { userID, updatedUserCredentials }, context) {
         return true;
     },
-    removeUser(userID) {
+    removeUser(root, { userID }, context) {
         return false;
     }
 }

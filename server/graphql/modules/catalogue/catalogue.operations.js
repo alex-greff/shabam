@@ -1,6 +1,6 @@
 // TODO: implement
 module.exports = {
-    getAllTracks() {
+    getAllTracks(root, args, context) {
         return [
             {
                 _id: "fe3f32wfwesd",
@@ -16,7 +16,7 @@ module.exports = {
             }
         ]
     },
-    getTrack(trackID) {
+    getTrack(root, { trackID }, context) {
         return {
             _id: "fe3f32wfwesd",
             fingerprintID: "adffwf2er2w34",
@@ -30,7 +30,7 @@ module.exports = {
             }
         }
     },
-    addTrack(trackData) {
+    addTrack(root, { trackData }, context) {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
@@ -40,7 +40,7 @@ module.exports = {
             updatedDate: "some date"
         }
     },
-    editTrack(trackData) {
+    editTrack(root, { trackData }, context) {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
