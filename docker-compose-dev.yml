@@ -21,6 +21,8 @@ services:
             - "PG_USER=${SHABAM_PG_USER}"
             - "PG_PORT=${SHABAM_PG_PORT}"
             - "PG_PASSWORD=${SHABAM_PG_PASSWORD}"
+            - "JWT_SECRET=${SHABAM_JWT_SECRET}"
+            - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
     client:
         build:
             dockerfile: Dockerfile.dev
