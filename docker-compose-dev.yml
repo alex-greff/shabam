@@ -30,3 +30,10 @@ services:
             - ./client:/app
         environment: 
             - CHOKIDAR_USEPOLLING=true
+    fingerprint_worker:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./fingerprint_worker
+        volumes: 
+            - /app/node_modules
+            - ./fingerprint_worker:/app

@@ -28,3 +28,10 @@ services:
         volumes: 
             - /app/node_modules
             - ./client:/app
+    fingerprint_worker:
+        build:
+            dockerfile: Dockerfile.dev
+            context: ./fingerprint_worker
+        volumes: 
+            - /app/node_modules
+            - ./fingerprint_worker:/app
