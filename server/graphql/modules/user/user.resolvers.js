@@ -1,5 +1,6 @@
 const UserOperations = require("./user.operations");
-const Utilities = require("../../utilities");
+const Utilities = require("../../../utilities");
+const permit = require("../../middleware/permission");
 
 module.exports = {
     Query: {
@@ -7,8 +8,8 @@ module.exports = {
     },
     Mutation: { 
         signup: Utilities.middlewareChain()(UserOperations.signup),
-        editUser: Utilities.middlewareChain()(UserOperations.editUser),
-        editUserRole: Utilities.middlewareChain()(UserOperations.editUserRole),
-        removeUser: Utilities.middlewareChain()(UserOperations.removeUser),
+        editUser: Utilities.middlewareChain(permit({ checkSelf: true }, "edit-user"))(UserOperations.editUser),
+        editUserRole: Utilities.middlewareChain(permit({ checkSelf: false }, "edit-user-roles"))(UserOperations.editUserRole),
+        removeUser: Utilities.middlewareChain(permit({ checkSelf: true }, "delete-user"))(UserOperations.removeUser),
     }
 }

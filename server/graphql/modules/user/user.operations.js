@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Utilities = require("../../utilities");
+const Utilities = require("../../../utilities");
 const db = require("../../../db");
 const KEYS = require("../../../keys");
 
@@ -10,11 +10,11 @@ module.exports = {
     login: async (root, { credentials }, context) => {
         const { email, password } = credentials;
 
-        const getUserQuery = await db.query("SELECT user_account_id, email, role, password FROM user_account AS uc WHERE uc.email = %L", email);
+        const getUserQuery = await db.query("SELECT user_account_id, password FROM user_account AS ua WHERE ua.email = %L", email);
         const bUserFound = getUserQuery.rowCount > 0;
 
         if (!bUserFound) {
-            throw new Error("Authorization failed");
+            Utilities.throwAuthorizationError();
         }
 
         const sPasswordHash = getUserQuery.rows[0].password;
@@ -24,16 +24,14 @@ module.exports = {
             bcrypt.compareSync(password, sPasswordHash);
         } catch(err) {
             // Password comparison failed
-            throw new Error("Authorization failed");
+            Utilities.throwAuthorizationError();
         }
 
-        const { user_account_id: _id, role } = getUserQuery.rows[0];
+        const { user_account_id: _id } = getUserQuery.rows[0];
 
         // Generate token
         const oJWTPayload = {
-            email: email,
             userID: _id,
-            role: role
         };
         const oJWTOptions = {
             expiresIn: KEYS.jwtExpireTime
@@ -71,8 +69,9 @@ module.exports = {
         const sNewUserValues = Object.values(oNewUser);
 
         // Create the new user
-        const temp = await db.query(`INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)`, ...sNewUserKeys, ...sNewUserValues);    
-        console.log("save res", temp);
+        await db.query(`INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)`, ...sNewUserKeys, ...sNewUserValues);    
+
+        console.log("CREATED USER", oNewUser);
 
         return true;
     },

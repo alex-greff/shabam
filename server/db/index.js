@@ -21,7 +21,5 @@ pool.on("error", () => console.error("Lost PG connection"));
  */
 exports.query = (text, ...params) => {
     const sEscapedQuery = escape(text, ...params);
-    console.log("ESCAPED:", sEscapedQuery); // TODO: remove
-
     return pool.query(sEscapedQuery);
 }

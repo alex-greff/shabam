@@ -1,6 +1,6 @@
 let roles = {
     admin: {
-        can: ['edit-user', 'delete-user', 'edit-track', 'delete-track'],
+        can: ['edit-user', 'edit-user-roles', 'delete-user', 'edit-track', 'delete-track'],
         inherits: ['distributor']
     },
     distributor: {

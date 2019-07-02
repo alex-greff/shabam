@@ -1,5 +1,5 @@
 const CatalogueOperations = require("./catalogue.operations");
-const Utilities = require("../../utilities");
+const Utilities = require("../../../utilities");
 
 module.exports = {
     Query: {
