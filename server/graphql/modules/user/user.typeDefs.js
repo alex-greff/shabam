@@ -42,6 +42,8 @@ module.exports = gql`
         signup(credentials: UserCredentialsInput!): Boolean!
         """Edit user account details."""
         editUser(userID: String!, updatedCredentials: UpdateUserCredentailsInput!): Boolean!
+        """Edits a user's role."""
+        editUserRole(userID: String!, updatedRole: String!): Boolean!
         """Remove user account."""
         removeUser(userID: String!): Boolean!
     }

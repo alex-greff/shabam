@@ -8,6 +8,7 @@ module.exports = {
     Mutation: { 
         signup: Utilities.middlewareChain()(UserOperations.signup),
         editUser: Utilities.middlewareChain()(UserOperations.editUser),
+        editUserRole: Utilities.middlewareChain()(UserOperations.editUserRole),
         removeUser: Utilities.middlewareChain()(UserOperations.removeUser),
     }
 }

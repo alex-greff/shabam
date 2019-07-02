@@ -79,6 +79,9 @@ module.exports = {
     editUser(root, { userID, updatedCredentials }, context) {
         return true;
     },
+    editUserRole(root, { userID, updatedRole }, context) {
+        return true;
+    },
     removeUser(root, { userID }, context) {
         return false;
     }
