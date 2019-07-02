@@ -27,36 +27,6 @@ exports.middlewareChain = (...middlewares) => {
 };
 
 /**
- * Sets up a chain of context injectors.
- * 
- * @param  {...Function} injectors The injectors.
- */
-exports.injectorChain = (...injectors) => {
-    return async (session, currentContext, moduleSessionInfo) => {
-        let accumulator = {};
-
-        for (let i = 0; i < injectors.length; i++) {
-            console.log("Here 1");
-
-            const currInjector = injectors[i];
-            console.log("Curr injector", currInjector);
-
-            const ret = await currInjector(req);
-
-            console.log("RET", ret);
-
-            accumulator = { ...accumulator, ...ret };
-
-            console.log("here");
-        }
-
-        console("accumulator", accumulator);
-
-        return { ...accumulator, ...session, ...currentContext, ...moduleSessionInfo };
-    };
-};
-
-/**
  * Throws the standard authorization error.
  */
 exports.throwAuthorizationError = () => {
