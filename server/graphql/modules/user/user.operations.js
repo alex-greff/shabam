@@ -10,7 +10,7 @@ module.exports = {
     login: async (root, { credentials }, context) => {
         const { email, password } = credentials;
 
-        const getUserQuery = await db.query("SELECT user_account_id, password FROM user_account AS ua WHERE ua.email = %L", email);
+        const getUserQuery = await db.query("SELECT email, password FROM user_account AS ua WHERE ua.email = %L", email);
         const bUserFound = getUserQuery.rowCount > 0;
 
         if (!bUserFound) {
@@ -19,19 +19,17 @@ module.exports = {
 
         const sPasswordHash = getUserQuery.rows[0].password;
 
-        try {
-            // Compare the user's password
-            bcrypt.compareSync(password, sPasswordHash);
-        } catch(err) {
-            // Password comparison failed
+        const bSamePassword = bcrypt.compareSync(password, sPasswordHash);
+        // Password comparison failed
+        if (!bSamePassword) {
             Utilities.throwAuthorizationError();
         }
 
-        const { user_account_id: _id } = getUserQuery.rows[0];
+        const { email: userEmail } = getUserQuery.rows[0];
 
         // Generate token
         const oJWTPayload = {
-            userID: _id,
+            email: userEmail,
         };
         const oJWTOptions = {
             expiresIn: KEYS.jwtExpireTime
@@ -47,7 +45,7 @@ module.exports = {
         const { email, password } = credentials;
 
         // Attempt to find an already existing user
-        const checkUserQuery = await db.query("SELECT email FROM user_account WHERE email = %L", email);
+        const checkUserQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", email);
         const bUserExists = checkUserQuery.rowCount > 0;
 
         if (bUserExists) {
@@ -56,7 +54,7 @@ module.exports = {
         }
 
         // Hash password
-        const sPasswordHashed = bcrypt.hashSync(password, 10)
+        const sPasswordHashed = bcrypt.hashSync(password, 10);
         
         const oNewUser = {
             email: email,
@@ -69,19 +67,75 @@ module.exports = {
         const sNewUserValues = Object.values(oNewUser);
 
         // Create the new user
-        await db.query(`INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)`, ...sNewUserKeys, ...sNewUserValues);    
+        await db.query('INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)', ...sNewUserKeys, ...sNewUserValues);    
 
         console.log("CREATED USER", oNewUser);
 
         return true;
     },
-    editUser(root, { userID, updatedCredentials }, context) {
+    editUser: async (root, { email: currEmail, updatedCredentials }, context) => {
+        const { email: newEmail, password: newPassword } = updatedCredentials;
+
+        // Check that the user exists
+        const getUserQuery = await db.query("SELECT password FROM user_account AS ua WHERE ua.email = %L", currEmail);
+        const bUserExists = getUserQuery.rowCount > 0;
+
+        if (!bUserExists) {
+            throw new Error(`User '${currEmail}' does not exist`);
+        }
+
+        const { password: sCurrPasswordHash } = getUserQuery.rows[0];
+
+        const aUpdatedUserData = []; // Fromat: [ [identifier, value] ]
+
+        if (newEmail) {
+            if (!Utilities.isEmail(newEmail)) {
+                throw new Error(`The email '${newEmail}' is not valid`);
+            }
+
+            if (currEmail === newEmail) {
+                throw new Error("New email must be different than the current one");
+            }
+
+            // Validate that new email is not used anywhere else
+            const emailInUseQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", newEmail);
+            const bEmailInUse = emailInUseQuery.rowCount > 0;
+
+            if (bEmailInUse) {
+                throw new Error("Email already in use");
+            }
+
+            aUpdatedUserData.push(["email", newEmail]);
+        }
+
+        if (newPassword) {
+            let bSamePass = bcrypt.compareSync(newPassword, sCurrPasswordHash);
+            // Make sure the new password is not the same as the current one
+            if (bSamePass) {
+                throw new Error("New password must be different");
+            }
+
+            // Hash password
+            const sNewPasswordHash = bcrypt.hashSync(newPassword, 10);
+
+            aUpdatedUserData.push(["password", sNewPasswordHash]);
+        }
+
+        // Update the user
+        const aSetFormat = aUpdatedUserData.map(aVal => "%I = %L");
+        const sSetFormat = aSetFormat.join(", ");
+        const aSetValues = aUpdatedUserData.reduce((acc, i_aCurrVal) => [...acc, i_aCurrVal[0], i_aCurrVal[1]], []);
+
+        await db.query(`UPDATE user_account AS ua SET ${sSetFormat} WHERE ua.email = %L`, ...aSetValues, currEmail);
+
+        console.log(`UPDATED ACCOUNT '${currEmail}' ${aSetValues}`)
+
         return true;
     },
-    editUserRole(root, { userID, updatedRole }, context) {
+    editUserRole: async (root, { userID, updatedRole }, context) => {
         return true;
     },
-    removeUser(root, { userID }, context) {
+    removeUser: async (root, { userID }, context) => {
         return false;
     }
 }

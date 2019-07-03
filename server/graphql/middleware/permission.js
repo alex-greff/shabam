@@ -6,7 +6,7 @@ const KEYS = require("../../keys");
 
 const DEFAULT_CHECK_CONFIG = {
     checkSelf: false,
-    userIDPath: "userID"
+    userEmailPath: "email"
 };
 
 module.exports = (checkConfig, ...operations) => {
@@ -17,27 +17,27 @@ module.exports = (checkConfig, ...operations) => {
             // Validate token
             const token = context.authorization.split(" ")[1];
             const decoded = jwt.verify(token, KEYS.jwtSecret);
-            context.userData = { userID: decoded.userID };
+            context.userData = { email: decoded.email };
 
             // Get the user's role
-            const getUserQuery = await db.query("SELECT role, user_account_id FROM user_account AS ua WHERE ua.user_account_id = %L", `${context.userData.userID}`);
+            const getUserQuery = await db.query("SELECT role, email FROM user_account AS ua WHERE ua.email = %L", `${context.userData.email}`);
 
             // Check that user exists
             if (getUserQuery.rowCount <= 0) {
                 Utilities.throwAuthorizationError();
             }
 
-            const { role, user_account_id: userID } = getUserQuery.rows[0];
+            const { role, email: userEmail } = getUserQuery.rows[0];
 
-            const { checkSelf, userIDPath } = checkConfig;
-            const checkUserID = Utilities.getIn(args, userIDPath);
+            const { checkSelf, userEmailPath } = checkConfig;
+            const checkUserEmail = Utilities.getIn(args, userEmailPath);
 
             // Check if user has access
             if (context.userData && canDoAllOperations(role, ...operations)) {
                 context.userAccessType = "role";
             }
             // Check if the user is self
-            else if (checkSelf && checkUserID && userID === checkUserID) {
+            else if (checkSelf && checkUserEmail && userEmail === checkUserEmail) {
                 context.userAccessType = "self";
             }
             else {

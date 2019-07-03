@@ -38,13 +38,13 @@ module.exports = gql`
     }
 
     type Mutation {
-        """Signup and create     a new user."""
+        """Signup and create a new user."""
         signup(credentials: UserCredentialsInput!): Boolean!
         """Edit user account details."""
-        editUser(userID: Int!, updatedCredentials: UpdateUserCredentailsInput!): Boolean!
+        editUser(email: String!, updatedCredentials: UpdateUserCredentailsInput!): Boolean!
         """Edits a user's role."""
-        editUserRole(userID: Int!, updatedRole: String!): Boolean!
+        editUserRole(email: String!, updatedRole: String!): Boolean!
         """Remove user account."""
-        removeUser(userID: String!): Boolean!
+        removeUser(email: String!): Boolean!
     }
 `;

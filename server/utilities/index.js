@@ -66,7 +66,7 @@ exports.getIn = (obj, key, def, p = 0) => {
         obj = obj[path[p++]];
     }
     return obj === undefined ? def : obj;
-}
+};
 
 /**
  * Deeply set a value from in object via it's path. If the value at `path`
@@ -129,4 +129,9 @@ exports.setIn = (obj, path, value) => {
     }
 
     return res;
-}
+};
+
+exports.isEmail = (email) => {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+};
