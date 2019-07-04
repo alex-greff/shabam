@@ -159,6 +159,17 @@ module.exports = {
         return true;
     },
     removeUser: async (root, { email }, context) => {
-        return false;
+        // Attempt to find an already existing user
+        const checkUserQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", email);
+        const bUserExists = checkUserQuery.rowCount > 0;
+
+        if (!bUserExists) {
+            throw new Error(`User '${email}' does not exist`);
+        }
+
+        // Delete the user
+        await db.query("DELETE FROM user_account AS ua WHERE ua.email = %L", email);
+
+        return true;
     }
 }
