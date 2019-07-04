@@ -169,6 +169,8 @@ module.exports = {
 
         // Delete the user
         await db.query("DELETE FROM user_account AS ua WHERE ua.email = %L", email);
+        
+        console.log(`REMOVED USER '${email}'`);
 
         return true;
     }
