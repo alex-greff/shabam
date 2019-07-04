@@ -11,5 +11,13 @@ module.exports = {
         editUser: Utilities.middlewareChain(permit({ checkSelf: true }, "edit-user"))(UserOperations.editUser),
         editUserRole: Utilities.middlewareChain(permit({ checkSelf: false }, "edit-user-roles"))(UserOperations.editUserRole),
         removeUser: Utilities.middlewareChain(permit({ checkSelf: true }, "delete-user"))(UserOperations.removeUser),
+    },
+    User: {
+        _id: user => user.id,
+        email: user => user.email,
+        password: user => user.password
+    },
+    Token: {
+        token: t => t.token
     }
 }
