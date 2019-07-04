@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const Utilities = require("../../../utilities");
 const db = require("../../../db");
 const KEYS = require("../../../keys");
+const roles = require("../../../roles/roles");
 
 const DEFAULT_ROLE = "default";
 
@@ -35,6 +36,10 @@ module.exports = {
             expiresIn: KEYS.jwtExpireTime
         };
         const sToken = jwt.sign(oJWTPayload, KEYS.jwtSecret, oJWTOptions);
+
+        // Update last login
+        const sLastLoginTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
+        await db.query(`UPDATE user_account AS ua SET last_login = %s WHERE ua.email = %L`, sLastLoginTimestamp, email);
 
         // Return the token
         return {
@@ -132,10 +137,28 @@ module.exports = {
 
         return true;
     },
-    editUserRole: async (root, { userID, updatedRole }, context) => {
+    editUserRole: async (root, { email, updatedRole }, context) => {
+        // Check that the user exists
+        const getUserQuery = await db.query("SELECT password FROM user_account AS ua WHERE ua.email = %L", email);
+        const bUserExists = getUserQuery.rowCount > 0;
+
+        if (!bUserExists) {
+            throw new Error(`User '${currEmail}' does not exist`);
+        }
+
+        // Make sure role exists
+        if (!roles[updatedRole]) {
+            throw new Error(`Role '${updatedRole}' does not exist`);
+        }
+
+        // Update the user's role
+        await db.query(`UPDATE user_account AS ua SET role = %L WHERE ua.email = %L`, updatedRole, email);
+
+        console.log(`UPDATED USER ACCOUNT '${email}' TO ROLE '${updatedRole}'`);
+
         return true;
     },
-    removeUser: async (root, { userID }, context) => {
+    removeUser: async (root, { email }, context) => {
         return false;
     }
 }
