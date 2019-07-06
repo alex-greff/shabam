@@ -1,6 +1,8 @@
+const axios = require("axios");
+
 // TODO: implement
 module.exports = {
-    getAllTracks(root, args, context) {
+    getAllTracks: async (root, args, context) => {
         return [
             {
                 _id: "fe3f32wfwesd",
@@ -16,7 +18,11 @@ module.exports = {
             }
         ]
     },
-    getTrack(root, { trackID }, context) {
+    getTrack: async (root, { trackID }, context) => {
+        const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint");
+
+        console.log("RES", res.data);
+
         return {
             _id: "fe3f32wfwesd",
             fingerprintID: "adffwf2er2w34",
@@ -30,7 +36,7 @@ module.exports = {
             }
         }
     },
-    addTrack(root, { trackData }, context) {
+    addTrack: async (root, { trackData }, context) => {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
@@ -40,7 +46,7 @@ module.exports = {
             updatedDate: "some date"
         }
     },
-    editTrack(root, { trackData }, context) {
+    editTrack: async (root, { trackData }, context) => {
         return {
             title: "temp",
             artists: ["artist1", "artist2"],
