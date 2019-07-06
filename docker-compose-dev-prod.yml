@@ -47,6 +47,7 @@ services:
             context: ./fingerprint_worker
         volumes: 
             - /app/node_modules
+            - /app/build
             - ./fingerprint_worker:/app
         networks:
             - app-network
@@ -58,6 +59,7 @@ services:
             context: ./identification_worker
         volumes: 
             - /app/node_modules
+            - /app/build
             - ./identification_worker:/app
         networks:
             - app-network

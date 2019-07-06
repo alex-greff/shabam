@@ -3,11 +3,14 @@
     "version": "1.0.0",
     "description": "The fingerprint generator worker for the shabam project",
     "main": "server.js",
+    "gypfile": true,
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon server.js",
         "start:prod": "NODE_ENV=production node server.js",
-        "start:dev": "nodemon --legacy-watch server.js"
+        "start:dev": "nodemon --legacy-watch server.js",
+        "gyp:build": "node-gyp rebuild",
+        "gyp:clean": "node-gyp clean"
     },
     "author": "Alexander Greff",
     "license": "ISC",
@@ -15,9 +18,11 @@
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "express-validator": "^5.3.1"
+        "express-validator": "^5.3.1",
+        "node-addon-api": "^1.6.3"
     },
     "devDependencies": {
+        "node-gyp": "^5.0.2",
         "nodemon": "^1.19.1"
     }
 }
