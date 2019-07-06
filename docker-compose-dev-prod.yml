@@ -4,7 +4,7 @@ services:
     proxy:
         restart: always
         build:
-            dockerfile: Dockerfile.dev
+            dockerfile: dev.Dockerfile
             context: ./proxy
         ports:
             - "3050:80"
@@ -14,7 +14,7 @@ services:
         container_name: shabam_proxy
     api:
         build:
-            dockerfile: Dockerfile.dev
+            dockerfile: dev.Dockerfile
             context: ./server
         volumes:
             - /app/node_modules
@@ -43,7 +43,7 @@ services:
         container_name: shabam_client
     fingerprint_worker:
         build:
-            dockerfile: Dockerfile.dev
+            dockerfile: dev.Dockerfile
             context: ./fingerprint_worker
         volumes: 
             - /app/node_modules
@@ -54,7 +54,7 @@ services:
         container_name: shabam_fingerprint_worker
     identification_worker:
         build:
-            dockerfile: Dockerfile.dev
+            dockerfile: dev.Dockerfile
             context: ./identification_worker
         volumes: 
             - /app/node_modules
