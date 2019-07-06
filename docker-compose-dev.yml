@@ -1,13 +1,16 @@
 # Sets up the development environment
 version: "3.2"
 services: 
-    nginx:
+    proxy:
         restart: always
         build:
             dockerfile: Dockerfile.dev
-            context: ./nginx
+            context: ./proxy
         ports:
             - "3050:80"
+        networks:
+            - app-network
+        hostname: proxy
     api:
         build:
             dockerfile: Dockerfile.dev
@@ -23,6 +26,9 @@ services:
             - "PG_PASSWORD=${SHABAM_PG_PASSWORD}"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
+        networks:
+            - app-network
+        hostname: api
     client:
         build:
             dockerfile: Dockerfile.dev
@@ -32,6 +38,8 @@ services:
             - ./client:/app
         environment: 
             - CHOKIDAR_USEPOLLING=true
+        networks:
+            - app-network
     fingerprint_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -39,6 +47,9 @@ services:
         volumes: 
             - /app/node_modules
             - ./fingerprint_worker:/app
+        networks:
+            - app-network
+        hostname: fingerprint_worker
     identification_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -46,3 +57,8 @@ services:
         volumes: 
             - /app/node_modules
             - ./identification_worker:/app
+        networks:
+            - app-network
+        hostname: identification_worker
+networks:
+    app-network:

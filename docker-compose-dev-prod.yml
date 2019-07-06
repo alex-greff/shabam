@@ -1,13 +1,16 @@
 # Sets up the development environment but with the client production image running
 version: "3.2"
 services: 
-    nginx:
+    proxy:
         restart: always
         build:
             dockerfile: Dockerfile.dev
-            context: ./nginx
+            context: ./proxy
         ports:
             - "3050:80"
+        networks:
+            - app-network
+        hostname: proxy
     api:
         build:
             dockerfile: Dockerfile.dev
@@ -23,6 +26,8 @@ services:
             - "PG_PASSWORD=${SHABAM_PG_PASSWORD}"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
+        networks:
+            - app-network
     client:
         build:
             dockerfile: Dockerfile
@@ -30,6 +35,8 @@ services:
         volumes: 
             - /app/node_modules
             - ./client:/app
+        networks:
+            - app-network
     fingerprint_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -37,6 +44,8 @@ services:
         volumes: 
             - /app/node_modules
             - ./fingerprint_worker:/app
+        networks:
+            - app-network
     identification_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -44,3 +53,7 @@ services:
         volumes: 
             - /app/node_modules
             - ./identification_worker:/app
+        networks:
+            - app-network
+networks:
+    app-network:
