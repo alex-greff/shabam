@@ -6,7 +6,12 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start:dev": "docker-compose -f docker-compose-dev.yml up --build",
-        "start:dev-prod": "docker-compose -f docker-compose-dev-prod.yml up --build"
+        "start:dev-prod": "docker-compose -f docker-compose-dev-prod.yml up --build",
+        "sh:proxy": "docker exec -it shabam_proxy sh",
+        "sh:client": "docker exec -it shabam_client sh",
+        "sh:api": "docker exec -it shabam_api sh",
+        "sh:fingerprint-worker": "docker exec -it shabam_fingerprint_worker sh",
+        "sh:identification-worker": "docker exec -it shabam_identification_worker sh"
     },
     "repository": {
         "type": "git",

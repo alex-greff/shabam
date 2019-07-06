@@ -11,6 +11,7 @@ services:
         networks:
             - app-network
         hostname: proxy
+        container_name: shabam_proxy
     api:
         build:
             dockerfile: Dockerfile.dev
@@ -28,6 +29,8 @@ services:
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
         networks:
             - app-network
+        hostname: api
+        container_name: shabam_api
     client:
         build:
             dockerfile: Dockerfile
@@ -37,6 +40,7 @@ services:
             - ./client:/app
         networks:
             - app-network
+        container_name: shabam_client
     fingerprint_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -46,6 +50,8 @@ services:
             - ./fingerprint_worker:/app
         networks:
             - app-network
+        hostname: fingerprint_worker
+        container_name: shabam_fingerprint_worker
     identification_worker:
         build:
             dockerfile: Dockerfile.dev
@@ -55,5 +61,7 @@ services:
             - ./identification_worker:/app
         networks:
             - app-network
+        hostname: identification_worker
+        container_name: shabam_identification_worker
 networks:
     app-network:
