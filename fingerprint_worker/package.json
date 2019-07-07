@@ -8,7 +8,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "nodemon server.js",
         "start:prod": "NODE_ENV=production node server.js",
-        "start:dev": "npm start gyp:build && nodemon --legacy-watch server.js",
+        "start:dev": "npm run gyp:build && nodemon --legacy-watch server.js",
         "gyp:build": "node-gyp rebuild",
         "gyp:clean": "node-gyp clean"
     },
