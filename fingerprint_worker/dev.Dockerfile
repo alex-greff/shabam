@@ -2,7 +2,7 @@ FROM node:alpine
 
 WORKDIR /app
 
-COPY ./package.json ./
+COPY ./package*.json ./
 
 # Install the needed dependencies 
 RUN apk --no-cache --virtual build-dependencies add \
