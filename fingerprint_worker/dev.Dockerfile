@@ -11,6 +11,9 @@ RUN apk --no-cache --virtual build-dependencies add \
 # Install npm dependencies
 RUN npm install
 
+# Install gulp cli
+RUN npm install gulp-cli -g
+
 # Copy the rest of the app over
 COPY . .
 
