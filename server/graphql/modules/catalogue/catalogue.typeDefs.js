@@ -15,6 +15,7 @@ module.exports = gql`
     type Track {
         _id: ID!
         fingerprintID: Int!
+        fingerprintData: String! # TODO: make fingerprint type
         metaData: TrackMetaData!
     }
 
@@ -38,7 +39,7 @@ module.exports = gql`
         """Get all tracks in the catalogue."""
         getAllTracks: [Track!]!
         """Get a specific track in the catalogue."""
-        getTrack(trackID: String!): Track!
+        getTrack(title: String!, artists: [String!]!): Track!
     }
 
     type Mutation {
