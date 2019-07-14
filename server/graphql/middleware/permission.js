@@ -14,10 +14,10 @@ module.exports = (checkConfig, ...operations) => {
         try {
             checkConfig = { ...DEFAULT_CHECK_CONFIG, ...checkConfig };
 
-            // Validate token
-            const token = context.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, KEYS.jwtSecret);
-            context.userData = { email: decoded.email };
+            // Check if there is an email given
+            if (!context.userData.email) {
+                Utilities.throwAuthorizationError();
+            }
 
             // Get the user's role
             const getUserQuery = await db.query("SELECT role, email FROM user_account AS ua WHERE ua.email = %L", `${context.userData.email}`);
