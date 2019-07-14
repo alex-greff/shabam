@@ -22,7 +22,7 @@ pool.on("error", () => console.error("Lost PG connection"));
 exports.query = (text, ...params) => {
     const sEscapedQuery = escape(text, ...params);
     return pool.query(sEscapedQuery);
-}
+};
 
 /**
  * Returns the string of the computed and properly escaped query.
@@ -32,4 +32,4 @@ exports.query = (text, ...params) => {
  */
 exports.getComputedQuery = (text, ...params) => {
     return escape(text, ...params);
-}
+};
