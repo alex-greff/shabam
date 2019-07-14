@@ -1,6 +1,7 @@
 const KEYS = require("../keys");
 const clone = require("lodash.clone");
 const toPath = require("lodash.topath");
+const db = require("../db");
 
 /**
  * Sets up a chain of middlewares. 
@@ -131,6 +132,11 @@ exports.setIn = (obj, path, value) => {
     return res;
 };
 
+/**
+ * Checks if the given input is a valid email.
+ * 
+ * @param {String} email The email.
+ */
 exports.isEmail = (email) => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
