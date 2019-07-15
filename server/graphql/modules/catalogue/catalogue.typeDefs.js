@@ -50,6 +50,6 @@ module.exports = gql`
         """Edit an existing track in the catalogue."""
         editTrack(trackData: TrackEditInputData): Track!
         """Remove a track from the catalogue."""
-        deleteTrack(trackID: Int!): Boolean
+        deleteTrack(title: String!, artists: [String!]!): Boolean
     }
 `;

@@ -32,13 +32,23 @@ module.exports = {
         return dbTrackData;
     },
     editTrack: async (root, { trackData }, context) => {
+        // TODO: implement
         return {
-            title: "temp",
-            artists: ["artist1", "artist2"],
-            coverImage: "some image link",
-            releaseDate: "some date",
-            createdDate: "some date",
-            updatedDate: "some date"
+            _id: 123,
+            fingerprintID: 123,
+            fingerprintData: "something",
+            metaData: {
+                title: "temp",
+                artists: ["artist1", "artist2"],
+                coverImage: "some image link",
+                releaseDate: "some date",
+                createdDate: "some date",
+                updatedDate: "some date"
+            }
         }
+    },
+    deleteTrack: async (root, { title, artists }, context) => {
+        // TODO: implement
+        return true;
     }
 };
