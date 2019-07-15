@@ -187,8 +187,5 @@ exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_dReleaseDate, i_sEmai
     const sFingerprintData = JSON.stringify(i_oFingerprintData);
     const sArtistList = i_aArtists.map(sArtist => `'${sArtist}'`).join(", ");
 
-    // TODO: remove
-    // console.log(db.getComputedQuery(query, sFingerprintData, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sArtistList)); 
-
     return db.query(query, sFingerprintData, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sArtistList);
 };
