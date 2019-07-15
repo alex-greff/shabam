@@ -8,22 +8,6 @@ module.exports = {
         const allTracks = await helpers.getAllTracks();
 
         return allTracks;
-
-        // return [
-        //     {
-        //         _id: 123,
-        //         fingerprintID: 123,
-        //         fingerprintData: "something",
-        //         metaData: {
-        //             title: "temp",
-        //             artists: ["artist1", "artist2"],
-        //             coverImage: "some image link",
-        //             releaseDate: "some date",
-        //             createdDate: "some date",
-        //             updatedDate: "some date"
-        //         }
-        //     }
-        // ]
     },
     getTrack: async (root, { title, artists }, context) => {
         // const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint");
@@ -56,5 +40,5 @@ module.exports = {
             createdDate: "some date",
             updatedDate: "some date"
         }
-    }    
+    }
 };

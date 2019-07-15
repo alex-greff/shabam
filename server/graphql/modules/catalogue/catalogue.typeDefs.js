@@ -25,6 +25,7 @@ module.exports = gql`
         artists: [String!]!
         coverImage: String
         releaseDate: String
+        # TODO: add signal data field
     }
 
     """Input data for editing a track."""
@@ -33,6 +34,7 @@ module.exports = gql`
         artists: [String]
         coverImage: String
         releaseDate: String
+        # TODO: add optional signal data field
     }
 
     type Query {
