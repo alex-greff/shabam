@@ -1,8 +1,6 @@
-const jwt = require('jsonwebtoken');
 const canDoAllOperations = require("../../roles/role-check");
 const Utilities = require("../../utilities");
 const db = require("../../db");
-const KEYS = require("../../keys");
 
 const DEFAULT_CHECK_CONFIG = {
     checkSelf: false,

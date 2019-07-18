@@ -1,6 +1,9 @@
 const CatalogueOperations = require("./catalogue.operations");
 const Utilities = require("../../../utilities");
+
+const injectUserData = require("../../middleware/userData");
 const permit = require("../../middleware/permission");
+
 
 module.exports = {
     Query: {

@@ -2,10 +2,10 @@ const GraphQLModule = require("@graphql-modules/core").GraphQLModule;
 const typeDefs = require("./catalogue.typeDefs");
 const resolvers = require("./catalogue.resolvers");
 
-const authorizationInjector = require("../../injectors/authorization");
+const headerInjector = require("../../injectors/headers");
 
 module.exports = new GraphQLModule({
     typeDefs,
     resolvers,
-    context: authorizationInjector
+    context: headerInjector
 });
