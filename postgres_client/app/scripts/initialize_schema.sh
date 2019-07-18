@@ -10,7 +10,7 @@ source "$SCRIPT_DIR/functions/run_query.sh"
 # Start command
 read -d '' SCHEMA_INIT_QUERY << EOF
     -- user table
-    DROP TABLE IF EXISTS user_account CASCADE;
+    /*DROP TABLE IF EXISTS user_account CASCADE;
     CREATE TABLE user_account(
         user_account_id serial PRIMARY KEY,
         password CHAR (60) NOT NULL,
@@ -18,29 +18,19 @@ read -d '' SCHEMA_INIT_QUERY << EOF
         role VARCHAR (50) NOT NULL,
         signup_date TIMESTAMP NOT NULL,
         last_login TIMESTAMP
-    );
-
-    -- fingerprint table
-    DROP TABLE IF EXISTS fingerprint CASCADE;
-    CREATE TABLE fingerprint(
-        fingerprint_id serial PRIMARY KEY,
-        data json NOT NULL
-    );
+    );*/
 
     -- track table
     DROP TABLE IF EXISTS track CASCADE;
     CREATE TABLE track(
         track_id serial PRIMARY KEY,
-        fingerprint_id integer NOT NULL,
         upload_user_account_id integer NOT NULL,
         title VARCHAR (50) UNIQUE NOT NULL,
         cover_image VARCHAR (355) NOT NULL,
+        fingerprint_data json NOT NULL,
         release_date TIMESTAMP,
         created_date TIMESTAMP NOT NULL,
         update_date TIMESTAMP NOT NULL,
-        CONSTRAINT track_fingerprint_id_fkey FOREIGN KEY (fingerprint_id)
-            REFERENCES fingerprint (fingerprint_id) MATCH SIMPLE
-            ON UPDATE RESTRICT ON DELETE CASCADE,
         CONSTRAINT track_upload_user_account_id_fkey FOREIGN KEY (upload_user_account_id)
             REFERENCES user_account (user_account_id) MATCH SIMPLE
             ON UPDATE RESTRICT ON DELETE CASCADE

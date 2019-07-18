@@ -26,11 +26,8 @@ exports.findTrackID = async (i_sTitle, i_aArtists) => {
 
 exports.getTrack = async (i_nTrackID) => {
     const trackQuery = `
-        SELECT t.*, f.data as fingerprint_data FROM 
-            (SELECT * FROM track AS t WHERE t.track_id = %L) t
-            INNER JOIN fingerprint as f
-            ON t.fingerprint_id = f.fingerprint_id;
-    `;
+        SELECT * FROM track AS t where t.track_id = %L 
+    `
 
     const resTrack = await db.query(trackQuery, `${i_nTrackID}`);
 
@@ -58,7 +55,6 @@ exports.getTrack = async (i_nTrackID) => {
     // Construct and return track data
     return {
         _id: trackData.track_id,
-        fingerprintID: trackData.fingerprint_id,
         fingerprintData: JSON.stringify(trackData.fingerprint_data), // TODO: remove the stringify
         metaData: {
             title: trackData.title,
@@ -73,8 +69,7 @@ exports.getTrack = async (i_nTrackID) => {
 
 exports.getAllTracks = async () => {
     const allTracksQuery = `
-        SELECT t.*, f.data as fingerprint_data FROM track AS t INNER JOIN fingerprint AS f
-            ON t.fingerprint_id = f.fingerprint_id
+        SELECT * FROM track
     `;
 
     const trackToArtistsMapQuery = `
@@ -111,7 +106,6 @@ exports.getAllTracks = async () => {
 
     const aAllTracks = aRawTrackData.map(oCurrRawTrackData => ({
         _id: oCurrRawTrackData.track_id,
-        fingerprintID: oCurrRawTrackData.fingerprint_id,
         fingerprintData: JSON.stringify(oCurrRawTrackData.fingerprint_data), // TODO: remove the stringify
         metaData: {
             title: oCurrRawTrackData.title,
@@ -165,17 +159,15 @@ exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_dReleaseDate, i_sEmai
         DECLARE
             trackID INTEGER;
         BEGIN
-            WITH FP_TABLE AS (
-                INSERT INTO fingerprint(data) VALUES (%L) RETURNING fingerprint_id
-            ), UA_TABLE AS (
+            WITH UA_TABLE AS (
                 SELECT user_account_id FROM user_account AS ua WHERE ua.email = %L
             )
             INSERT INTO track 
                 (title, cover_image, release_date, created_date, update_date,
-                fingerprint_id, upload_user_account_id)
+                fingerprint_data, upload_user_account_id)
             SELECT 
-                %L, %L, %s, %s, %s, FP_TABLE.fingerprint_id, UA_TABLE.user_account_id
-            FROM FP_TABLE, UA_TABLE
+                %L, %L, %s, %s, %s, %L, UA_TABLE.user_account_id
+            FROM UA_TABLE
             RETURNING track_id INTO trackID;
 
             PERFORM insert_artists(trackID, ARRAY[%s]);
@@ -187,5 +179,5 @@ exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_dReleaseDate, i_sEmai
     const sFingerprintData = JSON.stringify(i_oFingerprintData);
     const sArtistList = i_aArtists.map(sArtist => `'${sArtist}'`).join(", ");
 
-    return db.query(query, sFingerprintData, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sArtistList);
+    return db.query(query, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sFingerprintData, sArtistList);
 };

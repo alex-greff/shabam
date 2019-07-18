@@ -35,7 +35,6 @@ module.exports = {
         // TODO: implement
         return {
             _id: 123,
-            fingerprintID: 123,
             fingerprintData: "something",
             metaData: {
                 title: "temp",

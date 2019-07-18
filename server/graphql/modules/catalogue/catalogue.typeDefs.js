@@ -14,7 +14,6 @@ module.exports = gql`
     """A track object."""
     type Track {
         _id: ID!
-        fingerprintID: Int!
         fingerprintData: String! # TODO: make fingerprint type
         metaData: TrackMetaData!
     }
