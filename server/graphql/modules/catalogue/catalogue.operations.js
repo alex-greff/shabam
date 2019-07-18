@@ -47,7 +47,9 @@ module.exports = {
         }
     },
     deleteTrack: async (root, { title, artists }, context) => {
-        // TODO: implement
+        const trackID = await helpers.findTrackID(title, artists);
+        await helpers.deleteTrack(trackID);
+
         return true;
     }
 };

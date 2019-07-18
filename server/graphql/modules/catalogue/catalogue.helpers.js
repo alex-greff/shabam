@@ -181,3 +181,11 @@ exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_dReleaseDate, i_sEmai
 
     return db.query(query, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sFingerprintData, sArtistList);
 };
+
+exports.deleteTrack = (i_nTrackID) => {
+    const query = `
+        DELETE FROM track AS t WHERE t.track_id = %L
+    `;  
+
+    return db.query(query, `${i_nTrackID}`);
+}
