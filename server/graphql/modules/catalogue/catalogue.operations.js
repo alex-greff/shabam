@@ -19,9 +19,9 @@ module.exports = {
         return trackData;
     },
     addTrack: async (root, { trackData }, context) => {
-        const { title, artists, coverImage, releaseDate } = trackData;
+        const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
-        const fingerprintData = {"some":"json data"}; // TODO: generate fingerprint from worker
+        const fingerprintData = {"some":"json data"}; // TODO: generate fingerprint from worker with signal data
 
         await helpers.addTrack(title, artists, coverImage, releaseDate, email, fingerprintData);
 
@@ -31,20 +31,21 @@ module.exports = {
 
         return dbTrackData;
     },
-    editTrack: async (root, { trackData }, context) => {
-        // TODO: implement
-        return {
-            _id: 123,
-            fingerprintData: "something",
-            metaData: {
-                title: "temp",
-                artists: ["artist1", "artist2"],
-                coverImage: "some image link",
-                releaseDate: "some date",
-                createdDate: "some date",
-                updatedDate: "some date"
-            }
-        }
+    editTrack: async (root, { title, artists, updatedTrackData }, context) => {
+        const { title: newTitle, artists: newArtists, 
+            coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData; // TODO: get updated signal data
+
+        let newFingerprintData; // TODO: generate new fingerprint, if needed
+
+        const trackID = await helpers.findTrackID(title, artists);
+
+        // Update the track
+        await helpers.editTrack(trackID, newTitle, newArtists, newCoverImage, newReleaseDate, newFingerprintData);
+
+        // Get the updated track
+        const dbTrackData = await helpers.getTrack(trackID);
+
+        return dbTrackData;
     },
     deleteTrack: async (root, { title, artists }, context) => {
         const trackID = await helpers.findTrackID(title, artists);
