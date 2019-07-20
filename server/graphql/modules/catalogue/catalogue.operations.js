@@ -1,8 +1,6 @@
-const axios = require("axios");
-const db = require("../../../db");
 const helpers = require("./catalogue.helpers");
+const workers = require("../../../workers");
 
-// TODO: implement
 module.exports = {
     getAllTracks: async (root, args, context) => {
         const allTracks = await helpers.getAllTracks();
@@ -10,9 +8,6 @@ module.exports = {
         return allTracks;
     },
     getTrack: async (root, { title, artists }, context) => {
-        // const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint");
-        // console.log("RES", res.data);
-
         const trackID = await helpers.findTrackID(title, artists);
         const trackData = await helpers.getTrack(trackID);
 
@@ -21,7 +16,7 @@ module.exports = {
     addTrack: async (root, { trackData }, context) => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
-        const fingerprintData = {"some":"json data"}; // TODO: generate fingerprint from worker with signal data
+        const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
 
         await helpers.addTrack(title, artists, coverImage, releaseDate, email, fingerprintData);
 
@@ -35,7 +30,12 @@ module.exports = {
         const { title: newTitle, artists: newArtists, 
             coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData; // TODO: get updated signal data
 
-        let newFingerprintData; // TODO: generate new fingerprint, if needed
+        let newFingerprintData;
+        // Generate a new fingerprint, if needed
+        const generateNewFingerprint = false; // TODO: check if new signal data is passed in
+        if (generateNewFingerprint) {
+            newFingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in updated signal data
+        }
 
         const trackID = await helpers.findTrackID(title, artists);
 
