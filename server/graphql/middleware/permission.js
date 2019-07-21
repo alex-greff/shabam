@@ -4,42 +4,23 @@ const db = require("../../db");
 const userHelpers = require("../modules/user/user.helpers");
 
 const DEFAULT_CHECK_CONFIG = {
-    checkSelf: false,
     userEmailPath: "email"
 };
 
 module.exports = (config, ...operations) => {
     return async (root, args, context) => {
         try {
-            config = { ...DEFAULT_CHECK_CONFIG, ...config };
+            config = (config) ? { ...DEFAULT_CHECK_CONFIG, ...config } : { ...DEFAULT_CHECK_CONFIG };
 
-            // Check if there is an email given
-            if (!context.userData || !context.userData.email) {
+            // Check if there user data provided
+            if (!context.userData) {
                 Utilities.throwAuthorizationError();
             }
 
-            // Get the user's data
-            const oUserData = await userHelpers.getUser(`${context.userData.email}`);
-
-            // Check that user exists
-            if (!oUserData) {
-                Utilities.throwAuthorizationError();
-            }
-
-            const { role, email: userEmail } = oUserData;
-
-            const { checkSelf, userEmailPath } = config;
-            const providedUserEmail = Utilities.getIn(args, userEmailPath);
+            const { role } = context.userData;
 
             // Check if user has access
-            if (await canDoAllOperations(root, args, context)(config, role, ...operations)) {
-                context.userAccessType = "role";
-            }
-            // Check if the user is self
-            else if (checkSelf && providedUserEmail && userEmail === providedUserEmail) {
-                context.userAccessType = "self";
-            }
-            else {
+            if (!(await canDoAllOperations(root, args, context)(config, role, ...operations))) {
                 Utilities.throwAuthorizationError();
             }
         } catch (error) {

@@ -13,7 +13,8 @@ module.exports = (root, args, context) => {
     const decoded = jwt.verify(token, KEYS.jwtSecret);
 
     const userData = {
-        email: decoded.email
+        email: decoded.email,
+        role: decoded.role,
     };
 
     // Inject user data into the context

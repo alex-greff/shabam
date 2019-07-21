@@ -10,9 +10,9 @@ module.exports = {
     },
     Mutation: { 
         signup: Utilities.middlewareChain()(UserOperations.signup),
-        editUser: Utilities.middlewareChain(injectUserData, permit({ checkSelf: true }, "edit-user"))(UserOperations.editUser),
-        editUserRole: Utilities.middlewareChain(injectUserData, permit({ checkSelf: false }, "edit-user-roles"))(UserOperations.editUserRole),
-        removeUser: Utilities.middlewareChain(injectUserData, permit({ checkSelf: true }, "delete-user"))(UserOperations.removeUser),
+        editUser: Utilities.middlewareChain(injectUserData, permit({}, "edit-user", "edit-self"))(UserOperations.editUser),
+        editUserRole: Utilities.middlewareChain(injectUserData, permit({}, "edit-user-roles"))(UserOperations.editUserRole),
+        removeUser: Utilities.middlewareChain(injectUserData, permit({}, "delete-user", "delete-self"))(UserOperations.removeUser),
     },
     User: {
         _id: user => user.id,

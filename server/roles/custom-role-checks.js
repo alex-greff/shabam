@@ -15,7 +15,18 @@ const checkTrackIsOwned = async (root, args, context, config) => {
     return (uploaderEmail === userEmail);
 };
 
+const checkSelf = (root, args, context, config) => {
+    const { userEmailPath } = config;
+    const targetUserEmail = Utilities.getIn(args, userEmailPath);
+
+    const { email: userEmail } = context.userData;
+
+    return (targetUserEmail === userEmail);
+};
+
 module.exports = {
     "edit-owned-track": checkTrackIsOwned,
     "delete-owned-track": checkTrackIsOwned,
+    "edit-self": checkSelf,
+    "delete-self": checkSelf,
 };

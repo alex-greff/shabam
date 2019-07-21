@@ -25,11 +25,12 @@ module.exports = {
             Utilities.throwAuthorizationError();
         }
 
-        const { email: userEmail } = oUser;
+        const { email: userEmail, role: userRole } = oUser;
 
         // Generate token
         const oJWTPayload = {
             email: userEmail,
+            role: userRole,
         };
         const oJWTOptions = {
             expiresIn: KEYS.jwtExpireTime
