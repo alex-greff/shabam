@@ -45,8 +45,6 @@ module.exports = gql`
         length: Int!
         """The sample rate of the audio sample."""
         sampleRate: Int!
-        """The PCM data array."""
-        data: [Float!]!
     }
 
     type Query {

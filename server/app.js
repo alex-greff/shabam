@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { Pool } = require("pg");
 const graphqlHttp = require("express-graphql");
+const { graphqlUploadExpress } = require("graphql-upload");
 const KEYS = require("./keys");
 
 const AppModule = require("./graphql/modules");
@@ -42,10 +43,17 @@ app.options(cors(corsOptions));
 app.use(cors(corsOptions));
 
 // Setup graphql
-app.use('/graphql', graphqlHttp({
-    schema: AppModule.schema,
-    graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production    
-}))
+app.use(
+    '/graphql', 
+    graphqlUploadExpress({ 
+        maxFileSize: 50000000, // 50mb
+        maxFiles: 5
+    }),
+    graphqlHttp({
+        schema: AppModule.schema,
+        graphiql: !KEYS.PRODUCTION // Only use graphiql debugger page if not in production    
+    })
+);
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
