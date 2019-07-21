@@ -181,102 +181,98 @@ exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_sReleaseDate, i_sEmai
     return db.query(query, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sFingerprintData, sArtistList);
 };
 
-exports.editTrack = (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverImage, i_sNewReleaseDate, i_oNewFingerprintData) => {
-    return new Promise(async (resolve) => {
-        const sNowTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
+exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverImage, i_sNewReleaseDate, i_oNewFingerprintData) => {
+    const sNowTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
 
-        const aUpdateArgs = [];
-        let sUpdateListString = "update_date = %s";
+    const aUpdateArgs = [];
+    let sUpdateListString = "update_date = %s";
 
-        if (i_sNewTitle) {
-            sUpdateListString += ", title = %L";
-            aUpdateArgs.push(i_sNewTitle);
-        }
+    if (i_sNewTitle) {
+        sUpdateListString += ", title = %L";
+        aUpdateArgs.push(i_sNewTitle);
+    }
 
-        if (i_sNewCoverImage) {
-            sUpdateListString += ", cover_image = %L";
-            aUpdateArgs.push(i_sNewCoverImage);
-        }
+    if (i_sNewCoverImage) {
+        sUpdateListString += ", cover_image = %L";
+        aUpdateArgs.push(i_sNewCoverImage);
+    }
 
-        if (i_sNewReleaseDate) {
-            const sReleaseDateTimestamp = `to_timestamp(${new Date(i_sNewReleaseDate).getTime()} / 1000.0)`;
-            sUpdateListString += ", release_date = %s";
-            aUpdateArgs.push(sReleaseDateTimestamp);
-        }
+    if (i_sNewReleaseDate) {
+        const sReleaseDateTimestamp = `to_timestamp(${new Date(i_sNewReleaseDate).getTime()} / 1000.0)`;
+        sUpdateListString += ", release_date = %s";
+        aUpdateArgs.push(sReleaseDateTimestamp);
+    }
 
-        if (i_oNewFingerprintData) {
-            const sFingerprintData = JSON.stringify(i_oFingerprintData);
-            sUpdateListString += ", fingerprint_data = %s";
-            aUpdateArgs.push(sFingerprintData);
-        }
+    if (i_oNewFingerprintData) {
+        const sFingerprintData = JSON.stringify(i_oFingerprintData);
+        sUpdateListString += ", fingerprint_data = %s";
+        aUpdateArgs.push(sFingerprintData);
+    }
 
-        let trackQuery = `
-            UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = %L
+    let trackQuery = `
+        UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = %L
+    `;
+
+    const bUpdateArtists = i_aNewArtists && i_aNewArtists.length > 0;
+
+    // Check if no items are actually being updated
+    if (aUpdateArgs.length <= 0 && !bUpdateArtists) {
+        throw new Error("Error updating track, at least one field must be provided to update");
+    }
+
+    // Add the track query to the list of promises to run
+    await db.query(trackQuery, sNowTimestamp, ...aUpdateArgs, `${i_nTrackID}`)
+
+    // Make the update artists query, if needed
+    if (bUpdateArtists) {
+        const artistQuery = `
+            DROP FUNCTION IF EXISTS insert_artist(artistName VARCHAR);
+
+            CREATE OR REPLACE FUNCTION insert_artist(artistName VARCHAR)
+                RETURNS INTEGER AS $$
+            DECLARE
+                artistID INTEGER;
+            BEGIN
+                IF EXISTS (SELECT 1 FROM artist WHERE artist.name = artistName) THEN
+                    SELECT artist.artist_id INTO artistID FROM artist WHERE artist.name = artistName;
+                ELSE
+                    INSERT INTO artist(name) VALUES (artistName) RETURNING artist_id INTO artistID;
+                END IF;
+
+                RETURN artistID;
+            END; $$ LANGUAGE plpgsql;
+
+            DROP FUNCTION IF EXISTS insert_artists(trackID INTEGER, artistNameArr VARCHAR[]);
+
+            CREATE OR REPLACE FUNCTION insert_artists(trackID INTEGER, artistNameArr VARCHAR[])
+                RETURNS VOID AS $$
+            DECLARE
+                -- artistNameArr VARCHAR[] := ARRAY['artist-1', 'artist-2'];
+                artistName VARCHAR;
+                currArtistID INTEGER;
+            BEGIN
+                FOREACH artistName IN ARRAY artistNameArr
+                LOOP
+                    currArtistID := insert_artist(artistName);
+                    INSERT INTO track_artist(track_id, artist_id) VALUES (trackID, currArtistID);
+                END LOOP;
+            END; $$ LANGUAGE plpgsql;            
+
+            DO $$
+            DECLARE
+                trackID INTEGER := %L;
+            BEGIN
+                -- Remove any existing artists mapped to the track
+                DELETE FROM track_artist AS ta WHERE ta.track_id = trackID;
+                -- Add the updated artists in
+                PERFORM insert_artists(trackID, ARRAY[%s]);
+            END $$
         `;
 
-        const bUpdateArtists = i_aNewArtists && i_aNewArtists.length > 0;
+        const sArtistList = i_aNewArtists.map(sArtist => `'${sArtist}'`).join(", ");
 
-        // Check if no items are actually being updated
-        if (aUpdateArgs.length <= 0 && !bUpdateArtists) {
-            throw new Error("Error updating track, at least one field must be provided to update");
-        }
-
-        // Add the track query to the list of promises to run
-        await db.query(trackQuery, sNowTimestamp, ...aUpdateArgs, `${i_nTrackID}`)
-
-        // Make the update artists query, if needed
-        if (bUpdateArtists) {
-            const artistQuery = `
-                DROP FUNCTION IF EXISTS insert_artist(artistName VARCHAR);
-
-                CREATE OR REPLACE FUNCTION insert_artist(artistName VARCHAR)
-                    RETURNS INTEGER AS $$
-                DECLARE
-                    artistID INTEGER;
-                BEGIN
-                    IF EXISTS (SELECT 1 FROM artist WHERE artist.name = artistName) THEN
-                        SELECT artist.artist_id INTO artistID FROM artist WHERE artist.name = artistName;
-                    ELSE
-                        INSERT INTO artist(name) VALUES (artistName) RETURNING artist_id INTO artistID;
-                    END IF;
-
-                    RETURN artistID;
-                END; $$ LANGUAGE plpgsql;
-
-                DROP FUNCTION IF EXISTS insert_artists(trackID INTEGER, artistNameArr VARCHAR[]);
-
-                CREATE OR REPLACE FUNCTION insert_artists(trackID INTEGER, artistNameArr VARCHAR[])
-                    RETURNS VOID AS $$
-                DECLARE
-                    -- artistNameArr VARCHAR[] := ARRAY['artist-1', 'artist-2'];
-                    artistName VARCHAR;
-                    currArtistID INTEGER;
-                BEGIN
-                    FOREACH artistName IN ARRAY artistNameArr
-                    LOOP
-                        currArtistID := insert_artist(artistName);
-                        INSERT INTO track_artist(track_id, artist_id) VALUES (trackID, currArtistID);
-                    END LOOP;
-                END; $$ LANGUAGE plpgsql;            
-
-                DO $$
-                DECLARE
-                    trackID INTEGER := %L;
-                BEGIN
-                    -- Remove any existing artists mapped to the track
-                    DELETE FROM track_artist AS ta WHERE ta.track_id = trackID;
-                    -- Add the updated artists in
-                    PERFORM insert_artists(trackID, ARRAY[%s]);
-                END $$
-            `;
-
-            const sArtistList = i_aNewArtists.map(sArtist => `'${sArtist}'`).join(", ");
-
-            await db.query(artistQuery, `${i_nTrackID}`, sArtistList);
-        }
-
-        resolve();
-    });
+        await db.query(artistQuery, `${i_nTrackID}`, sArtistList);
+    }
 };
 
 exports.deleteTrack = (i_nTrackID) => {
