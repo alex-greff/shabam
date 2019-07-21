@@ -14,6 +14,20 @@ exports.getUser = async (i_sEmail) => {
     return null;
 };
 
+exports.getUserByID = async (i_nID) => {
+    const query = `
+        SELECT * FROM user_account AS ua WHERE ua.user_account_id = %L
+    `;
+
+    const res = await db.query(query, `${i_nID}`);
+
+    if (res.rowCount > 0) {
+        return res.rows[0];
+    }
+
+    return null;
+};
+
 exports.updateLastUserLogin = async (i_sEmail, i_sLastLoginTime = null) => {
     const sLastLoginTimestamp = (i_sLastLoginTime) ? 
         `to_timestamp(${new Date(i_sLastLoginTime).getTime()} / 1000.0)` : `to_timestamp(${Date.now()} / 1000.0)`;

@@ -9,7 +9,6 @@ const KEYS = require("./keys");
 
 const AppModule = require("./graphql/modules");
 
-
 // Postgress client connection setup
 const pgClient = new Pool({
     user: KEYS.pgUser,

@@ -11,8 +11,8 @@ module.exports = {
         getTrack: Utilities.middlewareChain()(CatalogueOperations.getTrack),
     },
     Mutation: {
-        addTrack: Utilities.middlewareChain()(CatalogueOperations.addTrack),
-        editTrack: Utilities.middlewareChain()(CatalogueOperations.editTrack),
-        deleteTrack: Utilities.middlewareChain()(CatalogueOperations.deleteTrack),
+        addTrack: Utilities.middlewareChain(injectUserData, permit({}, "upload-track"))(CatalogueOperations.addTrack),
+        editTrack: Utilities.middlewareChain(injectUserData, permit({}, "edit-track", "edit-owned-track"))(CatalogueOperations.editTrack),
+        deleteTrack: Utilities.middlewareChain(injectUserData, permit({}, "delete-track", "delete-owned-track"))(CatalogueOperations.deleteTrack),
     }
 };  

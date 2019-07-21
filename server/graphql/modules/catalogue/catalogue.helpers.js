@@ -26,7 +26,11 @@ exports.findTrackID = async (i_sTitle, i_aArtists) => {
 
 exports.getTrack = async (i_nTrackID) => {
     const trackQuery = `
-        SELECT * FROM track AS t where t.track_id = %L 
+        SELECT * FROM 
+            (SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
+                INNER JOIN user_account AS ua 
+                ON t.upload_user_account_id = ua.user_account_id) n1 
+            WHERE n1.track_id = %L
     `
 
     const resTrack = await db.query(trackQuery, `${i_nTrackID}`);
@@ -60,6 +64,7 @@ exports.getTrack = async (i_nTrackID) => {
             title: trackData.title,
             artists: trackData.artists,
             coverImage: trackData.cover_image,
+            uploaderEmail: trackData.upload_user_account_email,
             releaseDate: trackData.release_date,
             createdDate: trackData.created_date,
             updatedDate: trackData.update_date
@@ -69,7 +74,9 @@ exports.getTrack = async (i_nTrackID) => {
 
 exports.getAllTracks = async () => {
     const allTracksQuery = `
-        SELECT * FROM track
+        SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
+            INNER JOIN user_account AS ua
+            ON (t.upload_user_account_id = ua.user_account_id);
     `;
 
     const trackToArtistsMapQuery = `
@@ -111,6 +118,7 @@ exports.getAllTracks = async () => {
             title: oCurrRawTrackData.title,
             artists: oCurrRawTrackData.artists,
             coverImage: oCurrRawTrackData.cover_image,
+            uploaderEmail: oCurrRawTrackData.upload_user_account_email,
             releaseDate: oCurrRawTrackData.release_date,
             createdDate: oCurrRawTrackData.created_date,
             updatedDate: oCurrRawTrackData.update_date

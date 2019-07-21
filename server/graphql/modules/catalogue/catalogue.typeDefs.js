@@ -6,6 +6,7 @@ module.exports = gql`
         title: String!
         artists: [String!]!
         coverImage: String
+        uploaderEmail: String!
         releaseDate: String
         createdDate: String!
         updatedDate: String!

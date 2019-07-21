@@ -7,7 +7,7 @@ const db = require("../db");
  * Sets up a chain of middlewares. 
  * Returns a function that takes a resolver which is called at the end of the middleware chain.
  * 
- * @param  {...Function} middlewares The middlewares to call.
+ * @param {...Function} middlewares The middlewares to call.
  */
 exports.middlewareChain = (...middlewares) => {
     /**
@@ -140,4 +140,37 @@ exports.setIn = (obj, path, value) => {
 exports.isEmail = (email) => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+};
+
+/**
+ * Takes a function and returns a promise that resolves if the function returns a truthy value and rejects if a falsey value.
+ * 
+ * @param {Function} i_fnFunc Function that returns a truthy or falsey.
+ * @param {...Any} i_params Any parameters to pass in.
+ */
+exports.booleanResolver = (i_fnFunc, ...i_params) => {
+    return new Promise(async (resolve, reject) => {
+        const bRet = await i_fnFunc(...i_params);
+
+        if (bRet) {
+            resolve();
+        } else {
+            reject();
+        }
+    });
+};
+
+/**
+ * Takes a function that returns a promise and returns true if the promise resolves and false if it rejects.
+ * 
+ * @param {Function} i_fnFunc A function that returns a promise.
+ * @param {...Any} i_params Any parameters to pass in.
+ */
+exports.resolveAsBoolean = async (i_fnFunc, ...i_params) => {
+    try {
+        await i_fnFunc(...i_params);
+        return true;
+    } catch(err) {
+        return false;
+    }
 };
