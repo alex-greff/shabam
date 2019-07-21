@@ -74,13 +74,13 @@ module.exports = {
         const { email: newEmail, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
-        const bUserExists = await helpers.userExists(currEmail);
+        const oUserData = await helpers.getUser(currEmail);
 
-        if (!bUserExists) {
+        if (!oUserData) {
             throw new Error(`User '${currEmail}' does not exist`);
         }
 
-        const { password: sCurrPasswordHash } = getUserQuery.rows[0];
+        const { password: sCurrPasswordHash } = oUserData;
 
         if (newEmail) {
             if (!Utilities.isEmail(newEmail)) {

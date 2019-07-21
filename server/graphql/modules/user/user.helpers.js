@@ -74,7 +74,7 @@ exports.createNewUser = async (i_sEmail, i_sPasswordHash, i_sRole, i_sSignupDate
 
 exports.editUser = async (i_sEmail, i_sNewEmail, i_sNewPasswordHash) => {
     const aUpdateArgs = [];
-    const sUpdateListString = "";
+    let sUpdateListString = "";
 
     if (i_sNewEmail) {
         sUpdateListString += ", email = %L";
