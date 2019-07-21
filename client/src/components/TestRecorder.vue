@@ -66,6 +66,60 @@ export default {
 
             console.log("BUFFER", buffer);
             console.log("CHANNEL DATA", channelData);
+
+            try {
+                // const res = await this.$http.post("/api/graphql", {
+                //     query: `
+                //         query {
+                //             getAllTracks {
+                //                 _id,
+                //                 fingerprintData,
+                //                 metaData {
+                //                     title,
+                //                     artists,
+                //                     coverImage,
+                //                     uploaderEmail,
+                //                     releaseDate,
+                //                     createdDate,
+                //                     updatedDate
+                //                 }
+                //             }
+                //         }
+                //     `
+                // });
+
+                const res = await this.$http.post("/api/graphql", {
+                    query: `
+                        query SearchTrack($searchData: SignalData!) {
+                            searchTrack(searchData: $searchData) {
+                                _id,
+                                fingerprintData,
+                                metaData {
+                                    title,
+                                    artists,
+                                    coverImage,
+                                    uploaderEmail,
+                                    releaseDate,
+                                    createdDate,
+                                    updatedDate
+                                }
+                            }
+                        }
+                    `,
+                    variables: {
+                        searchData: {
+                            duration: buffer.duration,
+                            length: buffer.length,
+                            sampleRate: buffer.sampleRate,
+                            data: JSON.stringify(channelData)
+                        }
+                    }
+                });
+
+                console.log("RES", res);
+            } catch(err) {
+                console.log("ERROR", err.message);
+            }
         }
     }
 }
