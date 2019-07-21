@@ -37,11 +37,25 @@ module.exports = gql`
         # TODO: add optional signal data field
     }
 
+    """Input PCM audio signal data."""
+    input SignalData {
+        """The duration in seconds of the audio sample."""
+        duration: Float!
+        """The number of total samples in the audio sample."""
+        length: Int!
+        """The sample rate of the audio sample."""
+        sampleRate: Int!
+        """The PCM data array."""
+        data: [Float!]!
+    }
+
     type Query {
         """Get all tracks in the catalogue."""
         getAllTracks: [Track!]!
         """Get a specific track in the catalogue."""
         getTrack(title: String!, artists: [String!]!): Track!
+        """Searches for a track based off the given PCM audio signal data."""
+        searchTrack(searchData: SignalData!): Track
     }
 
     type Mutation {

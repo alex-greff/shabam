@@ -13,6 +13,11 @@ module.exports = {
 
         return trackData;
     },
+    searchTrack: async (root, { searcData }, context) => {
+        // TODO: implement
+        
+        return null;
+    },
     addTrack: async (root, { trackData }, context) => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
