@@ -1,9 +1,9 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Utilities = require("../../../utilities");
-const db = require("../../../db");
 const KEYS = require("../../../keys");
 const roles = require("../../../roles/roles");
+const helpers = require("./user.helpers");
 
 const DEFAULT_ROLE = "default";
 
@@ -11,14 +11,13 @@ module.exports = {
     login: async (root, { credentials }, context) => {
         const { email, password } = credentials;
 
-        const getUserQuery = await db.query("SELECT email, password FROM user_account AS ua WHERE ua.email = %L", email);
-        const bUserFound = getUserQuery.rowCount > 0;
+        const oUser = await helpers.getUser(email);
 
-        if (!bUserFound) {
+        if (!oUser) {
             Utilities.throwAuthorizationError();
         }
 
-        const sPasswordHash = getUserQuery.rows[0].password;
+        const sPasswordHash = oUser.password;
 
         const bSamePassword = bcrypt.compareSync(password, sPasswordHash);
         // Password comparison failed
@@ -26,7 +25,7 @@ module.exports = {
             Utilities.throwAuthorizationError();
         }
 
-        const { email: userEmail } = getUserQuery.rows[0];
+        const { email: userEmail } = oUser;
 
         // Generate token
         const oJWTPayload = {
@@ -37,9 +36,8 @@ module.exports = {
         };
         const sToken = jwt.sign(oJWTPayload, KEYS.jwtSecret, oJWTOptions);
 
-        // Update last login
-        const sLastLoginTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
-        await db.query(`UPDATE user_account AS ua SET last_login = %s WHERE ua.email = %L`, sLastLoginTimestamp, email);
+        // Update last login to now
+        await helpers.updateLastUserLogin(email);
 
         // Return the token
         return {
@@ -50,8 +48,7 @@ module.exports = {
         const { email, password } = credentials;
 
         // Attempt to find an already existing user
-        const checkUserQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", email);
-        const bUserExists = checkUserQuery.rowCount > 0;
+        const bUserExists = await helpers.userExists(email);
 
         if (bUserExists) {
             // If query doesn't error then the user already exists
@@ -60,21 +57,15 @@ module.exports = {
 
         // Hash password
         const sPasswordHashed = bcrypt.hashSync(password, 10);
-        
-        const oNewUser = {
-            email: email,
-            password: sPasswordHashed,
-            role: DEFAULT_ROLE,
-            signup_date: `to_timestamp(${Date.now()} / 1000.0)`
-        };
-
-        const sNewUserKeys = Object.keys(oNewUser);
-        const sNewUserValues = Object.values(oNewUser);
 
         // Create the new user
-        await db.query('INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)', ...sNewUserKeys, ...sNewUserValues);    
+        await helpers.createNewUser(email, sPasswordHashed, role);
 
-        console.log("CREATED USER", oNewUser);
+        console.log("CREATED USER", {
+            email,
+            password: sPasswordHashed,
+            role: DEFAULT_ROLE
+        });
 
         return true;
     },
@@ -82,16 +73,13 @@ module.exports = {
         const { email: newEmail, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
-        const getUserQuery = await db.query("SELECT password FROM user_account AS ua WHERE ua.email = %L", currEmail);
-        const bUserExists = getUserQuery.rowCount > 0;
+        const bUserExists = await helpers.userExists(currEmail);
 
         if (!bUserExists) {
             throw new Error(`User '${currEmail}' does not exist`);
         }
 
         const { password: sCurrPasswordHash } = getUserQuery.rows[0];
-
-        const aUpdatedUserData = []; // Fromat: [ [identifier, value] ]
 
         if (newEmail) {
             if (!Utilities.isEmail(newEmail)) {
@@ -103,16 +91,14 @@ module.exports = {
             }
 
             // Validate that new email is not used anywhere else
-            const emailInUseQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", newEmail);
-            const bEmailInUse = emailInUseQuery.rowCount > 0;
+            const bEmailInUse = await helpers.userExists(newEmail);
 
             if (bEmailInUse) {
                 throw new Error("Email already in use");
             }
-
-            aUpdatedUserData.push(["email", newEmail]);
         }
 
+        let newPasswordHash;
         if (newPassword) {
             let bSamePass = bcrypt.compareSync(newPassword, sCurrPasswordHash);
             // Make sure the new password is not the same as the current one
@@ -121,26 +107,18 @@ module.exports = {
             }
 
             // Hash password
-            const sNewPasswordHash = bcrypt.hashSync(newPassword, 10);
-
-            aUpdatedUserData.push(["password", sNewPasswordHash]);
+            newPasswordHash = bcrypt.hashSync(newPassword, 10);
         }
 
-        // Update the user
-        const aSetFormat = aUpdatedUserData.map(aVal => "%I = %L");
-        const sSetFormat = aSetFormat.join(", ");
-        const aSetValues = aUpdatedUserData.reduce((acc, i_aCurrVal) => [...acc, i_aCurrVal[0], i_aCurrVal[1]], []);
+        await helpers.editUser(currEmail, newEmail, newPasswordHash);
 
-        await db.query(`UPDATE user_account AS ua SET ${sSetFormat} WHERE ua.email = %L`, ...aSetValues, currEmail);
-
-        console.log(`UPDATED ACCOUNT '${currEmail}' ${aSetValues}`)
+        console.log(`UPDATED ACCOUNT '${currEmail}'`, (newEmail) ? `email=${newEmail}` : "", (newPasswordHash) ? `password=${newPasswordHash}` : "");
 
         return true;
     },
     editUserRole: async (root, { email, updatedRole }, context) => {
         // Check that the user exists
-        const getUserQuery = await db.query("SELECT password FROM user_account AS ua WHERE ua.email = %L", email);
-        const bUserExists = getUserQuery.rowCount > 0;
+        const bUserExists = await helpers.userExists(email);
 
         if (!bUserExists) {
             throw new Error(`User '${currEmail}' does not exist`);
@@ -152,7 +130,7 @@ module.exports = {
         }
 
         // Update the user's role
-        await db.query(`UPDATE user_account AS ua SET role = %L WHERE ua.email = %L`, updatedRole, email);
+        await helpers.editUserRole(email, updatedRole);
 
         console.log(`UPDATED USER ACCOUNT '${email}' TO ROLE '${updatedRole}'`);
 
@@ -160,15 +138,14 @@ module.exports = {
     },
     removeUser: async (root, { email }, context) => {
         // Attempt to find an already existing user
-        const checkUserQuery = await db.query("SELECT email FROM user_account AS ua WHERE ua.email = %L", email);
-        const bUserExists = checkUserQuery.rowCount > 0;
+        const bUserExists = helpers.userExists(email);
 
         if (!bUserExists) {
             throw new Error(`User '${email}' does not exist`);
         }
 
         // Delete the user
-        await db.query("DELETE FROM user_account AS ua WHERE ua.email = %L", email);
+        await helpers.deleteUser(email);
         
         console.log(`REMOVED USER '${email}'`);
 
