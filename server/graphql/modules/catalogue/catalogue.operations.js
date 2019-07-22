@@ -13,9 +13,10 @@ module.exports = {
 
         return trackData;
     },
-    searchTrack: async (root, { searchData }, context) => {
+    searchTrack: async (root, { searchData, file }, context) => {
         // TODO: implement
         console.log("SEARCH DATA", searchData);
+        console.log("FILE", file);
 
         return null;
     },

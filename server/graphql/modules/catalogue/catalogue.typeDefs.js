@@ -53,7 +53,7 @@ module.exports = gql`
         """Get a specific track in the catalogue."""
         getTrack(title: String!, artists: [String!]!): Track!
         """Searches for a track based off the given PCM audio signal data."""
-        searchTrack(searchData: SignalData!): Track
+        searchTrack(searchData: SignalData!, file: Upload!): Track
     }
 
     type Mutation {
