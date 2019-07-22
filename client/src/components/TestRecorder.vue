@@ -70,8 +70,8 @@ export default {
             try {
                 const operations = {
                     query: `
-                        query SearchTrack($searchData: SignalData!, $file: Upload!) {
-                            searchTrack(searchData: $searchData, file: $file) {
+                        query SearchTrack($audioFile: Upload!) {
+                            searchTrack(audioFile: $audioFile) {
                                 _id,
                                 fingerprintData,
                                 metaData {
@@ -87,18 +87,12 @@ export default {
                         }
                     `,
                     variables: {
-                        searchData: {
-                            duration: buffer.duration,
-                            length: buffer.length,
-                            sampleRate: buffer.sampleRate,
-                            // data: JSON.stringify(channelData)
-                        },
-                        file: null
+                        audioFile: null
                     }
                 };
 
                 const map = {
-                    "0": ["variables.file"]
+                    "0": ["variables.audioFile"]
                 };
 
                 const fd = new FormData();

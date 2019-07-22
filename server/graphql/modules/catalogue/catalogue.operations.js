@@ -13,10 +13,9 @@ module.exports = {
 
         return trackData;
     },
-    searchTrack: async (root, { searchData, file }, context) => {
+    searchTrack: async (root, { audioFile }, context) => {
         // TODO: implement
-        console.log("SEARCH DATA", searchData);
-        console.log("FILE", file);
+        console.log("AUDIO FILE", audioFile);
 
         return null;
     },
