@@ -57,17 +57,20 @@ export default {
 
             console.log("Audio", audio);
 
-            const arrayBuffer = await new Response(audio.audioBlob).arrayBuffer();
-
+            const audioBlob = audio.audioBlob;
+            const arrayBuffer = await new Response(audioBlob).arrayBuffer();
             const audioContext = new AudioContext();
 
             const buffer = await audioContext.decodeAudioData(arrayBuffer);
             const channelData = buffer.getChannelData(0);
 
-            console.log("ARRAY BUFFER", arrayBuffer);
+            const audioFile = new File([audioBlob], "audioFile", { type: 'audio/wav; codecs=MS_PCM', lastModified: Date.now() });
 
-            console.log("BUFFER", buffer);
-            console.log("CHANNEL DATA", channelData);
+            console.log("AUDIO BLOB", audioBlob);
+            console.log("AUDIO FILE", audioFile);
+            // console.log("ARRAY BUFFER", arrayBuffer);
+            // console.log("BUFFER", buffer);
+            // console.log("CHANNEL DATA", channelData);
 
             try {
                 const operations = {
@@ -100,9 +103,13 @@ export default {
                 const fd = new FormData();
                 fd.append("operations", JSON.stringify(operations));
                 fd.append("map", JSON.stringify(map));
-                fd.append(0, arrayBuffer);
+                fd.append(0, audioFile, audioFile.name);
 
-                const res = await this.$http.post("/api/graphql", fd);
+                const res = await this.$http.post("/api/graphql", fd, {
+                    headers: {
+                        "Content-Type": `multipart/form-data; boundary=${fd._boundary}`
+                    }
+                });
 
                 console.log("RES", res);
             } catch(err) {
