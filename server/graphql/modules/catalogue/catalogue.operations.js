@@ -17,6 +17,18 @@ module.exports = {
         // TODO: implement
         console.log("AUDIO FILE", audioFile);
 
+        const { filename, mimetype, createReadStream } = await audioFile;
+
+        // const stream = createReadStream();
+
+        // let buffer = Buffer.from(stream);
+        // let arrayBuffer = Float32Array.from(buffer).buffer;
+
+        // console.log("ARRAY BUFFER", arrayBuffer);
+
+        // console.log("FILENAME", filename, "MIMETYPE", mimetype);
+        // console.log("STREAM", stream);
+
         return null;
     },
     addTrack: async (root, { trackData }, context) => {
