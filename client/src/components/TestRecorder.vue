@@ -64,6 +64,8 @@ export default {
             const buffer = await audioContext.decodeAudioData(arrayBuffer);
             const channelData = buffer.getChannelData(0);
 
+            console.log("ARRAY BUFFER", arrayBuffer);
+
             console.log("BUFFER", buffer);
             console.log("CHANNEL DATA", channelData);
 
@@ -98,7 +100,7 @@ export default {
                 const fd = new FormData();
                 fd.append("operations", JSON.stringify(operations));
                 fd.append("map", JSON.stringify(map));
-                fd.append(0, audio.audioBlob);
+                fd.append(0, arrayBuffer);
 
                 const res = await this.$http.post("/api/graphql", fd);
 
@@ -106,6 +108,51 @@ export default {
             } catch(err) {
                 console.log("ERROR", err.response.data.errors);
             }
+
+            // let reader =  new FileReader();
+            // reader.onload = async (e) => {
+            //     try {
+            //         const operations = {
+            //             query: `
+            //                 query SearchTrack($audioFile: Upload!) {
+            //                     searchTrack(audioFile: $audioFile) {
+            //                         _id,
+            //                         fingerprintData,
+            //                         metaData {
+            //                             title,
+            //                             artists,
+            //                             coverImage,
+            //                             uploaderEmail,
+            //                             releaseDate,
+            //                             createdDate,
+            //                             updatedDate
+            //                         }
+            //                     }
+            //                 }
+            //             `,
+            //             variables: {
+            //                 audioFile: null
+            //             }
+            //         };
+
+            //         const map = {
+            //             "0": ["variables.audioFile"]
+            //         };
+
+            //         const fd = new FormData();
+            //         fd.append("operations", JSON.stringify(operations));
+            //         fd.append("map", JSON.stringify(map));
+            //         fd.append(0, e.target.result);
+
+            //         const res = await this.$http.post("/api/graphql", fd);
+
+            //         console.log("RES", res);
+            //     } catch(err) {
+            //         console.log("ERROR", err.response.data.errors);
+            //     }
+            // };
+
+            // reader.readAsDataURL(audio.audioBlob);
         }
     }
 }
