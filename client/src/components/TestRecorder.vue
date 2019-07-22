@@ -68,30 +68,10 @@ export default {
             console.log("CHANNEL DATA", channelData);
 
             try {
-                // const res = await this.$http.post("/api/graphql", {
-                //     query: `
-                //         query {
-                //             getAllTracks {
-                //                 _id,
-                //                 fingerprintData,
-                //                 metaData {
-                //                     title,
-                //                     artists,
-                //                     coverImage,
-                //                     uploaderEmail,
-                //                     releaseDate,
-                //                     createdDate,
-                //                     updatedDate
-                //                 }
-                //             }
-                //         }
-                //     `
-                // });
-
-                const res = await this.$http.post("/api/graphql", {
+                const operations = {
                     query: `
-                        query SearchTrack($searchData: SignalData!) {
-                            searchTrack(searchData: $searchData) {
+                        query SearchTrack($searchData: SignalData!, $file: Upload!) {
+                            searchTrack(searchData: $searchData, file: $file) {
                                 _id,
                                 fingerprintData,
                                 metaData {
@@ -111,14 +91,26 @@ export default {
                             duration: buffer.duration,
                             length: buffer.length,
                             sampleRate: buffer.sampleRate,
-                            data: JSON.stringify(channelData)
-                        }
+                            // data: JSON.stringify(channelData)
+                        },
+                        file: null
                     }
-                });
+                };
+
+                const map = {
+                    "0": ["variables.file"]
+                };
+
+                const fd = new FormData();
+                fd.append("operations", JSON.stringify(operations));
+                fd.append("map", JSON.stringify(map));
+                fd.append(0, audio.audioBlob);
+
+                const res = await this.$http.post("/api/graphql", fd);
 
                 console.log("RES", res);
             } catch(err) {
-                console.log("ERROR", err.message);
+                console.log("ERROR", err.response.data.errors);
             }
         }
     }
