@@ -2,6 +2,7 @@ const helpers = require("./catalogue.helpers");
 const workers = require("../../../workers");
 const fs = require("fs");
 const FormData = require("form-data");
+const axios = require("axios");
 
 module.exports = {
     getAllTracks: async (root, args, context) => {
@@ -28,8 +29,8 @@ module.exports = {
         const audioReadStream = createReadStream();
 
         // Writes to a test file
-        // NOTE: make sure "test" directory exists
-        // const writeStream = fs.createWriteStream("./test/test.wav");
+        // NOTE: make sure "temp" directory exists
+        // const writeStream = fs.createWriteStream("./temp/test.wav");
         // audioReadStream.pipe(writeStream);
 
         // let buffer = Buffer.from(stream);
@@ -38,7 +39,16 @@ module.exports = {
         // console.log("ARRAY BUFFER", arrayBuffer);
 
         // console.log("FILENAME", filename, "MIMETYPE", mimetype);
-        // console.log("STREAM", stream);
+        // console.log("STREAM", audioReadStream);
+
+        const fd = new FormData();
+        fd.append("audioFile", audioReadStream, filename);
+
+        const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint", fd, {
+            headers: { ...fd.getHeaders() }
+        });
+
+        console.log("FINGERPRINT WORKER RES", res.data);
 
         return null;
     },

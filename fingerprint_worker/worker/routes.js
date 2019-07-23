@@ -13,6 +13,8 @@ const fileFields = [
 ];
 
 // [domain]/fingerprint_worker/generate_fingerprint : POST
-router.post("/generate_fingerprint", upload(fileFields, "audio/wav"), RootController.generate_fingerprint);
+router.post("/generate_fingerprint", upload(fileFields), RootController.generate_fingerprint);
+
+// "audio/wav"
 
 module.exports = router;
