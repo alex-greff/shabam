@@ -2,6 +2,7 @@
 node_modules
 dist
 build
+test
 
 # local env files
 .env.local

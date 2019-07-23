@@ -1,5 +1,6 @@
 const helpers = require("./catalogue.helpers");
 const workers = require("../../../workers");
+const fs = require("fs");
 
 module.exports = {
     getAllTracks: async (root, args, context) => {
@@ -17,9 +18,18 @@ module.exports = {
         // TODO: implement
         console.log("AUDIO FILE", audioFile);
 
+        const audioFileRes = await audioFile;
+
+        console.log("AUDIO FILE RES", audioFileRes);
+
         const { filename, mimetype, createReadStream } = await audioFile;
 
-        // const stream = createReadStream();
+        const audioReadStream = createReadStream();
+
+        // Writes to a test file
+        // NOTE: make sure "test" directory exists
+        // const writeStream = fs.createWriteStream("./test/test.wav");
+        // audioReadStream.pipe(writeStream);
 
         // let buffer = Buffer.from(stream);
         // let arrayBuffer = Float32Array.from(buffer).buffer;
