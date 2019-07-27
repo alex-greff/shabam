@@ -11,11 +11,11 @@
         "rm-services:dev-prod": "docker-compose -f docker-compose-dev-prod.yml rm proxy api client fingerprint_worker identification_worker",
         "start:dev-prod": "docker-compose -f docker-compose-dev-prod.yml up --build",
         "start:dev-prod--recreate": "npm run rm-services:dev-prod && npm run start:dev-prod",
-        "sh:proxy": "docker exec -it shabam_proxy sh",
-        "sh:client": "docker exec -it shabam_client sh",
-        "sh:api": "docker exec -it shabam_api sh",
-        "sh:fingerprint-worker": "docker exec -it shabam_fingerprint_worker sh",
-        "sh:identification-worker": "docker exec -it shabam_identification_worker sh"
+        "shell:proxy": "docker exec -it shabam_proxy sh",
+        "shell:client": "docker exec -it shabam_client bash",
+        "shell:api": "docker exec -it shabam_api sh",
+        "shell:fingerprint-worker": "docker exec -it shabam_fingerprint_worker sh",
+        "shell:identification-worker": "docker exec -it shabam_identification_worker sh"
     },
     "repository": {
         "type": "git",
