@@ -42,6 +42,7 @@ services:
             - CHOKIDAR_USEPOLLING=true
         networks:
             - app-network
+        privileged: true
         container_name: shabam_client
     fingerprint_worker:
         build:

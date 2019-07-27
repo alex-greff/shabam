@@ -5,6 +5,8 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "start": "npm run serve",
+        "compile:wasm": "bash -lc \"em++ /app/cpp/hello.cpp /app/cpp/fib.cpp -g -s WASM=1 -o /app/wasm/hello.js\"",
+        "start:dev": "npm run compile:wasm && npm run serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "test:unit": "vue-cli-service test:unit"
