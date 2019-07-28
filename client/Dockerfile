@@ -1,3 +1,5 @@
+# TODO: compile wasm modules in separate build step
+
 FROM node:alpine as builder
 
 WORKDIR /app

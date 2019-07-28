@@ -9,6 +9,7 @@
 
 <script>
 import initializeRecorder from "@/recorder";
+import testModule from "../../wasm/hello.wasm";
 
 export default {
     data() {
@@ -24,6 +25,23 @@ export default {
         // } catch(err) {
         //     console.log(err.toString());
         // }
+
+        const test = testModule().then(({instance}) => {
+            console.log("TEST WASM MODULE EXPORTS", instance.exports);
+        });
+
+
+        // var importObject = {
+        //     imports: { imported_func: arg => console.log(arg) }
+        // };
+
+        // fetch("hello.wasm").then(response => 
+        //     response.arrayBuffer()
+        // ).then(bytes => 
+        //     WebAssembly.instantiate(bytes, importObject)
+        // ).then(results => {
+        //     console.log(results.instance.exports);
+        // })
     },
     computed: {
         inactive() {

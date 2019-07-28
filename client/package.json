@@ -5,7 +5,7 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "start": "npm run serve",
-        "compile:wasm": "bash -lc \"em++ /app/cpp/hello.cpp /app/cpp/fib.cpp -g -s WASM=1 -o /app/wasm/hello.js\"",
+        "compile:wasm": "bash -lc \"source /emsdk/emsdk_env.sh --build=Release && em++ /app/cpp/hello.cpp /app/cpp/fib.cpp -s WASM=1 -s ONLY_MY_CODE=1 -s EXPORT_ALL=1 -o /app/wasm/hello.js\"",
         "start:dev": "npm run compile:wasm && npm run serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
@@ -17,7 +17,8 @@
         "vue": "^2.6.10",
         "vue-router": "^3.0.3",
         "vue-axios": "^2.1.4",
-        "vuex": "^3.0.1"
+        "vuex": "^3.0.1",
+        "wasm-loader": "^1.3.0"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "^3.8.0",

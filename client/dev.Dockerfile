@@ -8,18 +8,16 @@ RUN apt-get update && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt install nodejs
 
-# Install webassembly from the precompiled build
+# Install webassembly from the precompiled build (building it ourselves takes forever)
 RUN git clone https://github.com/emscripten-core/emsdk.git && \
     cd ./emsdk && \
     ./emsdk install latest && \
     ./emsdk activate latest
 
-WORKDIR /emsdk
-
-# Add the emsdk command to the bash profile
+# Add the emscripten commands to the bash profile
 RUN echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.bashrc && \
     echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.profile
-
+    
 # Install the client
 WORKDIR /app
 
@@ -29,7 +27,6 @@ RUN npm install
 
 # Copy all the client files
 COPY . .
-
 
 # Start dev server
 CMD ["npm", "run", "start:dev"]
