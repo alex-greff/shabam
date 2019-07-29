@@ -2,9 +2,9 @@ FROM ubuntu:16.04
 
 WORKDIR /
 
-# Install dependencies for webassembly as well as nodejs
+# Install dependencies for webassembly as well as nodejs and dos2unix
 RUN apt-get update && \
-    apt-get install -y build-essential cmake python git curl bash && \
+    apt-get install -y build-essential cmake python git curl bash dos2unix && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt install nodejs
 

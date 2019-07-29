@@ -5,8 +5,9 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "start": "npm run serve",
-        "compile:wasm": "bash -lc \"source /emsdk/emsdk_env.sh --build=Release && em++ /app/cpp/hello.cpp /app/cpp/fib.cpp -s WASM=1 -s ONLY_MY_CODE=1 -s EXPORT_ALL=1 -o /app/wasm/hello.js\"",
-        "start:dev": "npm run compile:wasm && npm run serve",
+        "clean-scripts": "find /app -path /app/node_modules -prune -o -name '*.sh' -print0 | xargs -0 dos2unix &>/dev/null",
+        "compile:wasm": "bash -l /app/build.sh",
+        "start:dev": "npm run clean-scripts && npm run compile:wasm && npm run serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "test:unit": "vue-cli-service test:unit"
