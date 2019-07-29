@@ -12,6 +12,12 @@ import initializeRecorder from "@/recorder";
 // import testModule from "../../wasm/hello.wasm";
 // import testModule from "../../wasm/test.wasm";
 
+// import fibonacci from "../../wasm/fibonacci.js";
+// import fibonacciModule from "../../wasm/fibonacci.wasm";
+// import testModule from "../../wasm/test.wasm";
+// import testModule from "../../wasm/quick_example.wasm";
+import testModule from "../../wasm/fibonacci.wasm";
+
 export default {
     data() {
         return {
@@ -20,6 +26,41 @@ export default {
         }
     },
     async mounted() {
+        const test = testModule().then(({instance}) => {
+            console.log("EXPORTS", instance.exports);
+            // console.log(instance.exports.a(12));
+            console.log(instance.exports._fib(12));
+        });
+
+        // fetch("./wasm/test.wasm")
+        // .then(res =>
+        //     res.arrayBuffer()
+        // ).then(bytes => 
+        //     WebAssembly.instantiate(bytes)
+        // ).then(results => {
+        //     instance = results.instance;
+        //     console.log(instance.exports);
+        // });
+
+        // const thing = fibonacci({
+        //     locateFile(path) {
+        //         if(path.endsWith('.wasm')) {
+        //             return fibonacciModule;
+        //         }
+        //         return path;
+        //     }
+        // });
+
+        // thing.onRuntimeInitialized = () => {
+        //     console.log(thing._fib(12));
+        // };
+
+        // var Module = {
+        //     onRuntimeInitialized: function() {
+        //         console.log('lerp result: ' + Module.lerp(1, 2, 0.5));
+        //     }
+        // };
+
         // try {
         //     const recorder = await initializeRecorder();
         //     console.log(recorder);
