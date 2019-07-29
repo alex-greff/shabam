@@ -9,7 +9,8 @@
 
 <script>
 import initializeRecorder from "@/recorder";
-import testModule from "../../wasm/hello.wasm";
+// import testModule from "../../wasm/hello.wasm";
+// import testModule from "../../wasm/test.wasm";
 
 export default {
     data() {
@@ -26,9 +27,9 @@ export default {
         //     console.log(err.toString());
         // }
 
-        const test = testModule().then(({instance}) => {
-            console.log("TEST WASM MODULE EXPORTS", instance.exports);
-        });
+        // const test = testModule().then(({instance}) => {
+        //     console.log("TEST WASM MODULE EXPORTS", instance.exports);
+        // });
 
 
         // var importObject = {
@@ -42,6 +43,22 @@ export default {
         // ).then(results => {
         //     console.log(results.instance.exports);
         // })
+
+        // const memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
+        // const importObj = {
+        //     env: {
+        //         abortStackOverflow: () => { throw new Error('overflow'); },
+        //         table: new WebAssembly.Table({ initial: 0, maximum: 0, element: 'anyfunc' }),
+        //         tableBase: 0,
+        //         memory: memory,
+        //         memoryBase: 1024,
+        //         STACKTOP: 0,
+        //         STACK_MAX: memory.buffer.byteLength,
+        //     }
+        // };
+        // fetch('hello.wasm').then((response) => response.arrayBuffer())  
+        //     .then((bytes) => WebAssembly.instantiate(bytes, importObj))
+        //     .then((wa) => alert(wa.instance.exports._bezier1(0.5, 10, 20)));
     },
     computed: {
         inactive() {
