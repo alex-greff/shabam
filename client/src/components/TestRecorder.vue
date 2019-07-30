@@ -34,6 +34,8 @@ export default {
 
         console.log("test(8)", lazyLoad._test(8), regLoad._test(8));
 
+        console.log("this.$wasm", this.$wasm);
+
 
         // const temp = fibModule().then(({instance}) => {
         //     console.log("EXPORTS", instance.exports);
