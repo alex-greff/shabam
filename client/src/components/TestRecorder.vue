@@ -9,8 +9,9 @@
 
 <script>
 import initializeRecorder from "@/recorder";
+import { WASMLoader } from "@/loaders";
 
-import fibModule from "../../wasm/fibonacci.wasm";
+import fibModule from "@WASM/fibonacci.wasm";
 
 export default {
     data() {
@@ -20,13 +21,37 @@ export default {
         }
     },
     async mounted() {
-        const temp = fibModule().then(({instance}) => {
-            console.log("EXPORTS", instance.exports);
-            // console.log(instance.exports.a(12));
-            console.log("fib(12)", instance.exports._fib(12));
+        // console.log("WASM Loader", WASMLoader);
+        // const test1 = await WASMLoader(fibModule);
+        // const test2 = await import("@WASM/fibonacci.wasm");
+        // console.log("TEST2", test2);
 
-            return instance.exports;
-        });
+        const lazyLoad = await WASMLoader((await import("@WASM/fibonacci.wasm")).default);
+        const regLoad = await WASMLoader(fibModule);
+
+        console.log("lazyLoad", lazyLoad);
+        console.log("regLoad", regLoad);
+
+
+        // const temp = fibModule().then(({instance}) => {
+        //     console.log("EXPORTS", instance.exports);
+        //     // console.log(instance.exports.a(12));
+        //     console.log("fib(12)", instance.exports._fib(12));
+
+        //     return instance.exports;
+        // });
+
+        // const temp = import("../../wasm/fibonacci.wasm")
+        // .then((Component) => {
+        //     console.log(Component);
+        //     return Component.default();
+        // }).then(({instance}) => {
+        //     console.log("EXPORTS", instance.exports);
+        //     // console.log(instance.exports.a(12));
+        //     console.log("fib(12)", instance.exports._fib(12));
+
+        //     return instance.exports;
+        // });
     },
     computed: {
         inactive() {
