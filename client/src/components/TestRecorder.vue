@@ -10,7 +10,7 @@
 <script>
 import initializeRecorder from "@/recorder";
 
-import testModule from "../../wasm/fibonacci.wasm";
+import fibModule from "../../wasm/fibonacci.wasm";
 
 export default {
     data() {
@@ -20,10 +20,12 @@ export default {
         }
     },
     async mounted() {
-        const test = testModule().then(({instance}) => {
+        const temp = fibModule().then(({instance}) => {
             console.log("EXPORTS", instance.exports);
             // console.log(instance.exports.a(12));
             console.log("fib(12)", instance.exports._fib(12));
+
+            return instance.exports;
         });
     },
     computed: {
