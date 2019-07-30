@@ -9,13 +9,7 @@
 
 <script>
 import initializeRecorder from "@/recorder";
-// import testModule from "../../wasm/hello.wasm";
-// import testModule from "../../wasm/test.wasm";
 
-// import fibonacci from "../../wasm/fibonacci.js";
-// import fibonacciModule from "../../wasm/fibonacci.wasm";
-// import testModule from "../../wasm/test.wasm";
-// import testModule from "../../wasm/quick_example.wasm";
 import testModule from "../../wasm/fibonacci.wasm";
 
 export default {
@@ -29,77 +23,8 @@ export default {
         const test = testModule().then(({instance}) => {
             console.log("EXPORTS", instance.exports);
             // console.log(instance.exports.a(12));
-            console.log(instance.exports._fib(12));
+            console.log("fib(12)", instance.exports._fib(12));
         });
-
-        // fetch("./wasm/test.wasm")
-        // .then(res =>
-        //     res.arrayBuffer()
-        // ).then(bytes => 
-        //     WebAssembly.instantiate(bytes)
-        // ).then(results => {
-        //     instance = results.instance;
-        //     console.log(instance.exports);
-        // });
-
-        // const thing = fibonacci({
-        //     locateFile(path) {
-        //         if(path.endsWith('.wasm')) {
-        //             return fibonacciModule;
-        //         }
-        //         return path;
-        //     }
-        // });
-
-        // thing.onRuntimeInitialized = () => {
-        //     console.log(thing._fib(12));
-        // };
-
-        // var Module = {
-        //     onRuntimeInitialized: function() {
-        //         console.log('lerp result: ' + Module.lerp(1, 2, 0.5));
-        //     }
-        // };
-
-        // try {
-        //     const recorder = await initializeRecorder();
-        //     console.log(recorder);
-        // } catch(err) {
-        //     console.log(err.toString());
-        // }
-
-        // const test = testModule().then(({instance}) => {
-        //     console.log("TEST WASM MODULE EXPORTS", instance.exports);
-        // });
-
-
-        // var importObject = {
-        //     imports: { imported_func: arg => console.log(arg) }
-        // };
-
-        // fetch("hello.wasm").then(response => 
-        //     response.arrayBuffer()
-        // ).then(bytes => 
-        //     WebAssembly.instantiate(bytes, importObject)
-        // ).then(results => {
-        //     console.log(results.instance.exports);
-        // })
-
-        // const memory = new WebAssembly.Memory({ initial: 256, maximum: 256 });
-        // const importObj = {
-        //     env: {
-        //         abortStackOverflow: () => { throw new Error('overflow'); },
-        //         table: new WebAssembly.Table({ initial: 0, maximum: 0, element: 'anyfunc' }),
-        //         tableBase: 0,
-        //         memory: memory,
-        //         memoryBase: 1024,
-        //         STACKTOP: 0,
-        //         STACK_MAX: memory.buffer.byteLength,
-        //     }
-        // };
-        // fetch('hello.wasm').then((response) => response.arrayBuffer())  
-        //     .then((bytes) => WebAssembly.instantiate(bytes, importObj))
-        //     .then((wa) => alert(wa.instance.exports._bezier1(0.5, 10, 20)));
     },
     computed: {
         inactive() {
