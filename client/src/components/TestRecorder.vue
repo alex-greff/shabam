@@ -11,7 +11,7 @@
 import initializeRecorder from "@/recorder";
 import { WASMLoader } from "@/loaders";
 
-import fibModule from "@WASM/fibonacci.wasm";
+import testModule from "@WASM/fingerprint.wasm";
 
 export default {
     data() {
@@ -26,11 +26,13 @@ export default {
         // const test2 = await import("@WASM/fibonacci.wasm");
         // console.log("TEST2", test2);
 
-        const lazyLoad = await WASMLoader((await import("@WASM/fibonacci.wasm")).default);
-        const regLoad = await WASMLoader(fibModule);
+        const lazyLoad = await WASMLoader((await import("@WASM/fingerprint.wasm")).default);
+        const regLoad = await WASMLoader(testModule);
 
         console.log("lazyLoad", lazyLoad);
         console.log("regLoad", regLoad);
+
+        console.log("test(8)", lazyLoad._test(8), regLoad._test(8));
 
 
         // const temp = fibModule().then(({instance}) => {
