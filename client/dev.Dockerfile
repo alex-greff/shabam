@@ -28,7 +28,11 @@ WORKDIR /app
 
 COPY ./package*.json ./
 
+# Install npm dependencies
 RUN npm install
+
+# Install gulp cli
+RUN npm install gulp-cli -g
 
 # Copy all the client files
 COPY . .
