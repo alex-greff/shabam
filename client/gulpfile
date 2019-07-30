@@ -1,0 +1,123 @@
+const gulp = require("gulp");
+const { exec, spawn } = require("child_process");
+
+var devServer; // The Vue dev server process instance
+
+// ---------------
+// --- Helpers ---
+// ---------------
+
+function logWasmMessage(message) {
+    console.log('\x1b[92m%s\x1b[0m %s', "[WASM]", message);
+}
+
+
+// ------------------
+// --- Operations ---
+// ------------------
+
+async function compileWasm() {
+    await new Promise((resolve, reject) => {
+        // Recompile the wasm code
+        exec("npm run compile:wasm", function(err, stdout, stderr) {
+            console.log(stdout);
+            console.error(stderr);
+            
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+async function startDevServer() {
+    await new Promise((resolve) => {
+        // Start the dev server it it's not already running
+        if (!devServer) {
+            devServer = spawn("npm", ["run", "serve"], { stdio: "inherit" });
+        }
+
+        resolve();
+    });
+}
+
+async function killDevServer() {
+    await new Promise((resolve, reject) => {
+        if (devServer) {
+            devServer.kill();
+
+            devServer.on("close", function (code) {
+                devServer = null;
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        } else {
+            resolve();
+        }
+    });
+}
+
+async function cleanScripts() {
+    await new Promise((resolve, reject) => {
+        // Recompile the wasm code
+        exec("npm run clean-scripts", function(err, stdout, stderr) {
+            console.log(stdout);
+            console.error(stderr);
+            
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+
+// -------------
+// --- Tasks ---
+// -------------
+
+function watchCpp() {
+    gulp.watch(
+        ["cpp/**/*.cpp", "cpp/**/*.h", "cpp/**/*.c"], 
+        { interval: 1000, usePolling: true},
+        async function() {
+            logWasmMessage("C/C++ file change detected, recompiling...");
+
+            try {
+                await compileWasm();
+
+                logWasmMessage("Compilation successful!");
+            } catch(err) {
+                logWasmMessage("Compilation failed!");
+                console.log(err);
+            }
+        }
+    );
+}
+
+
+// ---------------
+// --- Exports ---
+// ---------------
+
+function defaultExport() {
+    return gulp.series(cleanScripts, compileWasm, gulp.parallel(startDevServer, watchCpp));
+}
+
+exports.default = defaultExport();
+
+
+// ---------------
+// --- Cleanup ---
+// ---------------
+
+process.on("exit", function() {
+    killDevServer();
+});

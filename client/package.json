@@ -7,7 +7,7 @@
         "start": "npm run serve",
         "clean-scripts": "find /app -path /app/node_modules -prune -o -name '*.sh' -print0 | xargs -0 dos2unix &>/dev/null",
         "compile:wasm": "bash -l /app/build.sh",
-        "start:dev": "npm run clean-scripts && npm run compile:wasm && npm run serve",
+        "start:dev": "gulp --gulpfile gulpfile",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "test:unit": "vue-cli-service test:unit"
