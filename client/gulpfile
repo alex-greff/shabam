@@ -31,13 +31,16 @@ function logCleanScriptsMessage(message, error = false) {
 async function compileWasm() {
     await new Promise((resolve, reject) => {
         // Recompile the wasm code
+        logWasmMessage("Compiling C/C++ code to WASM...");
         exec("npm run compile:wasm", function(err, stdout, stderr) {
             console.log(stdout);
             console.error(stderr);
             
             if (err) {
+                logWasmMessage("Compilation failed!", true);
                 reject(err);
             } else {
+                logWasmMessage("Compilation succeeded!");
                 resolve();
             }
         });
@@ -104,14 +107,11 @@ function watchCpp() {
         ["cpp/**/*.cpp", "cpp/**/*.h", "cpp/**/*.c"], 
         { interval: 1000, usePolling: true},
         async function() {
-            logWasmMessage("C/C++ file change detected, recompiling...");
+            logWasmMessage("C/C++ file change detected...");
 
             try {
                 await compileWasm();
-
-                logWasmMessage("Compilation successful!");
             } catch(err) {
-                logWasmMessage("Compilation failed!", true);
                 console.log(err);
             }
         }
