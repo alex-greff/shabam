@@ -29,6 +29,3 @@ A list of all the base npm commands available. When running prefix all the follo
 * `rm-services:[environment]-[?container]`: Removes the given services. If no specific services is specified then all are removed.
 * `restart:[environment]-[?container]`: restarts the given containers. If no specific container is specified then the entire environment is restarted.
 * `shell:[container]`: Opens an interactive shell in the given container.
-
-
-
