@@ -7,8 +7,20 @@ var devServer; // The Vue dev server process instance
 // --- Helpers ---
 // ---------------
 
-function logWasmMessage(message) {
-    console.log('\x1b[92m%s\x1b[0m %s', "[WASM]", message);
+function logWasmMessage(message, error = false) {
+    if (error) {
+        console.error('\x1b[92m%s\x1b[0m %s', "[WASM]", message);
+    } else {
+        console.log('\x1b[92m%s\x1b[0m %s', "[WASM]", message);
+    }
+}
+
+function logCleanScriptsMessage(message, error = false) {
+    if (error) {
+        console.error('\x1b[34m%s\x1b[0m %s', "[Clean-Scripts]", message);    
+    } else {
+        console.log('\x1b[34m%s\x1b[0m %s', "[Clean-Scripts]", message);
+    }
 }
 
 
@@ -66,8 +78,12 @@ async function cleanScripts() {
     await new Promise((resolve, reject) => {
         // Recompile the wasm code
         exec("npm run clean-scripts", function(err, stdout, stderr) {
+            logCleanScriptsMessage("Cleaning scripts...");
+
             console.log(stdout);
             console.error(stderr);
+
+            logCleanScriptsMessage("Cleaning completed!");
             
             if (err) {
                 reject(err);
@@ -95,7 +111,7 @@ function watchCpp() {
 
                 logWasmMessage("Compilation successful!");
             } catch(err) {
-                logWasmMessage("Compilation failed!");
+                logWasmMessage("Compilation failed!", true);
                 console.log(err);
             }
         }
