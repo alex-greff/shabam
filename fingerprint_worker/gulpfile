@@ -3,6 +3,7 @@ const { exec, spawn } = require("child_process");
 
 var nodeServer; // The node server process instance
 
+
 // ---------------
 // --- Helpers ---
 // ---------------
@@ -14,6 +15,7 @@ function logCppWatcherMessage(message) {
 function logJsWatcherMessage(message) {
     console.log('\x1b[32m%s\x1b[0m %s', "[JavaScript Watcher]", message);
 }
+
 
 // ------------------
 // --- Operations ---
@@ -63,6 +65,7 @@ async function killNodeServer() {
         }
     });
 }
+
 
 // -------------
 // --- Tasks ---
