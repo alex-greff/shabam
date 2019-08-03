@@ -1,20 +1,36 @@
 import Vue from "vue";
-import axios from "axios";
 import VueAxios from "vue-axios";
+import VueWasm from "vue-wasm";
+import axios from "axios";
+
+// App imports
 import App from "@/App.vue";
 import router from "@/router";
 import store from "@/store";
 
-Vue.config.productionTip = false;
+// Wasm modules
+import FingerprintModule from "@WASM/fingerprint.wasm";
 
-new Vue({
-    router,
-    store,
-    render: h => h(App)
-}).$mount('#app');
+// Note: this aysnc function closure is needed for the WASM modules to load before the app is initialized
+(async function() {
+    // Load WASM modules
+    await VueWasm(Vue, {
+        modules: {
+            fingerprint: FingerprintModule
+        }
+    });
 
-// Setup axios
-Vue.use(VueAxios, axios);
+    Vue.config.productionTip = false;
 
-// Setup audio context
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    new Vue({
+        router,
+        store,
+        render: h => h(App)
+    }).$mount('#app');
+
+    // Setup axios
+    Vue.use(VueAxios, axios);
+
+    // Setup audio context
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+})();

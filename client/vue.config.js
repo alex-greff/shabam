@@ -1,3 +1,9 @@
+const path = require("path");
+
+function resolve(dir) {
+    return path.join(__dirname, dir);
+}
+
 module.exports = {
     devServer: {
         disableHostCheck: true,
@@ -26,6 +32,11 @@ module.exports = {
                     type: 'json'
                 }
             ]
+        },
+        resolve: {
+            alias: {
+                "@WASM": resolve('wasm')
+            }
         }
     }
 }
