@@ -9,14 +9,9 @@
 
 <script>
 import initializeRecorder from "@/recorder";
-<<<<<<< HEAD
-
-import fibModule from "../../wasm/fibonacci.wasm";
-=======
 import { WASMLoader } from "@/loaders";
 
 import testModule from "@WASM/fingerprint.wasm";
->>>>>>> b7f8e4717e842ba11c73b2f3b029820f47f1a85c
 
 export default {
     data() {
@@ -26,15 +21,6 @@ export default {
         }
     },
     async mounted() {
-<<<<<<< HEAD
-        const temp = fibModule().then(({instance}) => {
-            console.log("EXPORTS", instance.exports);
-            // console.log(instance.exports.a(12));
-            console.log("fib(12)", instance.exports._fib(12));
-
-            return instance.exports;
-        });
-=======
         // console.log("WASM Loader", WASMLoader);
         // const test1 = await WASMLoader(fibModule);
         // const test2 = await import("@WASM/fibonacci.wasm");
@@ -70,7 +56,6 @@ export default {
 
         //     return instance.exports;
         // });
->>>>>>> b7f8e4717e842ba11c73b2f3b029820f47f1a85c
     },
     computed: {
         inactive() {
