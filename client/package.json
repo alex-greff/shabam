@@ -34,10 +34,7 @@
         "node-sass": "^4.9.0",
         "sass-loader": "^7.1.0",
         "vue-template-compiler": "^2.6.10",
-<<<<<<< HEAD
-=======
         "vue-wasm": "^1.0.0",
->>>>>>> b7f8e4717e842ba11c73b2f3b029820f47f1a85c
         "wasm-loader": "^1.3.0"
     }
 }
