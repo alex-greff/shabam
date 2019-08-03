@@ -33,9 +33,9 @@ module.exports = {
             role: userRole,
         };
         const oJWTOptions = {
-            expiresIn: KEYS.jwtExpireTime
+            expiresIn: KEYS.JWT_EXPIRE_TIME
         };
-        const sToken = jwt.sign(oJWTPayload, KEYS.jwtSecret, oJWTOptions);
+        const sToken = jwt.sign(oJWTPayload, KEYS.JWT_SECRET, oJWTOptions);
 
         // Update last login to now
         await helpers.updateLastUserLogin(email);

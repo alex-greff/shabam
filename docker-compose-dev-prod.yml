@@ -56,8 +56,8 @@ services:
             - /app/node_modules
             - ./fingerprint_worker:/app
         environment: 
-            - "PLOTLY_API_USERNAME=${SHABAM_PLOTLY_API_USERNAME}"
-            - "PLOTLY_API_KEY=${SHABAM_PLOTLY_API_KEY}"
+            - "VUE_APP_PLOTLY_API_USERNAME=${SHABAM_PLOTLY_API_USERNAME}"
+            - "VUE_APP_PLOTLY_API_KEY=${SHABAM_PLOTLY_API_KEY}"
         networks:
             - app-network
         hostname: fingerprint_worker

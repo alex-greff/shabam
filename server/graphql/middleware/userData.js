@@ -10,7 +10,7 @@ module.exports = (root, args, context) => {
     }
 
     const token = tokenRaw.split(" ")[1];
-    const decoded = jwt.verify(token, KEYS.jwtSecret);
+    const decoded = jwt.verify(token, KEYS.JWT_SECRET);
 
     const userData = {
         email: decoded.email,

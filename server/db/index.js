@@ -4,11 +4,11 @@ const escape = require("pg-escape");
 
 // Setup pool instance
 const pool = new Pool({
-    user: KEYS.pgUser,
-    host: KEYS.pgHost,
-    database: KEYS.pgDatabase,
-    password: KEYS.pgPassword,
-    port: KEYS.pgPort,
+    user: KEYS.PG_USER,
+    host: KEYS.PG_HOST,
+    database: KEYS.PG_DATABASE,
+    password: KEYS.PG_PASSWORD,
+    port: KEYS.PG_PORT,
     ssl: true
 });
 pool.on("error", () => console.error("Lost PG connection"));

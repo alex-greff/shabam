@@ -12,11 +12,11 @@ const AppModule = require("./graphql/modules");
 
 // Postgress client connection setup
 const pgClient = new Pool({
-    user: KEYS.pgUser,
-    host: KEYS.pgHost,
-    database: KEYS.pgDatabase,
-    password: KEYS.pgPassword,
-    port: KEYS.pgPort
+    user: KEYS.PG_USER,
+    host: KEYS.PG_HOST,
+    database: KEYS.PG_DATABASE,
+    password: KEYS.PG_PASSWORD,
+    port: KEYS.PG_PORT
 });
 pgClient.on("error", () => console.log("ERROR: lost connection to postgress database"));
 

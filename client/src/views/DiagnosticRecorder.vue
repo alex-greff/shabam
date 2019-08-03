@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Utilities from "@/utilities";
 import initializeRecorder from "@/recorder";
 
 export default {
@@ -17,6 +18,9 @@ export default {
             recorder: null,
             running: false
         }
+    },
+    mounted() {
+        console.log("Plotly", Utilities.plotly);
     },
     methods: {
         async start() {
