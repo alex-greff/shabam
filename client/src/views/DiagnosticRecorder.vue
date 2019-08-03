@@ -5,22 +5,34 @@
             <button @click="start" :disabled="running">Start</button>
             <button @click="stop" :disabled="!running">Finish</button>
         </div>
+        <plotly 
+            :data="testData" 
+            :layout="testLayout" 
+            :display-mode-bar="false"
+        />
     </div>
 </template>
 
 <script>
-import Utilities from "@/utilities";
 import initializeRecorder from "@/recorder";
+import { Plotly } from 'vue-plotly'
+
+import spectrogramData from "@/_sampleData/spectrogram";
 
 export default {
+    components: {
+        plotly: Plotly
+    },
     data() {
         return {
             recorder: null,
-            running: false
+            running: false,
+            testData: spectrogramData.data,
+            testLayout: spectrogramData.layout,
         }
     },
     mounted() {
-        console.log("Plotly", Utilities.plotly);
+        
     },
     methods: {
         async start() {
@@ -39,6 +51,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 
 </style>
+
