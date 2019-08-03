@@ -17,7 +17,7 @@
 import initializeRecorder from "@/recorder";
 import { Plotly } from 'vue-plotly'
 
-import spectrogramData from "@/_sampleData/spectrogram";
+import spectrogramData from "@TEST-DATA/spectrogram";
 
 export default {
     components: {

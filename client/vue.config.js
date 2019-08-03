@@ -35,7 +35,8 @@ module.exports = {
         },
         resolve: {
             alias: {
-                "@WASM": resolve('wasm')
+                "@WASM": resolve('wasm'),
+                "@TEST-DATA": resolve('tests/data')
             }
         }
     }
