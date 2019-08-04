@@ -1,10 +1,12 @@
 source /emsdk/emsdk_env.sh --build=Release;
 
-# Create the wasm directory, if it does not already exist
-mkdir -p /app/wasm
-
+# Ensure the needed directories for the build step exist
+mkdir -p /app/wasm /app/build_temp
 
 cd /app
 
 # Compile the code
 make
+
+# Clean the compilation
+make clean

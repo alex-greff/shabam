@@ -15,16 +15,21 @@ MAIN_FLAGS = \
 	-s MODULARIZE=1
 
 SOURCE_DIR = /app/cpp
+TEMP_DIR = /app/build_temp
 OUT_DIR = /app/wasm
+KFR_DIR = /kfr/include/kfr
 
 
 # --- Compile steps ---
 
 main.wasm : main.bc
-	$(CC) -O1 $^ $(MAIN_FLAGS) -o $(OUT_DIR)/$@
+	$(CC) -O1 $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
 
 main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
-	$(CC) -O1 $^ -o $@
+	$(CC) -O1 $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc -o $(TEMP_DIR)/$@
 
 fibonacci.bc : $(SOURCE_DIR)/fibonacci.cpp $(SOURCE_DIR)/fibonacci.hpp
-	$(CC) -O1 $(SOURCE_DIR)/fibonacci.cpp -o $@
+	$(CC) -O1 $(SOURCE_DIR)/fibonacci.cpp -o $(TEMP_DIR)/$@
+
+clean:
+	rm -f $(TEMP_DIR)/*.bc
