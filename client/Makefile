@@ -31,5 +31,7 @@ main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
 fibonacci.bc : $(SOURCE_DIR)/fibonacci.cpp $(SOURCE_DIR)/fibonacci.hpp
 	$(CC) -O1 $(SOURCE_DIR)/fibonacci.cpp -o $(TEMP_DIR)/$@
 
+# --- Cleanup ---
+
 clean:
 	rm -f $(TEMP_DIR)/*.bc
