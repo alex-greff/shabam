@@ -23,13 +23,13 @@ KFR_DIR = /kfr/include/kfr
 # --- Compile steps ---
 
 main.wasm : main.bc
-	$(CC) -O1 $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
+	$(CC) -O2 $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
 
 main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
-	$(CC) -O1 $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc -o $(TEMP_DIR)/$@
+	$(CC) -O2 $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc -o $(TEMP_DIR)/$@
 
 fibonacci.bc : $(SOURCE_DIR)/fibonacci.cpp $(SOURCE_DIR)/fibonacci.hpp
-	$(CC) -O1 $(SOURCE_DIR)/fibonacci.cpp -o $(TEMP_DIR)/$@
+	$(CC) -O2 $(SOURCE_DIR)/fibonacci.cpp -o $(TEMP_DIR)/$@
 
 # --- Cleanup ---
 
