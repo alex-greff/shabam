@@ -9,14 +9,14 @@ import router from "@/router";
 import store from "@/store";
 
 // Wasm modules
-import FingerprintModule from "@WASM/fingerprint.wasm";
+import MainModule from "@WASM/main.wasm";
 
 // Note: this aysnc function closure is needed for the WASM modules to load before the app is initialized
 (async function() {
     // Load WASM modules
     await VueWasm(Vue, {
         modules: {
-            fingerprint: FingerprintModule
+            main: MainModule
         }
     });
 

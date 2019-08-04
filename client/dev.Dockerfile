@@ -16,7 +16,10 @@ RUN git clone https://github.com/emscripten-core/emsdk.git && \
 RUN echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.bashrc && \
     echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.profile
 
+WORKDIR /
 
+# Download KFR
+RUN git clone https://github.com/kfrlib/kfr.git kfr
 
 # Install nodejs and dos2unix
 RUN apt-get install -y curl dos2unix bash && \

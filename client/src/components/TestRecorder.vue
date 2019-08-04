@@ -11,7 +11,7 @@
 import initializeRecorder from "@/recorder";
 import { WASMLoader } from "@/loaders";
 
-import testModule from "@WASM/fingerprint.wasm";
+import testModule from "@WASM/main.wasm";
 
 export default {
     data() {
@@ -26,7 +26,7 @@ export default {
         // const test2 = await import("@WASM/fibonacci.wasm");
         // console.log("TEST2", test2);
 
-        const lazyLoad = await WASMLoader((await import("@WASM/fingerprint.wasm")).default);
+        const lazyLoad = await WASMLoader((await import("@WASM/main.wasm")).default);
         const regLoad = await WASMLoader(testModule);
 
         console.log("lazyLoad", lazyLoad);
