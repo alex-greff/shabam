@@ -13,7 +13,7 @@ module.exports = {
         },
     },
     lintOnSave: false,
-    chainWebpack: config => config.resolve.extensions.delete('.wasm'),
+    // chainWebpack: config => config.resolve.extensions.delete('.wasm'),
     configureWebpack: {
         // output: {
         //     path: path.resolve(__dirname, "dist"),
@@ -56,7 +56,7 @@ module.exports = {
                 }
             ]
         },
-        plugins: [new webpack.IgnorePlugin(/(fs)/)],
+        // plugins: [new webpack.IgnorePlugin(/(fs)/)],
         resolve: {
             alias: {
                 "@WASM": resolve('wasm'),
