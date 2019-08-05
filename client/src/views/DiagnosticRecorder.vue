@@ -40,18 +40,21 @@ export default {
     mounted() {
         console.log(mainJS);
         console.log(mainWASM);
-        // const mainModule = mainJS({
-        //     locateFile(path) {
-        //         if(path.endsWith('.wasm')) {
-        //             return mainWASM;
-        //         }
-        //         return path;
-        //     }
-        // });
 
-        // mainModule.onRuntimeInitialized = () => {
-        //     console.log("MODULE", mainModule);
-        // };
+        const mainModule = mainJS({
+            locateFile(path) {
+                console.log("PATH", path);
+                if(path.endsWith('.wasm')) {
+                    return mainWASM;
+                }
+                return path;
+            }
+        });
+
+        mainModule.onRuntimeInitialized = () => {
+            console.log("MODULE", mainModule);
+            console.log("TEST", mainModule._test(8))
+        };
     },
     methods: {
         async start() {

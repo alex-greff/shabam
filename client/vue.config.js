@@ -13,7 +13,11 @@ module.exports = {
         },
     },
     lintOnSave: false,
+    chainWebpack: config => config.resolve.extensions.delete('.wasm'),
     configureWebpack: {
+        // output: {
+        //     path: path.resolve(__dirname, "dist"),
+        // },
         // browser: { 
         //     "fs": false
         // },
@@ -25,18 +29,18 @@ module.exports = {
                 // {
                 //     test: /\.wasm$/,
                 //     loaders: ['wasm-loader']
-                // }
+                // },
                 {
-                    test: /main-wasm\.js$/,
+                    test: /.*main-wasm\.js$/,
                     loader: "exports-loader"
                 },
                 {
-                    test: /main-wasm\.wasm$/,
+                    test: /.*main-wasm\.wasm$/,
                     type: "javascript/auto",
                     loader: "file-loader",
-                    options: {
-                        publicPath: "dist/"
-                    }
+                    // options: {
+                    //     publicPath: "public/"
+                    // }
                 }
             ],
             // Needed to get wasm-loader working properly

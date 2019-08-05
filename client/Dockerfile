@@ -14,4 +14,5 @@ FROM nginx
 EXPOSE 8080
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./mime.types /etc/nginx/mime.types
 COPY --from=builder /app/build /usr/share/nginx/html
