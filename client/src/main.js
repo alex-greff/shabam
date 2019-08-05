@@ -9,16 +9,16 @@ import router from "@/router";
 import store from "@/store";
 
 // Wasm modules
-import MainModule from "@WASM/main.wasm";
+// import MainModule from "@WASM/main.wasm";
 
 // Note: this aysnc function closure is needed for the WASM modules to load before the app is initialized
 (async function() {
     // Load WASM modules
-    await VueWasm(Vue, {
-        modules: {
-            main: MainModule
-        }
-    });
+    // await VueWasm(Vue, {
+    //     modules: {
+    //         main: MainModule
+    //     }
+    // });
 
     Vue.config.productionTip = false;
 

@@ -1,3 +1,5 @@
+FROM trzeci/emscripten:sdk-incoming-64bit as emscripten_base
+
 FROM ubuntu:16.04
 
 WORKDIR /
@@ -6,25 +8,31 @@ WORKDIR /
 RUN apt-get update && \
     apt-get install -y build-essential cmake python git
 
-# Install webassembly from the precompiled build (building it ourselves takes forever)
-RUN git clone https://github.com/emscripten-core/emsdk.git && \
-    cd ./emsdk && \
-    ./emsdk install latest && \
-    ./emsdk activate latest
+# # Install webassembly from the precompiled build (building it ourselves takes forever)
+# RUN git clone https://github.com/emscripten-core/emsdk.git /emsdk && \
+#     cd ./emsdk && \
+#     ./emsdk install latest && \
+#     ./emsdk activate latest
 
-# Add the emscripten commands to the bash profile
-RUN echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.bashrc && \
-    echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.profile
+# # Add the emscripten commands to the bash profile
+# RUN echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.bashrc && \
+#     echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.profile
+
+# Copy over the emscripten sdk files
+COPY --from=emscripten_base /emsdk_portable /emsdk_portable
+
+# Setup emscripten environment
+RUN echo "source /emsdk_portable/entrypoint" >> ~/.bashrc
 
 WORKDIR /
 
 # Download KFR
-RUN git clone https://github.com/kfrlib/kfr.git kfr
+# RUN git clone https://github.com/kfrlib/kfr.git kfr
 
 # Install nodejs and dos2unix
 RUN apt-get install -y curl dos2unix bash && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    apt install nodejs
+    apt-get install nodejs
 
 # Install the client    
 WORKDIR /app

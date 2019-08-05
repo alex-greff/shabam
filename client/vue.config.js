@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const path = require("path");
 
 function resolve(dir) {
@@ -13,11 +14,29 @@ module.exports = {
     },
     lintOnSave: false,
     configureWebpack: {
+        // browser: { 
+        //     "fs": false
+        // },
+        node: {
+            fs: "empty"
+        },
         module: {
             rules: [
+                // {
+                //     test: /\.wasm$/,
+                //     loaders: ['wasm-loader']
+                // }
                 {
-                    test: /\.wasm$/,
-                    loaders: ['wasm-loader']
+                    test: /main-wasm\.js$/,
+                    loader: "exports-loader"
+                },
+                {
+                    test: /main-wasm\.wasm$/,
+                    type: "javascript/auto",
+                    loader: "file-loader",
+                    options: {
+                        publicPath: "dist/"
+                    }
                 }
             ],
             // Needed to get wasm-loader working properly
@@ -33,6 +52,7 @@ module.exports = {
                 }
             ]
         },
+        plugins: [new webpack.IgnorePlugin(/(fs)/)],
         resolve: {
             alias: {
                 "@WASM": resolve('wasm'),

@@ -5,11 +5,11 @@
             <button @click="start" :disabled="running">Start</button>
             <button @click="stop" :disabled="!running">Finish</button>
         </div>
-        <plotly 
+        <!-- <plotly 
             :data="testData" 
             :layout="testLayout" 
             :display-mode-bar="false"
-        />
+        /> -->
     </div>
 </template>
 
@@ -17,22 +17,41 @@
 import initializeRecorder from "@/recorder";
 import { Plotly } from 'vue-plotly'
 
-import spectrogramData from "@TEST-DATA/spectrogram";
+// import spectrogramData from "@TEST-DATA/spectrogram";
+
+import mainJS from "@WASM/main-wasm.js";
+// const mainJS = require("@WASM/main-wasm.js");
+// require("../../wasm/main-wasm.js")
+// const mainJS = require("exports-loader?Module!../../wasm/main-wasm.js");
+import mainWASM from "@WASM/main-wasm.wasm";
 
 export default {
     components: {
-        plotly: Plotly
+        // plotly: Plotly
     },
     data() {
         return {
             recorder: null,
             running: false,
-            testData: spectrogramData.data,
-            testLayout: spectrogramData.layout,
+            // testData: spectrogramData.data,
+            // testLayout: spectrogramData.layout,
         }
     },
     mounted() {
-        
+        console.log(mainJS);
+        console.log(mainWASM);
+        // const mainModule = mainJS({
+        //     locateFile(path) {
+        //         if(path.endsWith('.wasm')) {
+        //             return mainWASM;
+        //         }
+        //         return path;
+        //     }
+        // });
+
+        // mainModule.onRuntimeInitialized = () => {
+        //     console.log("MODULE", mainModule);
+        // };
     },
     methods: {
         async start() {
