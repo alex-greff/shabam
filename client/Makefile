@@ -7,22 +7,22 @@
 # --- Environment variables ---
 CC = em++
 
-MAIN_FLAGS = \
-	-s WASM=1 \
-	-s ONLY_MY_CODE=1 \
-	-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-	-s ALLOW_MEMORY_GROWTH=1 \
-	-s MODULARIZE=1 \
-	-s ENVIRONMENT=web \
-	-s FILESYSTEM=0	
-
 # MAIN_FLAGS = \
 # 	-s WASM=1 \
+# 	-s ONLY_MY_CODE=1 \
 # 	-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
 # 	-s ALLOW_MEMORY_GROWTH=1 \
 # 	-s MODULARIZE=1 \
 # 	-s ENVIRONMENT=web \
 # 	-s FILESYSTEM=0	
+
+MAIN_FLAGS = \
+	-s WASM=1 \
+	-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
+	-s ALLOW_MEMORY_GROWTH=1 \
+	-s MODULARIZE=1 \
+	-s ENVIRONMENT=web \
+	-s FILESYSTEM=0	
 
 OPT_LEVEL = -O1
 

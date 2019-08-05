@@ -42,7 +42,7 @@ services:
             context: ./client
         volumes: 
             - /app/node_modules
-            - /root/.emscripten_cache
+            - /root
             - ./client:/app
         environment: 
             - CHOKIDAR_USEPOLLING=true
