@@ -6,7 +6,15 @@ WORKDIR /
 
 # Install dependencies for webassembly
 RUN apt-get update && \
-    apt-get install -y build-essential cmake python git
+    apt-get install -y build-essential cmake python git libstdc++6 && \
+    apt-get update
+
+# RUN apt-get update && \
+#     apt-get install -y software-properties-common && \
+#     add-apt-repository ppa:ubuntu-toolchain-r/test && \
+#     apt-get install -y build-essential cmake python git && \
+#     apt-get upgrade libstdc++6 && \
+#     apt-get update
 
 # # Install webassembly from the precompiled build (building it ourselves takes forever)
 # RUN git clone https://github.com/emscripten-core/emsdk.git /emsdk && \
@@ -22,7 +30,8 @@ RUN apt-get update && \
 COPY --from=emscripten_base /emsdk_portable /emsdk_portable
 
 # Setup emscripten environment
-RUN echo "source /emsdk_portable/entrypoint" >> ~/.bashrc
+RUN echo "source /emsdk_portable/entrypoint" >> ~/.bashrc && \
+    echo "source /emsdk_portable/entrypoint" >> ~/.profile
 
 WORKDIR /
 
