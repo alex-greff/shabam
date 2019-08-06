@@ -20,10 +20,6 @@ import { Plotly } from 'vue-plotly'
 // import spectrogramData from "@TEST-DATA/spectrogram";
 
 import mainJS from "@WASM/main-wasm.js";
-// const mainJS = require("@WASM/main-wasm.js");
-// const mainJS = require("@WASM/main-wasm.js");
-// require("../../wasm/main-wasm.js")
-// const mainJS = require("exports-loader?Module!../../wasm/main-wasm.js");
 import mainWASM from "@WASM/main-wasm.wasm";
 
 export default {
@@ -39,23 +35,26 @@ export default {
         }
     },
     mounted() {
-        console.log(mainJS);
-        console.log(mainWASM);
+        // console.log(mainJS);
+        // console.log(mainWASM);
 
-        const mainModule = mainJS({
-            locateFile(path) {
-                console.log("PATH", path);
-                if(path.endsWith('.wasm')) {
-                    return mainWASM;
-                }
-                return path;
-            }
-        });
+        // const mainModule = mainJS({
+        //     locateFile(path) {
+        //         console.log("PATH", path);
+        //         if(path.endsWith('.wasm')) {
+        //             return mainWASM;
+        //         }
+        //         return path;
+        //     }
+        // });
 
-        mainModule.onRuntimeInitialized = () => {
-            console.log("MODULE", mainModule);
-            console.log("TEST", mainModule._test(8))
-        };
+        // mainModule.onRuntimeInitialized = () => {
+        //     console.log("MODULE", mainModule);
+        //     console.log("TEST", mainModule._test(8))
+        // };
+
+        console.log(this.$wasm);
+        console.log(this.$wasm.main.test(8));
     },
     methods: {
         async start() {

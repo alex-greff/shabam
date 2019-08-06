@@ -36,7 +36,6 @@
         "gulp": "^4.0.2",
         "node-sass": "^4.9.0",
         "sass-loader": "^7.1.0",
-        "vue-template-compiler": "^2.6.10",
-        "vue-wasm": "^1.0.0"
+        "vue-template-compiler": "^2.6.10"
     }
 }

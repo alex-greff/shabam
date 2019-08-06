@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueAxios from "vue-axios";
-import VueWasm from "vue-wasm";
+import VueWasm from "@/plugins/VueWasm";
 import axios from "axios";
 
 // App imports
@@ -9,16 +9,23 @@ import router from "@/router";
 import store from "@/store";
 
 // Wasm modules
-// import MainModule from "@WASM/main.wasm";
+import MainModuleJS from "@WASM/main-wasm.js";
+import MainModuleWASM from "@WASM/main-wasm.wasm";
 
-// Note: this aysnc function closure is needed for the WASM modules to load before the app is initialized
+// Note 1: this aysnc function closure is needed for the WASM modules to load before the app is initialized
+// Note 2: This will probably be changed in the future in order to display a loading page
 (async function() {
     // Load WASM modules
-    // await VueWasm(Vue, {
-    //     modules: {
-    //         main: MainModule
-    //     }
-    // });
+    await VueWasm(Vue, {
+        modules: {
+            main: {
+                js: MainModuleJS,
+                wasm: MainModuleWASM,
+                // Format: target to rename
+                exports: { "_test": "test" }
+            }
+        }
+    });
 
     Vue.config.productionTip = false;
 
