@@ -25,15 +25,8 @@ KFR_DIR = /kfr/include/kfr
 
 # --- Compile steps ---
 
-# main-wasm.js:
-# 	echo "Hello World!"
-
-# main.wasm : main.bc
-# 	$(CC) -O2 $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
-
 main-wasm.js : main.bc
-	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@ && \
-	echo "export default Module;" >> $(OUT_DIR)/$@
+	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
 
 main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
 	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc -o $(TEMP_DIR)/$@

@@ -21,6 +21,7 @@ import { Plotly } from 'vue-plotly'
 
 import mainJS from "@WASM/main-wasm.js";
 // const mainJS = require("@WASM/main-wasm.js");
+// const mainJS = require("@WASM/main-wasm.js");
 // require("../../wasm/main-wasm.js")
 // const mainJS = require("exports-loader?Module!../../wasm/main-wasm.js");
 import mainWASM from "@WASM/main-wasm.wasm";

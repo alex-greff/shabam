@@ -13,54 +13,31 @@ module.exports = {
         },
     },
     lintOnSave: false,
-    // chainWebpack: config => config.resolve.extensions.delete('.wasm'),
     configureWebpack: {
-        // output: {
-        //     path: path.resolve(__dirname, "dist"),
-        // },
-        // browser: { 
-        //     "fs": false
-        // },
         node: {
             fs: "empty"
         },
         module: {
             rules: [
-                // {
-                //     test: /\.wasm$/,
-                //     loaders: ['wasm-loader']
-                // },
                 {
-                    test: /.*main-wasm\.js$/,
-                    loader: "exports-loader"
+                    test: /\.js$/,
+                    include: [ // Only run in the wasm directory
+                        resolve("wasm")
+                    ],
+                    // Export the "Module" variable from the JS file
+                    loader: "exports-loader?Module" 
                 },
                 {
-                    test: /.*main-wasm\.wasm$/,
+                    test: /\.wasm$/,
                     type: "javascript/auto",
-                    loader: "file-loader",
-                    // options: {
-                    //     publicPath: "public/"
-                    // }
+                    loader: "file-loader"
                 }
             ],
-            // Needed to get wasm-loader working properly
-            // Source: https://github.com/webpack/webpack/issues/6725
-            defaultRules: [
-                {
-                    type: 'javascript/auto',
-                    resolve: {}
-                },
-                {
-                    test: /\.json$/i,
-                    type: 'json'
-                }
-            ]
         },
-        // plugins: [new webpack.IgnorePlugin(/(fs)/)],
         resolve: {
             alias: {
-                "@WASM": resolve('wasm'),
-                "@TEST-DATA": resolve('tests/data')
+                "@WASM": resolve("wasm"),
+                "@TEST-DATA": resolve("tests/data")
             }
         }
     }
