@@ -1,5 +1,5 @@
 const gulp = require("gulp");
-const { exec, spawn } = require("child_process");
+const { spawn } = require("child_process");
 
 var devServer; // The Vue dev server process instance
 
@@ -32,17 +32,22 @@ async function compileWasm() {
     await new Promise((resolve, reject) => {
         // Recompile the wasm code
         logWasmMessage("Compiling C/C++ code to WASM...");
-        exec("npm run compile:wasm", function(err, stdout, stderr) {
-            console.log(stdout);
-            console.error(stderr);
-            
-            if (err) {
-                logWasmMessage("Compilation failed!", true);
-                reject(err);
-            } else {
-                logWasmMessage("Compilation succeeded!");
-                resolve();
+
+        const compile = spawn("npm", ["run", "compile:wasm"], { stdio: 'inherit' });
+
+        compile.on("close", (code) => { 
+            if (code === 0) {
+                logWasmMessage("Compilation succeeded!"); 
+                return resolve(code);     
             }
+            
+            logWasmMessage("Compilation failed!", true); 
+            return reject();
+        });
+
+        compile.on("error", (err) => { 
+            logWasmMessage("Compilation failed!", true); 
+            return reject(err);
         });
     });
 }
@@ -79,21 +84,25 @@ async function killDevServer() {
 
 async function cleanScripts() {
     await new Promise((resolve, reject) => {
-        // Recompile the wasm code
-        exec("npm run clean-scripts", function(err, stdout, stderr) {
-            logCleanScriptsMessage("Cleaning scripts...");
+        logCleanScriptsMessage("Cleaning scripts...");
 
-            console.log(stdout);
-            console.error(stderr);
+        // Clean the scripts
+        const clean = spawn("npm", ["run", "clean-scripts"], { stdio: "inherit" });
 
-            logCleanScriptsMessage("Cleaning completed!");
-            
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
+        clean.on("close", (code) => {
+            if (code === 0) {
+                logCleanScriptsMessage("Cleaning completed!");
+                return resolve();
             }
+
+            logCleanScriptsMessage("Cleaning failed!", true);
+            return reject();
         });
+
+        clean.on("error", (err) => { 
+            logCleanScriptsMessage("Cleaning failed!", true);
+            return reject(err);
+        })
     });
 }
 
