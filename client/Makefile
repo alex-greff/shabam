@@ -7,13 +7,17 @@
 # --- Environment variables ---
 CC = em++
 
-MAIN_FLAGS = \
+ROOT_FLAGS = \
 	-s WASM=1 \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s MODULARIZE=1 \
 	-s ENVIRONMENT=web \
-	-s FILESYSTEM=0	
+	-s FILESYSTEM=0	\
+
+COMMON_FLAGS = \
+	-std=c++14 \
+	# -I/kfr/include
 
 OPT_LEVEL = -O1
 
@@ -26,13 +30,13 @@ KFR_DIR = /kfr/include/kfr
 # --- Compile steps ---
 
 main-wasm.js : main.bc
-	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(MAIN_FLAGS) -o $(OUT_DIR)/$@
+	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
 
 main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
-	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc -o $(TEMP_DIR)/$@
+	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
 
 fibonacci.bc : $(SOURCE_DIR)/fibonacci.cpp $(SOURCE_DIR)/fibonacci.hpp
-	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/fibonacci.cpp -o $(TEMP_DIR)/$@
+	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/fibonacci.cpp $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
 
 # --- Cleanup ---
 
