@@ -10,14 +10,25 @@ const AudioRecorder = {
 
         const start = () => mediaRecorder.start();
 
-        const stop = () => {
+        const stop = (i_bIncludeAudioBuffer = true) => {
             return new Promise(resolve => {
-                mediaRecorder.addEventListener("stop", () => {
+                mediaRecorder.addEventListener("stop", async () => {
                     const audioBlob = new Blob(audioChunks, { 'type': 'audio/wav; codecs=MS_PCM' });
                     const audioUrl = URL.createObjectURL(audioBlob);
                     const audio = new Audio(audioUrl);
-                    
-                    resolve({ audioBlob, audioUrl, audio });
+
+                    let ret = { audioBlob, audioUrl, audio };
+
+                    if (i_bIncludeAudioBuffer) {
+                        const arrayBuffer = await new Response(audioBlob).arrayBuffer();
+                        const audioContext = new AudioContext();
+
+                        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                        ret = { ...ret, audioBuffer };
+                    }
+
+                    resolve(ret);
                 });
 
                 mediaRecorder.stop();

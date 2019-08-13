@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { Recorder } from "@/audio";
+import { Recorder, downsample } from "@/audio";
 import { Plotly } from 'vue-plotly'
 
 // import spectrogramData from "@TEST-DATA/spectrogram";
@@ -68,6 +68,10 @@ export default {
             this.running = false;
 
             console.log("Audio", audio);
+
+            const downsampledAudioBuffer = await downsample(audio.audioBuffer);
+
+            console.log("Downsampled audio buffer", downsampledAudioBuffer);
         }
     }
 }
