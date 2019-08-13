@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import AudioRecorder from "@/recorder";
+import { Recorder } from "@/audio";
 import { Plotly } from 'vue-plotly'
 
 // import spectrogramData from "@TEST-DATA/spectrogram";
@@ -59,7 +59,7 @@ export default {
     methods: {
         async start() {
             // NOTE: Just assumes that the microphone is allowed for now
-            this.recorder = await AudioRecorder.create();
+            this.recorder = await Recorder.create();
             this.recorder.start();
             this.running = true;
         },
