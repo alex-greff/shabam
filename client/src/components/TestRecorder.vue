@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import initializeRecorder from "@/recorder";
+import AudioRecorder from "@/recorder";
 // import { WASMLoader } from "@/loaders";
 
 // import testModule from "@WASM/main.wasm";
@@ -71,7 +71,7 @@ export default {
     methods: {
         async start() {
             // NOTE: Just assumes that the microphone is allowed for now
-            this.recorder = await initializeRecorder();
+            this.recorder = await AudioRecorder.create();
             this.recorder.start();
             this.state = this.recorder.getState();
         },

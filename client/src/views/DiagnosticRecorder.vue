@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import initializeRecorder from "@/recorder";
+import AudioRecorder from "@/recorder";
 import { Plotly } from 'vue-plotly'
 
 // import spectrogramData from "@TEST-DATA/spectrogram";
@@ -53,13 +53,13 @@ export default {
         //     console.log("TEST", mainModule._test(8))
         // };
 
-        console.log(this.$wasm);
-        console.log(this.$wasm.main.test(8));
+        // console.log(this.$wasm);
+        // console.log(this.$wasm.main.test(8));
     },
     methods: {
         async start() {
             // NOTE: Just assumes that the microphone is allowed for now
-            this.recorder = await initializeRecorder();
+            this.recorder = await AudioRecorder.create();
             this.recorder.start();
             this.running = true;
         },
