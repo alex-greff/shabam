@@ -15,13 +15,16 @@ echo "Building KFR library with emscripten..."
 
 cd /kfr
 
-rm -rf ./build_emscripten
-mkdir ./build_emscripten
-cd ./build_emscripten
+# rm -rf ./build_emscripten
+# mkdir ./build_emscripten
+# cd ./build_emscripten
 
-emconfigure cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Release ..
+# emconfigure cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Release ..
+# emconfigure cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=em++ -DCMAKE_CXX_FLAGS=-std=c++14 -DCMAKE_BUILD_TYPE=Release ..
+# cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=em++ -DCMAKE_CXX_FLAGS="-std=c++14" -DCMAKE_BUILD_TYPE=Release ..
+# emconfigure cmake -DENABLE_TESTS=OFF -DCMAKE_BUILD_TYPE=Release ..
 
-emmake make -j
+# emmake make -j
 
 echo "KFR compiled!"
 

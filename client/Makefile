@@ -20,7 +20,7 @@ COMMON_FLAGS = \
 	# -I/kfr/include
 
 
-OPT_LEVEL = -O1
+OPT_LEVEL = -O2
 
 SOURCE_DIR = /app/cpp
 TEMP_DIR = /app/build_temp
@@ -28,8 +28,8 @@ OUT_DIR = /app/wasm
 # KFR_DIR = /kfr/include/kfr
 
 KFR_ARCHIVES = \
-	/kfr/build_emscripten/libkfr_dft.a \
-	/kfr/build_emscripten/libkfr_io.a
+	# /kfr/build_emscripten/libkfr_dft.a \
+	# /kfr/build_emscripten/libkfr_io.a
 
 
 # --- Compile steps ---
