@@ -14,10 +14,10 @@
 </template>
 
 <script>
-import { Recorder, downsample } from "@/audio";
+import { AudioRecorder, AudioUtilities } from "@/audio";
 import { Plotly } from 'vue-plotly'
 
-// import spectrogramData from "@TEST-DATA/spectrogram";
+import spectrogramData from "@TEST-DATA/spectrogram";
 
 import mainJS from "@WASM/main-wasm.js";
 import mainWASM from "@WASM/main-wasm.wasm";
@@ -59,7 +59,7 @@ export default {
     methods: {
         async start() {
             // NOTE: Just assumes that the microphone is allowed for now
-            this.recorder = await Recorder.create();
+            this.recorder = await AudioRecorder.create();
             this.recorder.start();
             this.running = true;
         },
@@ -69,9 +69,50 @@ export default {
 
             console.log("Audio", audio);
 
-            const downsampledAudioBuffer = await downsample(audio.audioBuffer);
+            const downsampledAudioBuffer = await AudioUtilities.downsample(audio.audioBuffer, 16000);
 
             console.log("Downsampled audio buffer", downsampledAudioBuffer);
+
+            // const offlineCtx = new OfflineAudioContext
+
+            // const audioCtx = new AudioContext();
+            // const source = audioCtx.createBufferSource();
+            // source.buffer = downsampledAudioBuffer;
+            // source.connect(audioCtx.destination);
+            // source.start(0);
+
+            // const offlineCtx = new OfflineAudioContext(
+            //     downsampledAudioBuffer.numberOfChannels,
+            //     downsampledAudioBuffer.length,
+            //     downsampledAudioBuffer.sampleRate
+            // );
+            // const source = offlineCtx.createBufferSource();
+            // source.buffer = downsampledAudioBuffer;
+            // source.connect(offlineCtx.destination);
+            // source.start(0);
+
+            // const analyser = offlineCtx.createAnalyser();
+            // analyser.fftSize = 256;
+            // const bufferLength = analyser.frequencyBinCount;
+            // console.log(bufferLength);
+            // const dataArray = new Uint8Array(bufferLength);
+            // analyser.getByteFrequencyData(dataArray);
+            // console.log(dataArray);
+        
+
+            // const analyser = audioCtx.createAnalyser();
+            // analyser.fftSize = 256;
+            // const bufferLength = analyser.frequencyBinCount;
+
+            // console.log(bufferLength);
+
+            // const dataArray = new Uint8Array(bufferLength);
+            // analyser.getByteFrequencyData(dataArray);
+
+            // console.log(dataArray);
+
+            
+
         }
     }
 }

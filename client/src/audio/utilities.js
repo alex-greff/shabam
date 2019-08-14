@@ -5,7 +5,7 @@
  * @param {AudioBuffer} source The source audio buffer. 
  * @param {Number} targetSampleRate The targetted sample rate.
  */
-async function downsample(sourceAudioBuffer, targetSampleRate = 16000) {
+export async function downsample(sourceAudioBuffer, targetSampleRate = 16000) {
     const offlineCtx = new OfflineAudioContext(
         sourceAudioBuffer.numberOfChannels, 
         sourceAudioBuffer.duration * sourceAudioBuffer.numberOfChannels * targetSampleRate, 
@@ -34,4 +34,6 @@ async function downsample(sourceAudioBuffer, targetSampleRate = 16000) {
     return resampledAudioBuffer;
 }
 
-export default downsample;
+export default {
+    downsample
+};

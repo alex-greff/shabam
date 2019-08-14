@@ -1,10 +1,10 @@
 import Recorder__import from "@/audio/recorder";
-import downsample__import from "@/audio/downsample";
+import Utilities__import from "@/audio/utilities";
 
-export const Recorder = Recorder__import;
-export const downsample = downsample__import;
+export const AudioRecorder = Recorder__import;
+export const AudioUtilities = Utilities__import;
 
 export default {
-    Recorder,
-    downsample
+    AudioRecorder,
+    AudioUtilities
 };
