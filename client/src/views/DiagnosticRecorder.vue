@@ -15,6 +15,7 @@
 
 <script>
 import { AudioRecorder, AudioUtilities } from "@/audio";
+import CONSTANTS from "@/constants";
 import { Plotly } from 'vue-plotly'
 
 import spectrogramData from "@TEST-DATA/spectrogram";
@@ -69,11 +70,31 @@ export default {
 
             console.log("Audio", audio);
 
-            const downsampledAudioBuffer = await AudioUtilities.downsample(audio.audioBuffer, 16000);
+            const downsampledAudioBuffer = await AudioUtilities.downsample(audio.audioBuffer, CONSTANTS.TARGET_SAMPLE_RATE);
 
             console.log("Downsampled audio buffer", downsampledAudioBuffer);
 
-            // const offlineCtx = new OfflineAudioContext
+            // const audioContext = new OfflineAudioContext(
+            //     downsampledAudioBuffer.numberOfChannels,
+            //     downsampledAudioBuffer.length,
+            //     downsampledAudioBuffer.sampleRate
+            // );
+            // const sourceNode = new AudioBufferSourceNode(audioContext, { buffer: downsampledAudioBuffer });
+            // const analyserNode = new AnalyserNode(audioContext, { fftSize: CONSTANTS.FFT_SIZE });
+
+            // sourceNode.connect(audioContext.destination);
+            // sourceNode.connect(analyserNode);
+            // sourceNode.start();
+            // await audioContext.startRendering();
+
+            // const freqData = new Uint8Array(analyserNode.frequencyBinCount);
+            // analyserNode.getByteFrequencyData(freqData);
+
+            // console.log(analyserNode.frequencyBinCount, freqData);
+
+            const test = await AudioUtilities.computeFFTData(downsampledAudioBuffer);
+            console.log("TEST", test);
+
 
             // const audioCtx = new AudioContext();
             // const source = audioCtx.createBufferSource();
