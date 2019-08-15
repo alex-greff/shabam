@@ -5,6 +5,12 @@
             <button @click="start" :disabled="running">Start</button>
             <button @click="stop" :disabled="!running">Finish</button>
         </div>
+        
+        <spectrogram 
+            title="Recorded Audio Spectrogram"
+            :data="spectrogramData"
+        />
+
         <!-- <plotly 
             :data="testData" 
             :layout="testLayout" 
@@ -17,15 +23,17 @@
 import { AudioRecorder, AudioUtilities } from "@/audio";
 import CONSTANTS from "@/constants";
 import { Plotly } from 'vue-plotly'
+import Spectrogram from "@/components/charts/Spectrogram.vue";
 
-import spectrogramData from "@TEST-DATA/spectrogram";
+// import spectrogramData from "@TEST-DATA/spectrogram";
 
 import mainJS from "@WASM/main-wasm.js";
 import mainWASM from "@WASM/main-wasm.wasm";
 
 export default {
     components: {
-        // plotly: Plotly
+        // plotly: Plotly,
+        spectrogram: Spectrogram,
     },
     data() {
         return {
@@ -33,6 +41,7 @@ export default {
             running: false,
             // testData: spectrogramData.data,
             // testLayout: spectrogramData.layout,
+            spectrogramData: []
         }
     },
     mounted() {
@@ -96,6 +105,8 @@ export default {
             // console.log("Frequency Data for first window", frequencyData);
             const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
             console.log("Spectrogram data", spectrogramData);
+
+            this.spectrogramData = spectrogramData;
 
 
             // Plays back the downsampled audio
