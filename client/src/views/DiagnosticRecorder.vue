@@ -92,10 +92,13 @@ export default {
 
             // console.log(analyserNode.frequencyBinCount, freqData);
 
-            const test = await AudioUtilities.computeFFTData(downsampledAudioBuffer);
-            console.log("TEST", test);
+            // const frequencyData = await AudioUtilities.computeFrequencyData(downsampledAudioBuffer);
+            // console.log("Frequency Data for first window", frequencyData);
+            const spectrogramData = await AudioUtilities.computeSpectrogram(downsampledAudioBuffer);
+            console.log("TEST2", spectrogramData);
 
 
+            // Plays back the downsampled audio
             // const audioCtx = new AudioContext();
             // const source = audioCtx.createBufferSource();
             // source.buffer = downsampledAudioBuffer;
