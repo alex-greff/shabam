@@ -173,7 +173,7 @@ export async function computeTimeDomainData(sourceAudioBuffer, windowIndex = 0, 
  * @param {Number} windowSmoothing The smoothing value for the Blackman windowing function used internally by the WebAudio API.
  * @return {Array} Returns an array of Uint8Array arrays.
  */
-export async function computeSpectrogram(sourceAudioBuffer, windowDuration = CONSTANTS.WINDOW_DURATION, FFTSize = CONSTANTS.FFT_SIZE, windowSmoothing = CONSTANTS.WINDOW_SMOOTHING) {
+export async function computeSpectrogramData(sourceAudioBuffer, windowDuration = CONSTANTS.WINDOW_DURATION, FFTSize = CONSTANTS.FFT_SIZE, windowSmoothing = CONSTANTS.WINDOW_SMOOTHING) {
     // Calculate the total number of windows for the given audio source
     const numWindows = Math.floor(sourceAudioBuffer.duration / windowDuration);
 
@@ -195,5 +195,5 @@ export default {
     computeFFTData,
     computeFrequencyData,
     computeTimeDomainData,
-    computeSpectrogram,
+    computeSpectrogramData,
 };

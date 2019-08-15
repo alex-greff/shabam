@@ -94,8 +94,8 @@ export default {
 
             // const frequencyData = await AudioUtilities.computeFrequencyData(downsampledAudioBuffer);
             // console.log("Frequency Data for first window", frequencyData);
-            const spectrogramData = await AudioUtilities.computeSpectrogram(downsampledAudioBuffer);
-            console.log("TEST2", spectrogramData);
+            const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
+            console.log("Spectrogram data", spectrogramData);
 
 
             // Plays back the downsampled audio
