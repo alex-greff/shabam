@@ -49,7 +49,7 @@ export default {
         x() {
             const aSpectrogramData = this.data;
             return aSpectrogramData.map((_, i_nWindowIndex) => {
-                return (i_nWindowIndex + 1) * this.windowDuration;
+                return i_nWindowIndex * this.windowDuration;
             });
         },
         y() {
@@ -59,7 +59,7 @@ export default {
 
             const aBinRange = [...Array(nNumBins).keys()];
             return aBinRange.map((_, i_nBinIdx) => {
-                return (i_nBinIdx + 1) * nFreqPerBin;
+                return i_nBinIdx * nFreqPerBin;
             });
         },
         z() {
@@ -96,6 +96,7 @@ export default {
             return [this.trace];
         },
         plotlyLayout() {
+            const bIsEmpty = this.data.length <= 0;
             const nTotalDuration = this.windowDuration * this.data.length;
             const nMaxFreq = (1/2 * this.sampleRate); // Using Nyquist theorem
 
@@ -104,16 +105,21 @@ export default {
                 xaxis: {
                     title: { text: "Time" },
                     ticks: "Time [s]",
+                    showgrid: false,
+                    zeroline:false,
+                    autorange: false,
+                    range: [0, (bIsEmpty) ? 1 : nTotalDuration],
                     // This code snippet ensures the graph is at least 5 seconds long
                     // ...don't know if I really want that
-                    // autorange: false,
                     // range: [0, Math.max(5, nTotalDuration)],
                 },
                 yaxis: {
                     title: { text: "Frequency" },
                     ticks: "Frequency [kHz]",
                     type: 'log', 
-                    dtick: 'log_10(2)'
+                    dtick: 'log_10(2)',
+                    showgrid: false,
+                    zeroline: false,
                 }
             };
         }
