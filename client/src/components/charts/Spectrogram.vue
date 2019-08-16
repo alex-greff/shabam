@@ -74,6 +74,7 @@ export default {
             const aMatrix = Array(nNumBins).fill(0).map(() => new Uint8Array(nNumWindows));
 
             // Perform the flip
+            // TODO: probably want to look at a better way of finding the transpose of the matrix
             for (let nWindowNum = 0; nWindowNum < nNumWindows; nWindowNum++) {
                 for (let nBinNum = 0; nBinNum < nNumBins; nBinNum++) {
                     aMatrix[nBinNum][nWindowNum] = aSpectrogramData[nWindowNum][nBinNum];
@@ -116,8 +117,8 @@ export default {
                 yaxis: {
                     title: { text: "Frequency" },
                     ticks: "Frequency [kHz]",
-                    type: 'log', 
-                    dtick: 'log_10(2)',
+                    // type: 'log', 
+                    // dtick: 'log_10(2)',
                     showgrid: false,
                     zeroline: false,
                 }
