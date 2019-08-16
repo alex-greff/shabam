@@ -13,6 +13,7 @@
 <script>
 import { Plotly } from 'vue-plotly';
 import CONSTANTS from "@/constants";
+import Utilities from "@/utilities";
 
 export default {
     components: {
@@ -64,7 +65,7 @@ export default {
         },
         z() {
             // Unfortunately the way that the spectrogram data is computed is flipped from how plotly takes it
-            // So we must flip the matrix here
+            // So we must transpose the matrix here
 
             const aSpectrogramData = this.data;
             const nNumBins = 1/2 * this.FFTSize; // Number of sample bins in FFT is equal to half the FFT (Window) size
@@ -73,10 +74,11 @@ export default {
             // Initialize the matrix
             const aMatrix = Array(nNumBins).fill(0).map(() => new Uint8Array(nNumWindows));
 
-            // Perform the flip
+            // Perform the transpose
             // TODO: probably want to look at a better way of finding the transpose of the matrix
-            for (let nWindowNum = 0; nWindowNum < nNumWindows; nWindowNum++) {
-                for (let nBinNum = 0; nBinNum < nNumBins; nBinNum++) {
+            let nWindowNum, nBinNum = 0;
+            for (nWindowNum = 0; nWindowNum < nNumWindows; nWindowNum++) {
+                for (nBinNum = 0; nBinNum < nNumBins; nBinNum++) {
                     aMatrix[nBinNum][nWindowNum] = aSpectrogramData[nWindowNum][nBinNum];
                 }
             }
