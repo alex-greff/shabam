@@ -166,12 +166,13 @@ export async function computeTimeDomainData(sourceAudioBuffer, windowIndex = 0, 
 }
 
 /**
+ * Computes the spectrogram data of the given source audio buffer.
  * 
- * @param {AudioBuffer} sourceAudioBuffer 
+ * @param {AudioBuffer} sourceAudioBuffer The source audio buffer.
  * @param {Number} windowDuration The duration (seconds) of the window.
  * @param {Number} FFTSize The number of samples in the FFT window.
  * @param {Number} windowSmoothing The smoothing value for the Blackman windowing function used internally by the WebAudio API.
- * @return {Array} Returns an array of Uint8Array arrays.
+ * @return {Array} Returns an array of Uint8Array arrays representing the spectrogram matrix.
  */
 export async function computeSpectrogramData(sourceAudioBuffer, windowDuration = CONSTANTS.WINDOW_DURATION, FFTSize = CONSTANTS.FFT_SIZE, windowSmoothing = CONSTANTS.WINDOW_SMOOTHING) {
     // Calculate the total number of windows for the given audio source

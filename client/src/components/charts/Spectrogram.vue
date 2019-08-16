@@ -1,8 +1,4 @@
 <template>
-    <!-- <plotly
-
-    /> -->
-    <!-- <div></div> -->
     <plotly 
         :data="plotlyData"
         :layout="plotlyLayout"
