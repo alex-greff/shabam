@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { Plotly } from 'vue-plotly';
+import { Plotly } from "vue-plotly";
 import CONSTANTS from "@/constants";
 import Utilities from "@/utilities";
 

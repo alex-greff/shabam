@@ -8,7 +8,7 @@ import CONSTANTS from "@/constants";
  * @param {Number} partitionCurve The curve that the partition ranges are calculated on.
  * @return {Array} Returns an array of tuples (2 element arrays) of the computed parition ranges.
  */
-function computePartitionRanges(partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE) {
+export function computePartitionRanges(partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE) {
     function getBoundaryIndex(i_nParitionIdx, i_nTotalParitions, i_nTotalBins) {
         // --- Checks ---
         if (i_nTotalBins <= 0)
@@ -142,17 +142,18 @@ function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplie
  */
 export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
     // Get the parition ranges
-    const paritionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
+    const aParitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
     
     // Compute the partitioned spectrogram
-    const paritionedSpectrogram = computeParitionedSpectrogram(spectrogramData, paritionRanges);
+    const aParitionedSpectrogram = computeParitionedSpectrogram(spectrogramData, aParitionRanges);
 
     // Filter the partitioned spectrogram and reduce to binary values, thus getting the fingerprint
-    const aFingerprint = filterAndBinarize(paritionedSpectrogram, fingerprintThresholdMultiplier);
+    const aFingerprint = filterAndBinarize(aParitionedSpectrogram, fingerprintThresholdMultiplier);
 
     return aFingerprint;
 }
 
 export default {
+    computePartitionRanges,
     generateFingerprint,
 };

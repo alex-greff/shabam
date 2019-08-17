@@ -6,9 +6,14 @@
             <button @click="stop" :disabled="!running">Finish</button>
         </div>
         
-        <spectrogram 
+        <spectrogram-chart
             title="Recorded Audio Spectrogram"
             :data="spectrogramData"
+        />
+
+        <fingerprint-chart 
+            title="Generated Audio Fingerprint"
+            :data="fingerprintData"
         />
 
         <!-- <plotly 
@@ -23,7 +28,8 @@
 import { AudioRecorder, AudioUtilities, AudioFingerprint } from "@/audio";
 import CONSTANTS from "@/constants";
 import { Plotly } from 'vue-plotly'
-import Spectrogram from "@/components/charts/Spectrogram.vue";
+import SpectrogramChart from "@/components/charts/Spectrogram.vue";
+import FingerprintChart from "@/components/charts/Fingerprint.vue";
 
 // import spectrogramData from "@TEST-DATA/spectrogram";
 
@@ -33,7 +39,8 @@ import mainWASM from "@WASM/main-wasm.wasm";
 export default {
     components: {
         // plotly: Plotly,
-        spectrogram: Spectrogram,
+        spectrogramChart: SpectrogramChart,
+        fingerprintChart: FingerprintChart,
     },
     data() {
         return {
@@ -41,7 +48,8 @@ export default {
             running: false,
             // testData: spectrogramData.data,
             // testLayout: spectrogramData.layout,
-            spectrogramData: []
+            spectrogramData: [],
+            fingerprintData: [],
         }
     },
     mounted() {
@@ -108,8 +116,9 @@ export default {
             this.spectrogramData = spectrogramData;
             console.log("Spectrogram data", spectrogramData);
 
-            const fingerprint = AudioFingerprint.generateFingerprint(spectrogramData);
-            console.log("Fingerprint", fingerprint);
+            const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
+            this.fingerprintData = fingerprintData;
+            console.log("Fingerprint", fingerprintData);
 
 
             // Plays back the downsampled audio
