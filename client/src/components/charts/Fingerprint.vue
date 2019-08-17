@@ -24,6 +24,10 @@ export default {
             type: Array,
             default: () => []
         },
+        partitionRanges: {
+            type: Array,
+            required: true,
+        },
         windowDuration: {
             type: Number,
             default: CONSTANTS.WINDOW_DURATION
@@ -38,6 +42,17 @@ export default {
         },
     },
     computed: {
+        partitions() {
+            return this.partitionRanges.map(i_aPartitionRange => {
+                const nBinSize = this.FFTSize / 2;
+                const nMaxFreq = this.sampleRate / 2;
+                const nNormalizeMult = nMaxFreq / nBinSize;
+
+                const nAverage = (i_aPartitionRange[0] + i_aPartitionRange[1]) / 2;
+
+                return nAverage * nNormalizeMult;
+            });
+        },
         plotlyData() {
             const aFingerprintData = this.data;
             const nPartitionNum = (aFingerprintData[0]) ? aFingerprintData[0].length : 0;
@@ -53,7 +68,7 @@ export default {
                 }, []);
 
                 // Fill the y-axis with the current partition number
-                const aYData = Array(aXData.length).fill(i_nCurrPartition + 1);
+                const aYData = Array(aXData.length).fill(this.partitions[i_nCurrPartition]);
 
                 // Return the trace
                 return {
@@ -62,7 +77,7 @@ export default {
                     type: "scatter",
                     mode: "markers",
                     name: `Band ${i_nCurrPartition + 1}`,
-                    hoverinfo: "skip",
+                    // hoverinfo: "skip", // Hides the hover information
                 };
             });
 
@@ -77,7 +92,7 @@ export default {
                 title: { text: this.title },
                 showlegend: false,
                 xaxis: {
-                    title: { text: "Time" },
+                    title: { text: "Time (s)" },
                     ticks: "Time [s]",
                     showgrid: false,
                     zeroline:false,
@@ -88,10 +103,11 @@ export default {
                     // range: [0, Math.max(5, nTotalDuration)],
                 },
                 yaxis: {
-                    title: { text: "Partition" },
-                    ticks: "Partition",
+                    title: { text: "Frequency (kHz)" },
+                    ticks: "Frequency [kHz]",
                     // type: 'log', 
                     // dtick: 'log_10(2)',
+                    range: [0, nMaxFreq],
                     showgrid: false,
                     zeroline: false,
                 }

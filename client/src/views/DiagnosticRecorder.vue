@@ -14,6 +14,7 @@
         <fingerprint-chart 
             title="Generated Audio Fingerprint"
             :data="fingerprintData"
+            :partition-ranges="partitionRanges"
         />
 
         <!-- <plotly 
@@ -50,6 +51,7 @@ export default {
             // testLayout: spectrogramData.layout,
             spectrogramData: [],
             fingerprintData: [],
+            partitionRanges: AudioFingerprint.computePartitionRanges(),
         }
     },
     mounted() {
@@ -115,6 +117,8 @@ export default {
             const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
             this.spectrogramData = spectrogramData;
             console.log("Spectrogram data", spectrogramData);
+
+            console.log("Partition ranges", this.partitionRanges);
 
             const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
             this.fingerprintData = fingerprintData;

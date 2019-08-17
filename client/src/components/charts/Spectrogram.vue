@@ -102,7 +102,7 @@ export default {
             return {
                 title: { text: this.title },
                 xaxis: {
-                    title: { text: "Time" },
+                    title: { text: "Time (s)" },
                     ticks: "Time [s]",
                     showgrid: false,
                     zeroline:false,
@@ -113,12 +113,13 @@ export default {
                     // range: [0, Math.max(5, nTotalDuration)],
                 },
                 yaxis: {
-                    title: { text: "Frequency" },
+                    title: { text: "Frequency (kHz)" },
                     ticks: "Frequency [kHz]",
                     // type: 'log', 
                     // dtick: 'log_10(2)',
                     showgrid: false,
                     zeroline: false,
+                    range: [0, nMaxFreq],
                 }
             };
         }
