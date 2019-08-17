@@ -109,7 +109,7 @@ export default {
             console.log("Spectrogram data", spectrogramData);
 
             const fingerprint = AudioFingerprint.generateFingerprint(spectrogramData);
-            
+            console.log("Fingerprint", fingerprint);
 
 
             // Plays back the downsampled audio

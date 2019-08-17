@@ -143,15 +143,14 @@ function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplie
 export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
     // Get the parition ranges
     const paritionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
-    console.log("Parition ranges", paritionRanges);
     
     // Compute the partitioned spectrogram
     const paritionedSpectrogram = computeParitionedSpectrogram(spectrogramData, paritionRanges);
-    console.log("Paritioned spectrogram", paritionedSpectrogram);
 
     // Filter the partitioned spectrogram and reduce to binary values, thus getting the fingerprint
     const aFingerprint = filterAndBinarize(paritionedSpectrogram, fingerprintThresholdMultiplier);
-    console.log("Fingerprint", aFingerprint);
+
+    return aFingerprint;
 }
 
 export default {
