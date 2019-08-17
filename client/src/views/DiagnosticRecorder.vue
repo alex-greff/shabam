@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { AudioRecorder, AudioUtilities } from "@/audio";
+import { AudioRecorder, AudioUtilities, AudioFingerprint } from "@/audio";
 import CONSTANTS from "@/constants";
 import { Plotly } from 'vue-plotly'
 import Spectrogram from "@/components/charts/Spectrogram.vue";
@@ -103,10 +103,13 @@ export default {
 
             // const frequencyData = await AudioUtilities.computeFrequencyData(downsampledAudioBuffer);
             // console.log("Frequency Data for first window", frequencyData);
+
             const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
+            this.spectrogramData = spectrogramData;
             console.log("Spectrogram data", spectrogramData);
 
-            this.spectrogramData = spectrogramData;
+            const fingerprint = AudioFingerprint.generateFingerprint(spectrogramData);
+            
 
 
             // Plays back the downsampled audio
