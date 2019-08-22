@@ -93,6 +93,18 @@ export default {
 
             console.log("Downsampled audio buffer", downsampledAudioBuffer);
 
+            const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
+            this.spectrogramData = spectrogramData;
+            console.log("Spectrogram data", spectrogramData);
+
+            console.log("Partition ranges", this.partitionRanges);
+
+            const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
+            this.fingerprintData = fingerprintData;
+            console.log("Fingerprint", fingerprintData);
+
+            // Bunch of extra code, will remove eventually
+
             // const audioContext = new OfflineAudioContext(
             //     downsampledAudioBuffer.numberOfChannels,
             //     downsampledAudioBuffer.length,
@@ -113,16 +125,6 @@ export default {
 
             // const frequencyData = await AudioUtilities.computeFrequencyData(downsampledAudioBuffer);
             // console.log("Frequency Data for first window", frequencyData);
-
-            const spectrogramData = await AudioUtilities.computeSpectrogramData(downsampledAudioBuffer);
-            this.spectrogramData = spectrogramData;
-            console.log("Spectrogram data", spectrogramData);
-
-            console.log("Partition ranges", this.partitionRanges);
-
-            const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
-            this.fingerprintData = fingerprintData;
-            console.log("Fingerprint", fingerprintData);
 
 
             // Plays back the downsampled audio
