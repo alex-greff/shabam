@@ -9,6 +9,13 @@
         <spectrogram-chart
             title="Recorded Audio Spectrogram"
             :data="spectrogramData"
+            :partition-ranges="partitionRanges"
+        />
+
+        <spectrogram-chart
+            title="Filtered Audio Spectrogram"
+            :data="filteredData"
+            :partition-ranges="partitionRanges"
         />
 
         <fingerprint-chart 
@@ -16,30 +23,20 @@
             :data="fingerprintData"
             :partition-ranges="partitionRanges"
         />
-
-        <!-- <plotly 
-            :data="testData" 
-            :layout="testLayout" 
-            :display-mode-bar="false"
-        /> -->
     </div>
 </template>
 
 <script>
 import { AudioRecorder, AudioUtilities, AudioFingerprint } from "@/audio";
 import CONSTANTS from "@/constants";
-import { Plotly } from 'vue-plotly'
 import SpectrogramChart from "@/components/charts/Spectrogram.vue";
 import FingerprintChart from "@/components/charts/Fingerprint.vue";
-
-// import spectrogramData from "@TEST-DATA/spectrogram";
 
 import mainJS from "@WASM/main-wasm.js";
 import mainWASM from "@WASM/main-wasm.wasm";
 
 export default {
     components: {
-        // plotly: Plotly,
         spectrogramChart: SpectrogramChart,
         fingerprintChart: FingerprintChart,
     },
@@ -47,9 +44,8 @@ export default {
         return {
             recorder: null,
             running: false,
-            // testData: spectrogramData.data,
-            // testLayout: spectrogramData.layout,
             spectrogramData: [],
+            filteredData: [],
             fingerprintData: [],
             partitionRanges: AudioFingerprint.computePartitionRanges(),
         }
@@ -99,7 +95,8 @@ export default {
 
             console.log("Partition ranges", this.partitionRanges);
 
-            const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
+            const { fingerprint: fingerprintData, filteredSpectrogram }= AudioFingerprint.generateFingerprint(spectrogramData);
+            this.filteredData = filteredSpectrogram;
             this.fingerprintData = fingerprintData;
             console.log("Fingerprint", fingerprintData);
 

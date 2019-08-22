@@ -24,6 +24,10 @@ export default {
             type: Array,
             default: () => []
         },
+        partitionRanges: {
+            type: Array,
+            default: null
+        },
         windowDuration: {
             type: Number,
             default: CONSTANTS.WINDOW_DURATION
@@ -81,6 +85,22 @@ export default {
 
             return aMatrix;
         },
+        partitionRangesNormalized() {
+            if (!this.partitionRanges) {
+                return null;
+            }
+
+            return this.partitionRanges.map(i_aPartitionRange => {
+                const nBinSize = this.FFTSize / 2;
+                const nMaxFreq = this.sampleRate / 2;
+                const nNormalizeMult = nMaxFreq / nBinSize;
+
+                return [
+                    i_aPartitionRange[0] * nNormalizeMult,
+                    i_aPartitionRange[1] * nNormalizeMult
+                ];
+            });
+        },
         trace() {
             return {
                 type: "heatmap",
@@ -98,6 +118,28 @@ export default {
             const bIsEmpty = this.data.length <= 0;
             const nTotalDuration = this.windowDuration * this.data.length;
             const nMaxFreq = (1/2 * this.sampleRate); // Using Nyquist theorem
+
+            // Plot partition range lines
+            let aLines = {};
+            if (this.partitionRangesNormalized) {
+                aLines = this.partitionRangesNormalized.map((i_aCurrPartitionRange) => {
+                    const rangeVal = i_aCurrPartitionRange[1];
+
+                    const oLine = {
+                        type: 'line',
+                        x0: 0,
+                        y0: rangeVal,
+                        x1: (bIsEmpty) ? 1 : nTotalDuration,
+                        y1: rangeVal,
+                        line: {
+                            color: 'rgba(45, 230, 205, 0.8)',
+                            width: 1,
+                        }
+                    }
+
+                    return oLine;
+                });
+            }
 
             return {
                 title: { text: this.title },
@@ -120,7 +162,10 @@ export default {
                     showgrid: false,
                     zeroline: false,
                     range: [0, nMaxFreq],
-                }
+                },
+                shapes: [
+                    ...aLines
+                ]
             };
         }
     },

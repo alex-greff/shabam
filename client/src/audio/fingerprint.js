@@ -103,31 +103,82 @@ function generateAverageMap(partitionedSpectrogram) {
     return aAverageMap;
 }
 
+// /**
+//  * Filters the given partitioned spectrogram data and reduces it to binary values.
+//  * 
+//  * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
+//  * @param {Number} fingerprintThresholdMultiplier The threshold multiplier for the fingerprint acceptance qualifier.
+//  * @return {Array} Returns an array of Uint8Arrays.
+//  */
+// function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
+//     // Get the average map
+//     const aAverageMap = generateAverageMap(partitionedSpectrogram);
+
+//     const nNumPartitions = partitionedSpectrogram[0].length;
+
+//     // Compute the fingerprint
+//     const aFingerprint = partitionedSpectrogram.map((i_aCurrPartition) => {
+//         return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
+//             const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
+//             const nCurrAverageVal = aAverageMap[i_nCurrPartition];
+
+//             const bPassThreshold = nCurrFreqVal > nCurrAverageVal * fingerprintThresholdMultiplier;
+//             return (bPassThreshold) ? 1 : 0;
+//         });
+//     });
+    
+//     return aFingerprint;
+// }
+
+// TODO: filterSpectrogram and binarizeSpectrogram should be merged into one function and just return both at the same time
+// ...this avoids running two passes over the data.
+
 /**
- * Filters the given partitioned spectrogram data and reduces it to binary values.
+ * Filters the given partitioned spectrogram data.
  * 
- * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
+ * @param {Array} spectrogramData The spectrogram data (an array of Uint8Arrays).
  * @param {Number} fingerprintThresholdMultiplier The threshold multiplier for the fingerprint acceptance qualifier.
  * @return {Array} Returns an array of Uint8Arrays.
  */
-function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
+function filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
     // Get the average map
-    const aAverageMap = generateAverageMap(partitionedSpectrogram);
+    const aAverageMap = generateAverageMap(spectrogramData);
 
-    const nNumPartitions = partitionedSpectrogram[0].length;
+    const nNumPartitions = spectrogramData[0].length;
 
-    // Compute the fingerprint
-    const aFingerprint = partitionedSpectrogram.map((i_aCurrPartition) => {
+    // Filter the spectrogram
+    const aFingerprint = spectrogramData.map((i_aCurrPartition) => {
         return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
             const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
             const nCurrAverageVal = aAverageMap[i_nCurrPartition];
 
             const bPassThreshold = nCurrFreqVal > nCurrAverageVal * fingerprintThresholdMultiplier;
-            return (bPassThreshold) ? 1 : 0;
+            return (bPassThreshold) ? nCurrFreqVal : 0;
         });
     });
     
     return aFingerprint;
+}
+
+/**
+ * Binarizes a filtered spectrogram (aka generates the fingerprint).
+ * 
+ * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
+ * @return {Array} Returns an array of Uint8Arrays with a value of either 0 or 1.
+ */
+function binarizeSpectrogram(partitionedSpectrogram) {
+    const nNumPartitions = partitionedSpectrogram[0].length;
+
+    // Binarize the spectrogram
+    const aBinarized = partitionedSpectrogram.map((i_aCurrPartition) => {
+        return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
+            const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
+
+            return (nCurrFreqVal > 0) ? 1 : 0;
+        });
+    });
+
+    return aBinarized;
 }
 
 /**
@@ -143,14 +194,25 @@ function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplie
 export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
     // Get the parition ranges
     const aParitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
+
+    const aFilteredSpectrogram = filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier);
     
     // Compute the partitioned spectrogram
     const aParitionedSpectrogram = computeParitionedSpectrogram(spectrogramData, aParitionRanges);
 
-    // Filter the partitioned spectrogram and reduce to binary values, thus getting the fingerprint
-    const aFingerprint = filterAndBinarize(aParitionedSpectrogram, fingerprintThresholdMultiplier);
+    // const aFilteredSpectrogram = filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier);
 
-    return aFingerprint;
+    // Filter the partitioned spectrogram and reduce to binary values, thus getting the fingerprint
+    // const aFingerprint = filterAndBinarize(aParitionedSpectrogram, fingerprintThresholdMultiplier);
+
+    const aFingerprint = binarizeSpectrogram(aParitionedSpectrogram);
+
+    // return aFingerprint;
+
+    return {
+        filteredSpectrogram: aFilteredSpectrogram,
+        fingerprint: aFingerprint,
+    };
 }
 
 export default {
