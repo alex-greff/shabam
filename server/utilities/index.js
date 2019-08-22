@@ -46,7 +46,7 @@ exports.isFunction = (obj) => typeof obj === 'function';
 exports.isObject = (obj) => obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */
-exports.isInteger = (obj) => String(Math.floor(Number(obj))) === obj;
+exports.isInteger = (obj) => Number.isInteger(obj);
 
 /** @private is the given object a string? */
 exports.isString = (obj) => Object.prototype.toString.call(obj) === '[object String]';
