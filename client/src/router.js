@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from '@/views/Home.vue'
 import DiagnosticRecorder from '@/views/DiagnosticRecorder.vue';
+import DiagnosticUploader from '@/views/DiagnosticUploader.vue';
 
 Vue.use(Router)
 
@@ -20,6 +21,11 @@ export default new Router({
             name: 'diagnosticRecorder',
             component: DiagnosticRecorder
         },
+        {
+            path: '/diagnostic-uploader',
+            name: 'diagnosticUploader',
+            component: DiagnosticUploader
+        }
         // {
         //     path: '/about',
         //     name: 'about',
