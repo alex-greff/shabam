@@ -1,3 +1,4 @@
+import __range from "lodash/range";
 import CONSTANTS from "@/constants";
 
 /**
@@ -47,138 +48,131 @@ export function computePartitionRanges(partitionAmount = CONSTANTS.FINGERPRINT_P
     }, []);
 }
 
-/**
- * Computes the paritioned spectrogram version.
- * 
- * @param {Array} spectrogramData The spectrogram data (an array of Uint8Arrays).
- * @param {Array} parititionRanges The computed parition ranges.
- * @return {Array} Returns an array of Uint8Arrays.
- */
-function computeParitionedSpectrogram(spectrogramData, parititionRanges) {
-    const nNumParitions = parititionRanges.length;
+class MeanStorage {
+    /**
+     * Initializes a mean storage instance.
+     * 
+     * @param {Array} spectrogramData The spectrogram data (an array of Uint8Arrays).
+     * @param {Array} partitionRanges The computed parition ranges.
+     */
+    constructor(spectrogramData, partitionRanges) {
+        this.spectrogramData = spectrogramData;
+        this.partitionRanges = partitionRanges;
+        this.numPartitions = partitionRanges.length;
+        this.numWindows = spectrogramData.length;
 
-    // Compute the partitioned values for each window
-    const paritionedSpectrogram = spectrogramData.map((i_u8CurrWindow) => {
-        const partitionedBins = new Uint8Array(nNumParitions);
+        this.computedValues = {};
+    }
 
-        // Calculate the average for each of the parition slices
-        parititionRanges.forEach((i_aCurrParition, i_nPartitionIdx) => {
-            const nStartIdx = i_aCurrParition[0];
-            const nEndIdx = i_aCurrParition[1];
+    /**
+     * Checks the given coordinates and throws any errors if invalid.
+     * 
+     * @param {Number} window The index of the window.
+     * @param {Number} partition The index of the partition.
+     */
+    _checkCoordinates(window, partition) {
+        if (window < 0 || window >= this.numWindows) {
+            throw `Invalid window index '${window}'`;
+        }
 
-            const aWindowSlice = i_u8CurrWindow.slice(nStartIdx, nEndIdx)
-            const nBinAverage = Math.round(aWindowSlice.reduce((acc, i_nCurrVal) => acc + i_nCurrVal, 0) / aWindowSlice.length);
+        if (partition < 0 || partition >= this.numPartitions) {
+            throw `Invalid partition index '${partition}'`;
+        }
+    }
 
-            partitionedBins[i_nPartitionIdx] = nBinAverage;
-        });
+    /**
+     * Gets the key of the storage map for the given window-partition coordinate.
+     * 
+     * @param {Number} window The index of the window.
+     * @param {Number} partition The index of the partition.
+     * @return {String} The storage map key.
+     */
+    _getStorageMapKey(window, partition) {
+        return `${window}:${partition}`;
+    }
 
-        return partitionedBins;
-    });
+    /**
+     * Gets the mean value of the cell located at the given window-partition coordinate.
+     * 
+     * @param {Number} window The index of the window.
+     * @param {Number} partition The index of the partition.
+     * @param {Boolean} recompute Force recomputation of the mean value, even if it already exists.
+     * @return {Number} Returns the mean value of the cell.
+     */
+    getCellMean(window, partition, recompute = false) {
+        this._checkCoordinates(window, partition);
 
-    return paritionedSpectrogram;
+        const sStorageKey = this._getStorageMapKey(window, partition);
+
+        const bMeanAlreadyComputed = !!this.computedValues[sStorageKey];
+
+        // Compute the mean value, if needed
+        if (!bMeanAlreadyComputed || recompute) {
+            const aPartitionRange = this.partitionRanges[partition];
+            const nStartIdx = aPartitionRange[0];
+            const nEndIdx = aPartitionRange[1];
+
+            const u8Window = this.spectrogramData[window];
+
+            const u8PartitionSlice = u8Window.slice(nStartIdx, nEndIdx);
+
+            const nPartitionMean = Math.round(u8PartitionSlice.reduce((acc, i_nCurrVal) => acc + i_nCurrVal, 0) / u8PartitionSlice.length);
+
+            this.computedValues[sStorageKey] = nPartitionMean;
+        }
+
+        return this.computedValues[sStorageKey];
+    }
 }
 
 /**
- * Computes the average values of each partition band.
+ * Computes the mean of the given slider window.
  * 
- * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
- * @return {Array} Returns an array containing the average values for each partition band.
+ * @param {Number} i_nCurrPartitionIdx The current partition index.
+ * @param {Array} i_aSliderPartitionIdxs The array of slider partition window indexes.
+ * @param {MeanStorage} i_meanStorage The current mean storage instance.
  */
-function generateAverageMap(partitionedSpectrogram) {
-    const nNumWindows = partitionedSpectrogram.length;
-    const nNumPartitions = partitionedSpectrogram[0].length;
+function computeSliderMean(i_nCurrPartitionIdx, i_aSliderPartitionIdxs, i_meanStorage) {
+    return i_aSliderPartitionIdxs.reduce((acc, i_nCurrSliderIdx) => {
+        const nCurrCellMean = i_meanStorage.getCellMean(i_nCurrSliderIdx, i_nCurrPartitionIdx);
 
-    const aParitionRange = [...Array(nNumPartitions).keys()];
-    // For each parition band calculate the average value in all the windows
-    const aAverageMap = aParitionRange.reduce((acc, i_nCurrPartition) => {
-        const aWindowsRange = [...Array(nNumWindows).keys()];
-
-        const nCurrPartitionAverage = aWindowsRange.reduce((acc, i_nCurrWindow) => {
-            return acc + partitionedSpectrogram[i_nCurrWindow][i_nCurrPartition];
-        }, 0) / nNumWindows;
-
-        return [...acc, nCurrPartitionAverage];
-    }, []);
-
-    return aAverageMap;
-}
-
-// /**
-//  * Filters the given partitioned spectrogram data and reduces it to binary values.
-//  * 
-//  * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
-//  * @param {Number} fingerprintThresholdMultiplier The threshold multiplier for the fingerprint acceptance qualifier.
-//  * @return {Array} Returns an array of Uint8Arrays.
-//  */
-// function filterAndBinarize(partitionedSpectrogram, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
-//     // Get the average map
-//     const aAverageMap = generateAverageMap(partitionedSpectrogram);
-
-//     const nNumPartitions = partitionedSpectrogram[0].length;
-
-//     // Compute the fingerprint
-//     const aFingerprint = partitionedSpectrogram.map((i_aCurrPartition) => {
-//         return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
-//             const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
-//             const nCurrAverageVal = aAverageMap[i_nCurrPartition];
-
-//             const bPassThreshold = nCurrFreqVal > nCurrAverageVal * fingerprintThresholdMultiplier;
-//             return (bPassThreshold) ? 1 : 0;
-//         });
-//     });
-    
-//     return aFingerprint;
-// }
-
-// TODO: filterSpectrogram and binarizeSpectrogram should be merged into one function and just return both at the same time
-// ...this avoids running two passes over the data.
-
-/**
- * Filters the given partitioned spectrogram data.
- * 
- * @param {Array} spectrogramData The spectrogram data (an array of Uint8Arrays).
- * @param {Number} fingerprintThresholdMultiplier The threshold multiplier for the fingerprint acceptance qualifier.
- * @return {Array} Returns an array of Uint8Arrays.
- */
-function filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
-    // Get the average map
-    const aAverageMap = generateAverageMap(spectrogramData);
-
-    const nNumPartitions = spectrogramData[0].length;
-
-    // Filter the spectrogram
-    const aFingerprint = spectrogramData.map((i_aCurrPartition) => {
-        return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
-            const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
-            const nCurrAverageVal = aAverageMap[i_nCurrPartition];
-
-            const bPassThreshold = nCurrFreqVal > nCurrAverageVal * fingerprintThresholdMultiplier;
-            return (bPassThreshold) ? nCurrFreqVal : 0;
-        });
-    });
-    
-    return aFingerprint;
+        return acc + nCurrCellMean;
+    }, 0) / i_aSliderPartitionIdxs.length;
 }
 
 /**
- * Binarizes a filtered spectrogram (aka generates the fingerprint).
+ * Computes the standard deviation of the given slider window.
  * 
- * @param {Array} partitionedSpectrogram The partitioned spectrogram data (array of Unit8Arrays).
- * @return {Array} Returns an array of Uint8Arrays with a value of either 0 or 1.
+ * @param {Array} i_aSpectrogramData The spectrogram data (an array of Uint8Arrays).
+ * @param {Number} i_nCurrPartitionIdx The current partition index.
+ * @param {Array} i_aSliderPartitionIdxs The array of slider partition window indexes.
+ * @param {Number} i_nSliderMean The mean of the current slider window.
+ * @param {Array} i_aPartitionRanges The computed parition ranges.
  */
-function binarizeSpectrogram(partitionedSpectrogram) {
-    const nNumPartitions = partitionedSpectrogram[0].length;
+function computeSliderStandardDeviation(i_aSpectrogramData, i_nCurrPartitionIdx, i_aSliderPartitionIdxs, i_nSliderMean, i_aPartitionRanges) {
+    const aCurrPartitionRange = i_aPartitionRanges[i_nCurrPartitionIdx];
+    const nPartitionStartIdx = aCurrPartitionRange[0];
+    const nPartitionEndIdx = aCurrPartitionRange[1];
+    const nCurrPartitionSize = aCurrPartitionRange[1] - aCurrPartitionRange[0];
 
-    // Binarize the spectrogram
-    const aBinarized = partitionedSpectrogram.map((i_aCurrPartition) => {
-        return (new Uint8Array(nNumPartitions)).map((_, i_nCurrPartition) => {
-            const nCurrFreqVal = i_aCurrPartition[i_nCurrPartition];
+    const nPartitionFreqNum = nCurrPartitionSize * i_aSliderPartitionIdxs.length;
 
-            return (nCurrFreqVal > 0) ? 1 : 0;
-        });
-    });
+    // Iterate each slider partition
+    const nSliderStandardDeviation = Math.sqrt(i_aSliderPartitionIdxs.reduce((acc, i_nCurrSliderIdx) => {
+        const u8CurrWindow = i_aSpectrogramData[i_nCurrSliderIdx];
+        const u8CurrPartitionSlice = u8CurrWindow.slice(nPartitionStartIdx, nPartitionEndIdx);
 
-    return aBinarized;
+        // Iterate each frequency data point in the current partition slice
+        const nSigmaSubEvaluation = u8CurrPartitionSlice.reduce((acc, i_nFreqData) => {
+            const nVal = Math.pow(i_nFreqData + i_nSliderMean, 2);
+
+            return acc + nVal;
+        }, 0);
+
+        return acc + nSigmaSubEvaluation;
+    }, 0) / (nPartitionFreqNum - 1));
+
+    return nSliderStandardDeviation;
 }
 
 /**
@@ -193,26 +187,68 @@ function binarizeSpectrogram(partitionedSpectrogram) {
  */
 export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS.FINGERPRINT_PARITION_AMOUNT, FFTSize = CONSTANTS.FFT_SIZE, partitionCurve = CONSTANTS.FINGERPRINT_PARITIION_CURVE, fingerprintThresholdMultiplier = CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER) {
     // Get the parition ranges
-    const aParitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
+    const aPartitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
 
-    const aFilteredSpectrogram = filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier);
-    
-    // Compute the partitioned spectrogram
-    const aParitionedSpectrogram = computeParitionedSpectrogram(spectrogramData, aParitionRanges);
+    // Initialize the mean storage class
+    const meanStorage = new MeanStorage(spectrogramData, aPartitionRanges);
 
-    // const aFilteredSpectrogram = filterSpectrogram(spectrogramData, fingerprintThresholdMultiplier);
+    const nNumWindows = spectrogramData.length;
+    const nNumPartitions = aPartitionRanges.length;
 
-    // Filter the partitioned spectrogram and reduce to binary values, thus getting the fingerprint
-    // const aFingerprint = filterAndBinarize(aParitionedSpectrogram, fingerprintThresholdMultiplier);
+    const aFingerprint = Array(nNumWindows).fill(0).map((_, nCurrWindowIdx) => {
+        const u8CurrWindow = new Uint8Array(nNumPartitions).map((_, nCurrPartitionIdx) => {
+            const aCurrPartitionRange = aPartitionRanges[nCurrPartitionIdx];
+            const nPartitionStartIdx = aCurrPartitionRange[0];
+            const nPartitionEndIdx = aCurrPartitionRange[1];
+            const nCurrPartitionSize = aCurrPartitionRange[1] - aCurrPartitionRange[0];
 
-    const aFingerprint = binarizeSpectrogram(aParitionedSpectrogram);
+            const nSliderStartIdx = Math.max(0, nCurrWindowIdx - CONSTANTS.FINGERPRINT_SLIDER_WIDTH);
+            const nSliderEndIdx = Math.min(nNumWindows, nCurrWindowIdx + CONSTANTS.FINGERPRINT_SLIDER_WIDTH + 1);
+            const aSliderPartitionIdxs = __range(nSliderStartIdx, nSliderEndIdx);
 
-    // return aFingerprint;
+            // console.log("Slider partition indexes", aSliderPartitionIdxs);
 
-    return {
-        filteredSpectrogram: aFilteredSpectrogram,
-        fingerprint: aFingerprint,
-    };
+            // Compute the average frequency value of the entire slider
+            const nSliderMean = computeSliderMean(nCurrPartitionIdx, aSliderPartitionIdxs, meanStorage);
+
+            // Compute the standard deviation of the slider
+            const nSliderStandardDeviation = computeSliderStandardDeviation(spectrogramData, nCurrPartitionIdx, aSliderPartitionIdxs, nSliderMean, aPartitionRanges);
+
+            // console.log(`(${nCurrWindowIdx}, ${nCurrPartitionIdx}): sliderMean=${nSliderMean} sliderStandardDeviation=${nSliderStandardDeviation}`);
+
+            // TODO: compute the current cell of the fingerprint
+
+            // Iterate through each frequency band in the current cell
+            const u8CurrWindow = spectrogramData[nCurrWindowIdx];
+            const u8CurrCellFreqs = u8CurrWindow.slice(nPartitionStartIdx, nPartitionEndIdx);
+
+            const nTotalCellFreqs = nCurrPartitionSize;
+            const nNeededFreqPassAmount = nTotalCellFreqs * CONSTANTS.FINGERPRINT_FREQ_PASS_PERCENT;
+
+            let nPassedFreqs = 0;
+
+            for (let i = 0; i < u8CurrCellFreqs.length; i++) {
+                const nCurrFreqValue = u8CurrCellFreqs[i];
+
+                // Frequency passes
+                const bFreqPasses = nCurrFreqValue > (nSliderMean + nSliderStandardDeviation) * CONSTANTS.FINGERPRINT_THRESHOLD_MULTIPLIER;
+                if (bFreqPasses) {
+                    nPassedFreqs++;
+                }
+
+                // The entire cell passes
+                if (nPassedFreqs >= nNeededFreqPassAmount) {
+                    return 1;
+                }
+            }
+
+            // Cell does not pass
+            return 0;
+        });
+        return u8CurrWindow;
+    });
+
+    return aFingerprint;
 }
 
 export default {

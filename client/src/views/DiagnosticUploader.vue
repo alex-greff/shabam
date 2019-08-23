@@ -13,12 +13,6 @@
             :partition-ranges="partitionRanges"
         />
 
-        <spectrogram-chart
-            title="Filtered Audio Spectrogram"
-            :data="filteredData"
-            :partition-ranges="partitionRanges"
-        />
-
         <fingerprint-chart 
             title="Generated Audio Fingerprint"
             :data="fingerprintData"
@@ -43,7 +37,6 @@ export default {
             recorder: null,
             running: false,
             spectrogramData: [],
-            filteredData: [],
             fingerprintData: [],
             partitionRanges: AudioFingerprint.computePartitionRanges(),
         }
@@ -84,8 +77,7 @@ export default {
 
                 console.log("Partition ranges", this.partitionRanges);
 
-                const { fingerprint: fingerprintData, filteredSpectrogram }= AudioFingerprint.generateFingerprint(spectrogramData);
-                this.filteredData = filteredSpectrogram;
+                const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
                 this.fingerprintData = fingerprintData;
                 console.log("Fingerprint", fingerprintData);
             }
