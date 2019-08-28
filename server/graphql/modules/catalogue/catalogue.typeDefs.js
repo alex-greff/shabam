@@ -19,6 +19,12 @@ module.exports = gql`
         metaData: TrackMetaData!
     }
 
+    """Supporting information for the raw compressed fingerprint data"""
+    input FingerprintInfo {
+        windowAmount: Int!
+        partitionAmount: Int!
+    }
+
     """Input data for adding a new track."""
     input TrackAddInputData {
         title: String!
@@ -42,8 +48,8 @@ module.exports = gql`
         getAllTracks: [Track!]!
         """Get a specific track in the catalogue."""
         getTrack(title: String!, artists: [String!]!): Track!
-        """Searches for a track based off the given PCM audio signal data."""
-        searchTrack(audioFile: Upload!): Track
+        """Searches for a track based off the given fingerprint of the audio data."""
+        searchTrack(fingerprint: Upload!, fingerprintInfo: FingerprintInfo!): Track
     }
 
     type Mutation {

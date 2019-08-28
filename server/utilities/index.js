@@ -3,6 +3,10 @@ const clone = require("lodash.clone");
 const toPath = require("lodash.topath");
 const db = require("../db");
 
+const FingerprintUtilities = require("./fingerprint");
+
+exports.FingerprintUtilities = FingerprintUtilities;
+
 /**
  * Sets up a chain of middlewares. 
  * Returns a function that takes a resolver which is called at the end of the middleware chain.

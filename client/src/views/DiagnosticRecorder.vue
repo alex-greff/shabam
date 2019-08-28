@@ -22,6 +22,7 @@
 
 <script>
 import { AudioRecorder, AudioUtilities, AudioFingerprint } from "@/audio";
+import AudioIdentification from "@/identification";
 import CONSTANTS from "@/constants";
 import SpectrogramChart from "@/components/charts/Spectrogram.vue";
 import FingerprintChart from "@/components/charts/Fingerprint.vue";
@@ -91,6 +92,15 @@ export default {
             const fingerprintData = AudioFingerprint.generateFingerprint(spectrogramData);
             this.fingerprintData = fingerprintData;
             console.log("Fingerprint", fingerprintData);
+
+            // Send to the server
+            console.log("Sending fingerprint to server");
+            
+            await AudioIdentification.identifyTrack(fingerprintData);
+
+
+
+
 
             // Bunch of extra code, will remove eventually
 

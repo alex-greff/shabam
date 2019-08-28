@@ -3,6 +3,8 @@ const workers = require("../../../workers");
 const fs = require("fs");
 const FormData = require("form-data");
 const axios = require("axios");
+const stream = require("stream");
+const { FingerprintUtilities } = require("../../../utilities");
 
 module.exports = {
     getAllTracks: async (root, args, context) => {
@@ -16,39 +18,42 @@ module.exports = {
 
         return trackData;
     },
-    searchTrack: async (root, { audioFile }, context) => {
+    searchTrack: async (root, { fingerprint, fingerprintInfo }, context) => {
         // TODO: implement
-        console.log("AUDIO FILE", audioFile);
+        const fingerprintRes = await fingerprint;
 
-        const audioFileRes = await audioFile;
+        const { filename, mimetype, createReadStream } = await fingerprint;
 
-        console.log("AUDIO FILE RES", audioFileRes);
+        const fingerprintBuffer = await FingerprintUtilities.getFingerprintBuffer(createReadStream);
+        let fingerprintData = FingerprintUtilities.getFingerprintData(fingerprintBuffer);
 
-        const { filename, mimetype, createReadStream } = await audioFile;
+        // TODO: remove
+        console.log("Fingerprint Buffer", fingerprintBuffer);
+        console.log("Fingerprint Data", fingerprintData);
 
-        const audioReadStream = createReadStream();
+        // TODO: remove
+        // Writes to a test file
+        // NOTE: make sure "temp" directory exists
+        // const writeStream = fs.createWriteStream("./temp/something");
+        // fingerprintReadStream.pipe(writeStream);
 
+        // TODO: remove
         // Writes to a test file
         // NOTE: make sure "temp" directory exists
         // const writeStream = fs.createWriteStream("./temp/test.wav");
         // audioReadStream.pipe(writeStream);
 
-        // let buffer = Buffer.from(stream);
-        // let arrayBuffer = Float32Array.from(buffer).buffer;
+        // TODO: remove
+        // const fd = new FormData();
+        // fd.append("audioFile", audioReadStream, filename);
 
-        // console.log("ARRAY BUFFER", arrayBuffer);
+        // const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint", fd, {
+        //     headers: { ...fd.getHeaders() }
+        // });
 
-        // console.log("FILENAME", filename, "MIMETYPE", mimetype);
-        // console.log("STREAM", audioReadStream);
+        // console.log("FINGERPRINT WORKER RES", res.data);
 
-        const fd = new FormData();
-        fd.append("audioFile", audioReadStream, filename);
-
-        const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint", fd, {
-            headers: { ...fd.getHeaders() }
-        });
-
-        console.log("FINGERPRINT WORKER RES", res.data);
+        // TODO: send fingerprintReadStream to the identification worker
 
         return null;
     },

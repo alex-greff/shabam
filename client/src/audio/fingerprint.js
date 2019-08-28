@@ -206,17 +206,15 @@ export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS
             const nSliderEndIdx = Math.min(nNumWindows, nCurrWindowIdx + CONSTANTS.FINGERPRINT_SLIDER_WIDTH + 1);
             const aSliderPartitionIdxs = __range(nSliderStartIdx, nSliderEndIdx);
 
-            // console.log("Slider partition indexes", aSliderPartitionIdxs);
-
             // Compute the average frequency value of the entire slider
             const nSliderMean = computeSliderMean(nCurrPartitionIdx, aSliderPartitionIdxs, meanStorage);
 
             // Compute the standard deviation of the slider
             const nSliderStandardDeviation = computeSliderStandardDeviation(spectrogramData, nCurrPartitionIdx, aSliderPartitionIdxs, nSliderMean, aPartitionRanges);
 
+            // TODO: remove debug statements
+            // console.log("Slider partition indexes", aSliderPartitionIdxs);
             // console.log(`(${nCurrWindowIdx}, ${nCurrPartitionIdx}): sliderMean=${nSliderMean} sliderStandardDeviation=${nSliderStandardDeviation}`);
-
-            // TODO: compute the current cell of the fingerprint
 
             // Iterate through each frequency band in the current cell
             const u8CurrWindow = spectrogramData[nCurrWindowIdx];
@@ -251,7 +249,42 @@ export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS
     return aFingerprint;
 }
 
+/**
+ * Condenses the fingerprint data down to a single Uint8Array. 
+ * Note: the number of windows and partition ranges are lost and must be accounted for externally.
+ * 
+ * @param {Array} i_aFingerprint The fingerprint data (an array of Uint8Arrays).
+ */
+export function condenseFingerprint(i_aFingerprint) {
+    if (i_aFingerprint.length <= 0) {
+        return {
+            windowNumber: 0,
+            partitionNumber: 0,
+            condensedData: new Uint8Array(0)
+        }
+    }
+
+    const nNumWindows = i_aFingerprint.length;
+    const nNumPartitions = i_aFingerprint[0].length;
+
+    const u8Condensed = new Uint8Array(nNumWindows * nNumPartitions);
+
+    for (let nCurrWindow = 0; nCurrWindow < nNumWindows; nCurrWindow++) {
+        for (let nCurrPartition = 0; nCurrPartition < nNumPartitions; nCurrPartition++) {
+            const nCurrIdx = (nCurrWindow * nNumPartitions) + nCurrPartition; // Row access formula
+            u8Condensed[nCurrIdx] = i_aFingerprint[nCurrWindow][nCurrPartition];
+        }
+    }
+
+    return { 
+        windowNumber: nNumWindows,
+        partitionNumber: nNumPartitions,
+        condensedData: u8Condensed 
+    };
+}
+
 export default {
     computePartitionRanges,
     generateFingerprint,
+    condenseFingerprint,
 };

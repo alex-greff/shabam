@@ -289,4 +289,4 @@ exports.deleteTrack = (i_nTrackID) => {
     `;  
 
     return db.query(query, `${i_nTrackID}`);
-}
+};
