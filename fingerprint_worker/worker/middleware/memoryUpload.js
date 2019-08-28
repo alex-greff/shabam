@@ -1,6 +1,6 @@
 const multer = require("multer");
 
-module.exports = (i_oFileFields, ...i_aMimeTypes) => {
+module.exports = (i_aFileFields, ...i_aMimeTypes) => {
     const storage = multer.memoryStorage();
 
     const fileFilter = (req, file, cb) => {
@@ -26,5 +26,5 @@ module.exports = (i_oFileFields, ...i_aMimeTypes) => {
         fileFilter
     });
 
-    return upload.fields(i_oFileFields);
+    return upload.fields(i_aFileFields);
 };
