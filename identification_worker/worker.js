@@ -1,19 +1,19 @@
 const express = require("express");
 const worker = express();
 const bodyParser = require("body-parser");
-const expressValidator = require("express-validator");
+const morgan = require("morgan");
 const cors = require("cors");
 const KEYS = require("./keys");
 
 // Import routes
 const rootRoute = require("./worker/routes");
 
+// Setup morgan (http request logger)
+worker.use(morgan("dev"));
+
 // Setup body parser
 worker.use(bodyParser.urlencoded({ extended: false }));
 worker.use(bodyParser.json());
-
-// Setup express-validator
-worker.use(expressValidator());
 
 // Setup CORS headers
 const corsOptions = {
