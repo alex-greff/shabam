@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPTS_DIR="$(pwd)/scripts"
 
 # Include the common env script
-source "$SCRIPT_DIR/common_env.sh"
+source "$SCRIPTS_DIR/common_env.sh"
 
 # Build the container
 docker build -t $IMAGE_NAME .

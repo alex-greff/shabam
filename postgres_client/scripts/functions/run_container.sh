@@ -4,12 +4,15 @@
 
 # Parameters:
 # $1: The command to run
+# $2: The database name
 run_container() {
     CURR_DIR=`pwd`
-    SCRIPT_DIR="$(dirname "$0")"
+    SCRIPTS_DIR="$(pwd)/scripts"
 
     # Include the common env script
-    source "$SCRIPT_DIR/common_env.sh"
+    source "$SCRIPTS_DIR/common_env.sh"
+
+    generate_set_container_env $2
 
     # Start command
     read -d '' START_CMD << EOF

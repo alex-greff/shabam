@@ -5,5 +5,14 @@
 # Name of the postgres client image
 IMAGE_NAME="alexgreff/postgres_client"
 
-# Container environment variable setter command
-SET_CONTAINER_ENV="export PG_HOST=$SHABAM_PG_HOST PG_DATABASE=$SHABAM_PG_DATABASE PG_PORT=$SHABAM_PG_PORT PG_USER=$SHABAM_PG_USER PG_PASSWORD=$SHABAM_PG_PASSWORD"
+# Generates the $SET_CONTAINER_ENV environment variable that can be used to set PG env variables in containers
+# Parameters:
+# $1: The database name
+generate_set_container_env() {
+    HOST_ENV_NAME=`echo "SHABAM_PG_$1_HOST"`;
+    DATABASE_ENV_NAME=`echo "SHABAM_PG_$1_DATABASE"`;
+    USER_ENV_NAME=`echo "SHABAM_PG_$1_USER"`;
+    PASSWORD_ENV_NAME=`echo "SHABAM_PG_$1_PASSWORD"`;
+
+    SET_CONTAINER_ENV="export PG_HOST=${!HOST_ENV_NAME} PG_DATABASE=${!DATABASE_ENV_NAME} PG_USER=${!USER_ENV_NAME} PG_PASSWORD=${!PASSWORD_ENV_NAME}";
+}

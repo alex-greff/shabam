@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPTS_DIR="/app/scripts"
 
 # Include the run_query function
-source "$SCRIPT_DIR/functions/run_query.sh"
+source "$SCRIPTS_DIR/functions/run_query.sh"
 
 # TODO: get this working
 
