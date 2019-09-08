@@ -19,6 +19,8 @@ module.exports = {
         return trackData;
     },
     searchTrack: async (root, { fingerprint, fingerprintInfo }, context) => {
+        const { windowAmount, partitionAmount } = fingerprintInfo;
+
         // TODO: implement
         const fingerprintRes = await fingerprint;
 
@@ -30,6 +32,7 @@ module.exports = {
         // TODO: remove
         console.log("Fingerprint Buffer", fingerprintBuffer);
         console.log("Fingerprint Data", fingerprintData);
+        console.log("Fingerprint Info", fingerprintInfo);
 
         // TODO: remove
         // Writes to a test file
@@ -53,7 +56,22 @@ module.exports = {
 
         // console.log("FINGERPRINT WORKER RES", res.data);
 
-        // TODO: send fingerprintReadStream to the identification worker
+        
+        const fingerprintReadStream = createReadStream();
+
+        // Send fingerprintReadStream to the identification worker
+
+        const fd = new FormData();
+        fd.append("fingerprint", fingerprintReadStream, filename);
+        fd.append("windowAmount", windowAmount);
+        fd.append("partitionAmount", partitionAmount);
+
+        const endpointURL = "http://identification_worker:5002/identify_fingerprint";
+        const res = await axios.post(endpointURL, fd, {
+            headers: { ...fd.getHeaders() }
+        });
+
+        console.log("IDENTIFICATION WORKER RES", res.data);
 
         return null;
     },
