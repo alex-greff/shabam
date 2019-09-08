@@ -25,11 +25,11 @@ services:
             - /app/node_modules
             - ./server:/app
         environment:
-            - "PG_HOST=${SHABAM_PG_HOST}"
-            - "PG_DATABASE=${SHABAM_PG_DATABASE}"
-            - "PG_USER=${SHABAM_PG_USER}"
-            - "PG_PORT=${SHABAM_PG_PORT}"
-            - "PG_PASSWORD=${SHABAM_PG_PASSWORD}"
+            - "PG_MAIN_HOST=${SHABAM_PG_MAIN_HOST}"
+            - "PG_MAIN_DATABASE=${SHABAM_PG_MAIN_DATABASE}"
+            - "PG_MAIN_USER=${SHABAM_PG_MAIN_USER}"
+            - "PG_MAIN_PORT=${SHABAM_PG_MAIN_PORT}"
+            - "PG_MAIN_PASSWORD=${SHABAM_PG_MAIN_PASSWORD}"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
         networks:
