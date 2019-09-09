@@ -11,5 +11,5 @@ A container for automating the configuration of the postgres server. The contain
 ## Commands
 
 * `$ npm run start:it--[database-name]` Starts an interactive shell terminal in the container configured for the given database.
-* `$ npm run start:psql----[database-name]` Starts an interactive psql terminal instance connected to the given database.
+* `$ npm run start:psql--[database-name]` Starts an interactive psql terminal instance connected to the given database.
 * `$ npm run exec:init-schema--[database-name]` Initializes the postgres schema. **NOTE** this will wipe all the data in the given database so use with care!
