@@ -12,7 +12,7 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     -- user table
     /*DROP TABLE IF EXISTS user_account CASCADE;
     CREATE TABLE user_account(
-        user_account_id serial PRIMARY KEY,
+        user_account_id SERIAL PRIMARY KEY,
         password CHAR (60) NOT NULL,
         email VARCHAR (355) UNIQUE NOT NULL,
         role VARCHAR (50) NOT NULL,
@@ -23,11 +23,11 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     -- track table
     DROP TABLE IF EXISTS track CASCADE;
     CREATE TABLE track(
-        track_id serial PRIMARY KEY,
-        upload_user_account_id integer NOT NULL,
+        track_id SERIAL PRIMARY KEY,
+        upload_user_account_id INTEGER NOT NULL,
         title VARCHAR (50) UNIQUE NOT NULL,
         cover_image VARCHAR (355) NOT NULL,
-        fingerprint_data json NOT NULL,
+        address_database INTEGER NOT NULL,
         release_date TIMESTAMP,
         created_date TIMESTAMP NOT NULL,
         update_date TIMESTAMP NOT NULL,
@@ -39,8 +39,8 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     -- search table
     DROP TABLE IF EXISTS search CASCADE;
     CREATE TABLE search(
-        user_account_id integer NOT NULL,
-        track_id integer NOT NULL,
+        user_account_id INTEGER NOT NULL,
+        track_id INTEGER NOT NULL,
         PRIMARY KEY (user_account_id, track_id),
         CONSTRAINT search_user_account_id_fkey FOREIGN KEY (user_account_id)
             REFERENCES user_account (user_account_id) MATCH SIMPLE
@@ -54,15 +54,15 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     -- artist table
     DROP TABLE IF EXISTS artist CASCADE;
     CREATE TABLE artist(
-        artist_id serial PRIMARY KEY,
+        artist_id SERIAL PRIMARY KEY,
         name VARCHAR (50) UNIQUE NOT NULL
     );
 
     -- track_artist table
     DROP TABLE IF EXISTS track_artist CASCADE;
     CREATE TABLE track_artist(
-        track_id integer NOT NULL,
-        artist_id integer NOT NULL,
+        track_id INTEGER NOT NULL,
+        artist_id INTEGER NOT NULL,
         PRIMARY KEY (track_id, artist_id),
         CONSTRAINT track_artist_track_id_fkey FOREIGN KEY (track_id)
             REFERENCES track (track_id) MATCH SIMPLE
