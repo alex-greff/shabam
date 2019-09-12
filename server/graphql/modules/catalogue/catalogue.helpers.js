@@ -1,4 +1,5 @@
 const db = require("../../../db/main");
+const address_db = require("../../../db/address");
 
 exports.findTrackID = async (i_sTitle, i_aArtists) => {
     const query = `
@@ -283,10 +284,27 @@ exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverIm
     }
 };
 
-exports.deleteTrack = (i_nTrackID) => {
-    const query = `
-        DELETE FROM track AS t WHERE t.track_id = %L
-    `;  
+exports.deleteTrack = async (i_nTrackID) => {
+    // Get the address database where the track address data are stored
+    const addressDbQuery = `
+        SELECT address_database FROM track AS t WHERE t.track_id = %L 
+    `;
 
-    return db.query(query, `${i_nTrackID}`);
+    const addressDbRes = await db.query(addressDbQuery, `${i_nTrackID}`);
+
+    if (addressDbRes.rowCount <= 0) {
+        throw `Track '${i_nTrackID}' not found`;
+    }
+
+    const addressDb = addressDbRes.rows[0].address_database;
+
+    // TODO: delete addresses related to this track ID
+
+    // Delete the track from the track table
+
+    const deleteQuery = `
+        DELETE FROM track AS t WHERE t.track_id = %L
+    `;
+
+    return db.query(deleteQuery, `${i_nTrackID}`);
 };
