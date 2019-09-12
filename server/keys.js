@@ -14,5 +14,5 @@ module.exports = {
         PG_ADDRESS_PORT: process.env[`PG_ADR${addressNum}_PORT`],
         PG_ADDRESS_PASSWORD: process.env[`PG_ADR${addressNum}_PASSWORD`],
     }),
-    ADDRESS_DB_COUNT: process.env.ADDRESS_DB_COUNT
+    ADDRESS_DB_COUNT: (process.env.ADDRESS_DB_COUNT) ? parseInt(process.env.ADDRESS_DB_COUNT) : 0
 };
