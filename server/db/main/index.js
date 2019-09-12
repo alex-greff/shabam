@@ -11,7 +11,7 @@ const pool = new Pool({
     port: KEYS.PG_MAIN_PORT,
     ssl: true
 });
-pool.on("error", () => console.error("Lost PG connection"));
+pool.on("error", () => console.error("Lost PG main database connection"));
 
 /**
  * Queries the postgres database. Uses pg-escape internally so function calls should be formatted accordingly.
