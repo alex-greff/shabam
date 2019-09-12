@@ -50,7 +50,7 @@ services:
             - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
             - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
             # Misc
-            - "PG_ADDRESS_DB_COUNT=3"
+            - "ADDRESS_DB_COUNT=3"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
         networks:
