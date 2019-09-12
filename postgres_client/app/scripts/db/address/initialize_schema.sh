@@ -16,8 +16,4 @@ read -d '' SCHEMA_INIT_QUERY << EOF
     );
 EOF
 
-# TODO: uncomment
-# run_query "$SCHEMA_INIT_QUERY"
-
-# TODO: complete
-echo "TODO: complete address database schema initialization"
+run_query "$SCHEMA_INIT_QUERY"
