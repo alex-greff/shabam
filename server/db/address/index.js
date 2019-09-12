@@ -49,14 +49,9 @@ exports.query = (addressNum, text, ...params) => {
 /**
  * Returns the string of the computed and properly escaped query.
  * 
- * @param {Number} addressNum The number of the address database.
  * @param {String} text The query text.
  * @param  {...String} params The list of parameters.
  */
-exports.getComputedQuery = (addressNum, text, ...params) => {
-    const addressPool = addressPools[addressNum];
-
-    _checkAddressPool(addressPool);
-
+exports.getComputedQuery = (text, ...params) => {
     return escape(text, ...params);
 };
