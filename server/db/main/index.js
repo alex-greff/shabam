@@ -1,4 +1,4 @@
-const KEYS = require("../keys");
+const KEYS = require("../../keys");
 const { Pool } = require("pg");
 const escape = require("pg-escape");
 
