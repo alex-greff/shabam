@@ -25,11 +25,32 @@ services:
             - /app/node_modules
             - ./server:/app
         environment:
+            # Main DB
             - "PG_MAIN_HOST=${SHABAM_PG_MAIN_HOST}"
             - "PG_MAIN_DATABASE=${SHABAM_PG_MAIN_DATABASE}"
             - "PG_MAIN_USER=${SHABAM_PG_MAIN_USER}"
             - "PG_MAIN_PORT=${SHABAM_PG_MAIN_PORT}"
             - "PG_MAIN_PASSWORD=${SHABAM_PG_MAIN_PASSWORD}"
+            # Address 1 DB
+            - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
+            - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
+            - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
+            - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
+            - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
+            # Address 2 DB
+            - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
+            - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
+            - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
+            - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
+            - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
+            # Address 3 DB
+            - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
+            - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
+            - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
+            - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
+            - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
+            # Misc
+            - "PG_ADDRESS_DB_COUNT=3"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
         networks:
