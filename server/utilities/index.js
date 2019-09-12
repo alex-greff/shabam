@@ -1,7 +1,7 @@
 const KEYS = require("../keys");
 const clone = require("lodash.clone");
 const toPath = require("lodash.topath");
-const db = require("../db");
+const db = require("../db/main");
 
 const FingerprintUtilities = require("./fingerprint");
 

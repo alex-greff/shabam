@@ -1,4 +1,4 @@
-const db = require("../../../db");
+const db = require("../../../db/main");
 
 exports.findTrackID = async (i_sTitle, i_aArtists) => {
     const query = `

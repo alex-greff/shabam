@@ -1,6 +1,6 @@
 const canDoAllOperations = require("../../roles/role-check");
 const Utilities = require("../../utilities");
-const db = require("../../db");
+const db = require("../../db/main");
 const userHelpers = require("../modules/user/user.helpers");
 
 const DEFAULT_CHECK_CONFIG = {

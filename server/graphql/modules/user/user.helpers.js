@@ -1,4 +1,4 @@
-const db = require("../../../db");
+const db = require("../../../db/main");
 
 exports.getUser = async (i_sEmail) => {
     const query = `
