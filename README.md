@@ -19,6 +19,7 @@ A list of all the base npm commands available. When running prefix all the follo
 * `api`: the Node JS backend container
 * `fingerprint-worker`: the fingerprint worker container
 * `identification-worker`: the track identification worker container
+* `records-worker`: the track records search worker
 
 ### Commands
 

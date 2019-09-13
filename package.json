@@ -12,6 +12,7 @@
         "rm-services:dev-client": "docker-compose -f docker-compose-dev.yml rm -f client",
         "rm-services:dev-fingerprint-worker": "docker-compose -f docker-compose-dev.yml rm -f fingerprint_worker",
         "rm-services:dev-identification-worker": "docker-compose -f docker-compose-dev.yml rm -f identification_worker",
+        "rm-services:dev-records-worker": "docker-compose -f docker-compose-dev.yml rm -f records_worker",
         "start:dev": "docker-compose -f docker-compose-dev.yml up --build",
         "start:dev--recreate": "npm run rm-services:dev && npm run start:dev",
         "start:dev--recreate-proxy": "npm run rm-services:dev-proxy && npm run start:dev",
@@ -25,6 +26,7 @@
         "restart:dev-client": "docker-compose -f docker-compose-dev.yml restart client",
         "restart:dev-fingerprint-worker": "docker-compose -f docker-compose-dev.yml restart fingerprint-worker",
         "restart:dev-identification-worker": "docker-compose -f docker-compose-dev.yml restart identification-worker",
+        "restart:dev-records-worker": "docker-compose -f docker-compose-dev.yml restart records-worker",
         
         "rm-services:dev-prod": "docker-compose -f docker-compose-dev-prod.yml rm proxy api client fingerprint_worker identification_worker",
         "rm-services:dev-prod-proxy": "docker-compose -f docker-compose-dev-prod.yml rm -f proxy",
@@ -32,6 +34,7 @@
         "rm-services:dev-prod-client": "docker-compose -f docker-compose-dev-prod.yml rm -f client",
         "rm-services:dev-prod-fingerprint-worker": "docker-compose -f docker-compose-dev-prod.yml rm -f fingerprint_worker",
         "rm-services:dev-prod-identification-worker": "docker-compose -f docker-compose-dev-prod.yml rm -f identification_worker",
+        "rm-services:dev-prod-records-worker": "docker-compose -f docker-compose-dev-prod.yml rm -f records_worker",
         "start:dev-prod": "docker-compose -f docker-compose-dev-prod.yml up --build",
         "start:dev-prod--recreate": "npm run rm-services:dev-prod && npm run start:dev-prod",
         "start:dev-prod--recreate-proxy": "npm run rm-services:dev-prod-proxy && npm run start:dev-prod",
@@ -39,18 +42,21 @@
         "start:dev-prod-recreate-api": "npm run rm-services:dev-prod-api && npm run start:dev-prod",
         "start:dev-prod-recreate-fingerprint-worker": "npm run rm-services:dev-prod-fingerprint-worker && npm run start:dev-prod",
         "start:dev-prod-recreate-identification-worker": "npm run rm-services:dev-prod-identification-worker && npm run start:dev-prod",
+        "start:dev-prod-recreate-records-worker": "npm run rm-services:dev-prod-records-worker && npm run start:dev-prod",
         "restart:dev-prod": "docker-compose -f docker-compose-dev-prod.yml restart proxy api client fingerprint_worker identification_worker",
         "restart:dev-prod-proxy": "docker-compose -f docker-compose-dev-prod.yml restart proxy",
         "restart:dev-prod-api": "docker-compose -f docker-compose-dev-prod.yml restart api",
         "restart:dev-prod-client": "docker-compose -f docker-compose-dev-prod.yml restart client",
         "restart:dev-prod-fingerprint-worker": "docker-compose -f docker-compose-dev-prod.yml restart fingerprint-worker",
         "restart:dev-prod-identification-worker": "docker-compose -f docker-compose-dev-prod.yml restart identification-worker",
+        "restart:dev-prod-records-worker": "docker-compose -f docker-compose-dev-prod.yml restart records-worker",
 
         "shell:proxy": "docker exec -it shabam_proxy sh",
         "shell:client": "docker exec -it shabam_client bash",
         "shell:api": "docker exec -it shabam_api sh",
         "shell:fingerprint-worker": "docker exec -it shabam_fingerprint_worker sh",
-        "shell:identification-worker": "docker exec -it shabam_identification_worker sh"
+        "shell:identification-worker": "docker exec -it shabam_identification_worker sh",
+        "shell:records-worker": "docker exec -it shabam_records_worker sh"
     },
     "repository": {
         "type": "git",
