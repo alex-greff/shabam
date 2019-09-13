@@ -93,5 +93,37 @@ services:
             - app-network
         hostname: identification_worker
         container_name: shabam_identification_worker
+    address_worker:
+        build:
+            dockerfile: dev.Dockerfile
+            context: ./records_worker
+        volumes:
+            - /app/node_modules
+            - ./records_worker:/app
+        environment:
+            # Address 1 DB
+            - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
+            - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
+            - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
+            - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
+            - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
+            # Address 2 DB
+            - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
+            - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
+            - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
+            - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
+            - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
+            # Address 3 DB
+            - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
+            - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
+            - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
+            - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
+            - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
+            # Misc
+            - "ADDRESS_DB_COUNT=3"
+        networks:
+            - app-network
+        hostname: records_worker
+        container_name: shabam_records_worker
 networks:
     app-network:
