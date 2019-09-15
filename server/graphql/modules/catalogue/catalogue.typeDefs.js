@@ -15,7 +15,7 @@ module.exports = gql`
     """A track object."""
     type Track {
         _id: ID!
-        fingerprintData: String! # TODO: make fingerprint type
+        addressDatabase: Int
         metaData: TrackMetaData!
     }
 
@@ -47,7 +47,7 @@ module.exports = gql`
         """Get all tracks in the catalogue."""
         getAllTracks: [Track!]!
         """Get a specific track in the catalogue."""
-        getTrack(title: String!, artists: [String!]!): Track!
+        getTrack(trackID: Int!): Track!
         """Searches for a track based off the given fingerprint of the audio data."""
         searchTrack(fingerprint: Upload!, fingerprintInfo: FingerprintInfo!): Track
     }
@@ -55,9 +55,12 @@ module.exports = gql`
     type Mutation {
         """Add a new track to the catalogue."""
         addTrack(trackData: TrackAddInputData): Track!
+        # addTrack(fingerprint: Upload!, trackData: TrackAddInputData): Track! # TODO: use this addTrack
         """Edit an existing track in the catalogue."""
-        editTrack(title: String!, artists: [String!]!, updatedTrackData: TrackEditInputData): Track!
+        editTrack(trackID: Int!, updatedTrackData: TrackEditInputData): Track!
         """Remove a track from the catalogue."""
-        deleteTrack(title: String!, artists: [String!]!): Boolean
+        deleteTrack(trackID: Int!): Boolean
+        """Recomputes the track's stored fingerprint"""
+        recomputeTrackFingerprint(trackID: Int!, fingerprint: Upload!): Boolean
     }
 `;

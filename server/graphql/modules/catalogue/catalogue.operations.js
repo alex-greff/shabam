@@ -12,8 +12,7 @@ module.exports = {
 
         return allTracks;
     },
-    getTrack: async (root, { title, artists }, context) => {
-        const trackID = await helpers.findTrackID(title, artists);
+    getTrack: async (root, { trackID }, context) => {
         const trackData = await helpers.getTrack(trackID);
 
         return trackData;
@@ -56,7 +55,6 @@ module.exports = {
 
         // console.log("FINGERPRINT WORKER RES", res.data);
 
-        
         const fingerprintReadStream = createReadStream();
 
         // Send fingerprintReadStream to the identification worker
@@ -75,44 +73,43 @@ module.exports = {
 
         return null;
     },
-    addTrack: async (root, { trackData }, context) => {
+    addTrack: async (root, { fingerprint, trackData }, context) => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
-        const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
 
-        await helpers.addTrack(title, artists, coverImage, releaseDate, email, fingerprintData);
+        // TODO: remote
+        // const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
+        // const fingerprintData = { "something": "foo" };
+
+        const trackID = await helpers.addTrack(title, artists, coverImage, releaseDate, email);
+
+        // TODO: send fingerprint to a records worker to compute and add it to a records database
+        // Get the records database number that it was added to
+        // Update the current tracks address_database attribute with it
 
         // Get the track that was just added
-        const trackID = await helpers.findTrackID(title, artists);
         const dbTrackData = await helpers.getTrack(trackID);
 
         return dbTrackData;
     },
-    editTrack: async (root, { title, artists, updatedTrackData }, context) => {
+    editTrack: async (root, { trackID, updatedTrackData }, context) => {
         const { title: newTitle, artists: newArtists, 
-            coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData; // TODO: get updated signal data
-
-        let newFingerprintData;
-        // Generate a new fingerprint, if needed
-        const generateNewFingerprint = false; // TODO: check if new signal data is passed in
-        if (generateNewFingerprint) {
-            newFingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in updated signal data
-        }
-
-        const trackID = await helpers.findTrackID(title, artists);
+            coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData;
 
         // Update the track
-        await helpers.editTrack(trackID, newTitle, newArtists, newCoverImage, newReleaseDate, newFingerprintData);
+        await helpers.editTrack(trackID, newTitle, newArtists, newCoverImage, newReleaseDate);
 
         // Get the updated track
         const dbTrackData = await helpers.getTrack(trackID);
 
         return dbTrackData;
     },
-    deleteTrack: async (root, { title, artists }, context) => {
-        const trackID = await helpers.findTrackID(title, artists);
+    deleteTrack: async (root, { trackID }, context) => {
         await helpers.deleteTrack(trackID);
 
         return true;
+    },
+    recomputeTrackFingerprint: async (root, { trackID, fingerprint }, context) => {
+        // TODO: complete
     }
 };

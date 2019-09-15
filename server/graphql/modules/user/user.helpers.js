@@ -2,7 +2,7 @@ const db = require("../../../db/main");
 
 exports.getUser = async (i_sEmail) => {
     const query = `
-        SELECT * FROM user_account AS ua WHERE ua.email = %L
+        SELECT * FROM user_account AS ua WHERE ua.email = $1
     `;
 
     const res = await db.query(query, i_sEmail);
@@ -16,10 +16,10 @@ exports.getUser = async (i_sEmail) => {
 
 exports.getUserByID = async (i_nID) => {
     const query = `
-        SELECT * FROM user_account AS ua WHERE ua.user_account_id = %L
+        SELECT * FROM user_account AS ua WHERE ua.user_account_id = $1
     `;
 
-    const res = await db.query(query, `${i_nID}`);
+    const res = await db.query(query, i_nID);
 
     if (res.rowCount > 0) {
         return res.rows[0];
@@ -29,21 +29,20 @@ exports.getUserByID = async (i_nID) => {
 };
 
 exports.updateLastUserLogin = async (i_sEmail, i_sLastLoginTime = null) => {
-    const sLastLoginTimestamp = (i_sLastLoginTime) ? 
-        `to_timestamp(${new Date(i_sLastLoginTime).getTime()} / 1000.0)` : `to_timestamp(${Date.now()} / 1000.0)`;
+    const dLastLogin = (i_sLastLoginTime) ? new Date(i_sLastLoginTime) : new Date();
 
     const query = `
-        UPDATE user_account AS ua SET last_login = %s WHERE ua.email = %L
+        UPDATE user_account AS ua SET last_login = $1 WHERE ua.email = $2
     `;
 
-    const res = await db.query(query, sLastLoginTimestamp, i_sEmail);
+    const res = await db.query(query, dLastLogin, i_sEmail);
 
     return (res.rowCount > 0);
 };
 
 exports.userExists = async (i_sEmail) => {
     const query = `
-        SELECT email FROM user_account AS ua WHERE ua.email = %L
+        SELECT email FROM user_account AS ua WHERE ua.email = $1
     `;
 
     const res = await db.query(query, i_sEmail);
@@ -52,21 +51,20 @@ exports.userExists = async (i_sEmail) => {
 };
 
 exports.createNewUser = async (i_sEmail, i_sPasswordHash, i_sRole, i_sSignupDate = null) => {
-    const sSignupTimestamp = (i_sSignupDate) ? 
-        `to_timestamp(${new Date(i_sSignupDate).getTime()} / 1000.0)` : `to_timestamp(${Date.now()} / 1000.0)`;
+    const dSignupDate = (i_sSignupDate) ? new Date(i_sSignupDate) : new Date();
 
     const oNewUser = {
         email: i_sEmail,
         password: i_sPasswordHash,
         role: i_sRole,
-        signup_date: sSignupTimestamp
+        signup_date: dSignupDate
     };
 
     const sNewUserKeys = Object.keys(oNewUser);
     const sNewUserValues = Object.values(oNewUser);
 
     const query = `
-        INSERT INTO user_account(%I, %I, %I, %I) VALUES (%L, %L, %L, %s)
+        INSERT INTO user_account($1, $2, $3, $4) VALUES ($5, $6, $7, $8)
     `;
 
     await db.query(query, ...sNewUserKeys, ...sNewUserValues);
@@ -76,14 +74,18 @@ exports.editUser = async (i_sEmail, i_sNewEmail, i_sNewPasswordHash) => {
     const aUpdateArgs = [];
     let sUpdateListString = "";
 
+    const nCurrParam = 1;
+
     if (i_sNewEmail) {
-        sUpdateListString += ", email = %L";
+        sUpdateListString += `, email = $${nCurrParam}`;
         aUpdateArgs.push(i_sNewEmail);
+        nCurrParam++;
     }
 
     if (i_sNewPasswordHash) {
-        sUpdateListString += ", password = %L";
+        sUpdateListString += `, password = $${nCurrParam}`;
         aUpdateArgs.push(i_sNewPasswordHash);
+        nCurrParam++;
     }
 
     if (aUpdateArgs.length <= 0) {
@@ -94,7 +96,7 @@ exports.editUser = async (i_sEmail, i_sNewEmail, i_sNewPasswordHash) => {
     sUpdateListString = sUpdateListString.substring(2);
 
     const query = `
-        UPDATE user_account AS ua SET ${sUpdateListString} WHERE ua.email = %L
+        UPDATE user_account AS ua SET ${sUpdateListString} WHERE ua.email = $${nCurrParam}
     `;
 
     await db.query(query, ...aUpdateArgs, i_sEmail);
@@ -102,7 +104,7 @@ exports.editUser = async (i_sEmail, i_sNewEmail, i_sNewPasswordHash) => {
 
 exports.editUserRole = async (i_sEmail, i_sNewRole) => {
     const query = `
-        UPDATE user_account AS ua SET role = %L WHERE ua.email = %L
+        UPDATE user_account AS ua SET role = $1 WHERE ua.email = $2
     `;
 
     await db.query(query, i_sNewRole, i_sEmail);
@@ -110,7 +112,7 @@ exports.editUserRole = async (i_sEmail, i_sNewRole) => {
 
 exports.deleteUser = async (i_sEmail) => {
     const query = `
-        DELETE FROM user_account AS ua WHERE ua.email = %L
+        DELETE FROM user_account AS ua WHERE ua.email = $1
     `;
 
     await db.query(query, i_sEmail);

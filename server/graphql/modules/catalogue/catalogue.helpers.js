@@ -1,29 +1,35 @@
 const db = require("../../../db/main");
 const address_db = require("../../../db/address");
 
-exports.findTrackID = async (i_sTitle, i_aArtists) => {
-    const query = `
-        SELECT n3.track_id FROM
-            (SELECT n1.artist_id, n1.artist_name, n1.track_id, n2.title as track_title FROM 
-                (SELECT a.artist_id, a.name as artist_name, ta.track_id 
-                    FROM artist AS a INNER JOIN track_artist AS ta ON a.artist_id = ta.artist_id) n1 
-                INNER JOIN 
-                    (SELECT track_id, title FROM track) n2
-                ON (n1.track_id = n2.track_id)
-            ) n3
-            WHERE n3.track_title = %L AND n3.artist_name IN (%s) LIMIT 1;
-    `;
+async function _addArtistsToTrack(i_nTrackID, i_aArtists) {
+    // Add the artist list for the track
+    for (let sArtist of i_aArtists) {
+        // Add artist to artist table, if missing
+        const addToArtistTableQuery = `
+            INSERT INTO artist (name)
+                SELECT CAST($1 AS VARCHAR)
+            WHERE NOT EXISTS (
+                SELECT 1 FROM artist WHERE artist.name = $1
+            )
+        `;
 
-    const sArtistList = i_aArtists.map(sArtist => `'${sArtist}'`).join(", ");
+        await db.query(addToArtistTableQuery, sArtist);
 
-    const res = await db.query(query, i_sTitle, sArtistList);
+        // Add the track's artist list to the databse
+        const addTrackArtistRelationQuery = `
+            INSERT INTO track_artist 
+                (track_id, artist_id)
+            VALUES
+                (
+                    ( SELECT track_id FROM track WHERE track.track_id = $1 ),
+                    ( SELECT artist_id FROM artist WHERE artist.name = $2 )
+                );
+        `;
 
-    if (res.rowCount <= 0) {
-        throw new Error("Track not found");
+        await db.query(addTrackArtistRelationQuery, i_nTrackID, sArtist);
     }
+}
 
-    return res.rows[0].track_id;
-};
 
 exports.getTrack = async (i_nTrackID) => {
     const trackQuery = `
@@ -31,26 +37,27 @@ exports.getTrack = async (i_nTrackID) => {
             (SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
                 INNER JOIN user_account AS ua 
                 ON t.upload_user_account_id = ua.user_account_id) n1 
-            WHERE n1.track_id = %L
-    `
-
-    const resTrack = await db.query(trackQuery, `${i_nTrackID}`);
-
-    if (resTrack.rowCount <= 0) {
-        throw new Error("Track not found");
-    }
+            WHERE n1.track_id = $1
+    `;
 
     const artistsQuery = `
         SELECT a.name as artist_name FROM 
             track_artist AS ta
             INNER JOIN artist as a
             ON ta.artist_id = a.artist_id 
-            WHERE ta.track_id = %L
+            WHERE ta.track_id = $1
     `;
 
-    const resArtists = await db.query(artistsQuery, `${i_nTrackID}`);
-    let aArtists = [];
+    const dbQueries = [db.query(trackQuery, i_nTrackID), db.query(artistsQuery, i_nTrackID)];
 
+    const [resTrack, resArtists] = await Promise.all(dbQueries);
+
+    if (resTrack.rowCount <= 0) {
+        throw new Error("Track not found");
+    }
+
+    // Construct artists list
+    let aArtists = [];
     if (resArtists.rowCount > 0) {
         aArtists = resArtists.rows.map(i_oCurrArtist => i_oCurrArtist.artist_name);
     }
@@ -60,7 +67,7 @@ exports.getTrack = async (i_nTrackID) => {
     // Construct and return track data
     return {
         _id: trackData.track_id,
-        fingerprintData: JSON.stringify(trackData.fingerprint_data), // TODO: remove the stringify
+        addressDatabase: trackData.address_database,
         metaData: {
             title: trackData.title,
             artists: trackData.artists,
@@ -114,7 +121,7 @@ exports.getAllTracks = async () => {
 
     const aAllTracks = aRawTrackData.map(oCurrRawTrackData => ({
         _id: oCurrRawTrackData.track_id,
-        fingerprintData: JSON.stringify(oCurrRawTrackData.fingerprint_data), // TODO: remove the stringify
+        addressDatabase: oCurrRawTrackData.address_database,
         metaData: {
             title: oCurrRawTrackData.title,
             artists: oCurrRawTrackData.artists,
@@ -129,97 +136,57 @@ exports.getAllTracks = async () => {
     return aAllTracks;
 };
 
-exports.addTrack = (i_sTitle, i_aArtists, i_sCoverImage, i_sReleaseDate, i_sEmail, i_oFingerprintData) => {
-    const query = `
-        DROP FUNCTION IF EXISTS insert_artist(artistName VARCHAR);
+exports.addTrack = async (i_sTitle, i_aArtists, i_sCoverImage, i_sReleaseDate, i_sEmail) => {
+    const dReleaseDate = new Date(i_sReleaseDate);
+    const dNow = new Date();
 
-        CREATE OR REPLACE FUNCTION insert_artist(artistName VARCHAR)
-            RETURNS INTEGER AS $$
-        DECLARE
-            artistID INTEGER;
-        BEGIN
-            IF EXISTS (SELECT 1 FROM artist WHERE artist.name = artistName) THEN
-                SELECT artist.artist_id INTO artistID FROM artist WHERE artist.name = artistName;
-            ELSE
-                INSERT INTO artist(name) VALUES (artistName) RETURNING artist_id INTO artistID;
-            END IF;
-
-            RETURN artistID;
-        END; $$ LANGUAGE plpgsql;
-
-        DROP FUNCTION IF EXISTS insert_artists(trackID INTEGER, artistNameArr VARCHAR[]);
-
-        CREATE OR REPLACE FUNCTION insert_artists(trackID INTEGER, artistNameArr VARCHAR[])
-            RETURNS VOID AS $$
-        DECLARE
-            -- artistNameArr VARCHAR[] := ARRAY['artist-1', 'artist-2'];
-            artistName VARCHAR;
-            currArtistID INTEGER;
-        BEGIN
-            FOREACH artistName IN ARRAY artistNameArr
-            LOOP
-                currArtistID := insert_artist(artistName);
-                INSERT INTO track_artist(track_id, artist_id) VALUES (trackID, currArtistID);
-            END LOOP;
-        END; $$ LANGUAGE plpgsql;
-
-        DO $$
-        DECLARE
-            trackID INTEGER;
-        BEGIN
-            WITH UA_TABLE AS (
-                SELECT user_account_id FROM user_account AS ua WHERE ua.email = %L
-            )
-            INSERT INTO track 
-                (title, cover_image, release_date, created_date, update_date,
-                fingerprint_data, upload_user_account_id)
-            SELECT 
-                %L, %L, %s, %s, %s, %L, UA_TABLE.user_account_id
-            FROM UA_TABLE
-            RETURNING track_id INTO trackID;
-
-            PERFORM insert_artists(trackID, ARRAY[%s]);
-        END $$;
+    const insertTrackQuery = `
+        INSERT INTO track
+            (title, cover_image, release_date, created_date, update_date, upload_user_account_id)
+        VALUES
+            ($2, $3, $4, $5, $5, ( SELECT user_account_id FROM user_account AS ua WHERE ua.email = $1 ))
+        RETURNING track_id;
     `;
 
-    const sReleaseDateTimestamp = `to_timestamp(${new Date(i_sReleaseDate).getTime()} / 1000.0)`;
-    const sNowTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
-    const sFingerprintData = JSON.stringify(i_oFingerprintData);
-    const sArtistList = i_aArtists.map(sArtist => `'${sArtist}'`).join(", ");
+    const insertTrackRes = await db.query(insertTrackQuery, i_sEmail, i_sTitle, i_sCoverImage, dReleaseDate, dNow);
 
-    return db.query(query, i_sEmail, i_sTitle, i_sCoverImage, sReleaseDateTimestamp, sNowTimestamp, sNowTimestamp, sFingerprintData, sArtistList);
+    const { track_id : trackID } = insertTrackRes.rows[0];
+
+    // Add the artist list to the database
+    await _addArtistsToTrack(trackID, i_aArtists);
+
+    return trackID;
 };
 
-exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverImage, i_sNewReleaseDate, i_oNewFingerprintData) => {
-    const sNowTimestamp = `to_timestamp(${Date.now()} / 1000.0)`;
+exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverImage, i_sNewReleaseDate) => {
+    const dNow = new Date();
 
     const aUpdateArgs = [];
-    let sUpdateListString = "update_date = %s";
+    let sUpdateListString = `update_date = $1`;
+
+    let nCurrParam = 2;
 
     if (i_sNewTitle) {
-        sUpdateListString += ", title = %L";
+        sUpdateListString += `, title = $${nCurrParam}`;
         aUpdateArgs.push(i_sNewTitle);
+        nCurrParam++;
     }
 
     if (i_sNewCoverImage) {
-        sUpdateListString += ", cover_image = %L";
+        sUpdateListString += `, cover_image = $${nCurrParam}`;
         aUpdateArgs.push(i_sNewCoverImage);
+        nCurrParam++;
     }
 
     if (i_sNewReleaseDate) {
-        const sReleaseDateTimestamp = `to_timestamp(${new Date(i_sNewReleaseDate).getTime()} / 1000.0)`;
-        sUpdateListString += ", release_date = %s";
-        aUpdateArgs.push(sReleaseDateTimestamp);
-    }
-
-    if (i_oNewFingerprintData) {
-        const sFingerprintData = JSON.stringify(i_oFingerprintData);
-        sUpdateListString += ", fingerprint_data = %s";
-        aUpdateArgs.push(sFingerprintData);
+        const dReleaseDate = new Date(i_sNewReleaseDate);
+        sUpdateListString += `, release_date = $${nCurrParam}`;
+        aUpdateArgs.push(dReleaseDate);
+        nCurrParam++;
     }
 
     let trackQuery = `
-        UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = %L
+        UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = $${nCurrParam}
     `;
 
     const bUpdateArtists = i_aNewArtists && i_aNewArtists.length > 0;
@@ -230,67 +197,29 @@ exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverIm
     }
 
     // Add the track query to the list of promises to run
-    await db.query(trackQuery, sNowTimestamp, ...aUpdateArgs, `${i_nTrackID}`)
+    await db.query(trackQuery, dNow, ...aUpdateArgs, i_nTrackID);
 
     // Make the update artists query, if needed
     if (bUpdateArtists) {
-        const artistQuery = `
-            DROP FUNCTION IF EXISTS insert_artist(artistName VARCHAR);
-
-            CREATE OR REPLACE FUNCTION insert_artist(artistName VARCHAR)
-                RETURNS INTEGER AS $$
-            DECLARE
-                artistID INTEGER;
-            BEGIN
-                IF EXISTS (SELECT 1 FROM artist WHERE artist.name = artistName) THEN
-                    SELECT artist.artist_id INTO artistID FROM artist WHERE artist.name = artistName;
-                ELSE
-                    INSERT INTO artist(name) VALUES (artistName) RETURNING artist_id INTO artistID;
-                END IF;
-
-                RETURN artistID;
-            END; $$ LANGUAGE plpgsql;
-
-            DROP FUNCTION IF EXISTS insert_artists(trackID INTEGER, artistNameArr VARCHAR[]);
-
-            CREATE OR REPLACE FUNCTION insert_artists(trackID INTEGER, artistNameArr VARCHAR[])
-                RETURNS VOID AS $$
-            DECLARE
-                -- artistNameArr VARCHAR[] := ARRAY['artist-1', 'artist-2'];
-                artistName VARCHAR;
-                currArtistID INTEGER;
-            BEGIN
-                FOREACH artistName IN ARRAY artistNameArr
-                LOOP
-                    currArtistID := insert_artist(artistName);
-                    INSERT INTO track_artist(track_id, artist_id) VALUES (trackID, currArtistID);
-                END LOOP;
-            END; $$ LANGUAGE plpgsql;            
-
-            DO $$
-            DECLARE
-                trackID INTEGER := %L;
-            BEGIN
-                -- Remove any existing artists mapped to the track
-                DELETE FROM track_artist AS ta WHERE ta.track_id = trackID;
-                -- Add the updated artists in
-                PERFORM insert_artists(trackID, ARRAY[%s]);
-            END $$
+        // Remove the list of existing artists
+        const removeArtistsListQuery = `
+            DELETE FROM track_artist AS ta WHERE ta.track_id = $1;
         `;
 
-        const sArtistList = i_aNewArtists.map(sArtist => `'${sArtist}'`).join(", ");
+        await db.query(removeArtistsListQuery, i_nTrackID);
 
-        await db.query(artistQuery, `${i_nTrackID}`, sArtistList);
+        // Add in the new artist list
+        await _addArtistsToTrack(i_nTrackID, i_aNewArtists);
     }
 };
 
 exports.deleteTrack = async (i_nTrackID) => {
     // Get the address database where the track address data are stored
     const addressDbQuery = `
-        SELECT address_database FROM track AS t WHERE t.track_id = %L 
+        SELECT address_database FROM track AS t WHERE t.track_id = $1
     `;
 
-    const addressDbRes = await db.query(addressDbQuery, `${i_nTrackID}`);
+    const addressDbRes = await db.query(addressDbQuery, i_nTrackID);
 
     if (addressDbRes.rowCount <= 0) {
         throw `Track '${i_nTrackID}' not found`;
@@ -301,10 +230,9 @@ exports.deleteTrack = async (i_nTrackID) => {
     // TODO: delete addresses related to this track ID
 
     // Delete the track from the track table
-
     const deleteQuery = `
-        DELETE FROM track AS t WHERE t.track_id = %L
+        DELETE FROM track AS t WHERE t.track_id = $1
     `;
 
-    return db.query(deleteQuery, `${i_nTrackID}`);
+    return db.query(deleteQuery, i_nTrackID);
 };

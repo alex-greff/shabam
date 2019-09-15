@@ -178,3 +178,17 @@ exports.resolveAsBoolean = async (i_fnFunc, ...i_params) => {
         return false;
     }
 };
+
+/**
+ * Returns a string parameter list for database queries.
+ * 
+ * @param {Number} i_nLength The length of the parameter list.
+ * @param {Number} i_nStartParam The starting parameter number.
+ * @param {Boolean} i_nQuote Quote the items.
+ */
+exports.dbParamList = (i_nLength, i_nStartParam = 1, i_bQuote = false) => {
+    const aRange = [ ...Array(i_nLength).fill(0).keys() ];
+    const sWapperChar = (i_bQuote) ? "'" : "";
+
+    return aRange.map((_, idx) => `${sWapperChar}$${idx + i_nStartParam}${sWapperChar}`).join(",");
+}

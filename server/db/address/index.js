@@ -1,6 +1,5 @@
 const KEYS = require("../../keys");
 const { Pool } = require("pg");
-const escape = require("pg-escape");
 
 // Initialize address db connections
 const addressPools = {};
@@ -34,24 +33,13 @@ function _checkAddressPool(addressPool) {
  * Queries the given address database.
  * 
  * @param {Number} addressNum The number of the address database.
- * @param {String} text The query text.
+ * @param {String} queryText The query text.
  * @param  {...String} params The list of parameters.
  */
-exports.query = (addressNum, text, ...params) => {
+exports.query = (addressNum, queryText, ...params) => {
     const addressPool = addressPools[addressNum];
 
     _checkAddressPool(addressPool);
 
-    const sEscapedQuery = escape(text, ...params);
-    return pool.query(sEscapedQuery);
-};
-
-/**
- * Returns the string of the computed and properly escaped query.
- * 
- * @param {String} text The query text.
- * @param  {...String} params The list of parameters.
- */
-exports.getComputedQuery = (text, ...params) => {
-    return escape(text, ...params);
+    return pool.query(queryText, params);
 };
