@@ -27,7 +27,7 @@ read -d '' SCHEMA_INIT_QUERY << EOF
         upload_user_account_id INTEGER NOT NULL,
         title VARCHAR (50) UNIQUE NOT NULL,
         cover_image VARCHAR (355) NOT NULL,
-        address_database INTEGER NOT NULL,
+        address_database INTEGER,
         release_date TIMESTAMP,
         created_date TIMESTAMP NOT NULL,
         update_date TIMESTAMP NOT NULL,
