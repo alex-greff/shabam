@@ -8,7 +8,7 @@ Manages the track record sets as well as track record matching.
 
 **Search Address Database**
 
-Searches the given address database for the given track. If no address databases are specified then the single worker instance searches all address databases sequentially, else it searches the given address databases in the array.
+Searches the given address database for the given track. If no address databases are specified then the single worker instance searches all address databases sequentially, else it searches the given address databases in the array. Returns a map of all the matched couples and the number of matches for each one.
 
 * Endpoint: `POST [...]/records_worker/search_address_db`
     
@@ -17,6 +17,8 @@ Searches the given address database for the given track. If no address databases
     ```json
     {
         "addressDbNums": "Array of Integers (optional)",
+        "windowSize": "Integer (required)",
+        "partitionSize": "Integer (required)",
         "fingerprint": "Fingerprint ArrayBuffer (required)"
     }
     ```
@@ -32,6 +34,8 @@ Computes and adds the given track addresses from the provided fingerprint. If no
     ```json
     {
         "addressDbNum": "Integer (optional)",
+        "windowSize": "Integer (required)",
+        "partitionSize": "Integer (required)",
         "fingerprint": "Fingerprint ArrayBuffer (required)",
         "trackID": "Integer (required)"
     }
