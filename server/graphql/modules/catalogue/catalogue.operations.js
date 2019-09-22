@@ -61,8 +61,8 @@ module.exports = {
 
         const fd = new FormData();
         fd.append("fingerprint", fingerprintReadStream, filename);
-        fd.append("windowAmount", windowAmount);
-        fd.append("partitionAmount", partitionAmount);
+        fd.append("windowSize", windowAmount);
+        fd.append("partitionSize", partitionAmount);
 
         const endpointURL = "http://identification_worker:5002/identify_fingerprint";
         const res = await axios.post(endpointURL, fd, {
