@@ -1,6 +1,8 @@
 import axios from "axios";
 import { AudioFingerprint } from "@/audio";
 
+import SearchTrackQuery from "@/queries/SearchTrack.gql";
+
 /**
  * Sends the current fingerprint to the server for identification.
  * 
@@ -26,22 +28,7 @@ export async function identifyTrack(i_aFingerprint) {
     // Send fingerprint to the server
     try {
         const operations = {
-            query: `
-                query SearchTrack($fingerprint: Upload!, $fingerprintInfo: FingerprintInfo!) {
-                    searchTrack(fingerprint: $fingerprint, fingerprintInfo: $fingerprintInfo) {
-                        _id,
-                        metaData {
-                            title,
-                            artists,
-                            coverImage,
-                            uploaderEmail,
-                            releaseDate,
-                            createdDate,
-                            updatedDate
-                        }
-                    }
-                }
-            `,
+            query: SearchTrackQuery,
             variables: {
                 fingerprint: null,
                 fingerprintInfo: {

@@ -1,0 +1,14 @@
+query SearchTrack($fingerprint: Upload!, $fingerprintInfo: FingerprintInfo!) {
+    searchTrack(fingerprint: $fingerprint, fingerprintInfo: $fingerprintInfo) {
+        _id,
+        metaData {
+            title,
+            artists,
+            coverImage,
+            uploaderEmail,
+            releaseDate,
+            createdDate,
+            updatedDate
+        }
+    }
+}
