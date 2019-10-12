@@ -30,6 +30,12 @@ module.exports = {
                     test: /\.wasm$/,
                     type: "javascript/auto",
                     loader: "file-loader"
+                },
+                // Load graphql query files
+                {
+                    test: /\.(graphql|gql)$/,
+                    exclude: /node_modules/,
+                    loader: "raw-loader"
                 }
             ],
         },
