@@ -16,8 +16,8 @@ Attempts to identify the track in the given fingerprint. Will return the track I
 
     ```json
     {
-        "windowSize": "Integer (required)",
-        "partitionSize": "Integer (required)",
+        "windowAmount": "Integer (required)",
+        "partitionAmount": "Integer (required)",
         "fingerprint": "Fingerprint ArrayBuffer (required)",
     }
     ```

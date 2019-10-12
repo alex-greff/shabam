@@ -153,9 +153,9 @@ function computeSliderStandardDeviation(i_aSpectrogramData, i_nCurrPartitionIdx,
     const aCurrPartitionRange = i_aPartitionRanges[i_nCurrPartitionIdx];
     const nPartitionStartIdx = aCurrPartitionRange[0];
     const nPartitionEndIdx = aCurrPartitionRange[1];
-    const nCurrPartitionSize = aCurrPartitionRange[1] - aCurrPartitionRange[0];
+    const nCurrpartitionAmount = aCurrPartitionRange[1] - aCurrPartitionRange[0];
 
-    const nPartitionFreqNum = nCurrPartitionSize * i_aSliderPartitionIdxs.length;
+    const nPartitionFreqNum = nCurrpartitionAmount * i_aSliderPartitionIdxs.length;
 
     // Iterate each slider partition
     const nSliderStandardDeviation = Math.sqrt(i_aSliderPartitionIdxs.reduce((acc, i_nCurrSliderIdx) => {
@@ -200,7 +200,7 @@ export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS
             const aCurrPartitionRange = aPartitionRanges[nCurrPartitionIdx];
             const nPartitionStartIdx = aCurrPartitionRange[0];
             const nPartitionEndIdx = aCurrPartitionRange[1];
-            const nCurrPartitionSize = aCurrPartitionRange[1] - aCurrPartitionRange[0];
+            const nCurrpartitionAmount = aCurrPartitionRange[1] - aCurrPartitionRange[0];
 
             const nSliderStartIdx = Math.max(0, nCurrWindowIdx - CONSTANTS.FINGERPRINT_SLIDER_WIDTH);
             const nSliderEndIdx = Math.min(nNumWindows, nCurrWindowIdx + CONSTANTS.FINGERPRINT_SLIDER_WIDTH + 1);
@@ -220,7 +220,7 @@ export function generateFingerprint(spectrogramData, partitionAmount = CONSTANTS
             const u8CurrWindow = spectrogramData[nCurrWindowIdx];
             const u8CurrCellFreqs = u8CurrWindow.slice(nPartitionStartIdx, nPartitionEndIdx);
 
-            const nTotalCellFreqs = nCurrPartitionSize;
+            const nTotalCellFreqs = nCurrpartitionAmount;
             const nNeededFreqPassAmount = nTotalCellFreqs * CONSTANTS.FINGERPRINT_FREQ_PASS_PERCENT;
 
             let nPassedFreqs = 0;

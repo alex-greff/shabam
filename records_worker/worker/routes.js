@@ -38,4 +38,10 @@ router.delete("/delete_track_addresses",
     RootController.delete_track_addresses
 );
 
+router.post("/get_address_database", 
+    RootValidator.get_address_database,
+    validateResult,
+      RootController.get_address_database
+);
+
 module.exports = router;

@@ -12,3 +12,8 @@ exports.delete_track_addresses = async (req, res, next) => {
     // Send response
     res.status(200).json({ message: "TODO: implement"} );
 };
+
+exports.get_address_database = async (req, res, next) => {
+    // Send response
+    res.status(200).json({ message: "TODO: implement"} );
+};
