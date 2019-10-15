@@ -1,19 +1,12 @@
 #!/bin/bash
 
 SCRIPTS_DIR="/app/scripts"
+ADDRESS_DB_DIR="$SCRIPTS_DIR/db/address"
 
 # Include the run_query function
 source "$SCRIPTS_DIR/functions/run_query.sh"
 
-# Start command
-read -d '' SCHEMA_INIT_QUERY << EOF
-    -- address table
-    DROP TABLE IF EXISTS address CASCADE;
-    CREATE TABLE address(
-        address_id SERIAL PRIMARY KEY,
-        address_enc INTEGER NOT NULL,
-        couple_enc BIGINT NOT NULL
-    );
-EOF
+# Store initialize schema sql script
+SCHEMA_INIT_QUERY=`cat "$ADDRESS_DB_DIR/initialize_schema.pgsql"`
 
 run_query "$SCHEMA_INIT_QUERY"
