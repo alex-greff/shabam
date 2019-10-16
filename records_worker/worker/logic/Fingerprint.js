@@ -16,7 +16,7 @@ class Fingerprint {
 
         if (initData) {
             if (initData.length != this.numWindows * this.numPartitions) {
-                throw "Error: size of initial fingerprint data does not match expected size."
+                throw "Size of initial fingerprint data does not match expected size."
             }
 
             this.data = new Uint8Array(initData);
