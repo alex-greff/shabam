@@ -1,6 +1,6 @@
-module.exports = {
+export default {
     PRODUCTION: process.env.NODE_ENV === "production",
-    getAddressDbKeys: (addressNum) => ({
+    getAddressDbKeys: (addressNum: number) => ({
         PG_ADDRESS_HOST: process.env[`PG_ADR${addressNum}_HOST`],
         PG_ADDRESS_DATABASE: process.env[`PG_ADR${addressNum}_DATABASE`],
         PG_ADDRESS_USER: process.env[`PG_ADR${addressNum}_USER`],

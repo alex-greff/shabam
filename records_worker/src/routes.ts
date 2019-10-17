@@ -1,10 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const upload = require("./middleware/memoryUpload");
-const validateResult = require("./middleware/validateResult");
+import express, { Router } from "express";
+import upload from "./middleware/memoryUpload";
+import validateResult from "./middleware/validateResult";
 
-const RootValidator = require("./validators");
-const RootController = require("./controllers");
+import * as RootValidator from "./validators";
+import * as RootController from "./controllers";
+
+// const express = require("express");
+// const router = express.Router();
+// const upload = require("./middleware/memoryUpload");
+// const validateResult = require("./middleware/validateResult");
+
+// const RootValidator = require("./validators");
+// const RootController = require("./controllers");
+
+const router: Router = express.Router();
 
 // ----------------
 // --- Requests ---
@@ -44,4 +53,4 @@ router.post("/get_address_database",
       RootController.get_address_database
 );
 
-module.exports = router;
+export default router;

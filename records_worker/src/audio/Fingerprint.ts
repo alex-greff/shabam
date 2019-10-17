@@ -1,3 +1,9 @@
+interface Fingerprint {
+    numWindows: number,
+    numPartitions: number,
+    data: Uint8Array
+}
+
 /**
  * The class representation of a fingerprint. 
  * Provides a layer of abstraction from the fingerprint data array.
@@ -10,7 +16,7 @@ class Fingerprint {
      * @param {Number} numPartitions The number of partitions in the fingerprint (y-axis)
      * @param {Array} initData The initial data (if it exists)
      */
-    constructor(numWindows, numPartitions, initData = null) {
+    constructor(numWindows: number, numPartitions: number, initData?: number[]) {
         this.numWindows = numWindows;
         this.numPartitions = numPartitions;
 
@@ -32,7 +38,7 @@ class Fingerprint {
      * @param {Number} window The window index.
      * @param {Number} partition The partition index.
      */
-    get(window, partition) {
+    get(window: number, partition: number): number {
         const size = this.numWindows * this.numPartitions;
         const idx = (window * size) + partition;
 
@@ -46,7 +52,7 @@ class Fingerprint {
      * @param {Number} partition The partition index.
      * @param {Number} value The value of the fingerprint (0 or 1).
      */
-    set(window, partition, value) {
+    set(window: number, partition: number, value: number): void {
         const idx = (window * this.numPartitions) + partition;
 
         this.data[idx] = value;
@@ -57,7 +63,7 @@ class Fingerprint {
      * 
      * @param {Number} window The window index.
      */
-    getPartitionColumn(window) {
+    getPartitionColumn(window: number): Uint8Array {
         const startIdx = window * this.numPartitions;
         const endIdx = (window * this.numPartitions) + this.numPartitions;
 
@@ -69,11 +75,11 @@ class Fingerprint {
      * 
      * @param {Numner} partition The partition index.
      */
-    getWindowRow(partition) {
+    getWindowRow(partition: number): Uint8Array {
         const ret = new Uint8Array(this.numWindows);
 
         // Populate ret
-        for (let i = 0; i < ret.size; i++) {
+        for (let i = 0; i < ret.length; i++) {
             const dataIdx = (i * this.numPartitions) + partition;
 
             ret[i] = this.data[dataIdx];
@@ -88,13 +94,13 @@ class Fingerprint {
      * @param {Number} window The window index.
      * @param {Array} values The values for the parititon column.
      */
-    setPartitionColumn(window, values) {
+    setPartitionColumn(window: number, values: number[]): void {
         if (values.length != this.numPartitions) {
             throw "Invalid size of partition values array. Must match with number of partitions";
         }
 
         // Overwrite the data values in the partition column
-        for (let i = 0; i < values.size; i++){
+        for (let i = 0; i < values.length; i++){
             const dataIdx = (window * this.numPartitions) + i;
 
             this.data[dataIdx] = values[i];
@@ -107,13 +113,13 @@ class Fingerprint {
      * @param {Number} partition The partition index.
      * @param {Array} values The values for the window row.
      */
-    setWindowRow(partition, values) {
+    setWindowRow(partition: number, values: number[]): void {
         if (values.length != this.numWindows) {
             throw "Invalid size of window values array. Must match with number of windows";
         }
 
         // Overwrite the data values in the partition column
-        for (let i = 0; i < values.size; i++){
+        for (let i = 0; i < values.length; i++){
             const dataIdx = (i * this.numPartitions) + partition;
 
             this.data[dataIdx] = values[i];
@@ -123,9 +129,9 @@ class Fingerprint {
     /**
      * Returns a Uint8Array of the flattened fingerprint matrix.
      */
-    flatten() {
+    flatten(): Uint8Array {
         return new Uint8Array(this.data);
     }
 }
 
-module.exports = Fingerprint;
+export default Fingerprint;
