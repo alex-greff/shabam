@@ -93,7 +93,7 @@ services:
             - app-network
         hostname: identification_worker
         container_name: shabam_identification_worker
-    address_worker:
+    records_worker:
         build:
             dockerfile: dev.Dockerfile
             context: ./records_worker
