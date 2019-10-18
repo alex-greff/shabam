@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import multer, { Field, Options, Instance } from "multer";
-// const multer = require("multer");
 
 interface MulterCallback {
     (error: Error | null, acceptFile: boolean): void

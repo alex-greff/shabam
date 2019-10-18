@@ -5,14 +5,6 @@ import validateResult from "./middleware/validateResult";
 import * as RootValidator from "./validators";
 import * as RootController from "./controllers";
 
-// const express = require("express");
-// const router = express.Router();
-// const upload = require("./middleware/memoryUpload");
-// const validateResult = require("./middleware/validateResult");
-
-// const RootValidator = require("./validators");
-// const RootController = require("./controllers");
-
 const router: Router = express.Router();
 
 // ----------------

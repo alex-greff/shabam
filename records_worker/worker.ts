@@ -6,19 +6,10 @@ import cors, { CorsOptions } from "cors";
 import KEYS from "./keys";
 import HTTPError from "./src/error/HTTPError";
 
+// Import routes
 import rootRoute from "./src/routes";
 
-// const express = require("express");
-// const app = express();
-// const bodyParser = require("body-parser");
-// const morgan = require("morgan");
-// const cors = require("cors");
-// const KEYS = require("./keys");
-
 const app = express();
-
-// Import routes
-// const rootRoute = require("./src/routes");
 
 // Setup morgan (http request logger)
 app.use(morgan("dev"));

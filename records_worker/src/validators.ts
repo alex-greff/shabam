@@ -1,5 +1,4 @@
 import { check } from "express-validator";
-// const { check } = require("express-validator");
 
 export const search_address_db = [
     check("addressDbNum").optional().isInt(),

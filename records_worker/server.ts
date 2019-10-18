@@ -1,6 +1,3 @@
-// const http = require("http");
-// const worker = require("./worker");
-
 import * as http from "http";
 import worker from "./worker";
 
