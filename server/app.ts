@@ -1,14 +1,28 @@
-const express = require("express");
-const app = express();
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const { Pool } = require("pg");
-const graphqlHttp = require("express-graphql");
-const { graphqlUploadExpress } = require("graphql-upload");
-const KEYS = require("./keys");
+import express, { Request, Response, NextFunction } from "express";
+import morgan from "morgan";
+import cors, { CorsOptions } from "cors";
+import HTTPError from "./error/HTTPError";
+import bodyParser from "body-parser";
+import { Pool, PoolConfig } from "pg";
+import graphqlHttp from "express-graphql";
+const { graphqlUploadExpress } = require("graphql-upload"); // No types
+import KEYS from "./keys";
 
-const AppModule = require("./graphql/modules");
+import AppModule from "./graphql/modules";
+
+// const express = require("express");
+// const app = express();
+// const morgan = require("morgan");
+// const bodyParser = require("body-parser");
+// const cors = require("cors");
+// const { Pool } = require("pg");
+// const graphqlHttp = require("express-graphql");
+// const { graphqlUploadExpress } = require("graphql-upload");
+// const KEYS = require("./keys");
+
+const app = express();
+
+// const AppModule = require("./graphql/modules");
 
 // Postgress client connection setup
 const pgClient = new Pool({
@@ -38,7 +52,7 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 // Handle CORS preflight options request
-app.options(cors(corsOptions));
+app.options("*", cors(corsOptions));
 // Enable CORS
 app.use(cors(corsOptions));
 
@@ -57,14 +71,14 @@ app.use(
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
-app.use((req, res, next) => {
-    const error = new Error("Route not found");
+app.use((req: Request, res: Response, next: NextFunction) => {
+    const error = new HTTPError("Route not found");
     error.status = 404;
     next(error);
 });
 
 // Handle 500 errors
-app.use((error, req, res, next) => {
+app.use((error: HTTPError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.status || 500);
     res.json({
         error: {

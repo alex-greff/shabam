@@ -1,10 +1,10 @@
-const GraphQLModule = require("@graphql-modules/core").GraphQLModule;
+import { GraphQLModule } from "@graphql-modules/core";
 
 // Modules
 const CatalogueModule = require("./catalogue");
 const UserModule = require("./user");
 
-module.exports = new GraphQLModule({
+export default new GraphQLModule({
     imports: [
         CatalogueModule,
         UserModule

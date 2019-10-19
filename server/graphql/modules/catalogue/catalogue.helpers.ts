@@ -1,9 +1,10 @@
-const db = require("../../../db/main");
-const address_db = require("../../../db/address");
+import { Track } from ".";
+import db from "../../../db/main";
+import address_db from "../../../db/address";
 
-async function _addArtistsToTrack(i_nTrackID, i_aArtists) {
+async function _addArtistsToTrack(trackID: number, artists: string[]): Promise<void> {
     // Add the artist list for the track
-    for (let sArtist of i_aArtists) {
+    for (let artist of artists) {
         // Add artist to artist table, if missing
         const addToArtistTableQuery = `
             INSERT INTO artist (name)
@@ -13,7 +14,7 @@ async function _addArtistsToTrack(i_nTrackID, i_aArtists) {
             )
         `;
 
-        await db.query(addToArtistTableQuery, sArtist);
+        await db.query(addToArtistTableQuery, artist);
 
         // Add the track's artist list to the databse
         const addTrackArtistRelationQuery = `
@@ -26,12 +27,12 @@ async function _addArtistsToTrack(i_nTrackID, i_aArtists) {
                 );
         `;
 
-        await db.query(addTrackArtistRelationQuery, i_nTrackID, sArtist);
+        await db.query(addTrackArtistRelationQuery, trackID, artist);
     }
 }
 
 
-exports.getTrack = async (i_nTrackID) => {
+export async function getTrack(trackID: number): Promise<Track> {
     const trackQuery = `
         SELECT * FROM 
             (SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
@@ -48,7 +49,7 @@ exports.getTrack = async (i_nTrackID) => {
             WHERE ta.track_id = $1
     `;
 
-    const dbQueries = [db.query(trackQuery, i_nTrackID), db.query(artistsQuery, i_nTrackID)];
+    const dbQueries = [db.query(trackQuery, trackID), db.query(artistsQuery, trackID)];
 
     const [resTrack, resArtists] = await Promise.all(dbQueries);
 
@@ -80,7 +81,7 @@ exports.getTrack = async (i_nTrackID) => {
     }
 };
 
-exports.getAllTracks = async () => {
+export async function getAllTracks(): Promise<Track[]> {
     const allTracksQuery = `
         SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
             INNER JOIN user_account AS ua
@@ -119,7 +120,7 @@ exports.getAllTracks = async () => {
         artists: (trackToArtistsMap[oTrack.track_id]) ? [...trackToArtistsMap[oTrack.track_id]] : []
     }));
 
-    const aAllTracks = aRawTrackData.map(oCurrRawTrackData => ({
+    const allTracks = aRawTrackData.map(oCurrRawTrackData => ({
         _id: oCurrRawTrackData.track_id,
         addressDatabase: oCurrRawTrackData.address_database,
         metaData: {
@@ -133,11 +134,11 @@ exports.getAllTracks = async () => {
         }
     }));
 
-    return aAllTracks;
+    return allTracks;
 };
 
-exports.addTrack = async (i_sTitle, i_aArtists, i_sCoverImage, i_sReleaseDate, i_sEmail) => {
-    const dReleaseDate = new Date(i_sReleaseDate);
+export async function addTrack(title: string, artists: string[], coverImage: string, releaseDate: string, email: string): Promise<number> {
+    const dReleaseDate = new Date(releaseDate);
     const dNow = new Date();
 
     const insertTrackQuery = `
@@ -148,40 +149,40 @@ exports.addTrack = async (i_sTitle, i_aArtists, i_sCoverImage, i_sReleaseDate, i
         RETURNING track_id;
     `;
 
-    const insertTrackRes = await db.query(insertTrackQuery, i_sEmail, i_sTitle, i_sCoverImage, dReleaseDate, dNow);
+    const insertTrackRes = await db.query(insertTrackQuery, email, title, coverImage, dReleaseDate, dNow);
 
     const { track_id : trackID } = insertTrackRes.rows[0];
 
     // Add the artist list to the database
-    await _addArtistsToTrack(trackID, i_aArtists);
+    await _addArtistsToTrack(trackID, artists);
 
     return trackID;
 };
 
-exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverImage, i_sNewReleaseDate) => {
+export async function editTrack(trackID: number, newTitle?: string, newArtists?: string[], newCoverImage?: string, newRleaseDate?: string): Promise<void> {
     const dNow = new Date();
 
-    const aUpdateArgs = [];
+    const updateArgs = [];
     let sUpdateListString = `update_date = $1`;
 
     let nCurrParam = 2;
 
-    if (i_sNewTitle) {
+    if (newTitle) {
         sUpdateListString += `, title = $${nCurrParam}`;
-        aUpdateArgs.push(i_sNewTitle);
+        updateArgs.push(newTitle);
         nCurrParam++;
     }
 
-    if (i_sNewCoverImage) {
+    if (newCoverImage) {
         sUpdateListString += `, cover_image = $${nCurrParam}`;
-        aUpdateArgs.push(i_sNewCoverImage);
+        updateArgs.push(newCoverImage);
         nCurrParam++;
     }
 
-    if (i_sNewReleaseDate) {
-        const dReleaseDate = new Date(i_sNewReleaseDate);
+    if (newRleaseDate) {
+        const dReleaseDate = new Date(newRleaseDate);
         sUpdateListString += `, release_date = $${nCurrParam}`;
-        aUpdateArgs.push(dReleaseDate);
+        updateArgs.push(dReleaseDate);
         nCurrParam++;
     }
 
@@ -189,31 +190,31 @@ exports.editTrack = async (i_nTrackID, i_sNewTitle, i_aNewArtists, i_sNewCoverIm
         UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = $${nCurrParam}
     `;
 
-    const bUpdateArtists = i_aNewArtists && i_aNewArtists.length > 0;
+    const updateArtists = newArtists && newArtists.length > 0;
 
     // Check if no items are actually being updated
-    if (aUpdateArgs.length <= 0 && !bUpdateArtists) {
+    if (updateArgs.length <= 0 && !updateArtists) {
         throw new Error("Error updating track, at least one field must be provided to update");
     }
 
     // Add the track query to the list of promises to run
-    await db.query(trackQuery, dNow, ...aUpdateArgs, i_nTrackID);
+    await db.query(trackQuery, dNow, ...updateArgs, trackID);
 
     // Make the update artists query, if needed
-    if (bUpdateArtists) {
+    if (newArtists && newArtists.length > 0) {
         // Remove the list of existing artists
         const removeArtistsListQuery = `
             DELETE FROM track_artist AS ta WHERE ta.track_id = $1;
         `;
 
-        await db.query(removeArtistsListQuery, i_nTrackID);
+        await db.query(removeArtistsListQuery, trackID);
 
         // Add in the new artist list
-        await _addArtistsToTrack(i_nTrackID, i_aNewArtists);
+        await _addArtistsToTrack(trackID, newArtists);
     }
 };
 
-exports.deleteTrack = async (i_nTrackID) => {
+export async function deleteTrack(i_nTrackID: number): Promise<void> {
     // Get the address database where the track address data are stored
     const addressDbQuery = `
         SELECT address_database FROM track AS t WHERE t.track_id = $1
@@ -234,5 +235,5 @@ exports.deleteTrack = async (i_nTrackID) => {
         DELETE FROM track AS t WHERE t.track_id = $1
     `;
 
-    return db.query(deleteQuery, i_nTrackID);
+    await db.query(deleteQuery, i_nTrackID);
 };

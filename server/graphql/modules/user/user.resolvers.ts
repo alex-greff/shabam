@@ -4,6 +4,8 @@ const Utilities = require("../../../utilities");
 const injectUserData = require("../../middleware/userData");
 const permit = require("../../middleware/permission");
 
+// TODO: convert
+
 module.exports = {
     Query: {
         login: Utilities.middlewareChain()(UserOperations.login),

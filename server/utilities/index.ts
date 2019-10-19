@@ -1,11 +1,13 @@
-const KEYS = require("../keys");
-const clone = require("lodash.clone");
-const toPath = require("lodash.topath");
-const db = require("../db/main");
+import KEYS from "../keys";
+import clone from "lodash.clone";
+import toPath from "lodash.topath";
+import db from "../db/main";
+import * as FingerprintUtilitiesImport from "./fingerprint";
+import * as PromiseUtilitiesImport from "./promise";
+import { ResolverFn } from "@kamilkisiela/graphql-tools/dist/stitching/makeRemoteExecutableSchema";
 
-const FingerprintUtilities = require("./fingerprint");
-
-exports.FingerprintUtilities = FingerprintUtilities;
+export const FingerprintUtilities = FingerprintUtilitiesImport;
+export const PromiseUtilities = PromiseUtilitiesImport;
 
 /**
  * Sets up a chain of middlewares. 
@@ -13,14 +15,14 @@ exports.FingerprintUtilities = FingerprintUtilities;
  * 
  * @param {...Function} middlewares The middlewares to call.
  */
-exports.middlewareChain = (...middlewares) => {
+export const middlewareChain = (...middlewares: Function[]) => {
     /**
      * The construction function that takes the end-resolver
      * 
      * @param {*} resolver The resolver that is called.
      */
-    return (resolver) => {
-        return async (root, args, context) => {
+    return (resolver: ResolverFn) => {
+        return async (root: any, args: any, context: any) => {
             for (let i = 0; i < middlewares.length; i++) {
                 const currMiddleware = middlewares[i];
                 await currMiddleware(root, args, context);
@@ -34,7 +36,7 @@ exports.middlewareChain = (...middlewares) => {
 /**
  * Throws the standard authorization error.
  */
-exports.throwAuthorizationError = () => {
+export const throwAuthorizationError = () => {
     throw new Error("Authorization failed");
 };
 
@@ -44,28 +46,28 @@ exports.throwAuthorizationError = () => {
 // https://github.com/jaredpalmer/formik/blob/master/src/utils.ts
 
 /** @private is the given object a Function? */
-exports.isFunction = (obj) => typeof obj === 'function';
+export const isFunction = (obj: any) => typeof obj === 'function';
 
 /** @private is the given object an Object? */
-exports.isObject = (obj) => obj !== null && typeof obj === 'object';
+export const isObject = (obj: any) => obj !== null && typeof obj === 'object';
 
 /** @private is the given object an integer? */
-exports.isInteger = (obj) => Number.isInteger(obj);
+export const isInteger = (obj: any) => Number.isInteger(obj);
 
 /** @private is the given object a string? */
-exports.isString = (obj) => Object.prototype.toString.call(obj) === '[object String]';
+export const isString = (obj: any) => Object.prototype.toString.call(obj) === '[object String]';
 
 /** @private is the given object a NaN? */
 // eslint-disable-next-line no-self-compare
-exports.isNaN = (obj) => obj !== obj;
+export const isNaN = (obj: any) => obj !== obj;
 
 /** @private is the given object/value a promise? */
-exports.isPromise = (value) => isObject(value) && isFunction(value.then);
+export const isPromise = (value: any) => isObject(value) && isFunction(value.then);
 
 /**
  * Deeply get a value from an object via its path.
  */
-exports.getIn = (obj, key, def, p = 0) => {
+export const getIn = (obj: any, key: string | string[], def?: any, p: number = 0) => {
     const path = toPath(key);
     while (obj && p < path.length) {
         obj = obj[path[p++]];
@@ -97,7 +99,7 @@ exports.getIn = (obj, key, def, p = 0) => {
  * @see https://github.com/developit/linkstate
  * @see https://github.com/jaredpalmer/formik/pull/123
  */
-exports.setIn = (obj, path, value) => {
+export const setIn = (obj: any, path: string, value: any): any => {
     let res = clone(obj); // this keeps inheritance when obj is a class
     let resVal = res;
     let i = 0;
@@ -105,14 +107,14 @@ exports.setIn = (obj, path, value) => {
 
     for (; i < pathArray.length - 1; i++) {
         const currentPath = pathArray[i];
-        let currentObj = exports.getIn(obj, pathArray.slice(0, i + 1));
+        let currentObj = getIn(obj, pathArray.slice(0, i + 1));
 
         if (currentObj) {
             resVal = resVal[currentPath] = clone(currentObj);
         } else {
             const nextPath = pathArray[i + 1];
             resVal = resVal[currentPath] =
-                exports.isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
+                isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
         }
     }
 
@@ -141,7 +143,7 @@ exports.setIn = (obj, path, value) => {
  * 
  * @param {String} email The email.
  */
-exports.isEmail = (email) => {
+export const isEmail = (email: String): boolean => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 };
@@ -149,14 +151,14 @@ exports.isEmail = (email) => {
 /**
  * Takes a function and returns a promise that resolves if the function returns a truthy value and rejects if a falsey value.
  * 
- * @param {Function} i_fnFunc Function that returns a truthy or falsey.
- * @param {...Any} i_params Any parameters to pass in.
+ * @param {Function} func Function that returns a truthy or falsey.
+ * @param {...Any} params Any parameters to pass in.
  */
-exports.booleanResolver = (i_fnFunc, ...i_params) => {
+export const booleanResolver = (func: Function, ...params: any[]): Promise<void> => {
     return new Promise(async (resolve, reject) => {
-        const bRet = await i_fnFunc(...i_params);
+        const ret: any = await func(...params);
 
-        if (bRet) {
+        if (ret) {
             resolve();
         } else {
             reject();
@@ -167,12 +169,12 @@ exports.booleanResolver = (i_fnFunc, ...i_params) => {
 /**
  * Takes a function that returns a promise and returns true if the promise resolves and false if it rejects.
  * 
- * @param {Function} i_fnFunc A function that returns a promise.
- * @param {...Any} i_params Any parameters to pass in.
+ * @param {Function} func A function that returns a promise.
+ * @param {...Any} params Any parameters to pass in.
  */
-exports.resolveAsBoolean = async (i_fnFunc, ...i_params) => {
+export const resolveAsBoolean = async (func: Function, ...params: any[]): Promise<boolean> => {
     try {
-        await i_fnFunc(...i_params);
+        await func(...params);
         return true;
     } catch(err) {
         return false;
@@ -182,13 +184,13 @@ exports.resolveAsBoolean = async (i_fnFunc, ...i_params) => {
 /**
  * Returns a string parameter list for database queries.
  * 
- * @param {Number} i_nLength The length of the parameter list.
- * @param {Number} i_nStartParam The starting parameter number.
+ * @param {Number} length The length of the parameter list.
+ * @param {Number} startParam The starting parameter number.
  * @param {Boolean} i_nQuote Quote the items.
  */
-exports.dbParamList = (i_nLength, i_nStartParam = 1, i_bQuote = false) => {
-    const aRange = [ ...Array(i_nLength).fill(0).keys() ];
-    const sWapperChar = (i_bQuote) ? "'" : "";
+export const dbParamList = (length: number, startParam: number = 1, quote: boolean = false) => {
+    const range = [ ...Array(length).fill(0).keys() ];
+    const wrapperChar: string = (quote) ? "'" : "";
 
-    return aRange.map((_, idx) => `${sWapperChar}$${idx + i_nStartParam}${sWapperChar}`).join(",");
+    return range.map((_, idx) => `${wrapperChar}$${idx + startParam}${wrapperChar}`).join(",");
 }

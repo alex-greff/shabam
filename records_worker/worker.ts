@@ -1,5 +1,4 @@
-import { Router, Request, Response, NextFunction, RequestHandler } from "express";
-import express from "express";
+import express, { Router, Request, Response, NextFunction, RequestHandler } from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";

@@ -1,31 +1,65 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const Utilities = require("../../../utilities");
-const KEYS = require("../../../keys");
-const roles = require("../../../roles/roles");
-const helpers = require("./user.helpers");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import * as Utilities from "../../../utilities";
+import KEYS from "../../../keys";
+import roles from "../../../roles/roles";
+import * as helpers from "./user.helpers";
+
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const Utilities = require("../../../utilities");
+// const KEYS = require("../../../keys");
+// const roles = require("../../../roles/roles");
+// const helpers = require("./user.helpers");
 
 const DEFAULT_ROLE = "default";
 
-module.exports = {
-    login: async (root, { credentials }, context) => {
+interface UserCredentials {
+    email: string;
+    password: string;
+}
+
+interface LoginArgs {
+    credentials: UserCredentials;
+}
+
+interface SignupArgs {
+    credentials: UserCredentials;
+}
+
+interface EditUserArgs {
+    email: string;
+    updatedCredentials: UserCredentials;
+}
+
+interface EditUserRoleArgs {
+    email: string;
+    updatedRole: string;
+}
+
+interface RemoveUserArgs {
+    email: string;
+}
+
+export default {
+    login: async (root: any, { credentials }: LoginArgs, context: any) => {
         const { email, password } = credentials;
 
-        const oUser = await helpers.getUser(email);
+        const user = await helpers.getUser(email);
 
-        if (!oUser) {
-            Utilities.throwAuthorizationError();
+        if (!user) {
+            return Utilities.throwAuthorizationError();
         }
 
-        const sPasswordHash = oUser.password;
+        const passwordHash = user.password;
 
-        const bSamePassword = bcrypt.compareSync(password, sPasswordHash);
+        const samePassword = bcrypt.compareSync(password, passwordHash);
         // Password comparison failed
-        if (!bSamePassword) {
-            Utilities.throwAuthorizationError();
+        if (!samePassword) {
+            return Utilities.throwAuthorizationError();
         }
 
-        const { email: userEmail, role: userRole } = oUser;
+        const { email: userEmail, role: userRole } = user;
 
         // Generate token
         const oJWTPayload = {
@@ -35,23 +69,23 @@ module.exports = {
         const oJWTOptions = {
             expiresIn: KEYS.JWT_EXPIRE_TIME
         };
-        const sToken = jwt.sign(oJWTPayload, KEYS.JWT_SECRET, oJWTOptions);
+        const token = jwt.sign(oJWTPayload, KEYS.JWT_SECRET, oJWTOptions);
 
         // Update last login to now
         await helpers.updateLastUserLogin(email);
 
         // Return the token
         return {
-            token: sToken
+            token: token
         }
     },
-    signup: async (root, { credentials }, context) => {
+    signup: async (root: any, { credentials }: SignupArgs, context: any) => {
         const { email, password } = credentials;
 
         // Attempt to find an already existing user
-        const bUserExists = await helpers.userExists(email);
+        const userExists = await helpers.userExists(email);
 
-        if (bUserExists) {
+        if (userExists) {
             // If query doesn't error then the user already exists
             throw new Error(`User '${email}' already exists`);   
         }
@@ -60,8 +94,9 @@ module.exports = {
         const sPasswordHashed = bcrypt.hashSync(password, 10);
 
         // Create the new user
-        await helpers.createNewUser(email, sPasswordHashed, role);
+        await helpers.createNewUser(email, sPasswordHashed, DEFAULT_ROLE);
 
+        // TODO: remove
         console.log("CREATED USER", {
             email,
             password: sPasswordHashed,
@@ -70,17 +105,17 @@ module.exports = {
 
         return true;
     },
-    editUser: async (root, { email: currEmail, updatedCredentials }, context) => {
+    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: any) => {
         const { email: newEmail, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
-        const oUserData = await helpers.getUser(currEmail);
+        const userData = await helpers.getUser(currEmail);
 
-        if (!oUserData) {
+        if (!userData) {
             throw new Error(`User '${currEmail}' does not exist`);
         }
 
-        const { password: sCurrPasswordHash } = oUserData;
+        const { password: sCurrPasswordHash } = userData;
 
         if (newEmail) {
             if (!Utilities.isEmail(newEmail)) {
@@ -101,9 +136,9 @@ module.exports = {
 
         let newPasswordHash;
         if (newPassword) {
-            let bSamePass = bcrypt.compareSync(newPassword, sCurrPasswordHash);
+            let samePassword = bcrypt.compareSync(newPassword, sCurrPasswordHash);
             // Make sure the new password is not the same as the current one
-            if (bSamePass) {
+            if (samePassword) {
                 throw new Error("New password must be different");
             }
 
@@ -117,12 +152,12 @@ module.exports = {
 
         return true;
     },
-    editUserRole: async (root, { email, updatedRole }, context) => {
+    editUserRole: async (root: any, { email, updatedRole }: EditUserRoleArgs, context: any) => {
         // Check that the user exists
-        const bUserExists = await helpers.userExists(email);
+        const userExists = await helpers.userExists(email);
 
-        if (!bUserExists) {
-            throw new Error(`User '${currEmail}' does not exist`);
+        if (!userExists) {
+            throw new Error(`User '${email}' does not exist`);
         }
 
         // Make sure role exists
@@ -137,11 +172,11 @@ module.exports = {
 
         return true;
     },
-    removeUser: async (root, { email }, context) => {
+    removeUser: async (root: any, { email }: RemoveUserArgs, context: any) => {
         // Attempt to find an already existing user
-        const bUserExists = helpers.userExists(email);
+        const userExists = helpers.userExists(email);
 
-        if (!bUserExists) {
+        if (!userExists) {
             throw new Error(`User '${email}' does not exist`);
         }
 

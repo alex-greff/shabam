@@ -1,29 +1,42 @@
-const helpers = require("./catalogue.helpers");
-const workers = require("../../../workers");
-const fs = require("fs");
-const FormData = require("form-data");
-const axios = require("axios");
-const stream = require("stream");
-const { FingerprintUtilities } = require("../../../utilities");
+import { UploadFile } from "../../../index";
+import * as helpers from "./catalogue.helpers";
+import workers from "../../../workers";
+import fs from "fs";
+import FormData from "form-data";
+import axios from "axios";
+import stream from "stream";
+import { FingerprintUtilities } from "../../../utilities";
 
-module.exports = {
-    getAllTracks: async (root, args, context) => {
+interface GetTrackArgs {
+    trackID: string
+}
+
+interface SearchTrackArgs {
+    fingerprint: Promise<UploadFile>;
+    fingerprintInfo: {
+        windowAmount: Number
+        partitionAmount: Number
+    }
+}
+
+export default {
+    getAllTracks: async (root: any, args: any, context: any) => {
         const allTracks = await helpers.getAllTracks();
 
         return allTracks;
     },
-    getTrack: async (root, { trackID }, context) => {
+    getTrack: async (root, { trackID }: GetTrackArgs, context) => {
         const trackData = await helpers.getTrack(trackID);
 
         return trackData;
     },
-    searchTrack: async (root, { fingerprint, fingerprintInfo }, context) => {
+    searchTrack: async (root, { fingerprint, fingerprintInfo }: SearchTrackArgs, context) => {
         const { windowAmount, partitionAmount } = fingerprintInfo;
 
         // TODO: implement
-        const fingerprintRes = await fingerprint;
+        // const fingerprintRes = await fingerprint;
 
-        const { filename, mimetype, createReadStream } = await fingerprint;
+        const { filename, mimetype, createReadStream }: UploadFile = await fingerprint;
 
         const fingerprintBuffer = await FingerprintUtilities.getFingerprintBuffer(createReadStream);
         let fingerprintData = FingerprintUtilities.getFingerprintData(fingerprintBuffer);

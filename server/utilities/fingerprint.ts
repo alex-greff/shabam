@@ -1,8 +1,10 @@
-exports.getFingerprintBuffer = (createFingerprintReadStream) => {
-    return new Promise((resolve, reject) => {
-        const fingerprintReadStream = createFingerprintReadStream();
+import { Readable } from "stream";
 
-        const chunks = [];
+export function getFingerprintBuffer(createFingerprintReadStream: () => Readable): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+        const fingerprintReadStream: Readable = createFingerprintReadStream();
+
+        const chunks: Uint8Array[] = [];
 
         fingerprintReadStream.on("data", (chunk) => {
             chunks.push(chunk);
@@ -20,6 +22,6 @@ exports.getFingerprintBuffer = (createFingerprintReadStream) => {
     });
 };
 
-exports.getFingerprintData = (fingerprintBuffer) => {
+export function getFingerprintData(fingerprintBuffer: Buffer): Uint8Array {
     return Uint8Array.from(fingerprintBuffer);
 };

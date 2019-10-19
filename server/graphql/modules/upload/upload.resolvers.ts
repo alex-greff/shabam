@@ -1,5 +1,5 @@
 const GraphQLUpload = require("graphql-upload").GraphQLUpload;
 
-module.exports = {
+export default {
     Upload: GraphQLUpload
 };

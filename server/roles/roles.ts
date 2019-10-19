@@ -1,4 +1,4 @@
-let roles = {
+let roles: any = {
     admin: {
         can: ['edit-user', 'edit-user-roles', 'delete-user', 'edit-track', 'delete-track'],
         inherits: ['distributor']
@@ -12,4 +12,4 @@ let roles = {
     }
 };
 
-module.exports = roles;
+export default roles;

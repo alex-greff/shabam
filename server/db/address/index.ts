@@ -1,8 +1,13 @@
-const KEYS = require("../../keys");
-const { Pool } = require("pg");
+import KEYS from "../../keys";
+import { Pool, QueryResult } from "pg";
+
+interface AddressPools {
+    [s: string]: Pool
+    [n: number]: Pool
+}
 
 // Initialize address db connections
-const addressPools = {};
+const addressPools: AddressPools = {};
 
 const range = [ ...Array(KEYS.ADDRESS_DB_COUNT).keys() ];
 range.forEach(idx => {
@@ -22,7 +27,7 @@ range.forEach(idx => {
     addressPools[idx] = pool;
 });
 
-function _checkAddressPool(addressPool) {
+function _checkAddressPool(addressPool: Pool, addressNum: number) {
     if (!addressPool) {
         throw `Address database '${addressNum}' does not exist`;
     }
@@ -34,12 +39,16 @@ function _checkAddressPool(addressPool) {
  * 
  * @param {Number} addressNum The number of the address database.
  * @param {String} queryText The query text.
- * @param  {...String} params The list of parameters.
+ * @param  {...Any} params The list of parameters.
  */
-exports.query = (addressNum, queryText, ...params) => {
+export function query(addressNum: number, queryText: string, ...params: any): Promise<QueryResult<any>> {
     const addressPool = addressPools[addressNum];
 
-    _checkAddressPool(addressPool);
+    _checkAddressPool(addressPool, addressNum);
 
-    return pool.query(queryText, params);
+    return addressPool.query(queryText, params);
+};
+
+export default {
+    query
 };
