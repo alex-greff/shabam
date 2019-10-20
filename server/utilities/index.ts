@@ -9,6 +9,8 @@ import { ResolverFn } from "@kamilkisiela/graphql-tools/dist/stitching/makeRemot
 export const FingerprintUtilities = FingerprintUtilitiesImport;
 export const PromiseUtilities = PromiseUtilitiesImport;
 
+declare type MiddlewareResolverFn = (rootVal?: any, args?: any, context?: any) => any;
+
 /**
  * Sets up a chain of middlewares. 
  * Returns a function that takes a resolver which is called at the end of the middleware chain.
@@ -21,7 +23,7 @@ export const middlewareChain = (...middlewares: Function[]) => {
      * 
      * @param {*} resolver The resolver that is called.
      */
-    return (resolver: ResolverFn) => {
+    return (resolver: MiddlewareResolverFn) => {
         return async (root: any, args: any, context: any) => {
             for (let i = 0; i < middlewares.length; i++) {
                 const currMiddleware = middlewares[i];

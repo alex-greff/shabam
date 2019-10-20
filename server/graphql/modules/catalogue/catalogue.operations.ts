@@ -1,3 +1,4 @@
+import { Track } from "../../../index";
 import { UploadFile } from "../../../index";
 import * as helpers from "./catalogue.helpers";
 import workers from "../../../workers";
@@ -8,7 +9,7 @@ import stream from "stream";
 import { FingerprintUtilities } from "../../../utilities";
 
 interface GetTrackArgs {
-    trackID: string
+    trackID: number
 }
 
 interface SearchTrackArgs {
@@ -19,18 +20,47 @@ interface SearchTrackArgs {
     }
 }
 
+interface AddTrackArgs {
+    fingerprint: Promise<UploadFile>;
+    trackData: {
+        title: string;
+        artists: string[];
+        coverImage?: string;
+        releaseDate?: string;
+    };
+}
+
+interface EditTrackArgs {
+    trackID: number;
+    updatedTrackData: {
+        title?: string;
+        artists?: string[];
+        coverImage?: string;
+        releaseDate?: string;
+    };
+}
+
+interface DeleteTrackArgs {
+    trackID: number;
+}
+
+interface RecomputeTrackFingerprintArgs {
+    trackID: number;
+    fingerprint: Promise<UploadFile>;
+}
+
 export default {
-    getAllTracks: async (root: any, args: any, context: any) => {
+    getAllTracks: async (root: any, args: any, context: any): Promise<any> => {
         const allTracks = await helpers.getAllTracks();
 
         return allTracks;
     },
-    getTrack: async (root, { trackID }: GetTrackArgs, context) => {
+    getTrack: async (root: any, { trackID }: GetTrackArgs, context: any): Promise<Track> => {
         const trackData = await helpers.getTrack(trackID);
 
         return trackData;
     },
-    searchTrack: async (root, { fingerprint, fingerprintInfo }: SearchTrackArgs, context) => {
+    searchTrack: async (root: any, { fingerprint, fingerprintInfo }: SearchTrackArgs, context: any): Promise<any> => { // TODO: fix return typedef
         const { windowAmount, partitionAmount } = fingerprintInfo;
 
         // TODO: implement
@@ -86,15 +116,15 @@ export default {
 
         return null;
     },
-    addTrack: async (root, { fingerprint, trackData }, context) => {
+    addTrack: async (root: any, { fingerprint, trackData }: AddTrackArgs, context: any): Promise<Track> => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
 
-        // TODO: remote
+        // TODO: remove
         // const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
         // const fingerprintData = { "something": "foo" };
 
-        const trackID = await helpers.addTrack(title, artists, coverImage, releaseDate, email);
+        const trackID = await helpers.addTrack(title, artists, email, coverImage, releaseDate);
 
         // TODO: send fingerprint to a records worker to compute and add it to a records database
         // Get the records database number that it was added to
@@ -105,7 +135,7 @@ export default {
 
         return dbTrackData;
     },
-    editTrack: async (root, { trackID, updatedTrackData }, context) => {
+    editTrack: async (root: any, { trackID, updatedTrackData }: EditTrackArgs, context: any): Promise<Track> => {
         const { title: newTitle, artists: newArtists, 
             coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData;
 
@@ -117,12 +147,12 @@ export default {
 
         return dbTrackData;
     },
-    deleteTrack: async (root, { trackID }, context) => {
+    deleteTrack: async (root: any, { trackID }: DeleteTrackArgs, context: any): Promise<boolean> => {
         await helpers.deleteTrack(trackID);
 
         return true;
     },
-    recomputeTrackFingerprint: async (root, { trackID, fingerprint }, context) => {
+    recomputeTrackFingerprint: async (root: any, { trackID, fingerprint }: RecomputeTrackFingerprintArgs, context: any): Promise<any> => { // TODO: complete return typeDef
         // TODO: complete
     }
 };

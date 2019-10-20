@@ -1,12 +1,10 @@
-const UserOperations = require("./user.operations");
-const Utilities = require("../../../utilities");
+import { UserAccount, Token } from "../../../index";
+import UserOperations from "./user.operations";
+import * as Utilities from "../../../utilities";
+import injectUserData from "../../middleware/userData";
+import permit from "../../middleware/permission";
 
-const injectUserData = require("../../middleware/userData");
-const permit = require("../../middleware/permission");
-
-// TODO: convert
-
-module.exports = {
+export default {
     Query: {
         login: Utilities.middlewareChain()(UserOperations.login),
     },
@@ -17,11 +15,11 @@ module.exports = {
         removeUser: Utilities.middlewareChain(injectUserData, permit({}, "delete-user", "delete-self"))(UserOperations.removeUser),
     },
     User: {
-        _id: user => user.id,
-        email: user => user.email,
-        password: user => user.password
+        _id: (user: UserAccount) => user.id,
+        email: (user: UserAccount) => user.email,
+        password: (user: UserAccount) => user.password
     },
     Token: {
-        token: t => t.token
+        token: (t: Token) => t.token
     }
 }

@@ -1,3 +1,4 @@
+import { Token } from "../../../index";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as Utilities from "../../../utilities";
@@ -42,7 +43,7 @@ interface RemoveUserArgs {
 }
 
 export default {
-    login: async (root: any, { credentials }: LoginArgs, context: any) => {
+    login: async (root: any, { credentials }: LoginArgs, context: any): Promise<Token> => {
         const { email, password } = credentials;
 
         const user = await helpers.getUser(email);
@@ -79,7 +80,7 @@ export default {
             token: token
         }
     },
-    signup: async (root: any, { credentials }: SignupArgs, context: any) => {
+    signup: async (root: any, { credentials }: SignupArgs, context: any): Promise<boolean> => {
         const { email, password } = credentials;
 
         // Attempt to find an already existing user
@@ -105,7 +106,7 @@ export default {
 
         return true;
     },
-    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: any) => {
+    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: any): Promise<boolean> => {
         const { email: newEmail, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
@@ -152,7 +153,7 @@ export default {
 
         return true;
     },
-    editUserRole: async (root: any, { email, updatedRole }: EditUserRoleArgs, context: any) => {
+    editUserRole: async (root: any, { email, updatedRole }: EditUserRoleArgs, context: any): Promise<boolean> => {
         // Check that the user exists
         const userExists = await helpers.userExists(email);
 
@@ -172,7 +173,7 @@ export default {
 
         return true;
     },
-    removeUser: async (root: any, { email }: RemoveUserArgs, context: any) => {
+    removeUser: async (root: any, { email }: RemoveUserArgs, context: any): Promise<boolean> => {
         // Attempt to find an already existing user
         const userExists = helpers.userExists(email);
 

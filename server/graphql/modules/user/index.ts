@@ -4,7 +4,7 @@ const resolvers = require("./user.resolvers");
 
 const headerInjector = require("../../injectors/headers");
 
-module.exports = new GraphQLModule({
+export default new GraphQLModule({
     typeDefs,
     resolvers,
     context: headerInjector

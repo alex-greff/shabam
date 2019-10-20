@@ -1,8 +1,24 @@
 import { Readable } from "stream";
 
+export interface TrackMetaData {
+    title: string;
+    artists: string[];
+    coverImage?: string;
+    uploaderEmail: string;
+    releaseDate?: string;
+    createdDate: string;
+    updatedDate: string;
+}
+
+export interface Track {
+    _id: number;
+    addressDatabase?: number;
+    metaData: TrackMetaData
+}
+
 export interface UploadFile {
-    filename: String;
-    mimetype: String;
+    filename: string;
+    mimetype: string;
     createReadStream(): Readable;
 }
 
@@ -22,10 +38,14 @@ export interface RoleCheckConfig {
 }
 
 export interface UserAccount {
-    id: string;
+    id: number;
     email: string;
     password: string;
     role: string;
     signupDate: string;
     lastLogin: string;
+}
+
+export interface Token {
+    token: string;
 }

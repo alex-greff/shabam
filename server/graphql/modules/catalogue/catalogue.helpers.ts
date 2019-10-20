@@ -1,4 +1,4 @@
-import { Track } from ".";
+import { Track } from "../../../index";
 import db from "../../../db/main";
 import address_db from "../../../db/address";
 
@@ -137,19 +137,28 @@ export async function getAllTracks(): Promise<Track[]> {
     return allTracks;
 };
 
-export async function addTrack(title: string, artists: string[], coverImage: string, releaseDate: string, email: string): Promise<number> {
-    const dReleaseDate = new Date(releaseDate);
+export async function addTrack(title: string, artists: string[], email: string, coverImage?: string, releaseDate?: string): Promise<number> {
+    const dReleaseDate = (releaseDate) ? new Date(releaseDate) : new Date();
     const dNow = new Date();
+
+    const insertArgs = [title, dReleaseDate, dNow];
+    let insertListString = `title, release_date, created_date, update_date, upload_user_account_id`;
+    let insertIndicesString = `$2, $3, $4, $4, ( SELECT user_account_id FROM user_account AS ua WHERE ua.email = $1 )`;
+
+    if (coverImage) {
+        insertListString += ", cover_image";
+        insertIndicesString += ", $5";
+        insertArgs.push(coverImage);
+    }
 
     const insertTrackQuery = `
         INSERT INTO track
-            (title, cover_image, release_date, created_date, update_date, upload_user_account_id)
+            (${insertListString})
         VALUES
-            ($2, $3, $4, $5, $5, ( SELECT user_account_id FROM user_account AS ua WHERE ua.email = $1 ))
-        RETURNING track_id;
+            (${insertIndicesString})
     `;
 
-    const insertTrackRes = await db.query(insertTrackQuery, email, title, coverImage, dReleaseDate, dNow);
+    const insertTrackRes = await db.query(insertTrackQuery, email, ...insertArgs);
 
     const { track_id : trackID } = insertTrackRes.rows[0];
 
@@ -163,31 +172,31 @@ export async function editTrack(trackID: number, newTitle?: string, newArtists?:
     const dNow = new Date();
 
     const updateArgs = [];
-    let sUpdateListString = `update_date = $1`;
+    let updateListString = `update_date = $1`;
 
-    let nCurrParam = 2;
+    let currParam = 2;
 
     if (newTitle) {
-        sUpdateListString += `, title = $${nCurrParam}`;
+        updateListString += `, title = $${currParam}`;
         updateArgs.push(newTitle);
-        nCurrParam++;
+        currParam++;
     }
 
     if (newCoverImage) {
-        sUpdateListString += `, cover_image = $${nCurrParam}`;
+        updateListString += `, cover_image = $${currParam}`;
         updateArgs.push(newCoverImage);
-        nCurrParam++;
+        currParam++;
     }
 
     if (newRleaseDate) {
         const dReleaseDate = new Date(newRleaseDate);
-        sUpdateListString += `, release_date = $${nCurrParam}`;
+        updateListString += `, release_date = $${currParam}`;
         updateArgs.push(dReleaseDate);
-        nCurrParam++;
+        currParam++;
     }
 
     let trackQuery = `
-        UPDATE track AS t SET ${sUpdateListString} WHERE t.track_id = $${nCurrParam}
+        UPDATE track AS t SET ${updateListString} WHERE t.track_id = $${currParam}
     `;
 
     const updateArtists = newArtists && newArtists.length > 0;
