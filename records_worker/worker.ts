@@ -2,7 +2,6 @@ import express, { Router, Request, Response, NextFunction, RequestHandler } from
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
-import KEYS from "./keys";
 import HTTPError from "./src/error/HTTPError";
 
 // Import routes
