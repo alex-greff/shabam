@@ -1,6 +1,7 @@
-const gql = require("graphql-tag");
+import gql from "graphql-tag";
+// const gql = require("graphql-tag");
 
-module.exports = gql`
+export default gql`
     """A user object."""
     type User {
         """The ID of the user in the database."""

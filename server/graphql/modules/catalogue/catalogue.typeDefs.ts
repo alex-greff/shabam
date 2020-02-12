@@ -1,6 +1,8 @@
-const gql = require("graphql-tag");
+import gql from "graphql-tag";
 
-module.exports = gql`
+// const gql = require("graphql-tag");
+
+export default gql`
     """Meta-data for a track."""
     type TrackMetaData {
         title: String!
