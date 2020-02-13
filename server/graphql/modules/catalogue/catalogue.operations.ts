@@ -1,10 +1,11 @@
+import { Track } from "../../../types";
 import fs from "fs";
 import FormData from "form-data";
 import axios from "axios";
 import stream from "stream";
-
 import * as helpers from "./catalogue.helpers";
-
+import workers from "../../../workers";
+import { FingerprintUtilities } from "../../../utilities";
 import { 
     GetTrackArgs, 
     SearchTrackArgs, 
@@ -13,15 +14,14 @@ import {
     DeleteTrackArgs,
     RecomputeTrackFingerprintArgs
 } from "./catalogue.operations.types";
-import { Track } from "../../../types";
 
 // const helpers = require("./catalogue.helpers");
-const workers = require("../../../workers");
+// const workers = require("../../../workers");
 // const fs = require("fs");
 // const FormData = require("form-data");
 // const axios = require("axios");
 // const stream = require("stream");
-const { FingerprintUtilities } = require("../../../utilities");
+// const { FingerprintUtilities } = require("../../../utilities");
 
 export default {
     getAllTracks: async (root: any, args: any, context: any): Promise<any> => {

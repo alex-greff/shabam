@@ -1,7 +1,9 @@
 import { Track } from "../../../types";
+import * as db from "../../../db/main";
+import * as address_db from "../../../db/address";
 
-const db = require("../../../db/main");
-const address_db = require("../../../db/address");
+// const db = require("../../../db/main");
+// const address_db = require("../../../db/address");
 
 async function _addArtistsToTrack(trackID: number, artists: string[]): Promise<void> {
     // Add the artist list for the track

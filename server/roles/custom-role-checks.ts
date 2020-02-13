@@ -1,8 +1,12 @@
-const Utilities = require("../utilities");
-const catalogueHelpers = require("../graphql/modules/catalogue/catalogue.helpers");
-const userHelpers = require("../graphql/modules/user/user.helpers");
+import { UserDataContext, RoleCheckConfig } from "../types";
+import * as Utilities from "../utilities";
+import * as catalogueHelpers from "../graphql/modules/catalogue/catalogue.helpers";
 
-const checkTrackIsOwned = async (root, args, context, config) => {
+// const Utilities = require("../utilities");
+// const catalogueHelpers = require("../graphql/modules/catalogue/catalogue.helpers");
+// const userHelpers = require("../graphql/modules/user/user.helpers");
+
+const checkTrackIsOwned = async (root: any, args: any, context: UserDataContext, config: any): Promise<boolean> => {
     const { trackID: nTrackID } = args;
     const userEmail = context.userData.email;
 
@@ -14,7 +18,7 @@ const checkTrackIsOwned = async (root, args, context, config) => {
     return (uploaderEmail === userEmail);
 };
 
-const checkIsSelf = (root, args, context, config) => {
+const checkIsSelf = (root: any, args: any, context: UserDataContext, config: RoleCheckConfig): boolean => {
     const { userEmailPath } = config;
     const targetUserEmail = Utilities.getIn(args, userEmailPath);
 
@@ -24,7 +28,7 @@ const checkIsSelf = (root, args, context, config) => {
     return (targetUserEmail === userEmail);
 };
 
-module.exports = {
+export default {
     "edit-owned-track": checkTrackIsOwned,
     "delete-owned-track": checkTrackIsOwned,
     "edit-self": checkIsSelf,

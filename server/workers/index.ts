@@ -1,13 +1,14 @@
-const axios = require("axios");
+import axios from "axios";
+// const axios = require("axios");
 
 const FINGERPRINT_WORKER_ADDRESS = "http://fingerprint_worker:5001";
 const GENERATE_FINGERPRINT_ENDPOINT = `${FINGERPRINT_WORKER_ADDRESS}/generate_fingerprint`;
 
-module.exports = {
+export default {
     fingerprintWorker: {
-        generateFingerprint: async (i_oSignalData) => {
+        generateFingerprint: async (signalData: object) => {
             const res = await axios.post(GENERATE_FINGERPRINT_ENDPOINT, {
-                signalData: { ...i_oSignalData }
+                signalData: { ...signalData }
             });
         
             return res.data.fingerprint;

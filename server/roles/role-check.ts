@@ -1,14 +1,18 @@
-const roles = require("./roles");
+import { RoleCheckConfig } from "../types";
+import roles from "./roles";
+import * as Utilities from "../utilities";
+
+// const roles = require("./roles");
 const CUSTOM_ROLE_CHECK_MAP = require("./custom-role-checks");
-const Utilities = require("../utilities");
+// const Utilities = require("../utilities");
 
-// Inject prototype addons
-require("../utilities/prototypeAddons");
+// // Inject prototype addons
+// require("../utilities/prototypeAddons");
 
-module.exports = (root, args, context) => {
-    return async (config, role, ...operations) => {
+export default (root: any, args: any, context: any) => {
+    return async (config: RoleCheckConfig, role: string, ...operations: string[]): Promise<boolean> => {
         // Function checking if the permissions are allowed
-        const canDoOperation = async (role, operation) => {
+        const canDoOperation = async (role: string, operation: string) => {
             // Check if role exists
             if (!roles[role]){
                 return false;
@@ -35,10 +39,10 @@ module.exports = (root, args, context) => {
     
             // Check if at least one of the inherited roles can do the operation
             // Note: this code acts like Array.some but with async code
-            const inheritChecks = $role.inherits.map(inheritedRole => {
+            const inheritChecks = $role.inherits.map((inheritedRole: any) => {
                 return () => Utilities.booleanResolver(canDoOperation, inheritedRole, operation);
             });
-            return await Utilities.resolveAsBoolean(() => Promise.some(inheritChecks));
+            return await Utilities.resolveAsBoolean(() => Utilities.PromiseUtilities.some(inheritChecks));
         };
 
         // Check if at least one of the operations is in the role
@@ -46,6 +50,6 @@ module.exports = (root, args, context) => {
         const operationChecks = operations.map(operation => {
             return () => Utilities.booleanResolver(canDoOperation, role, operation);
         });
-        return await Utilities.resolveAsBoolean(() => Promise.some(operationChecks)); 
+        return await Utilities.resolveAsBoolean(() => Utilities.PromiseUtilities.some(operationChecks)); 
     };
 };

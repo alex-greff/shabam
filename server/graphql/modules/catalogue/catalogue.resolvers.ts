@@ -1,11 +1,14 @@
 import { Track, TrackMetaData } from "../../../types";
 import CatalogueOperations from "./catalogue.operations";
+import injectUserData from "../../middleware/userData";
+import permit from "../../middleware/permission";
+import * as Utilities from "../../../utilities";
 
 // const CatalogueOperations = require("./catalogue.operations");
-const Utilities = require("../../../utilities");
+// const Utilities = require("../../../utilities");
 
-const injectUserData = require("../../middleware/userData");
-const permit = require("../../middleware/permission");
+// const injectUserData = require("../../middleware/userData");
+// const permit = require("../../middleware/permission");
 
 
 export default {

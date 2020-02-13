@@ -7,6 +7,7 @@ import { Pool, PoolConfig } from "pg";
 import graphqlHttp from "express-graphql";
 const { graphqlUploadExpress } = require("graphql-upload"); // No types
 import AppModule from "./graphql/modules";
+import KEYS from "./keys";
 
 // const express = require("express");
 // const morgan = require("morgan");
@@ -15,7 +16,7 @@ import AppModule from "./graphql/modules";
 // const { Pool } = require("pg");
 // const graphqlHttp = require("express-graphql");
 // const { graphqlUploadExpress } = require("graphql-upload");
-const KEYS = require("./keys"); // TODO: convert KEYS to TypeScript last
+// const KEYS = require("./keys"); // TODO: convert KEYS to TypeScript last
 
 // const AppModule = require("./graphql/modules");
 
@@ -84,5 +85,4 @@ app.use((error: HTTPError, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-// module.exports = app;
 export default app;

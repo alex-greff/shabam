@@ -1,5 +1,5 @@
-const KEYS = require("../../keys");
-const { Pool } = require("pg");
+import KEYS from "../../keys";
+import { Pool, QueryResult } from "pg";
 
 // Setup pool instance
 const pool = new Pool({
@@ -16,8 +16,8 @@ pool.on("error", () => console.error("Lost PG main database connection"));
  * Queries the postgres database. Uses pg-escape internally so function calls should be formatted accordingly.
  * 
  * @param {String} queryText The query text.
- * @param  {...String} params The list of parameters.
+ * @param  {...Any} params The list of parameters.
  */
-exports.query = (queryText, ...params) => {
+export function query(queryText: string, ...params: any[]): Promise<QueryResult<any>> {
     return pool.query(queryText, params);
 };
