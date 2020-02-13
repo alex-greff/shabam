@@ -1,11 +1,14 @@
-const CatalogueOperations = require("./catalogue.operations");
+import { Track, TrackMetaData } from "../../../types";
+import CatalogueOperations from "./catalogue.operations";
+
+// const CatalogueOperations = require("./catalogue.operations");
 const Utilities = require("../../../utilities");
 
 const injectUserData = require("../../middleware/userData");
 const permit = require("../../middleware/permission");
 
 
-module.exports = {
+export default {
     Query: {
         getAllTracks: Utilities.middlewareChain()(CatalogueOperations.getAllTracks),
         getTrack: Utilities.middlewareChain()(CatalogueOperations.getTrack),
@@ -18,16 +21,16 @@ module.exports = {
         recomputeTrackFingerprint: Utilities.middlewareChain(injectUserData, permit({}, "edit-track", "edit-owned-track"))(CatalogueOperations.recomputeTrackFingerprint),
     },
     Track: {
-        _id: track => track._id,
-        metaData: track => track.metaData
+        _id: (track: Track) => track._id,
+        metaData: (track: Track) => track.metaData
     },
     TrackMetaData: {
-        title: md => md.title,
-        artists: md => md.artists,
-        coverImage: md => md.coverImage,
-        uploaderEmail: md => md.uploaderEmail,
-        releaseDate: md => md.releaseDate,
-        createdDate: md => md.createdDate,
-        updatedDate: md => md.updatedDate
+        title: (md: TrackMetaData) => md.title,
+        artists: (md: TrackMetaData) => md.artists,
+        coverImage: (md: TrackMetaData) => md.coverImage,
+        uploaderEmail: (md: TrackMetaData) => md.uploaderEmail,
+        releaseDate: (md: TrackMetaData) => md.releaseDate,
+        createdDate: (md: TrackMetaData) => md.createdDate,
+        updatedDate: (md: TrackMetaData) => md.updatedDate
     }
 };
