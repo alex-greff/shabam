@@ -1,5 +1,7 @@
 import gql from "graphql-tag";
 
+// const gql = require("graphql-tag");
+
 export default gql`
     """Meta-data for a track."""
     type TrackMetaData {

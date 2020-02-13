@@ -23,15 +23,15 @@ RUN echo "source /emsdk/emsdk_env.sh --build=Release > /dev/null" >> ~/.bashrc &
 
 WORKDIR /
 
-# Download KFR
-RUN git clone https://github.com/kfrlib/kfr.git kfr
+# # Download KFR
+# RUN git clone https://github.com/kfrlib/kfr.git kfr
 
-WORKDIR /kfr
+# WORKDIR /kfr
 
-# Compile KFR
-RUN mkdir /kfr/build && cd ./build && \
-    cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Release .. && \
-    make -j
+# # Compile KFR
+# RUN mkdir /kfr/build && cd ./build && \
+#     cmake -DENABLE_TESTS=OFF -DCMAKE_CXX_COMPILER=clang++-4.0 -DCMAKE_BUILD_TYPE=Release .. && \
+#     make -j
 
 # Install node 12.0 and dos2unix
 RUN apt-get install -y curl dos2unix bash && \

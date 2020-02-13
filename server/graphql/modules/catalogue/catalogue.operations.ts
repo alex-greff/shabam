@@ -1,11 +1,16 @@
+<<<<<<< HEAD:server/graphql/modules/catalogue/catalogue.operations.ts
 import { Track } from "../../../index";
 import { UploadFile } from "../../../index";
 import * as helpers from "./catalogue.helpers";
 import workers from "../../../workers";
+=======
+import { Track } from "../../../types";
+>>>>>>> typescript:server/graphql/modules/catalogue/catalogue.operations.js
 import fs from "fs";
 import FormData from "form-data";
 import axios from "axios";
 import stream from "stream";
+<<<<<<< HEAD:server/graphql/modules/catalogue/catalogue.operations.ts
 import { FingerprintUtilities } from "../../../utilities";
 
 interface GetTrackArgs {
@@ -48,6 +53,27 @@ interface RecomputeTrackFingerprintArgs {
     trackID: number;
     fingerprint: Promise<UploadFile>;
 }
+=======
+import * as helpers from "./catalogue.helpers";
+import workers from "../../../workers";
+import { FingerprintUtilities } from "../../../utilities";
+import { 
+    GetTrackArgs, 
+    SearchTrackArgs, 
+    AddTrackArgs,
+    EditTrackArgs,
+    DeleteTrackArgs,
+    RecomputeTrackFingerprintArgs
+} from "./catalogue.operations.types";
+
+// const helpers = require("./catalogue.helpers");
+// const workers = require("../../../workers");
+// const fs = require("fs");
+// const FormData = require("form-data");
+// const axios = require("axios");
+// const stream = require("stream");
+// const { FingerprintUtilities } = require("../../../utilities");
+>>>>>>> typescript:server/graphql/modules/catalogue/catalogue.operations.js
 
 export default {
     getAllTracks: async (root: any, args: any, context: any): Promise<any> => {
@@ -124,7 +150,11 @@ export default {
         // const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
         // const fingerprintData = { "something": "foo" };
 
+<<<<<<< HEAD:server/graphql/modules/catalogue/catalogue.operations.ts
         const trackID = await helpers.addTrack(title, artists, email, coverImage, releaseDate);
+=======
+        const trackID = await helpers.addTrack(title, artists, coverImage!, releaseDate, email);
+>>>>>>> typescript:server/graphql/modules/catalogue/catalogue.operations.js
 
         // TODO: send fingerprint to a records worker to compute and add it to a records database
         // Get the records database number that it was added to

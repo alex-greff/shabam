@@ -1,5 +1,13 @@
+<<<<<<< HEAD:server/db/address/index.ts
 import KEYS from "../../keys";
 import { Pool, QueryResult } from "pg";
+=======
+import { Pool, QueryResult } from "pg";
+import KEYS from "../../keys";
+
+// const KEYS = require("../../keys");
+// const { Pool } = require("pg");
+>>>>>>> typescript:server/db/address/index.js
 
 interface AddressPools {
     [s: string]: Pool
@@ -41,6 +49,7 @@ function _checkAddressPool(addressPool: Pool, addressNum: number) {
  * @param {String} queryText The query text.
  * @param  {...Any} params The list of parameters.
  */
+<<<<<<< HEAD:server/db/address/index.ts
 export function query(addressNum: number, queryText: string, ...params: any): Promise<QueryResult<any>> {
     const addressPool = addressPools[addressNum];
 
@@ -51,4 +60,12 @@ export function query(addressNum: number, queryText: string, ...params: any): Pr
 
 export default {
     query
+=======
+exports.query = (addressNum: number, queryText: string, ...params: any): Promise<QueryResult<any>> => {
+    const addressPool = addressPools[addressNum];
+
+    _checkAddressPool(addressPool, addressNum);
+
+    return addressPool.query(queryText, params);
+>>>>>>> typescript:server/db/address/index.js
 };

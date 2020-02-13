@@ -1,3 +1,4 @@
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
 import { Token } from "../../../index";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -5,6 +6,16 @@ import * as Utilities from "../../../utilities";
 import KEYS from "../../../keys";
 import roles from "../../../roles/roles";
 import * as helpers from "./user.helpers";
+=======
+import { Token } from "../../../types";
+import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import * as helpers from "./user.helpers";
+import KEYS from "../../../keys";
+import roles from "../../../roles/roles";
+import * as Utilities from "../../../utilities";
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
 
 // const bcrypt = require("bcryptjs");
 // const jwt = require("jsonwebtoken");
@@ -15,6 +26,7 @@ import * as helpers from "./user.helpers";
 
 const DEFAULT_ROLE = "default";
 
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
 interface UserCredentials {
     email: string;
     password: string;
@@ -42,6 +54,8 @@ interface RemoveUserArgs {
     email: string;
 }
 
+=======
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
 export default {
     login: async (root: any, { credentials }: LoginArgs, context: any): Promise<Token> => {
         const { email, password } = credentials;
@@ -49,6 +63,7 @@ export default {
         const user = await helpers.getUser(email);
 
         if (!user) {
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
             return Utilities.throwAuthorizationError();
         }
 
@@ -61,16 +76,34 @@ export default {
         }
 
         const { email: userEmail, role: userRole } = user;
+=======
+            Utilities.throwAuthorizationError();
+        }
+
+        const passwordHash = user!.password;
+
+        const bamePassword = bcrypt.compareSync(password, passwordHash);
+        // Password comparison failed
+        if (!bamePassword) {
+            Utilities.throwAuthorizationError();
+        }
+
+        const { email: userEmail, role: userRole } = user!;
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
 
         // Generate token
-        const oJWTPayload = {
+        const JWTPayload = {
             email: userEmail,
             role: userRole,
         };
-        const oJWTOptions = {
+        const JWTOptions = {
             expiresIn: KEYS.JWT_EXPIRE_TIME
         };
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
         const token = jwt.sign(oJWTPayload, KEYS.JWT_SECRET, oJWTOptions);
+=======
+        const token = jwt.sign(JWTPayload, KEYS.JWT_SECRET, JWTOptions);
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
 
         // Update last login to now
         await helpers.updateLastUserLogin(email);
@@ -92,15 +125,19 @@ export default {
         }
 
         // Hash password
-        const sPasswordHashed = bcrypt.hashSync(password, 10);
+        const passwordHashed = bcrypt.hashSync(password, 10);
 
         // Create the new user
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
         await helpers.createNewUser(email, sPasswordHashed, DEFAULT_ROLE);
+=======
+        await helpers.createNewUser(email, passwordHashed, DEFAULT_ROLE);
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
 
         // TODO: remove
         console.log("CREATED USER", {
             email,
-            password: sPasswordHashed,
+            password: passwordHashed,
             role: DEFAULT_ROLE
         });
 
@@ -137,9 +174,15 @@ export default {
 
         let newPasswordHash;
         if (newPassword) {
+<<<<<<< HEAD:server/graphql/modules/user/user.operations.ts
             let samePassword = bcrypt.compareSync(newPassword, sCurrPasswordHash);
             // Make sure the new password is not the same as the current one
             if (samePassword) {
+=======
+            let samePass = bcrypt.compareSync(newPassword, sCurrPasswordHash);
+            // Make sure the new password is not the same as the current one
+            if (samePass) {
+>>>>>>> typescript:server/graphql/modules/user/user.operations.js
                 throw new Error("New password must be different");
             }
 

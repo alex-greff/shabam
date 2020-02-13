@@ -1,7 +1,11 @@
 import KEYS from "../keys";
 import clone from "lodash.clone";
 import toPath from "lodash.topath";
+<<<<<<< HEAD:server/utilities/index.ts
 import db from "../db/main";
+=======
+import * as db from "../db/main";
+>>>>>>> typescript:server/utilities/index.js
 import * as FingerprintUtilitiesImport from "./fingerprint";
 import * as PromiseUtilitiesImport from "./promise";
 import { ResolverFn } from "@kamilkisiela/graphql-tools/dist/stitching/makeRemoteExecutableSchema";

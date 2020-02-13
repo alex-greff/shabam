@@ -1,7 +1,11 @@
-const gql = require("graphql-tag");
+import gql from "graphql-tag";
+// const gql = require("graphql-tag");
 
+<<<<<<< HEAD:server/graphql/modules/user/user.typeDefs.ts
 // TODO: convert
 
+=======
+>>>>>>> typescript:server/graphql/modules/user/user.typeDefs.js
 export default gql`
     """A user object."""
     type User {

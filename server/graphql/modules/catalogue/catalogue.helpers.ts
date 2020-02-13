@@ -1,6 +1,9 @@
-import { Track } from "../../../index";
-import db from "../../../db/main";
-import address_db from "../../../db/address";
+import { Track } from "../../../types";
+import * as db from "../../../db/main";
+import * as address_db from "../../../db/address";
+
+// const db = require("../../../db/main");
+// const address_db = require("../../../db/address");
 
 async function _addArtistsToTrack(trackID: number, artists: string[]): Promise<void> {
     // Add the artist list for the track
@@ -60,7 +63,7 @@ export async function getTrack(trackID: number): Promise<Track> {
     // Construct artists list
     let aArtists = [];
     if (resArtists.rowCount > 0) {
-        aArtists = resArtists.rows.map(i_oCurrArtist => i_oCurrArtist.artist_name);
+        aArtists = resArtists.rows.map((i_oCurrArtist: any) => i_oCurrArtist.artist_name);
     }
 
     const trackData = { ...resTrack.rows[0], artists: [ ...aArtists ] };
@@ -100,7 +103,7 @@ export async function getAllTracks(): Promise<Track[]> {
     const aDbQueries = [db.query(allTracksQuery), db.query(trackToArtistsMapQuery)];
     const [allTracksRes, trackToArtistsMapRes] = await Promise.all(aDbQueries);
 
-    const trackToArtistsMap = trackToArtistsMapRes.rows.reduce((acc, oCurrRawMap) => {
+    const trackToArtistsMap = trackToArtistsMapRes.rows.reduce((acc: any, oCurrRawMap: any) => {
         const { artist_name, track_id } = oCurrRawMap;
 
         if (!acc[track_id]) {
@@ -115,12 +118,16 @@ export async function getAllTracks(): Promise<Track[]> {
         return { ...acc };
     }, {});
 
-    const aRawTrackData = allTracksRes.rows.map(oTrack => ({
+    const aRawTrackData = allTracksRes.rows.map((oTrack:any) => ({
         ...oTrack,
         artists: (trackToArtistsMap[oTrack.track_id]) ? [...trackToArtistsMap[oTrack.track_id]] : []
     }));
 
+<<<<<<< HEAD:server/graphql/modules/catalogue/catalogue.helpers.ts
     const allTracks = aRawTrackData.map(oCurrRawTrackData => ({
+=======
+    const allTracks = aRawTrackData.map((oCurrRawTrackData:any) => ({
+>>>>>>> typescript:server/graphql/modules/catalogue/catalogue.helpers.js
         _id: oCurrRawTrackData.track_id,
         addressDatabase: oCurrRawTrackData.address_database,
         metaData: {
