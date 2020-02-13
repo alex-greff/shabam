@@ -6,38 +6,21 @@ import bodyParser from "body-parser";
 import { Pool, PoolConfig } from "pg";
 import graphqlHttp from "express-graphql";
 const { graphqlUploadExpress } = require("graphql-upload"); // No types
-<<<<<<< HEAD:server/app.ts
-import KEYS from "./keys";
-
-import AppModule from "./graphql/modules";
-
-// const express = require("express");
-// const app = express();
-=======
 import AppModule from "./graphql/modules";
 import KEYS from "./keys";
 
 // const express = require("express");
->>>>>>> typescript:server/app.js
 // const morgan = require("morgan");
 // const bodyParser = require("body-parser");
 // const cors = require("cors");
 // const { Pool } = require("pg");
 // const graphqlHttp = require("express-graphql");
 // const { graphqlUploadExpress } = require("graphql-upload");
-<<<<<<< HEAD:server/app.ts
-// const KEYS = require("./keys");
-
-const app = express();
-
-// const AppModule = require("./graphql/modules");
-=======
 // const KEYS = require("./keys"); // TODO: convert KEYS to TypeScript last
 
 // const AppModule = require("./graphql/modules");
 
 const app = express();
->>>>>>> typescript:server/app.js
 
 // Postgress client connection setup
 const pgClient = new Pool({
@@ -86,11 +69,7 @@ app.use(
 
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
-<<<<<<< HEAD:server/app.ts
-app.use((req: Request, res: Response, next: NextFunction) => {
-=======
 app.use((req, res, next) => {
->>>>>>> typescript:server/app.js
     const error = new HTTPError("Route not found");
     error.status = 404;
     next(error);

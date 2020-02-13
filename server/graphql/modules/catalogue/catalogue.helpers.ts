@@ -123,11 +123,7 @@ export async function getAllTracks(): Promise<Track[]> {
         artists: (trackToArtistsMap[oTrack.track_id]) ? [...trackToArtistsMap[oTrack.track_id]] : []
     }));
 
-<<<<<<< HEAD:server/graphql/modules/catalogue/catalogue.helpers.ts
-    const allTracks = aRawTrackData.map(oCurrRawTrackData => ({
-=======
     const allTracks = aRawTrackData.map((oCurrRawTrackData:any) => ({
->>>>>>> typescript:server/graphql/modules/catalogue/catalogue.helpers.js
         _id: oCurrRawTrackData.track_id,
         addressDatabase: oCurrRawTrackData.address_database,
         metaData: {

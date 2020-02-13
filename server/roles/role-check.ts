@@ -1,11 +1,3 @@
-<<<<<<< HEAD:server/roles/role-check.ts
-import { RoleCheckConfig } from "../index";
-import roles from "./roles";
-import CUSTOM_ROLE_CHECK_MAP from "./custom-role-checks";
-import * as Utilities from "../utilities";
-
-export default function(root: any, args: any, context: any): Function {
-=======
 import { RoleCheckConfig } from "../types";
 import roles from "./roles";
 import * as Utilities from "../utilities";
@@ -18,7 +10,6 @@ const CUSTOM_ROLE_CHECK_MAP = require("./custom-role-checks");
 // require("../utilities/prototypeAddons");
 
 export default (root: any, args: any, context: any) => {
->>>>>>> typescript:server/roles/role-check.js
     return async (config: RoleCheckConfig, role: string, ...operations: string[]): Promise<boolean> => {
         // Function checking if the permissions are allowed
         const canDoOperation = async (role: string, operation: string) => {
