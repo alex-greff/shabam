@@ -71,6 +71,7 @@ export default {
         // Create the new user
         await helpers.createNewUser(email, passwordHashed, DEFAULT_ROLE);
 
+        // TODO: remove
         console.log("CREATED USER", {
             email,
             password: passwordHashed,

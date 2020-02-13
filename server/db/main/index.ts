@@ -21,3 +21,7 @@ pool.on("error", () => console.error("Lost PG main database connection"));
 export function query(queryText: string, ...params: any[]): Promise<QueryResult<any>> {
     return pool.query(queryText, params);
 };
+
+export default {
+    query
+};

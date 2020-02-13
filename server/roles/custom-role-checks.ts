@@ -33,4 +33,4 @@ export default {
     "delete-owned-track": checkTrackIsOwned,
     "edit-self": checkIsSelf,
     "delete-self": checkIsSelf,
-};
+}
