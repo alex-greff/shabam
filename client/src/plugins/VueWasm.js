@@ -5,9 +5,17 @@ const install = async (Vue, options = {}) => {
     Vue.prototype.$wasm = {};
 
     await Promise.all(
-        Object.entries(options.modules).map(async ([moduleName, { js: jsLinkageModule, wasm: wasmModule, exports: exportMappings }]) => {
-            const loadedModule = await WASMLoader(jsLinkageModule, wasmModule, exportMappings);
-            Vue.prototype.$wasm[moduleName] = loadedModule
+        // Load each WASM module
+        Object.entries(options.modules).map(([moduleName, { js: jsLinkageModule, wasm: wasmModule, exports: exportMappings }]) => {
+            return new Promise((resolve, reject) => {
+                WASMLoader(jsLinkageModule, wasmModule, (err, loadedModule) => {
+                    if (err) return reject(err);
+
+                    Vue.prototype.$wasm[moduleName] = loadedModule;
+
+                    resolve();
+                });
+            });
         })
     );
 

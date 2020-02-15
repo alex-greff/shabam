@@ -63,7 +63,7 @@ export default {
         //     console.log("TEST", mainModule._test(8))
         // };
 
-        // console.log(this.$wasm);
+        console.log(this.$wasm);
         // console.log(this.$wasm.main.test(8));
     },
     methods: {

@@ -16,16 +16,14 @@ import MainModuleWASM from "@WASM/main-wasm.wasm";
 // Note 2: This will probably be changed in the future in order to display a loading page
 (async function() {
     // Load WASM modules
-    // await VueWasm(Vue, {
-    //     modules: {
-    //         main: {
-    //             js: MainModuleJS,
-    //             wasm: MainModuleWASM,
-    //             // Format: target to rename
-    //             exports: { "_test": "test" }
-    //         }
-    //     }
-    // });
+    await VueWasm(Vue, {
+        modules: {
+            main: {
+                js: MainModuleJS,
+                wasm: MainModuleWASM
+            }
+        }
+    });
 
     Vue.config.productionTip = false;
 
