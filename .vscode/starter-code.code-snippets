@@ -23,8 +23,8 @@
 			"    <div class=\"$TM_FILENAME_BASE\">$1</div>",
 			"</template>",
 			"",
-			"<script src=\"./$TM_FILENAME_BASE.ts\" />",
-			"<style src=\"./$TM_FILENAME_BASE.scss\" />",
+			"<script lang=\"ts\" src=\"./$TM_FILENAME_BASE.ts\" />",
+			"<style lang=\"scss\" src=\"./$TM_FILENAME_BASE.scss\" />",
 		],
 		"description": "The starter code for the Vue part of a component"
 	},
