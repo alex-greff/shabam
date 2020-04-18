@@ -1,0 +1,30 @@
+FROM ubuntu:16.04
+
+WORKDIR /
+
+# Install apt-add-repository
+RUN apt-get update && \
+    apt-get install -y software-properties-common
+
+WORKDIR /
+
+RUN apt-get install -y curl dos2unix bash && \
+    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get install -y nodejs
+
+# Install the client    
+WORKDIR /app
+
+COPY ./package*.json ./
+
+# Install npm dependencies
+RUN npm install
+
+# Install gulp cli
+RUN npm install gulp-cli -g
+
+# Copy all the client files
+COPY . .
+
+# Start dev server
+CMD ["npm", "run", "serve"]
