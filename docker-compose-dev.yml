@@ -4,7 +4,7 @@ services:
     proxy:
         restart: always
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./proxy
         ports:
             - "3050:80"
@@ -19,7 +19,7 @@ services:
             - "identification_worker"
     api:
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./server
         volumes:
             - /app/node_modules
@@ -59,7 +59,7 @@ services:
         container_name: shabam_api
     client:
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./client
         volumes: 
             - /app/node_modules
@@ -73,7 +73,7 @@ services:
         container_name: shabam_client
     fingerprint_worker:
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./fingerprint_worker
         volumes: 
             - /app/node_modules
@@ -84,7 +84,7 @@ services:
         container_name: shabam_fingerprint_worker
     identification_worker:
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./identification_worker
         volumes: 
             - /app/node_modules
@@ -95,7 +95,7 @@ services:
         container_name: shabam_identification_worker
     records_worker:
         build:
-            dockerfile: dev.Dockerfile
+            dockerfile: Dockerfile.dev
             context: ./records_worker
         volumes:
             - /app/node_modules
