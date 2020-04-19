@@ -70,6 +70,7 @@ services:
         networks:
             - app-network
         privileged: true
+        stdin_open: true
         container_name: shabam_client
     fingerprint_worker:
         build:

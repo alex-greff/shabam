@@ -7,5 +7,6 @@ module.exports = {
         },
         progress: false
     },
+    transpileDependencies: ['vuex-module-decorators'],
     lintOnSave: false
 }

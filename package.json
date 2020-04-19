@@ -28,6 +28,7 @@
         "restart:dev-fingerprint-worker": "docker-compose -f docker-compose-dev.yml restart fingerprint-worker",
         "restart:dev-identification-worker": "docker-compose -f docker-compose-dev.yml restart identification-worker",
         "restart:dev-records-worker": "docker-compose -f docker-compose-dev.yml restart records-worker",
+        "stop:dev": "docker-compose -f docker-compose-dev.yml down",
         
         "rm-services:dev-prod": "docker-compose -f docker-compose-dev-prod.yml rm proxy api client fingerprint_worker identification_worker",
         "rm-services:dev-prod-proxy": "docker-compose -f docker-compose-dev-prod.yml rm -f proxy",
@@ -51,6 +52,7 @@
         "restart:dev-prod-fingerprint-worker": "docker-compose -f docker-compose-dev-prod.yml restart fingerprint-worker",
         "restart:dev-prod-identification-worker": "docker-compose -f docker-compose-dev-prod.yml restart identification-worker",
         "restart:dev-prod-records-worker": "docker-compose -f docker-compose-dev-prod.yml restart records-worker",
+        "stop:dev-prod": "docker-compose -f docker-compose-dev-prod.yml down",
 
         "shell:proxy": "docker exec -it shabam_proxy sh",
         "shell:client": "docker exec -it shabam_client bash",

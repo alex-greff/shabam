@@ -27,4 +27,4 @@ RUN npm install gulp-cli -g
 COPY . .
 
 # Start dev server
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "serve"]
