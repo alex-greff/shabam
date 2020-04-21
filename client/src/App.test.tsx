@@ -4,5 +4,5 @@ import App from './App';
 
 test('App renders', () => {
     const app = render(<App />);
-    expect(app.baseElement).toBeInTheDocument()
+    expect(app.baseElement).toBeInTheDocument();
 });
