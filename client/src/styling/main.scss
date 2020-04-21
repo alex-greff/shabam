@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&display=swap');
+
+* {
+    // Global resets
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: 'Poppins', sans-serif;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+
+    // Definition of 1rem
+    font-size: 62.5%; // 10px
+}
+
+body {
+    height: 100%;
+    width: 100%;
+
+    font-size: 1.5rem;
+}

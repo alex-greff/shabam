@@ -38,6 +38,7 @@
         "react-dom": "^16.13.1",
         "react-router-dom": "^5.1.2",
         "react-scripts": "3.4.1",
+        "themer": "github:alex-greff/themer#33603823d14f882f0999422ab5a771a1deaa0909",
         "typescript": "^3.7.5"
     },
     "devDependencies": {
