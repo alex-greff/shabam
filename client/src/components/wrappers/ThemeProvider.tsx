@@ -38,7 +38,7 @@ class ThemeProvider extends Component<Props, any> {
         return (themeData) ? themeData["properties"] : {};
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { namespace, theme }: Props = this.props;
         this.validateProps(namespace, theme);
     }

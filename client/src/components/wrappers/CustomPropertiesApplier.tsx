@@ -85,13 +85,10 @@ class CustomPropertiesApplier extends Component<Props, State> {
         }
     }
 
-    componentWillMount() {
-        const { useRoot, useEl, el }: Props = this.props;
-        this.validateProps(useRoot, useEl, el);
-    }
-
     componentDidMount() {
         const { useRoot, useEl, el, properties }: Props = this.props;
+
+        this.validateProps(useRoot, useEl, el);
 
         if (useRoot) {
             this.setState((prevState) => update(prevState, { 
