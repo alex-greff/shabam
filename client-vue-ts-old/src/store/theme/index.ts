@@ -76,7 +76,7 @@ export default class ThemeStore extends VuexModule {
         }
     }
 
-    get getAllThemes() {
+    get allThemes() {
         return Object.values(this.themes);
     }
 
@@ -86,11 +86,11 @@ export default class ThemeStore extends VuexModule {
         }
     }
 
-    get getAllNamespaces() {
+    get allNamespaces() {
         return Object.values(this.namespaces);
     }
 
-    get namespace() {
+    get getNamespace() {
         return (namespaceID: string) => {
             return this.namespaces[namespaceID];
         }
