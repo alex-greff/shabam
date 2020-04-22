@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import "./ThemeProvider.scss";
-import { observable } from "mobx";
+import { observer } from "mobx-react";
 
 import CustomPropertiesApplier, { Props as CPAProps } from "@/components/wrappers/CustomPropertiesApplier";
 import { themeStore } from "@/store/theme/theme.store";
@@ -10,7 +9,7 @@ export interface Props extends CPAProps {
     theme?: string;
 };
 
-@observable
+@observer
 class ThemeProvider extends Component<Props, any> {
     static defaultProps = {
 
@@ -32,6 +31,7 @@ class ThemeProvider extends Component<Props, any> {
         const { namespace, theme }: Props = this.props;
         // Every time this is recomputed check the props
         this.validateProps(namespace, theme);
+        
         // Get the related theme data
         const themeName = (namespace) ? themeStore.getNamespace(namespace) : theme;
         const themeData = themeStore.getTheme(themeName!);

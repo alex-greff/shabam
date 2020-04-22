@@ -2,8 +2,10 @@
 export default {
     name: "dark",
     theme: {
-        test: {
-            primary: "#000000"
+        GLOBAL: {
+            test: {
+                primary: "#000000"
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import "./CustomPropertiesApplier.scss";
+import { Component } from "react";
 import update from "immutability-helper";
 
 import * as Utilities from "@/utilities";
@@ -47,22 +46,28 @@ class CustomPropertiesApplier extends Component<Props, State> {
 
     private updateRootStyles(useRoot: boolean, properties: CSSProperties) {
         if (useRoot) {
+            console.log("Applying properties to root", properties);
+
             Object.entries(properties).forEach(([name, value]) => {
                 Utilities.saveCSSProperty(name, value);
             });
             
-            this.setState((prevState) => update(prevState, { 
-                currentlyUsingRoot: { $set: true }
-            }));
+            if (!this.state.currentlyUsingRoot) {
+                this.setState((prevState) => update(prevState, { 
+                    currentlyUsingRoot: { $set: true }
+                }));
+            }
         }
         if (!useRoot && this.state.currentlyUsingRoot) {
             Object.keys(properties).forEach(name => {
                 Utilities.removeCSSProperty(name);
             });
             
-            this.setState((prevState) => update(prevState, { 
-                currentlyUsingRoot: { $set: false }
-            }));
+            if (this.state.currentlyUsingRoot) {
+                this.setState((prevState) => update(prevState, { 
+                    currentlyUsingRoot: { $set: false }
+                }));
+            }
         }
     }
 
@@ -100,8 +105,7 @@ class CustomPropertiesApplier extends Component<Props, State> {
         this.updateElementStyles(useEl, el, properties);
     }
 
-    // When something changed
-    getSnapshotBeforeUpdate() {
+    componentDidUpdate() {
         const { useRoot, useEl, el, properties }: Props = this.props;
         this.validateProps(useRoot, useEl, el);
 

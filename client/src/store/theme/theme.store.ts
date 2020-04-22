@@ -132,7 +132,7 @@ class ThemeStore {
 
     @action
     removeNamespace(namespaceID: string) {
-        this.checkNamespaceExists(name);
+        this.checkNamespaceExists(namespaceID);
 
         // Remove the namespace
         delete this.namespaces[namespaceID];
@@ -140,7 +140,7 @@ class ThemeStore {
 
     @action
     editNamespace(namespaceID: string, targetTheme: ThemeName) {
-        this.checkNamespaceExists(name);
+        this.checkNamespaceExists(namespaceID);
 
         // Edit the theme target        
         this.namespaces[namespaceID] = targetTheme;
