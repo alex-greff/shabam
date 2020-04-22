@@ -46,8 +46,6 @@ class CustomPropertiesApplier extends Component<Props, State> {
 
     private updateRootStyles(useRoot: boolean, properties: CSSProperties) {
         if (useRoot) {
-            console.log("Applying properties to root", properties);
-
             Object.entries(properties).forEach(([name, value]) => {
                 Utilities.saveCSSProperty(name, value);
             });
