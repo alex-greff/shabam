@@ -3,61 +3,42 @@ import { Schema, MixinDefinitions } from "themer";
 
 export const schema: Schema = {
     GLOBAL: {
-        test: {
-            $mixins: [ 'primary_modifier' ]
+        background: {
+            $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier', 'disabled_modifier']
+        },
+        text: {
+            $mixins: ['primary_modifier', 'secondary_modifier', 'disabled_modifier']
+        },
+        text_inverse: {
+            $mixins: ['primary_modifier', 'secondary_modifier', 'disabled_modifier']
+        },
+        accent: {
+            $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier', 'disabled_modifier']
+        },
+        selected: {
+            $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier']
+        },
+        gradient: {
+            $mixins: ['start_modifier', 'end_modifier']
+        },
+        gradient_selected: {
+            $mixins: ['start_modifier', 'end_modifier']
+        },
+        gradient_disabled: {
+            $mixins: ['start_modifier', 'end_modifier']
         }
-    }
-    // TODO: put this in
-    // GLOBAL: {
-    //     background: {
-    //         $mixins: ['primary_modifier', 'secondary_modifier', 'disabled_modifier']
-    //     },
-    //     text: {
-    //         $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier', 'disabled_modifier']
-    //     },
-    //     text_inverted: {
-    //         $mixins: ['primary_modifier', 'secondary_modifier', 'disabled_modifier']
-    //     },
-    //     accent: {
-    //         $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier', 'disabled_modifier']
-    //     },
-    //     selected: {
-    //         $mixins: ['primary_modifier', 'secondary_modifier', 'tertiary_modifier']
-    //     },
-    //     gradient: {
-    //         $mixins: ['start_modifier', 'end_modifier']
-    //     },
-    //     gradient_selected: {
-    //         $mixins: ['start_modifier', 'end_modifier']
-    //     },
-    //     gradient_disabled: {
-    //         $mixins: ['start_modifier', 'end_modifier']
-    //     },
-    //     // -- Notification colors ---
-    //     error: {
-    //         $mixins: ['background_modifier', 'text_modifier', 'accent_modifier']
-    //     },
-    //     info: {
-    //         $mixins: ['background_modifier', 'text_modifier', 'accent_modifier']
-    //     },
-    //     success: {
-    //         $mixins: ['background_modifier', 'text_modifier', 'accent_modifier']
-    //     },
-    //     warning: {
-    //         $mixins: ['background_modifier', 'text_modifier', 'accent_modifier']
-    //     },
-    // },
-    // // --- Component Scope Declarations ---
-    // // Views
-    // Home: { $inherits: "GLOBAL" },
-    // Account: { $inherits: "GLOBAL" },
-    // AccountCatalog: { $inherits: "GLOBAL" },
-    // AccountSearchHistory: { $inherits: "GLOBAL" },
-    // Catalog: { $inherits: "GLOBAL" },
-    // Search: { $inherits: "GLOBAL" },
-    // Signin: { $inherits: "GLOBAL" },
-    // Signup: { $inherits: "GLOBAL" },
-    // PageNotFound: { $inherits: "GLOBAL" }
+    },
+    // --- Component Scope Declarations ---
+    // Views
+    Home: { $inherits: "GLOBAL" },
+    Account: { $inherits: "GLOBAL" },
+    AccountCatalog: { $inherits: "GLOBAL" },
+    AccountSearchHistory: { $inherits: "GLOBAL" },
+    Catalog: { $inherits: "GLOBAL" },
+    Search: { $inherits: "GLOBAL" },
+    Signin: { $inherits: "GLOBAL" },
+    Signup: { $inherits: "GLOBAL" },
+    PageNotFound: { $inherits: "GLOBAL" }
 };
 
 export const mixins: MixinDefinitions = {

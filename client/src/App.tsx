@@ -7,10 +7,6 @@ import themes from "@/theme/themes";
 import { themeStore } from "@/store/theme/theme.store";
 import ThemeProvider from "@/components/wrappers/ThemeProvider";
 
-// Import global scss
-import "./styling/global.scss";
-import "./styling/main.scss";
-
 import NavBar from "@/components/NavBar/NavBar";
 import AppSwitch from "@/router/AppSwitch";
 
