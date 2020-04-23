@@ -5,14 +5,6 @@ import headerInjector from "../../injectors/headers";
 
 import UploadModule from "../upload";
 
-// const GraphQLModule = require("@graphql-modules/core").GraphQLModule;
-// const typeDefs = require("./catalogue.typeDefs");
-// const resolvers = require("./catalogue.resolvers");
-
-// const UploadModule = require("../upload");
-// const headerInjector = require("../../injectors/headers");
-
-
 export default new GraphQLModule({
     imports: [
         UploadModule

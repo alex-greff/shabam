@@ -4,13 +4,6 @@ import injectUserData from "../../middleware/userData";
 import permit from "../../middleware/permission";
 import * as Utilities from "../../../utilities";
 
-// const CatalogueOperations = require("./catalogue.operations");
-// const Utilities = require("../../../utilities");
-
-// const injectUserData = require("../../middleware/userData");
-// const permit = require("../../middleware/permission");
-
-
 export default {
     Query: {
         getAllTracks: Utilities.middlewareChain()(CatalogueOperations.getAllTracks),

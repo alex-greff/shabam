@@ -1,5 +1,4 @@
-import gql from "graphql-tag";
-// const gql = require("graphql-tag");
+import { gql } from "apollo-server-express";
 
 export default gql`
     """The scalar for uploaded objects."""

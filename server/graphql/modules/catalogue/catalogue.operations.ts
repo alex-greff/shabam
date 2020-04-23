@@ -15,14 +15,6 @@ import {
     RecomputeTrackFingerprintArgs
 } from "./catalogue.operations.types";
 
-// const helpers = require("./catalogue.helpers");
-// const workers = require("../../../workers");
-// const fs = require("fs");
-// const FormData = require("form-data");
-// const axios = require("axios");
-// const stream = require("stream");
-// const { FingerprintUtilities } = require("../../../utilities");
-
 export default {
     getAllTracks: async (root: any, args: any, context: any): Promise<any> => {
         const allTracks = await helpers.getAllTracks();

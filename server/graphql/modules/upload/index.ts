@@ -2,10 +2,7 @@ import { GraphQLModule } from "@graphql-modules/core";
 import typeDefs from "./upload.typeDefs";
 import resolvers from "./upload.resolvers";
 
-// const GraphQLModule = require("@graphql-modules/core").GraphQLModule;
-// const typeDefs = require("./upload.typeDefs");
-// const resolvers = require("./upload.resolvers");
-
+// Reference: https://graphql-modules.com/docs/recipes/file-uploads
 export default new GraphQLModule({
     typeDefs,
     resolvers

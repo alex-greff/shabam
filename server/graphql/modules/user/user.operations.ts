@@ -7,13 +7,6 @@ import KEYS from "../../../keys";
 import roles from "../../../roles/roles";
 import * as Utilities from "../../../utilities";
 
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-// const Utilities = require("../../../utilities");
-// const KEYS = require("../../../keys");
-// const roles = require("../../../roles/roles");
-// const helpers = require("./user.helpers");
-
 const DEFAULT_ROLE = "default";
 
 export default {

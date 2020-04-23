@@ -1,5 +1,4 @@
-import gql from "graphql-tag";
-// const gql = require("graphql-tag");
+import { gql } from "apollo-server-express";
 
 export default gql`
     """A user object."""
@@ -26,7 +25,7 @@ export default gql`
     }
 
     """Crdentials input for updating a user account."""
-    input UpdateUserCredentailsInput {
+    input UpdateUserCredentialsInput {
         """(Optional) The new email of the user."""
         email: String
         """(Optional) The new password of the user."""
@@ -42,7 +41,7 @@ export default gql`
         """Signup and create a new user."""
         signup(credentials: UserCredentialsInput!): Boolean!
         """Edit user account details."""
-        editUser(email: String!, updatedCredentials: UpdateUserCredentailsInput!): Boolean!
+        editUser(email: String!, updatedCredentials: UpdateUserCredentialsInput!): Boolean!
         """Edits a user's role."""
         editUserRole(email: String!, updatedRole: String!): Boolean!
         """Remove user account."""

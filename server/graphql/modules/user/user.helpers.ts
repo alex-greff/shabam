@@ -1,8 +1,6 @@
 import { UserAccount } from "../../../types";
 import * as db from "../../../db/main";
 
-// const db = require("../../../db/main");
-
 export async function getUser(email: string): Promise<UserAccount | null> {
     const query = `
         SELECT * FROM user_account AS ua WHERE ua.email = $1

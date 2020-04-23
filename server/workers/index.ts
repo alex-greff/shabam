@@ -1,5 +1,4 @@
 import axios from "axios";
-// const axios = require("axios");
 
 const FINGERPRINT_WORKER_ADDRESS = "http://fingerprint_worker:5001";
 const GENERATE_FINGERPRINT_ENDPOINT = `${FINGERPRINT_WORKER_ADDRESS}/generate_fingerprint`;
