@@ -18,6 +18,9 @@ const BLUE_2 = "#3176A8";
 const BLUE_3 = "#557F9D";
 const BLUE_4 = "#1C6498";
 const BLUE_5 = "#4BC1D1";
+const BLUE_6 = "#B3F6FF";
+const BLUE_7 = "#6AE8F9";
+const BLUE_8 = "#64829E";
 
 export default {
     name: "dark",
@@ -47,8 +50,8 @@ export default {
             },
             selected: {
                 // TODO: find colors for these
-                primary: "#FF0000",
-                secondary: "#FF6800",
+                primary: BLUE_6,
+                secondary: BLUE_7,
                 tertiary: "#FF8300"
             },
             gradient: {
@@ -64,6 +67,11 @@ export default {
                 // TODO: tweak these values
                 start: Color(BLUE_4).lighten(0.2).round().toString(),
                 end: Color(BLUE_5).lighten(0.2).round().toString()
+            }
+        },
+        NavBar: {
+            background: {
+                primary: BLUE_8
             }
         }
     }

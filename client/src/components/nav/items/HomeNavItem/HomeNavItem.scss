@@ -1,0 +1,20 @@
+.HomeNavItem {
+    $transition-time: 0.3s;
+
+    font-weight: bold;
+
+    font-size: 2rem;
+
+    & .HomeNavItem__text-first {
+        color: color-link("HomeNavItem", "text", "primary");
+
+        transition: color $transition-time;
+    }
+
+    & .HomeNavItem__text-second {
+        color: color-link("HomeNavItem", "text_inverse", "primary");
+        background-color: color-link("HomeNavItem", "text", "primary");
+
+        transition: background-color $transition-time;
+    }
+}

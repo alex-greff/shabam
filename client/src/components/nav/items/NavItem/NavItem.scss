@@ -1,0 +1,11 @@
+.NavItem {
+    $transition-time: 0.2s;
+
+    color: color-link("NavItem", "text", "secondary");
+
+    transition: color $transition-time;
+
+    &:hover {
+        color: color-link("NavItem", "selected", "primary");
+    }
+}

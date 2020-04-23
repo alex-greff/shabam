@@ -38,7 +38,12 @@ export const schema: Schema = {
     Search: { $inherits: "GLOBAL" },
     Signin: { $inherits: "GLOBAL" },
     Signup: { $inherits: "GLOBAL" },
-    PageNotFound: { $inherits: "GLOBAL" }
+    PageNotFound: { $inherits: "GLOBAL" },
+    // Components
+    NavBar: { $inherits: "GLOBAL" },
+    NavItemBase: { $inherits: "GLOBAL" },
+    NavItem: { $inherits: "GLOBAL" },
+    HomeNavItem: { $inherits: "GLOBAL" },
 };
 
 export const mixins: MixinDefinitions = {

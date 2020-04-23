@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from "react";
+import { BaseProps } from "@/types/baseProps.ts"
 import "./Account.scss";
+import classnames from "classnames";
 
-const Account: FunctionComponent<{}> = () => {
+const Account: FunctionComponent<BaseProps> = (props) => {
     return (
-        <div id="Account">
+        <div id="Account" className={classnames(props.className)}>
             Account View
         </div>
     );

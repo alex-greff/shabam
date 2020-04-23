@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from "react";
+import { BaseProps } from "@/types/baseProps.ts"
 import "./AccountSearchHistory.scss";
+import classnames from "classnames";
 
-const AccountSearchHistory: FunctionComponent<{}> = () => {
+const AccountSearchHistory: FunctionComponent<BaseProps> = (props) => {
     return (
-        <div id="AccountSearchHistory">
+        <div id="AccountSearchHistory" className={classnames(props.className)}>
             Account Search History View
         </div>
     );

@@ -1,0 +1,41 @@
+#NavBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.5rem 0.8rem;
+
+    & .NavBar__right-items {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        & > *:not(:last-child) {
+            margin-right: 1rem;
+        }
+    }
+
+    & .NavBar__divider-line {
+        $size: 1px;
+
+        position: relative;
+
+        width: $size;
+        height: 100%;
+
+        margin: 0 0.2rem;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-color: color-link("NavBar", "background", "primary");
+        }
+    }
+}
