@@ -1,12 +1,14 @@
-const express = require("express");
-const worker = express();
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-const cors = require("cors");
-const KEYS = require("./keys");
+import express, { Request, Response, NextFunction } from "express";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import cors from "cors";
+import KEYS from "@/keys";
+import HTTPError from "@/error/HTTPError";
 
 // Import routes
-const rootRoute = require("./worker/routes");
+import rootRoute from "@/worker/routes";
+
+const worker = express();
 
 // Setup morgan (http request logger)
 worker.use(morgan("dev"));
@@ -17,13 +19,14 @@ worker.use(bodyParser.json());
 
 // Setup CORS headers
 const corsOptions = {
+    // TODO: fixup cors
     origin: "*",
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
     optionsSuccessStatus: 200
 };
 // Handle CORS preflight options request
-worker.options(cors(corsOptions));
+worker.options("*", cors(corsOptions));
 // Enable CORS
 worker.use(cors(corsOptions));
 
@@ -33,13 +36,13 @@ worker.use("/", rootRoute);
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
 worker.use((req, res, next) => {
-    const error = new Error("Request endpoint not found");
+    const error = new HTTPError("Request endpoint not found");
     error.status = 404;
     next(error);
 });
 
 // Handle 500 errors
-worker.use((error, req, res, next) => {
+worker.use((error: HTTPError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.status || 500);
     res.json({
         error: {
@@ -48,4 +51,4 @@ worker.use((error, req, res, next) => {
     });
 });
 
-module.exports = worker;
+export default worker;

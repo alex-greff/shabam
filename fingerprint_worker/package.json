@@ -6,9 +6,9 @@
     "gypfile": true,
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon server.js",
-        "start:prod": "NODE_ENV=production node server.js",
-        "start:dev": "npm run gyp:build && gulp --gulpfile gulpfile",
+        "start:dev": "nodemon --legacy-watch -r tsconfig-paths/register ./server.ts",
+        "start:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register ./server.ts",
+        "_old_start:dev": "npm run gyp:build && gulp --gulpfile gulpfile",
         "gyp:build": "node-gyp rebuild",
         "gyp:clean": "node-gyp clean"
     },
@@ -22,9 +22,18 @@
         "morgan": "^1.9.1",
         "multer": "^1.4.2",
         "node-addon-api": "^1.6.3",
-        "node-gyp": "^5.0.2"
+        "node-gyp": "^5.0.2",
+        "ts-node": "^8.4.1",
+        "tsconfig-paths": "^3.9.0",
+        "typescript": "^3.6.4"
     },
     "devDependencies": {
-        "gulp": "^4.0.2"
+        "@types/cors": "^2.8.6",
+        "@types/express": "^4.17.1",
+        "@types/morgan": "^1.7.37",
+        "@types/multer": "^1.3.6",
+        "@types/node": "^12.11.1",
+        "gulp": "^4.0.2",
+        "nodemon": "^1.19.1"
     }
 }

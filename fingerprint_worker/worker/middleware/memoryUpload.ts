@@ -1,16 +1,17 @@
-const multer = require("multer");
+import { Request } from "express";
+import multer, { FileFilterCallback, Field } from "multer";
 
-module.exports = (i_aFileFields, ...i_aMimeTypes) => {
+export default (fileFields: Field[], ...mimeTypes: string[]) => {
     const storage = multer.memoryStorage();
 
-    const fileFilter = (req, file, cb) => {
+    const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
         // Auto accept if no mimetypes were provided
-        if (i_aMimeTypes.length <= 0) {
+        if (mimeTypes.length <= 0) {
             return cb(null, true); 
         }
 
         // Accept if file mimetype matches one of the provided mimetypes
-        if (i_aMimeTypes.includes(file.mimetype)) {
+        if (mimeTypes.includes(file.mimetype)) {
             return cb(null, true);
         }
 
@@ -26,5 +27,5 @@ module.exports = (i_aFileFields, ...i_aMimeTypes) => {
         fileFilter
     });
 
-    return upload.fields(i_aFileFields);
+    return upload.fields(fileFields);
 };

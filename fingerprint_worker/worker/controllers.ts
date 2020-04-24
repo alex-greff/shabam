@@ -1,11 +1,13 @@
-const fs = require("fs");
+import fs from "fs";
+import { Request, Response, NextFunction } from "express";
 
-const testAddon = require("../build/Release/testaddon.node");
+// const testAddon = require("../build/Release/testaddon.node");
 
-exports.generate_fingerprint = (req, res, next) => {
-    console.log("TEST ADDON", testAddon);
+export const generate_fingerprint = (req: Request, res: Response, next: NextFunction) => {
+    // console.log("TEST ADDON", testAddon);
 
-    const audioFile = req.files.audioFile[0];
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const audioFile = files.audioFile[0];
 
     // TODO: implement
     console.log("AUDIO FILE", audioFile);

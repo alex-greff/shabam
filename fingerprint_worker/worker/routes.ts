@@ -1,8 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const upload = require("./middleware/memoryUpload");
+import express from "express";
+import upload from "@/worker/middleware/memoryUpload";
 
-const RootController = require("./controllers");
+import * as RootController from "./controllers";
+
+const router = express.Router();
 
 // ----------------
 // --- Requests ---
@@ -17,4 +18,4 @@ router.post("/generate_fingerprint", upload(fileFields), RootController.generate
 
 // "audio/wav"
 
-module.exports = router;
+export default router;
