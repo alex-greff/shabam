@@ -1,13 +1,8 @@
-import { RoleCheckConfig } from "../types";
+import { RoleCheckConfig } from "@/types";
 import roles from "./roles";
-import * as Utilities from "../utilities";
+import * as Utilities from "@/utilities";
 
-// const roles = require("./roles");
 const CUSTOM_ROLE_CHECK_MAP = require("./custom-role-checks");
-// const Utilities = require("../utilities");
-
-// // Inject prototype addons
-// require("../utilities/prototypeAddons");
 
 export default (root: any, args: any, context: any) => {
     return async (config: RoleCheckConfig, role: string, ...operations: string[]): Promise<boolean> => {

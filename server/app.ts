@@ -1,11 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
-import HTTPError from "./error/HTTPError";
+import HTTPError from "@/error/HTTPError";
 import bodyParser from "body-parser";
 import { Pool, PoolConfig } from "pg";
-import AppModule from "./graphql/modules";
-import KEYS from "./keys";
+import AppModule from "@/graphql/modules";
+import KEYS from "@/keys";
 import { ApolloServer } from "apollo-server-express";
 
 const app = express();

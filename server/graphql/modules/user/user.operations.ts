@@ -1,11 +1,11 @@
-import { Token } from "../../../types";
+import { Token } from "@/types";
 import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as helpers from "./user.helpers";
-import KEYS from "../../../keys";
-import roles from "../../../roles/roles";
-import * as Utilities from "../../../utilities";
+import KEYS from "@/keys";
+import roles from "@/roles/roles";
+import * as Utilities from "@/utilities";
 
 const DEFAULT_ROLE = "default";
 

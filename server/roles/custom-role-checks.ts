@@ -1,6 +1,6 @@
 import { UserDataContext, RoleCheckConfig } from "../types";
-import * as Utilities from "../utilities";
-import * as catalogueHelpers from "../graphql/modules/catalogue/catalogue.helpers";
+import * as Utilities from "@/utilities";
+import * as catalogueHelpers from "@/graphql/modules/catalogue/catalogue.helpers";
 
 // const Utilities = require("../utilities");
 // const catalogueHelpers = require("../graphql/modules/catalogue/catalogue.helpers");

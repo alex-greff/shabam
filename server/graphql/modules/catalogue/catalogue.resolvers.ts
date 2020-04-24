@@ -1,8 +1,8 @@
-import { Track, TrackMetaData } from "../../../types";
+import { Track, TrackMetaData } from "@/types";
 import CatalogueOperations from "./catalogue.operations";
-import injectUserData from "../../middleware/userData";
-import permit from "../../middleware/permission";
-import * as Utilities from "../../../utilities";
+import injectUserData from "@/graphql/middleware/userData";
+import permit from "@/graphql/middleware/permission";
+import * as Utilities from "@/utilities";
 
 export default {
     Query: {

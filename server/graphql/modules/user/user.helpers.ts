@@ -1,5 +1,5 @@
-import { UserAccount } from "../../../types";
-import * as db from "../../../db/main";
+import { UserAccount } from "@/types";
+import * as db from "@/db/main";
 
 export async function getUser(email: string): Promise<UserAccount | null> {
     const query = `

@@ -1,11 +1,11 @@
-import { Track } from "../../../types";
+import { Track } from "@/types";
 import fs from "fs";
 import FormData from "form-data";
 import axios from "axios";
 import stream from "stream";
 import * as helpers from "./catalogue.helpers";
-import workers from "../../../workers";
-import { FingerprintUtilities } from "../../../utilities";
+import workers from "@/workers";
+import { FingerprintUtilities } from "@/utilities";
 import { 
     GetTrackArgs, 
     SearchTrackArgs, 

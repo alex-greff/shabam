@@ -1,6 +1,6 @@
-import { Track } from "../../../types";
-import * as db from "../../../db/main";
-import * as address_db from "../../../db/address";
+import { Track } from "@/types";
+import * as db from "@/db/main";
+import * as address_db from "@/db/address";
 
 async function _addArtistsToTrack(trackID: number, artists: string[]): Promise<void> {
     // Add the artist list for the track

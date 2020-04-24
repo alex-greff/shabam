@@ -1,4 +1,4 @@
-import { UploadFile } from "../../../types";
+import { UploadFile } from "@/types";
 
 export interface GetTrackArgs {
     trackID: number

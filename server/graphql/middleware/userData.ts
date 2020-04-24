@@ -1,9 +1,6 @@
-import { UserData } from "../../types";
+import { UserData } from "@/types";
 import jwt from "jsonwebtoken";
-import KEYS from "../../keys";
-
-// const jwt = require('jsonwebtoken');
-// const KEYS = require("../../keys");
+import KEYS from "@/keys";
 
 // Decodes the JWT token and injects the given user data into the context
 export default (root: any, args: any, context: any) => {
