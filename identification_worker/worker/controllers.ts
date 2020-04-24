@@ -1,10 +1,19 @@
-const Utilities = require("./utilities");
+import { Request, Response, NextFunction } from "express";
+import * as Utilities from "@/worker/utilities";
 
-exports.identify_fingerprint = async (req, res, next) => {
-    const fingerprintFile = req.files.fingerprint[0];
+interface BodyContent {
+    windowAmount: string;
+    partitionAmount: string;
+}
+
+
+export const identify_fingerprint = async (req: Request<any, any, BodyContent>, res: Response, next: NextFunction) => {
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const fingerprintFile = files["fingerprint"][0];
     const windowAmount = parseInt(req.body.windowAmount);
     const partitionAmount = parseInt(req.body.partitionAmount);
 
+    // TODO: remove
     console.log("FINGERPRINT", fingerprintFile);
     console.log("Window amount", windowAmount);
     console.log("Partition amount", partitionAmount);
@@ -14,6 +23,7 @@ exports.identify_fingerprint = async (req, res, next) => {
     const fingerprintCondensedData = Utilities.getFingerprintData(fingerprintBuffer);
     const fingerprintData = Utilities.uncondenseFingerprintData(fingerprintCondensedData, windowAmount, partitionAmount);
 
+    // TODO: remove
     console.log("Condensed Fingerprint Data", fingerprintCondensedData);
     console.log("Fingerprint data", fingerprintData);
 

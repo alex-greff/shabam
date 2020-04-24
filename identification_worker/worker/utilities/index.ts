@@ -1,4 +1,4 @@
-exports.getFingerprintData = (fingerprintBuffer) => {
+export const getFingerprintData = (fingerprintBuffer: Buffer) => {
     return Uint8Array.from(fingerprintBuffer);
 };
 
@@ -9,7 +9,7 @@ exports.getFingerprintData = (fingerprintBuffer) => {
  * @param {Number} numWindows The number of windows.
  * @param {Number} numPartitions The number of partitions.
  */
-exports.uncondenseFingerprintData = (condensedFingerprintData, numWindows, numPartitions) => {
+export const uncondenseFingerprintData = (condensedFingerprintData: Uint8Array, numWindows: number, numPartitions: number) => {
     const aRetFingerprint = [];
 
     for (let nCurrWindow = 0; nCurrWindow < numWindows; nCurrWindow++) {

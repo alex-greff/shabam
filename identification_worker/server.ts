@@ -1,5 +1,5 @@
-const http = require("http");
-const worker = require("./worker");
+import http from "http";
+import worker from "./worker";
 
 // Setup server
 
