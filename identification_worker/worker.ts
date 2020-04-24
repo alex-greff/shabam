@@ -19,6 +19,7 @@ worker.use(bodyParser.json());
 
 // Setup CORS headers
 const corsOptions = {
+    // TODO: fixup cors
     origin: "*",
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
