@@ -8,7 +8,7 @@ const pool = new Pool({
     database: KEYS.PG_MAIN_DATABASE,
     password: KEYS.PG_MAIN_PASSWORD,
     port: KEYS.PG_MAIN_PORT,
-    ssl: true
+    ssl: (KEYS.PRODUCTION) ? true : false
 });
 pool.on("error", () => console.error("Lost PG main database connection"));
 

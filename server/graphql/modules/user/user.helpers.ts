@@ -77,14 +77,14 @@ export async function createNewUser(username: string, passwordHash: string, role
         signup_date: signupDateCleaned
     };
 
-    const newUserKeys = Object.keys(newUser);
+    const newUserParams = Object.keys(newUser).join(", ");
     const newUserValues = Object.values(newUser);
 
     const query = `
-        INSERT INTO user_account($1, $2, $3, $4) VALUES ($5, $6, $7, $8)
+        INSERT INTO user_account(${newUserParams}) VALUES ($1, $2, $3, $4)
     `;
 
-    await db.query(query, ...newUserKeys, ...newUserValues);
+    await db.query(query, ...newUserValues);
 };
 
 export async function editUser(username: string, newUsername?: string, newPasswordHash?: string): Promise<void> {
