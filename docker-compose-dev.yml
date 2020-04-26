@@ -15,8 +15,29 @@ services:
         depends_on: 
             - "api"
             - "client"
-            - "fingerprint_worker"
-            - "identification_worker"
+            - "fingerprint-worker"
+            - "identification-worker"
+    db-main:
+        image: postgres
+        restart: always
+        ports:
+            - 5432:5432
+        environment: 
+            - POSTGRES_PASSWORD=development
+        hostname: db-main
+        container_name: shabam_db-main
+        shm_size: "256MB"
+        networks:
+            - app-network
+    adminder-db-main:
+        image: adminer
+        restart: always
+        ports:
+            - "8080:8080"
+        hostname: adminder-db-main
+        container_name: shabam_adminder_db_main
+        networks:
+            - app-network
     api:
         build:
             dockerfile: Dockerfile.dev
@@ -26,38 +47,39 @@ services:
             - ./server:/app
         environment:
             # Main DB
-            - "PG_MAIN_HOST=${SHABAM_PG_MAIN_HOST}"
-            - "PG_MAIN_DATABASE=${SHABAM_PG_MAIN_DATABASE}"
-            - "PG_MAIN_USER=${SHABAM_PG_MAIN_USER}"
-            - "PG_MAIN_PORT=${SHABAM_PG_MAIN_PORT}"
-            - "PG_MAIN_PASSWORD=${SHABAM_PG_MAIN_PASSWORD}"
-            # Address 1 DB
-            - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
-            - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
-            - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
-            - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
-            - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
-            # Address 2 DB
-            - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
-            - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
-            - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
-            - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
-            - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
-            # Address 3 DB
-            - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
-            - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
-            - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
-            - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
-            - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
+            - "PG_MAIN_HOST=db-main"
+            - "PG_MAIN_DATABASE=postgres"
+            - "PG_MAIN_USER=postgres"
+            - "PG_MAIN_PORT=5432"
+            - "PG_MAIN_PASSWORD=development"
+            # TODO: put back in
+            # # Address 1 DB
+            # - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
+            # - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
+            # - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
+            # - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
+            # - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
+            # # Address 2 DB
+            # - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
+            # - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
+            # - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
+            # - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
+            # - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
+            # # Address 3 DB
+            # - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
+            # - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
+            # - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
+            # - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
+            # - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
             # Misc
-            - "ADDRESS_DB_COUNT=3"
-            - "JWT_SECRET=${SHABAM_JWT_SECRET}"
-            - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
+            # - "ADDRESS_DB_COUNT=3"
             - "SESSION_SECRET=my-big-secret"
         networks:
             - app-network
         hostname: api
         container_name: shabam_api
+        depends_on: 
+            - "db-main"
     client:
         build:
             dockerfile: Dockerfile.dev
@@ -73,7 +95,7 @@ services:
         privileged: true
         stdin_open: true
         container_name: shabam_client
-    fingerprint_worker:
+    fingerprint-worker:
         build:
             dockerfile: Dockerfile.dev
             context: ./fingerprint_worker
@@ -82,9 +104,9 @@ services:
             - ./fingerprint_worker:/app
         networks:
             - app-network
-        hostname: fingerprint_worker
+        hostname: fingerprint-worker
         container_name: shabam_fingerprint_worker
-    identification_worker:
+    identification-worker:
         build:
             dockerfile: Dockerfile.dev
             context: ./identification_worker
@@ -93,9 +115,9 @@ services:
             - ./identification_worker:/app
         networks:
             - app-network
-        hostname: identification_worker
+        hostname: identification-worker
         container_name: shabam_identification_worker
-    records_worker:
+    records-worker:
         build:
             dockerfile: Dockerfile.dev
             context: ./records_worker
@@ -125,7 +147,7 @@ services:
             - "ADDRESS_DB_COUNT=3"
         networks:
             - app-network
-        hostname: records_worker
+        hostname: records-worker
         container_name: shabam_records_worker
 networks:
     app-network:

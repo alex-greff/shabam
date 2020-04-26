@@ -35,7 +35,3 @@ export interface UserAccount {
     signupDate: string;
     lastLogin: string;
 }
-
-export interface Token {
-    token: string;
-}

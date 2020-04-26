@@ -1,5 +1,4 @@
 import { AppContext } from "@/types";
-import { Token } from "@/types/schema";
 import { promisify } from "es6-promisify";
 import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
 import bcrypt from "bcryptjs";

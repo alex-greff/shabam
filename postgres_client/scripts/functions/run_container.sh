@@ -4,7 +4,11 @@
 
 # Parameters:
 # $1: The command to run
-# $2: The database name
+# $2: The database host
+# $3: The database database
+# $4: The database user
+# $5: The database password
+# $6: The database port
 run_container() {
     CURR_DIR=`pwd`
     SCRIPTS_DIR="$(pwd)/scripts"
@@ -12,7 +16,7 @@ run_container() {
     # Include the common env script
     source "$SCRIPTS_DIR/common_env.sh"
 
-    generate_set_container_env $2
+    generate_set_container_env "$2" "$3" "$4" "$5" "$6"
 
     # Start command
     read -d '' START_CMD << EOF
@@ -27,5 +31,5 @@ run_container() {
 EOF
 
     # Run the container
-    docker run -it -v "/$CURR_DIR/app:/app" $IMAGE_NAME bash -c "$START_CMD"
+    docker run -it -v "/$CURR_DIR/app:/app" --network shabam_app-network $IMAGE_NAME bash -c "$START_CMD"
 }

@@ -4,9 +4,10 @@ A container for automating the configuration of the postgres server. The contain
 
 ## Databases
 * `main`: the main database containing user and track information
-* `address-1`: the first track address database
+<!-- TODO: put back in later -->
+<!-- * `address-1`: the first track address database
 * `address-2`: the second track address database
-* `address-3`: the third track address database
+* `address-3`: the third track address database -->
 
 ## Commands
 

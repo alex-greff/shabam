@@ -1,4 +1,4 @@
-import { UserAccount, Token } from "@/types/schema";
+import { UserAccount } from "@/types/schema";
 import UserOperations from "./user.operations";
 import permit from "@/graphql/middleware/permission";
 import * as Utilities from "@/utilities";
@@ -17,8 +17,5 @@ export default {
         _id: (user: UserAccount) => user.id,
         username: (user: UserAccount) => user.username,
         password: (user: UserAccount) => user.password
-    },
-    Token: {
-        token: (t: Token) => t.token
     }
 }

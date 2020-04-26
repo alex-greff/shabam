@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 export default gql`
     type Query {
-        """Logins a user and returns a token."""
+        """Logins a user."""
         login(credentials: UserCredentialsInput!): Boolean
     }
 

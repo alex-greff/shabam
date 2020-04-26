@@ -59,7 +59,7 @@ export default {
         // const fd = new FormData();
         // fd.append("audioFile", audioReadStream, filename);
 
-        // const res = await axios.post("http://fingerprint_worker:5001/generate_fingerprint", fd, {
+        // const res = await axios.post("http://fingerprint-worker:5001/generate_fingerprint", fd, {
         //     headers: { ...fd.getHeaders() }
         // });
 
@@ -74,7 +74,7 @@ export default {
         fd.append("windowAmount", windowAmount);
         fd.append("partitionAmount", partitionAmount);
 
-        const endpointURL = "http://identification_worker:5002/identify_fingerprint";
+        const endpointURL = "http://identification-worker:5002/identify_fingerprint";
         const res = await axios.post(endpointURL, fd, {
             headers: { ...fd.getHeaders() }
         });
