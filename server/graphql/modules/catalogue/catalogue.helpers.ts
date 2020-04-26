@@ -35,7 +35,7 @@ async function _addArtistsToTrack(trackID: number, artists: string[]): Promise<v
 export async function getTrack(trackID: number): Promise<Track> {
     const trackQuery = `
         SELECT * FROM 
-            (SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
+            (SELECT t.*, ua.username AS upload_user_account_username FROM track AS t
                 INNER JOIN user_account AS ua 
                 ON t.upload_user_account_id = ua.user_account_id) n1 
             WHERE n1.track_id = $1
@@ -73,7 +73,7 @@ export async function getTrack(trackID: number): Promise<Track> {
             title: trackData.title,
             artists: trackData.artists,
             coverImage: trackData.cover_image,
-            uploaderEmail: trackData.upload_user_account_email,
+            uploaderUsername: trackData.upload_user_account_username,
             releaseDate: trackData.release_date,
             createdDate: trackData.created_date,
             updatedDate: trackData.update_date
@@ -83,7 +83,7 @@ export async function getTrack(trackID: number): Promise<Track> {
 
 export async function getAllTracks(): Promise<Track[]> {
     const allTracksQuery = `
-        SELECT t.*, ua.email AS upload_user_account_email FROM track AS t
+        SELECT t.*, ua.username AS upload_user_account_username FROM track AS t
             INNER JOIN user_account AS ua
             ON (t.upload_user_account_id = ua.user_account_id);
     `;
@@ -97,8 +97,8 @@ export async function getAllTracks(): Promise<Track[]> {
             ON (n1.track_id = n2.track_id);
     `;
 
-    const aDbQueries = [db.query(allTracksQuery), db.query(trackToArtistsMapQuery)];
-    const [allTracksRes, trackToArtistsMapRes] = await Promise.all(aDbQueries);
+    const dbQueries = [db.query(allTracksQuery), db.query(trackToArtistsMapQuery)];
+    const [allTracksRes, trackToArtistsMapRes] = await Promise.all(dbQueries);
 
     const trackToArtistsMap = trackToArtistsMapRes.rows.reduce((acc: any, oCurrRawMap: any) => {
         const { artist_name, track_id } = oCurrRawMap;
@@ -115,35 +115,35 @@ export async function getAllTracks(): Promise<Track[]> {
         return { ...acc };
     }, {});
 
-    const aRawTrackData = allTracksRes.rows.map((oTrack:any) => ({
+    const rawTrackData = allTracksRes.rows.map((oTrack: any) => ({
         ...oTrack,
         artists: (trackToArtistsMap[oTrack.track_id]) ? [...trackToArtistsMap[oTrack.track_id]] : []
     }));
 
-    const allTracks = aRawTrackData.map((oCurrRawTrackData:any) => ({
-        _id: oCurrRawTrackData.track_id,
-        addressDatabase: oCurrRawTrackData.address_database,
+    const allTracks = rawTrackData.map((currRawTrackData: any) => ({
+        _id: currRawTrackData.track_id,
+        addressDatabase: currRawTrackData.address_database,
         metaData: {
-            title: oCurrRawTrackData.title,
-            artists: oCurrRawTrackData.artists,
-            coverImage: oCurrRawTrackData.cover_image,
-            uploaderEmail: oCurrRawTrackData.upload_user_account_email,
-            releaseDate: oCurrRawTrackData.release_date,
-            createdDate: oCurrRawTrackData.created_date,
-            updatedDate: oCurrRawTrackData.update_date
+            title: currRawTrackData.title,
+            artists: currRawTrackData.artists,
+            coverImage: currRawTrackData.cover_image,
+            uploaderUsername: currRawTrackData.upload_user_account_username,
+            releaseDate: currRawTrackData.release_date,
+            createdDate: currRawTrackData.created_date,
+            updatedDate: currRawTrackData.update_date
         }
     }));
 
     return allTracks;
 };
 
-export async function addTrack(title: string, artists: string[], email: string, coverImage?: string, releaseDate?: string): Promise<number> {
+export async function addTrack(title: string, artists: string[], username: string, coverImage?: string, releaseDate?: string): Promise<number> {
     const dReleaseDate = (releaseDate) ? new Date(releaseDate) : new Date();
     const dNow = new Date();
 
     const insertArgs = [title, dReleaseDate, dNow];
     let insertListString = `title, release_date, created_date, update_date, upload_user_account_id`;
-    let insertIndicesString = `$2, $3, $4, $4, ( SELECT user_account_id FROM user_account AS ua WHERE ua.email = $1 )`;
+    let insertIndicesString = `$2, $3, $4, $4, ( SELECT user_account_id FROM user_account AS ua WHERE ua.username = $1 )`;
 
     if (coverImage) {
         insertListString += ", cover_image";
@@ -158,7 +158,7 @@ export async function addTrack(title: string, artists: string[], email: string, 
             (${insertIndicesString})
     `;
 
-    const insertTrackRes = await db.query(insertTrackQuery, email, ...insertArgs);
+    const insertTrackRes = await db.query(insertTrackQuery, username, ...insertArgs);
 
     const { track_id : trackID } = insertTrackRes.rows[0];
 
@@ -168,7 +168,7 @@ export async function addTrack(title: string, artists: string[], email: string, 
     return trackID;
 };
 
-export async function editTrack(trackID: number, newTitle?: string, newArtists?: string[], newCoverImage?: string, newRleaseDate?: string): Promise<void> {
+export async function editTrack(trackID: number, newTitle?: string, newArtists?: string[], newCoverImage?: string, newReleaseDate?: string): Promise<void> {
     const dNow = new Date();
 
     const updateArgs = [];
@@ -188,8 +188,8 @@ export async function editTrack(trackID: number, newTitle?: string, newArtists?:
         currParam++;
     }
 
-    if (newRleaseDate) {
-        const dReleaseDate = new Date(newRleaseDate);
+    if (newReleaseDate) {
+        const dReleaseDate = new Date(newReleaseDate);
         updateListString += `, release_date = $${currParam}`;
         updateArgs.push(dReleaseDate);
         currParam++;

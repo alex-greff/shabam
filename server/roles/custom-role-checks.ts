@@ -2,34 +2,30 @@ import { RoleCheckConfig, AppContext } from "@/types";
 import * as Utilities from "@/utilities";
 import * as catalogueHelpers from "@/graphql/modules/catalogue/catalogue.helpers";
 
-// const Utilities = require("../utilities");
-// const catalogueHelpers = require("../graphql/modules/catalogue/catalogue.helpers");
-// const userHelpers = require("../graphql/modules/user/user.helpers");
-
 const checkTrackIsOwned = async (root: any, args: any, context: AppContext, config: RoleCheckConfig): Promise<boolean> => {
     const { trackID: nTrackID } = args;
-    const userEmail = context.req.session?.userData?.email;
+    const userUsername = context.req.session?.userData?.username;
 
-    if (!userEmail) throw new Error("User email does not exist");
+    if (!userUsername) throw new Error("User username does not exist");
 
-    // Get the uploader user's email of the track that will be potentially edited
+    // Get the uploader user's username of the track that will be potentially edited
     const oTrackData = await catalogueHelpers.getTrack(nTrackID);
-    const { uploaderEmail } = oTrackData.metaData;
+    const { uploaderUsername } = oTrackData.metaData;
 
-    // Check if the uploader's email is the same as the current user
-    return (uploaderEmail === userEmail);
+    // Check if the uploader's username is the same as the current user
+    return (uploaderUsername === userUsername);
 };
 
 const checkIsSelf = (root: any, args: any, context: AppContext, config: RoleCheckConfig): boolean => {
-    const { userEmailPath } = config;
-    const targetUserEmail = Utilities.getIn(args, userEmailPath);
+    const { userUsernamePath } = config;
+    const targetUserUsername = Utilities.getIn(args, userUsernamePath);
 
-    const userEmail = context.req.session?.userData?.email;
+    const userUsername = context.req.session?.userData?.username;
 
-    if (!userEmail) throw new Error("User email does not exist");
+    if (!userUsername) throw new Error("User username does not exist");
 
-    // Compare the target email with the email of the current user
-    return (targetUserEmail === userEmail);
+    // Compare the target username with the username of the current user
+    return (targetUserUsername === userUsername);
 };
 
 export default {

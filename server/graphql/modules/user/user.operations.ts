@@ -12,9 +12,9 @@ const DEFAULT_ROLE = "default";
 
 export default {
     login: async (root: any, { credentials }: LoginArgs, context: AppContext): Promise<boolean> => {
-        const { email, password } = credentials;
+        const { username, password } = credentials;
 
-        const user = await helpers.getUser(email);
+        const user = await helpers.getUser(username);
 
         if (!user) {
             Utilities.throwAuthorizationError();
@@ -28,7 +28,7 @@ export default {
             Utilities.throwAuthorizationError();
         }
 
-        const { email: userEmail, role: userRole } = user!;
+        const { username: userUsername, role: userRole } = user!;
 
         // No session exists
         if (!context.req.session) {
@@ -40,7 +40,7 @@ export default {
 
         // Update the session metadata
         context.req.session!.userData = {
-            email: userEmail,
+            username: userUsername,
             role: userRole
         };
 
@@ -52,61 +52,61 @@ export default {
         }
 
         // Update last login to now
-        await helpers.updateLastUserLogin(email);
+        await helpers.updateLastUserLogin(username);
 
         return true;
     },
     signup: async (root: any, { credentials }: SignupArgs, context: AppContext): Promise<boolean> => {
-        const { email, password } = credentials;
+        const { username, password } = credentials;
 
         // Attempt to find an already existing user
-        const userExists = await helpers.userExists(email);
+        const userExists = await helpers.userExists(username);
 
         if (userExists) {
             // If query doesn't error then the user already exists
-            throw new Error(`User '${email}' already exists`);   
+            throw new Error(`User '${username}' already exists`);   
         }
 
         // Hash password
         const passwordHashed = bcrypt.hashSync(password, 10);
 
         // Create the new user
-        await helpers.createNewUser(email, passwordHashed, DEFAULT_ROLE);
+        await helpers.createNewUser(username, passwordHashed, DEFAULT_ROLE);
 
         console.log("CREATED USER", {
-            email,
+            username,
             password: passwordHashed,
             role: DEFAULT_ROLE
         });
 
         return true;
     },
-    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: AppContext): Promise<boolean> => {
-        const { email: newEmail, password: newPassword } = updatedCredentials;
+    editUser: async (root: any, { username: currUsername, updatedCredentials }: EditUserArgs, context: AppContext): Promise<boolean> => {
+        const { username: newUsername, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
-        const userData = await helpers.getUser(currEmail);
+        const userData = await helpers.getUser(currUsername);
 
         if (!userData) {
-            throw new Error(`User '${currEmail}' does not exist`);
+            throw new Error(`User '${currUsername}' does not exist`);
         }
 
         const { password: sCurrPasswordHash } = userData;
 
-        if (newEmail) {
-            if (!Utilities.isEmail(newEmail)) {
-                throw new Error(`The email '${newEmail}' is not valid`);
+        if (newUsername) {
+            if (!Utilities.isUsername(newUsername)) {
+                throw new Error(`The username '${newUsername}' is not valid`);
             }
 
-            if (currEmail === newEmail) {
-                throw new Error("New email must be different than the current one");
+            if (currUsername === newUsername) {
+                throw new Error("New username must be different than the current one");
             }
 
-            // Validate that new email is not used anywhere else
-            const emailInUse = await helpers.userExists(newEmail);
+            // Validate that new newUsername is not used anywhere else
+            const usernameInUse = await helpers.userExists(newUsername);
 
-            if (emailInUse) {
-                throw new Error("Email already in use");
+            if (usernameInUse) {
+                throw new Error("Username already in use");
             }
         }
 
@@ -122,18 +122,18 @@ export default {
             newPasswordHash = bcrypt.hashSync(newPassword, 10);
         }
 
-        await helpers.editUser(currEmail, newEmail, newPasswordHash);
+        await helpers.editUser(currUsername, newUsername, newPasswordHash);
 
-        console.log(`UPDATED ACCOUNT '${currEmail}'`, (newEmail) ? `email=${newEmail}` : "", (newPasswordHash) ? `password=${newPasswordHash}` : "");
+        console.log(`UPDATED ACCOUNT '${currUsername}'`, (newUsername) ? `username=${newUsername}` : "", (newPasswordHash) ? `password=${newPasswordHash}` : "");
 
         return true;
     },
-    editUserRole: async (root: any, { email, updatedRole }: EditUserRoleArgs, context: any): Promise<boolean> => {
+    editUserRole: async (root: any, { username, updatedRole }: EditUserRoleArgs, context: any): Promise<boolean> => {
         // Check that the user exists
-        const userExists = await helpers.userExists(email);
+        const userExists = await helpers.userExists(username);
 
         if (!userExists) {
-            throw new Error(`User '${email}' does not exist`);
+            throw new Error(`User '${username}' does not exist`);
         }
 
         // Make sure role exists
@@ -142,24 +142,24 @@ export default {
         }
 
         // Update the user's role
-        await helpers.editUserRole(email, updatedRole);
+        await helpers.editUserRole(username, updatedRole);
 
-        console.log(`UPDATED USER ACCOUNT '${email}' TO ROLE '${updatedRole}'`);
+        console.log(`UPDATED USER ACCOUNT '${username}' TO ROLE '${updatedRole}'`);
 
         return true;
     },
-    removeUser: async (root: any, { email }: RemoveUserArgs, context: AppContext): Promise<boolean> => {
+    removeUser: async (root: any, { username }: RemoveUserArgs, context: AppContext): Promise<boolean> => {
         // Attempt to find an already existing user
-        const userExists = helpers.userExists(email);
+        const userExists = helpers.userExists(username);
 
         if (!userExists) {
-            throw new Error(`User '${email}' does not exist`);
+            throw new Error(`User '${username}' does not exist`);
         }
 
         // Delete the user
-        await helpers.deleteUser(email);
+        await helpers.deleteUser(username);
         
-        console.log(`REMOVED USER '${email}'`);
+        console.log(`REMOVED USER '${username}'`);
 
         return true;
     }

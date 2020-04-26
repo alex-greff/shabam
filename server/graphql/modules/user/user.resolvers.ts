@@ -15,7 +15,7 @@ export default {
     },
     User: {
         _id: (user: UserAccount) => user.id,
-        email: (user: UserAccount) => user.email,
+        username: (user: UserAccount) => user.username,
         password: (user: UserAccount) => user.password
     },
     Token: {

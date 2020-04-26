@@ -3,13 +3,13 @@ import canDoAllOperations from "@/roles/role-check";
 import * as Utilities from "@/utilities";
 
 const DEFAULT_CHECK_CONFIG: RoleCheckConfig = {
-    userEmailPath: "email"
+    userUsernamePath: "username"
 };
 
 export default (config: Partial<RoleCheckConfig>, ...operations: string[]) => {
     return async (root: any, args: any, context: AppContext) => {
         try {
-            config = (config) ? { ...DEFAULT_CHECK_CONFIG, ...config } : { ...DEFAULT_CHECK_CONFIG };
+            config = (config) ? { ...DEFAULT_CHECK_CONFIG, ...config } : { ...DEFAULT_CHECK_CONFIG } as RoleCheckConfig;
 
             // Check if there user data provided
             if (!context.req.session || !context.req.session.userData) {

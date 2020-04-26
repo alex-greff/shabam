@@ -4,7 +4,7 @@ export interface TrackMetaData {
     title: string;
     artists: string[];
     coverImage?: string;
-    uploaderEmail: string;
+    uploaderUsername: string;
     releaseDate?: string;
     createdDate: string;
     updatedDate: string;
@@ -23,13 +23,13 @@ export interface UploadFile {
 }
 
 export interface UserData {
-    email: string;
+    username: string;
     role: string;
 }
 
 export interface UserAccount {
     id: number;
-    email: string;
+    username: string;
     password: string;
     role: string;
     signupDate: string;

@@ -1,5 +1,5 @@
 export interface UserCredentials {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -12,15 +12,15 @@ export interface SignupArgs {
 }
 
 export interface EditUserArgs {
-    email: string;
+    username: string;
     updatedCredentials: UserCredentials;
 }
 
 export interface EditUserRoleArgs {
-    email: string;
+    username: string;
     updatedRole: string;
 }
 
 export interface RemoveUserArgs {
-    email: string;
+    username: string;
 }

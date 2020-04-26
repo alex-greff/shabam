@@ -10,35 +10,35 @@ export default gql`
         """Signup and create a new user."""
         signup(credentials: UserCredentialsInput!): Boolean!
         """Edit user account details."""
-        editUser(email: String!, updatedCredentials: UpdateUserCredentialsInput!): Boolean!
+        editUser(username: String!, updatedCredentials: UpdateUserCredentialsInput!): Boolean!
         """Edits a user's role."""
-        editUserRole(email: String!, updatedRole: String!): Boolean!
+        editUserRole(username: String!, updatedRole: String!): Boolean!
         """Remove user account."""
-        removeUser(email: String!): Boolean!
+        removeUser(username: String!): Boolean!
     }
 
     """A user object."""
     type User {
         """The ID of the user in the database."""
         _id: ID!
-        """The email of the user."""
-        email: String!
+        """The username of the user."""
+        username: String!
         """The hashed password of the user."""
         password: String!
     }
 
     """Credentials input for user login."""
     input UserCredentialsInput {
-        """The email of the user."""
-        email: String!
+        """The username of the user."""
+        username: String!
         """The password of the user."""
         password: String!
     }
 
-    """Crdentials input for updating a user account."""
+    """Credentials input for updating a user account."""
     input UpdateUserCredentialsInput {
-        """(Optional) The new email of the user."""
-        email: String
+        """(Optional) The new username of the user."""
+        username: String
         """(Optional) The new password of the user."""
         password: String
     }

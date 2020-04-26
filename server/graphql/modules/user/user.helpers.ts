@@ -1,19 +1,19 @@
 import { UserAccount } from "@/types/schema";
 import * as db from "@/db/main";
 
-export async function getUser(email: string): Promise<UserAccount | null> {
+export async function getUser(username: string): Promise<UserAccount | null> {
     const query = `
-        SELECT * FROM user_account AS ua WHERE ua.email = $1
+        SELECT * FROM user_account AS ua WHERE ua.username = $1
     `;
 
-    const res = await db.query(query, email);
+    const res = await db.query(query, username);
 
     if (res.rowCount > 0) {
         const data = res.rows[0];
 
         return {
             id: parseInt(data.user_account_id),
-            email: data.email,
+            username: data.username,
             password: data.password,
             role: data.role,
             signupDate: data.signup_date,
@@ -36,7 +36,7 @@ export async function getUserByID(ID: number): Promise<UserAccount | null> {
 
         return {
             id: parseInt(data.user_account_id),
-            email: data.email,
+            username: data.username,
             password: data.password,
             role: data.role,
             signupDate: data.signup_date,
@@ -47,31 +47,31 @@ export async function getUserByID(ID: number): Promise<UserAccount | null> {
     return null;
 };
 
-export async function updateLastUserLogin(email: string, lastLoginTime?: string): Promise<void> {
+export async function updateLastUserLogin(username: string, lastLoginTime?: string): Promise<void> {
     const lastLogin = (lastLoginTime) ? new Date(lastLoginTime) : new Date();
 
     const query = `
-        UPDATE user_account AS ua SET last_login = $1 WHERE ua.email = $2
+        UPDATE user_account AS ua SET last_login = $1 WHERE ua.username = $2
     `;
 
-    await db.query(query, lastLogin, email);
+    await db.query(query, lastLogin, username);
 };
 
-export async function userExists(email: string): Promise<boolean> {
+export async function userExists(username: string): Promise<boolean> {
     const query = `
-        SELECT email FROM user_account AS ua WHERE ua.email = $1
+        SELECT username FROM user_account AS ua WHERE ua.username = $1
     `;
 
-    const res = await db.query(query, email);
+    const res = await db.query(query, username);
 
     return (res.rowCount > 0);
 };
 
-export async function createNewUser(email: string, passwordHash: string, role: string, signupDate?: string): Promise<void> {
+export async function createNewUser(username: string, passwordHash: string, role: string, signupDate?: string): Promise<void> {
     const signupDateCleaned = (signupDate) ? new Date(signupDate) : new Date();
 
     const newUser = {
-        email: email,
+        username: username,
         password: passwordHash,
         role: role,
         signup_date: signupDateCleaned
@@ -87,15 +87,15 @@ export async function createNewUser(email: string, passwordHash: string, role: s
     await db.query(query, ...newUserKeys, ...newUserValues);
 };
 
-export async function editUser(email: string, newEmail?: string, newPasswordHash?: string): Promise<void> {
+export async function editUser(username: string, newUsername?: string, newPasswordHash?: string): Promise<void> {
     const updateArgs = [];
     let updateListString = "";
 
     let currParam = 1;
 
-    if (newEmail) {
-        updateListString += `, email = $${currParam}`;
-        updateArgs.push(newEmail);
+    if (newUsername) {
+        updateListString += `, username = $${currParam}`;
+        updateArgs.push(newUsername);
         currParam++;
     }
 
@@ -113,24 +113,24 @@ export async function editUser(email: string, newEmail?: string, newPasswordHash
     updateListString = updateListString.substring(2);
 
     const query = `
-        UPDATE user_account AS ua SET ${updateListString} WHERE ua.email = $${currParam}
+        UPDATE user_account AS ua SET ${updateListString} WHERE ua.username = $${currParam}
     `;
 
-    await db.query(query, ...updateArgs, email);
+    await db.query(query, ...updateArgs, username);
 };
 
-export async function editUserRole(email: string, newRole: string): Promise<void> {
+export async function editUserRole(username: string, newRole: string): Promise<void> {
     const query = `
-        UPDATE user_account AS ua SET role = $1 WHERE ua.email = $2
+        UPDATE user_account AS ua SET role = $1 WHERE ua.username = $2
     `;
 
-    await db.query(query, newRole, email);
+    await db.query(query, newRole, username);
 };
 
-export async function deleteUser(email: string): Promise<void> {
+export async function deleteUser(username: string): Promise<void> {
     const query = `
-        DELETE FROM user_account AS ua WHERE ua.email = $1
+        DELETE FROM user_account AS ua WHERE ua.username = $1
     `;
 
-    await db.query(query, email);
+    await db.query(query, username);
 };

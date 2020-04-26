@@ -143,12 +143,21 @@ export const setIn = (obj: any, path: string, value: any): any => {
 /**
  * Checks if the given input is a valid email.
  * 
- * @param {String} email The email.
+ * @param email The email.
  */
-export const isEmail = (email: String): boolean => {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const isEmail = (email: string): boolean => {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 };
+
+/**
+ * Checks if the given username is a valid username.
+ * 
+ * @param username The username.
+ */
+export const isUsername = (username: string): boolean => {
+    return username.length >= 6 && username.length <= 15;
+}
 
 /**
  * Takes a function and returns a promise that resolves if the function returns a truthy value and rejects if a falsey value.

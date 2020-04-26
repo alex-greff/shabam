@@ -85,13 +85,13 @@ export default {
     },
     addTrack: async (root: any, { fingerprint, trackData }: AddTrackArgs, context: AppContext): Promise<Track> => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
-        const { email } = context.userData;
+        const { username } = context.req.session!.userData!;
 
         // TODO: remote
         // const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
         // const fingerprintData = { "something": "foo" };
 
-        const trackID = await helpers.addTrack(title, artists, coverImage!, releaseDate, email);
+        const trackID = await helpers.addTrack(title, artists, coverImage!, releaseDate, username);
 
         // TODO: send fingerprint to a records worker to compute and add it to a records database
         // Get the records database number that it was added to

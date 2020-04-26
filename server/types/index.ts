@@ -19,10 +19,10 @@ export interface AppContext extends ExpressContext {
 }
 
 export interface RoleCheckConfig {
-    userEmailPath: string;
+    userUsernamePath: string;
 }
 
 export interface UserData {
-    email: string;
+    username: string;
     role: string;
 }

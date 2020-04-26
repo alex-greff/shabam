@@ -6,7 +6,7 @@ export default gql`
         title: String!
         artists: [String!]!
         coverImage: String
-        uploaderEmail: String!
+        uploaderUsername: String!
         releaseDate: String
         createdDate: String!
         updatedDate: String!

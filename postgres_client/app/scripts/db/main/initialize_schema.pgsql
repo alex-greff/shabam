@@ -1,13 +1,18 @@
+-- The types of transits
+CREATE DOMAIN Username AS VARCHAR(15)
+    DEFAULT NULL
+    CHECK (char_length(VALUE) >= 6 OR char_length(VALUE) <= 15);
+
 -- user table
-/*DROP TABLE IF EXISTS user_account CASCADE;
+DROP TABLE IF EXISTS user_account CASCADE;
 CREATE TABLE user_account(
     user_account_id SERIAL PRIMARY KEY,
     password CHAR (60) NOT NULL,
-    email VARCHAR (355) UNIQUE NOT NULL,
+    username Username UNIQUE NOT NULL,
     role VARCHAR (50) NOT NULL,
     signup_date TIMESTAMP NOT NULL,
     last_login TIMESTAMP
-);*/
+);
 
 -- track table
 DROP TABLE IF EXISTS track CASCADE;
