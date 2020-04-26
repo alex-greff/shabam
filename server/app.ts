@@ -11,7 +11,7 @@ import session from "express-session";
 
 const app = express();
 
-// Postgress client connection setup
+// Postgres client connection setup
 const pgClient = new Pool({
     user: KEYS.PG_MAIN_USER,
     host: KEYS.PG_MAIN_HOST,
@@ -32,7 +32,9 @@ app.use(session({
         httpOnly: false, // TODO: make sure this is set to true
         secure: (KEYS.PRODUCTION) ? true : false,
         // TODO: set the store to point to a redis instance
-    }
+    },
+    saveUninitialized: false,
+    resave: true
 }));
 
 // Setup morgan
