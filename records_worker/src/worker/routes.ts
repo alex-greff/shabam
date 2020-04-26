@@ -1,9 +1,9 @@
 import express, { Router } from "express";
-import upload from "./middleware/memoryUpload";
-import validateResult from "./middleware/validateResult";
+import upload from "@/worker/middleware/memoryUpload";
+import validateResult from "@/worker/middleware/validateResult";
 
-import * as RootValidator from "./validators";
-import * as RootController from "./controllers";
+import * as RootValidator from "@/worker/validators";
+import * as RootController from "@/worker/controllers";
 
 const router: Router = express.Router();
 

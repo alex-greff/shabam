@@ -3,6 +3,7 @@ const { exec, spawn } = require("child_process");
 
 var nodeServer; // The node server process instance
 
+// TODO: this probably doesn't work anymore
 
 // ---------------
 // --- Helpers ---

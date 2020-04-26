@@ -5,8 +5,8 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start:dev": "nodemon --legacy-watch -r tsconfig-paths/register ./app.ts",
-        "start:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register ./app.ts",
+        "start:dev": "nodemon --legacy-watch -r tsconfig-paths/register ./src/app.ts",
+        "start:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register ./src/app.ts",
         "load-types": "npm install"
     },
     "author": "Alexander Greff",

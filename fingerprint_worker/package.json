@@ -6,8 +6,8 @@
     "gypfile": true,
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start:dev": "nodemon --legacy-watch -r tsconfig-paths/register ./server.ts",
-        "start:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register ./server.ts",
+        "start:dev": "nodemon --legacy-watch -r tsconfig-paths/register ./src/server.ts",
+        "start:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register ./src/server.ts",
         "_old_start:dev": "npm run gyp:build && gulp --gulpfile gulpfile",
         "gyp:build": "node-gyp rebuild",
         "gyp:clean": "node-gyp clean"

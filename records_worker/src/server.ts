@@ -1,5 +1,5 @@
 import * as http from "http";
-import worker from "./worker";
+import worker from "@/worker";
 
 // Setup server
 

@@ -4,10 +4,10 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import KEYS from "./keys";
-import HTTPError from "./src/error/HTTPError";
+import HTTPError from "@/error/HTTPError";
 
 // Import routes
-import rootRoute from "./src/routes";
+import rootRoute from "@/worker/routes";
 
 const app = express();
 
