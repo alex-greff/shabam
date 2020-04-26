@@ -1,4 +1,5 @@
-import { Track } from "@/types";
+import { AppContext } from "@/types";
+import { Track } from "@/types/schema";
 import fs from "fs";
 import FormData from "form-data";
 import axios from "axios";
@@ -16,17 +17,17 @@ import {
 } from "./catalogue.operations.types";
 
 export default {
-    getAllTracks: async (root: any, args: any, context: any): Promise<any> => {
+    getAllTracks: async (root: any, args: any, context: AppContext): Promise<any> => {
         const allTracks = await helpers.getAllTracks();
 
         return allTracks;
     },
-    getTrack: async (root: any, { trackID }: GetTrackArgs, context: any): Promise<Track> => {
+    getTrack: async (root: any, { trackID }: GetTrackArgs, context: AppContext): Promise<Track> => {
         const trackData = await helpers.getTrack(trackID);
 
         return trackData;
     },
-    searchTrack: async (root: any, { fingerprint, fingerprintInfo }: SearchTrackArgs, context: any): Promise<any> => { // TODO: fix return typedef
+    searchTrack: async (root: any, { fingerprint, fingerprintInfo }: SearchTrackArgs, context: AppContext): Promise<any> => { // TODO: fix return typedef
         const { windowAmount, partitionAmount } = fingerprintInfo;
 
         // TODO: implement
@@ -82,7 +83,7 @@ export default {
 
         return null;
     },
-    addTrack: async (root: any, { fingerprint, trackData }: AddTrackArgs, context: any): Promise<Track> => {
+    addTrack: async (root: any, { fingerprint, trackData }: AddTrackArgs, context: AppContext): Promise<Track> => {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
 
@@ -101,7 +102,7 @@ export default {
 
         return dbTrackData;
     },
-    editTrack: async (root: any, { trackID, updatedTrackData }: EditTrackArgs, context: any): Promise<Track> => {
+    editTrack: async (root: any, { trackID, updatedTrackData }: EditTrackArgs, context: AppContext): Promise<Track> => {
         const { title: newTitle, artists: newArtists, 
             coverImage: newCoverImage, releaseDate: newReleaseDate } = updatedTrackData;
 
@@ -113,12 +114,12 @@ export default {
 
         return dbTrackData;
     },
-    deleteTrack: async (root: any, { trackID }: DeleteTrackArgs, context: any): Promise<boolean> => {
+    deleteTrack: async (root: any, { trackID }: DeleteTrackArgs, context: AppContext): Promise<boolean> => {
         await helpers.deleteTrack(trackID);
 
         return true;
     },
-    recomputeTrackFingerprint: async (root: any, { trackID, fingerprint }: RecomputeTrackFingerprintArgs, context: any): Promise<any> => { // TODO: complete return typeDef
+    recomputeTrackFingerprint: async (root: any, { trackID, fingerprint }: RecomputeTrackFingerprintArgs, context: AppContext): Promise<any> => { // TODO: complete return typeDef
         // TODO: complete
     }
 };

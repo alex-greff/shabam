@@ -1,4 +1,4 @@
-import { UserAccount } from "@/types";
+import { UserAccount } from "@/types/schema";
 import * as db from "@/db/main";
 
 export async function getUser(email: string): Promise<UserAccount | null> {

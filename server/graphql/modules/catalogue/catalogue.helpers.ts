@@ -1,4 +1,4 @@
-import { Track } from "@/types";
+import { Track } from "@/types/schema";
 import * as db from "@/db/main";
 import * as address_db from "@/db/address";
 

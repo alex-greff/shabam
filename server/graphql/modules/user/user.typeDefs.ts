@@ -1,6 +1,22 @@
 import { gql } from "apollo-server-express";
 
 export default gql`
+    type Query {
+        """Logins a user and returns a token."""
+        login(credentials: UserCredentialsInput!): Boolean
+    }
+
+    type Mutation {
+        """Signup and create a new user."""
+        signup(credentials: UserCredentialsInput!): Boolean!
+        """Edit user account details."""
+        editUser(email: String!, updatedCredentials: UpdateUserCredentialsInput!): Boolean!
+        """Edits a user's role."""
+        editUserRole(email: String!, updatedRole: String!): Boolean!
+        """Remove user account."""
+        removeUser(email: String!): Boolean!
+    }
+
     """A user object."""
     type User {
         """The ID of the user in the database."""
@@ -9,11 +25,6 @@ export default gql`
         email: String!
         """The hashed password of the user."""
         password: String!
-    }
-
-    """JWT token for executing protected queries/mutations."""
-    type Token {
-        token: String!
     }
 
     """Credentials input for user login."""
@@ -30,21 +41,5 @@ export default gql`
         email: String
         """(Optional) The new password of the user."""
         password: String
-    }
-
-    type Query {
-        """Logins a user and returns a token."""
-        login(credentials: UserCredentialsInput!): Token
-    }
-
-    type Mutation {
-        """Signup and create a new user."""
-        signup(credentials: UserCredentialsInput!): Boolean!
-        """Edit user account details."""
-        editUser(email: String!, updatedCredentials: UpdateUserCredentialsInput!): Boolean!
-        """Edits a user's role."""
-        editUserRole(email: String!, updatedRole: String!): Boolean!
-        """Remove user account."""
-        removeUser(email: String!): Boolean!
     }
 `;

@@ -4,8 +4,6 @@ export default {
     PG_MAIN_USER: process.env.PG_MAIN_USER,
     PG_MAIN_PORT: process.env.PG_MAIN_PORT ? parseInt(process.env.PG_MAIN_PORT) : undefined,
     PG_MAIN_PASSWORD: process.env.PG_MAIN_PASSWORD,
-    JWT_SECRET: process.env.JWT_SECRET ? process.env.JWT_SECRET : "",
-    JWT_EXPIRE_TIME: process.env.JWT_EXPIRE_TIME,
     PRODUCTION: process.env.NODE_ENV === "production",
     getAddressDbKeys: (addressNum: number) => {
         const currPort = process.env[`PG_ADR${addressNum}_PORT`];
@@ -17,5 +15,6 @@ export default {
             PG_ADDRESS_PASSWORD: process.env[`PG_ADR${addressNum}_PASSWORD`],
         };
     },
-    ADDRESS_DB_COUNT: (process.env.ADDRESS_DB_COUNT) ? parseInt(process.env.ADDRESS_DB_COUNT) : 0
+    ADDRESS_DB_COUNT: (process.env.ADDRESS_DB_COUNT) ? parseInt(process.env.ADDRESS_DB_COUNT) : 0,
+    SESSION_SECRET: process.env.SESSION_SECRET
 };

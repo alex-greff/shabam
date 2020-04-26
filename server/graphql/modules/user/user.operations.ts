@@ -1,7 +1,8 @@
-import { Token } from "@/types";
+import { AppContext } from "@/types";
+import { Token } from "@/types/schema";
+import { promisify } from "es6-promisify";
 import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import * as helpers from "./user.helpers";
 import KEYS from "@/keys";
 import roles from "@/roles/roles";
@@ -10,7 +11,7 @@ import * as Utilities from "@/utilities";
 const DEFAULT_ROLE = "default";
 
 export default {
-    login: async (root: any, { credentials }: LoginArgs, context: any): Promise<Token> => {
+    login: async (root: any, { credentials }: LoginArgs, context: AppContext): Promise<boolean> => {
         const { email, password } = credentials;
 
         const user = await helpers.getUser(email);
@@ -21,33 +22,41 @@ export default {
 
         const passwordHash = user!.password;
 
-        const bamePassword = bcrypt.compareSync(password, passwordHash);
+        const samePassword = bcrypt.compareSync(password, passwordHash);
         // Password comparison failed
-        if (!bamePassword) {
+        if (!samePassword) {
             Utilities.throwAuthorizationError();
         }
 
         const { email: userEmail, role: userRole } = user!;
 
-        // Generate token
-        const JWTPayload = {
+        // No session exists
+        if (!context.req.session) {
+            throw new Error(`An error occurred on the server`);
+        }
+
+        // Regenerate the session
+        const regenerate = promisify(context.req.session!.regenerate);
+
+        // Update the session metadata
+        context.req.session!.userData = {
             email: userEmail,
-            role: userRole,
+            role: userRole
         };
-        const JWTOptions = {
-            expiresIn: KEYS.JWT_EXPIRE_TIME
-        };
-        const token = jwt.sign(JWTPayload, KEYS.JWT_SECRET, JWTOptions);
+
+        // Regenerate the session for the user
+        try {
+            await regenerate();
+        } catch(err) {
+            throw new Error(`An error occurred on the server`);
+        }
 
         // Update last login to now
         await helpers.updateLastUserLogin(email);
 
-        // Return the token
-        return {
-            token: token
-        }
+        return true;
     },
-    signup: async (root: any, { credentials }: SignupArgs, context: any): Promise<boolean> => {
+    signup: async (root: any, { credentials }: SignupArgs, context: AppContext): Promise<boolean> => {
         const { email, password } = credentials;
 
         // Attempt to find an already existing user
@@ -72,7 +81,7 @@ export default {
 
         return true;
     },
-    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: any): Promise<boolean> => {
+    editUser: async (root: any, { email: currEmail, updatedCredentials }: EditUserArgs, context: AppContext): Promise<boolean> => {
         const { email: newEmail, password: newPassword } = updatedCredentials;
 
         // Check that the user exists
@@ -94,9 +103,9 @@ export default {
             }
 
             // Validate that new email is not used anywhere else
-            const bEmailInUse = await helpers.userExists(newEmail);
+            const emailInUse = await helpers.userExists(newEmail);
 
-            if (bEmailInUse) {
+            if (emailInUse) {
                 throw new Error("Email already in use");
             }
         }
@@ -139,7 +148,7 @@ export default {
 
         return true;
     },
-    removeUser: async (root: any, { email }: RemoveUserArgs, context: any): Promise<boolean> => {
+    removeUser: async (root: any, { email }: RemoveUserArgs, context: AppContext): Promise<boolean> => {
         // Attempt to find an already existing user
         const userExists = helpers.userExists(email);
 

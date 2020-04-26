@@ -27,16 +27,6 @@ export interface UserData {
     role: string;
 }
 
-export interface UserDataContext {
-    userData: UserData;
-    [s: string]: any;
-    [n: number]: any;
-}
-
-export interface RoleCheckConfig {
-    userEmailPath: string;
-}
-
 export interface UserAccount {
     id: number;
     email: string;

@@ -1,4 +1,4 @@
-import { Track, TrackMetaData } from "@/types";
+import { Track, TrackMetaData } from "@/types/schema";
 import CatalogueOperations from "./catalogue.operations";
 import injectUserData from "@/graphql/middleware/userData";
 import permit from "@/graphql/middleware/permission";

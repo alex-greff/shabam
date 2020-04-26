@@ -7,6 +7,7 @@ import { Pool, PoolConfig } from "pg";
 import AppModule from "@/graphql/modules";
 import KEYS from "@/keys";
 import { ApolloServer } from "apollo-server-express";
+import session from "express-session";
 
 const app = express();
 
@@ -19,6 +20,20 @@ const pgClient = new Pool({
     port: KEYS.PG_MAIN_PORT
 });
 pgClient.on("error", () => console.log("ERROR: lost connection to postgress database"));
+
+// For express session to work properly
+app.set("trust proxy", 1);
+
+// Setup express session
+app.use(session({
+    secret: KEYS.SESSION_SECRET!,
+    cookie: {
+        sameSite: false,
+        httpOnly: false, // TODO: make sure this is set to true
+        secure: (KEYS.PRODUCTION) ? true : false,
+        // TODO: set the store to point to a redis instance
+    }
+}));
 
 // Setup morgan
 app.use(morgan("dev"));
@@ -50,7 +65,8 @@ const server = new ApolloServer({
     uploads: {
         maxFileSize: 50000000, // 50 MB
         maxFiles: 5
-    }
+    },
+    context: session => session
 });
 
 server.applyMiddleware({ 

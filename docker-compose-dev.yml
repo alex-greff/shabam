@@ -53,6 +53,7 @@ services:
             - "ADDRESS_DB_COUNT=3"
             - "JWT_SECRET=${SHABAM_JWT_SECRET}"
             - "JWT_EXPIRE_TIME=${SHABAM_JWT_EXPIRE_TIME}"
+            - "SESSION_SECRET=my-big-secret"
         networks:
             - app-network
         hostname: api

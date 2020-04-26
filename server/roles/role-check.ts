@@ -1,10 +1,10 @@
-import { RoleCheckConfig } from "@/types";
+import { AppContext, RoleCheckConfig } from "@/types";
 import roles from "./roles";
 import * as Utilities from "@/utilities";
 
 const CUSTOM_ROLE_CHECK_MAP = require("./custom-role-checks");
 
-export default (root: any, args: any, context: any) => {
+export default (root: any, args: any, context: AppContext) => {
     return async (config: RoleCheckConfig, role: string, ...operations: string[]): Promise<boolean> => {
         // Function checking if the permissions are allowed
         const canDoOperation = async (role: string, operation: string) => {

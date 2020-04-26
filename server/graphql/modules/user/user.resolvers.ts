@@ -1,6 +1,5 @@
-import { UserAccount, Token } from "@/types";
+import { UserAccount, Token } from "@/types/schema";
 import UserOperations from "./user.operations";
-import injectUserData from "@/graphql/middleware/userData";
 import permit from "@/graphql/middleware/permission";
 import * as Utilities from "@/utilities";
 
@@ -10,9 +9,9 @@ export default {
     },
     Mutation: { 
         signup: Utilities.middlewareChain()(UserOperations.signup),
-        editUser: Utilities.middlewareChain(injectUserData, permit({}, "edit-user", "edit-self"))(UserOperations.editUser),
-        editUserRole: Utilities.middlewareChain(injectUserData, permit({}, "edit-user-roles"))(UserOperations.editUserRole),
-        removeUser: Utilities.middlewareChain(injectUserData, permit({}, "delete-user", "delete-self"))(UserOperations.removeUser),
+        editUser: Utilities.middlewareChain(permit({}, "edit-user", "edit-self"))(UserOperations.editUser),
+        editUserRole: Utilities.middlewareChain(permit({}, "edit-user-roles"))(UserOperations.editUserRole),
+        removeUser: Utilities.middlewareChain(permit({}, "delete-user", "delete-self"))(UserOperations.removeUser),
     },
     User: {
         _id: (user: UserAccount) => user.id,
