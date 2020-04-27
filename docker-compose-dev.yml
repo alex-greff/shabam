@@ -20,6 +20,8 @@ services:
     db-main:
         image: postgres
         restart: always
+        volumes: 
+            - /var/lib/postgresql/data
         ports:
             - 5432:5432
         environment: 
