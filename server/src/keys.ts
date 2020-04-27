@@ -1,9 +1,9 @@
 export default {
-    PG_MAIN_HOST: process.env.PG_MAIN_HOST,
-    PG_MAIN_DATABASE: process.env.PG_MAIN_DATABASE,
-    PG_MAIN_USER: process.env.PG_MAIN_USER,
+    PG_MAIN_HOST: process.env.PG_MAIN_HOST!,
+    PG_MAIN_DATABASE: process.env.PG_MAIN_DATABASE!,
+    PG_MAIN_USER: process.env.PG_MAIN_USER!,
     PG_MAIN_PORT: process.env.PG_MAIN_PORT ? parseInt(process.env.PG_MAIN_PORT) : undefined,
-    PG_MAIN_PASSWORD: process.env.PG_MAIN_PASSWORD,
+    PG_MAIN_PASSWORD: process.env.PG_MAIN_PASSWORD!,
     PRODUCTION: process.env.NODE_ENV === "production",
     // TODO: put back in later?
     // getAddressDbKeys: (addressNum: number) => {
@@ -17,5 +17,8 @@ export default {
     //     };
     // },
     // ADDRESS_DB_COUNT: (process.env.ADDRESS_DB_COUNT) ? parseInt(process.env.ADDRESS_DB_COUNT) : 0,
-    SESSION_SECRET: process.env.SESSION_SECRET
+    REDIS_SESSION_HOST: process.env.REDIS_SESSION_HOST!,
+    REDIS_SESSION_PORT: process.env.REDIS_SESSION_PORT ? parseInt(process.env.REDIS_SESSION_PORT!) : undefined,
+    REDIS_SESSION_PASSWORD: process.env.REDIS_SESSION_PASSWORD!,
+    SESSION_SECRET: process.env.SESSION_SECRET!
 };

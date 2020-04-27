@@ -9,6 +9,8 @@ import AppModule from "@/graphql/modules";
 import KEYS from "@/keys";
 import { ApolloServer } from "apollo-server-express";
 import session from "express-session";
+import redis from "redis";
+import connectRedis from "connect-redis";
 
 const app = express();
 
@@ -26,18 +28,25 @@ pgClient.on("error", () => console.log("ERROR: lost connection to postgress data
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// For express session to work properly
+// For express session to work properly behind the proxy
 app.set("trust proxy", 1);
 
-// Setup express session
+// Setup express session with Redis as the store
+let RedisStore = connectRedis(session);
+let redisSessionClient = redis.createClient({
+    host: KEYS.REDIS_SESSION_HOST,
+    port: KEYS.REDIS_SESSION_PORT,
+    password: KEYS.REDIS_SESSION_PASSWORD
+});
+
 app.use(session({
-    secret: KEYS.SESSION_SECRET!,
+    store: new RedisStore({ client: redisSessionClient }),
+    secret: KEYS.SESSION_SECRET,
     cookie: {
         sameSite: false,
         httpOnly: true,
         secure: (KEYS.PRODUCTION) ? true : false,
         expires: new Date(Date.now() + SESSION_EXPIRE_LENGTH)
-        // TODO: set the store to point to a redis instance
     },
     saveUninitialized: false,
     resave: true
@@ -77,6 +86,8 @@ server.applyMiddleware({
     app,
     path: "/graphql"
 });
+
+// Setup the server port
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

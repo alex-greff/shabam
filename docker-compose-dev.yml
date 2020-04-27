@@ -31,14 +31,15 @@ services:
         shm_size: "256MB"
         networks:
             - app-network
-    adminder-db-main:
-        image: adminer
+    redis-session:
+        image: redis
         restart: always
-        ports:
-            - "8080:8080"
-        hostname: adminder-db-main
-        container_name: shabam_adminder_db_main
-        networks:
+        command: redis-server --requirepass development
+        volumes: 
+            - ./redis-session/redis.conf:/usr/local/etc/redis/redis.conf
+        hostname: redis-session
+        container_name: shabam_redis_session
+        networks: 
             - app-network
     api:
         build:
@@ -73,8 +74,11 @@ services:
             # - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
             # - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
             # - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
-            # Misc
+            # Other
             # - "ADDRESS_DB_COUNT=3"
+            - "REDIS_SESSION_HOST=redis-session"
+            - "REDIS_SESSION_PORT=6379"
+            - "REDIS_SESSION_PASSWORD=development"
             - "SESSION_SECRET=my-big-secret"
         networks:
             - app-network
@@ -82,6 +86,9 @@ services:
         container_name: shabam_api
         depends_on: 
             - "db-main"
+            - "fingerprint-worker"
+            - "identification-worker"
+            - "records-worker"
     client:
         build:
             dockerfile: Dockerfile.dev
@@ -97,6 +104,8 @@ services:
         privileged: true
         stdin_open: true
         container_name: shabam_client
+        depends_on: 
+            - "api"
     fingerprint-worker:
         build:
             dockerfile: Dockerfile.dev
@@ -151,6 +160,31 @@ services:
             - app-network
         hostname: records-worker
         container_name: shabam_records_worker
+    # Graphical tools
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - "8080:8080"
+        hostname: adminer
+        container_name: shabam_adminer
+        networks:
+            - app-network
+        depends_on: 
+            - db-main
+    redis-commander:
+        image: rediscommander/redis-commander:latest
+        restart: always
+        ports:
+            - "8081:8081"
+        hostname: redis-commander
+        container_name: shabam_redis_commander
+        environment: 
+            - REDIS_HOSTS=redis-session:redis-session:6379:0:development
+        networks: 
+            - app-network
+        depends_on: 
+            - redis-session
 networks:
     app-network:
 volumes: 
