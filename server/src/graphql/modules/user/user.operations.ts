@@ -37,22 +37,38 @@ export default {
         // Regenerate the session
         const regenerate = promisify(context.req.session!.regenerate.bind(context));
 
+        // Regenerate the session for the user
+        try {
+            await regenerate();
+        } catch(err) {
+            throw new Error(`An error occurred on the server`);
+        }
+
         // Update the session metadata
         context.req.session!.userData = {
             username: userUsername,
             role: userRole
         };
 
-        // Regenerate the session for the user
-        try {
-            await regenerate();
-        } catch(err) {
-            console.log(err);
-            throw new Error(`An error occurred on the server`);
-        }
-
         // Update last login to now
         await helpers.updateLastUserLogin(username);
+
+        return true;
+    },
+    logout: async (root: any, args: any, context: AppContext): Promise<boolean> => {
+        // No active session
+        if (!context.req.session?.userData) {
+            return false;
+        }
+
+        // Destroy the session
+        const destroy = promisify(context.req.session!.destroy.bind(context));
+
+        try {
+            await destroy();
+        } catch(err) {
+            throw new Error(`An error occurred on the server`);
+        }
 
         return true;
     },

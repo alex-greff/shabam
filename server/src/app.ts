@@ -21,6 +21,10 @@ const pgClient = new Pool({
 });
 pgClient.on("error", () => console.log("ERROR: lost connection to postgress database"));
 
+// Setup body parser
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // For express session to work properly
 app.set("trust proxy", 1);
 
@@ -39,10 +43,6 @@ app.use(session({
 
 // Setup morgan
 app.use(morgan("dev"));
-
-// Setup body parser
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 // Setup CORS headers
 // TODO: get rid of "*", super bad security!

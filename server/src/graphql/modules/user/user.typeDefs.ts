@@ -2,8 +2,10 @@ import { gql } from "apollo-server-express";
 
 export default gql`
     type Query {
-        """Logins a user."""
-        login(credentials: UserCredentialsInput!): Boolean
+        """Login a user, creating a session."""
+        login(credentials: UserCredentialsInput!): Boolean!
+        """Logout the current user, destroying the session."""
+        logout: Boolean!
     }
 
     type Mutation {
