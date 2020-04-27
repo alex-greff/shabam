@@ -10,8 +10,6 @@ A list of all the base npm commands available. When running prefix all the follo
 
 ### Environments
 * `dev`: the full development environment
-* `dev-prod`: development environment but the client image is run in production
-  * This is for testing for any dev-prod discrepancies
 
 ### Containers
 * `proxy`: the reverse-proxy container running on Nginx
