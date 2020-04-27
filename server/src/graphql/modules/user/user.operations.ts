@@ -1,6 +1,6 @@
 import { DEFAULT_ROLE, SESSION_EXPIRE_LENGTH, USERNAME_COOKIE_NAME } from "@/constants";
 import { AppContext } from "@/types";
-import { promisify } from "es6-promisify";
+import { promisify } from "util";
 import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
 import bcrypt from "bcryptjs";
 import * as helpers from "./user.helpers";
@@ -36,7 +36,15 @@ export default {
         }
 
         // Regenerate the session
-        const regenerate = promisify(context.req.session!.regenerate.bind(context));
+        const regenerate = () => new Promise((resolve, reject) => {
+            context.req.session!.regenerate((err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
 
         // Regenerate the session for the user
         try {
@@ -72,7 +80,17 @@ export default {
         }
 
         // Destroy the session
-        const destroy = promisify(context.req.session!.destroy.bind(context));
+        const destroy = () => new Promise((resolve, reject) => {
+            context.req.session!.destroy((err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            })
+        });
+
+        context.req.session.userData = undefined;
 
         try {
             await destroy();
