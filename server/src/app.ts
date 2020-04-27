@@ -68,7 +68,7 @@ const server = new ApolloServer({
         maxFileSize: 50000000, // 50 MB
         maxFiles: 5
     },
-    context: session => session
+    context: ({ req, res }) => ({ req, res })
 });
 
 server.applyMiddleware({ 

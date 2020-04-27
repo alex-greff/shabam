@@ -8,5 +8,6 @@ export default new GraphQLModule({
     imports: [
         CatalogueModule,
         UserModule
-    ]
+    ],
+    context: ({ req, res }) => ({ req, res })
 });

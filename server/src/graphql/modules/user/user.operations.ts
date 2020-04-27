@@ -35,7 +35,7 @@ export default {
         }
 
         // Regenerate the session
-        const regenerate = promisify(context.req.session!.regenerate);
+        const regenerate = promisify(context.req.session!.regenerate.bind(context));
 
         // Update the session metadata
         context.req.session!.userData = {
@@ -47,6 +47,7 @@ export default {
         try {
             await regenerate();
         } catch(err) {
+            console.log(err);
             throw new Error(`An error occurred on the server`);
         }
 
