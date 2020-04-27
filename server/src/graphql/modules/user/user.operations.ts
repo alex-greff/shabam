@@ -1,3 +1,4 @@
+import { DEFAULT_ROLE, SESSION_EXPIRE_LENGTH, USERNAME_COOKIE_NAME } from "@/constants";
 import { AppContext } from "@/types";
 import { promisify } from "es6-promisify";
 import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
@@ -6,8 +7,8 @@ import * as helpers from "./user.helpers";
 import KEYS from "@/keys";
 import roles from "@/roles/roles";
 import * as Utilities from "@/utilities";
+import cookie from "cookie";
 
-const DEFAULT_ROLE = "default";
 
 export default {
     login: async (root: any, { credentials }: LoginArgs, context: AppContext): Promise<boolean> => {
@@ -50,6 +51,15 @@ export default {
             role: userRole
         };
 
+        // Set the username cookie 
+        context.res.setHeader("Set-Cookie", cookie.serialize(USERNAME_COOKIE_NAME, userUsername, {
+            path: "/",
+            expires: new Date(Date.now() + SESSION_EXPIRE_LENGTH),
+            httpOnly: false,
+            secure: (KEYS.PRODUCTION) ? true : false,
+            sameSite: false
+        }));
+
         // Update last login to now
         await helpers.updateLastUserLogin(username);
 
@@ -69,6 +79,15 @@ export default {
         } catch(err) {
             throw new Error(`An error occurred on the server`);
         }
+
+        // Unset the username cookie 
+        context.res.setHeader("Set-Cookie", cookie.serialize(USERNAME_COOKIE_NAME, '', {
+            path: "/",
+            maxAge: -1,
+            httpOnly: false,
+            secure: (KEYS.PRODUCTION) ? true : false,
+            sameSite: false
+        }));
 
         return true;
     },

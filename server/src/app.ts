@@ -1,3 +1,4 @@
+import { SESSION_EXPIRE_LENGTH } from "@/constants";
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
@@ -33,8 +34,9 @@ app.use(session({
     secret: KEYS.SESSION_SECRET!,
     cookie: {
         sameSite: false,
-        httpOnly: false, // TODO: make sure this is set to true
+        httpOnly: true,
         secure: (KEYS.PRODUCTION) ? true : false,
+        expires: new Date(Date.now() + SESSION_EXPIRE_LENGTH)
         // TODO: set the store to point to a redis instance
     },
     saveUninitialized: false,
