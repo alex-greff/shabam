@@ -21,7 +21,7 @@ services:
         image: postgres
         restart: always
         volumes: 
-            - /var/lib/postgresql/data
+            - db_main_data:/var/lib/postgresql/data
         ports:
             - 5432:5432
         environment: 
@@ -153,3 +153,5 @@ services:
         container_name: shabam_records_worker
 networks:
     app-network:
+volumes: 
+    db_main_data:
