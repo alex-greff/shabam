@@ -4,7 +4,6 @@ import toPath from "lodash.topath";
 import * as db from "@/db/main";
 import * as FingerprintUtilitiesImport from "./fingerprint";
 import * as PromiseUtilitiesImport from "./promise";
-import { ResolverFn } from "@kamilkisiela/graphql-tools/dist/stitching/makeRemoteExecutableSchema";
 
 export const FingerprintUtilities = FingerprintUtilitiesImport;
 export const PromiseUtilities = PromiseUtilitiesImport;
@@ -33,13 +32,6 @@ export const middlewareChain = (...middlewares: Function[]) => {
             return await resolver(root, args, context);
         };
     };
-};
-
-/**
- * Throws the standard authorization error.
- */
-export const throwAuthorizationError = () => {
-    throw new Error("Authorization failed");
 };
 
 

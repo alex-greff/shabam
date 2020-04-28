@@ -7,6 +7,7 @@ import * as helpers from "./user.helpers";
 import KEYS from "@/keys";
 import roles from "@/roles/roles";
 import * as Utilities from "@/utilities";
+import * as Error from "@/error";
 import cookie from "cookie";
 
 
@@ -17,7 +18,7 @@ export default {
         const user = await helpers.getUser(username);
 
         if (!user) {
-            Utilities.throwAuthorizationError();
+            Error.throwAuthenticationError();
         }
 
         const passwordHash = user!.password;
@@ -25,14 +26,14 @@ export default {
         const samePassword = bcrypt.compareSync(password, passwordHash);
         // Password comparison failed
         if (!samePassword) {
-            Utilities.throwAuthorizationError();
+            Error.throwAuthenticationError();
         }
 
         const { username: userUsername, role: userRole } = user!;
 
         // No session exists
         if (!context.req.session) {
-            throw new Error(`An error occurred on the server`);
+            Error.throwServerError();
         }
 
         // Regenerate the session
@@ -50,7 +51,7 @@ export default {
         try {
             await regenerate();
         } catch(err) {
-            throw new Error(`An error occurred on the server`);
+            Error.throwServerError();
         }
 
         // Update the session metadata
@@ -95,7 +96,7 @@ export default {
         try {
             await destroy();
         } catch(err) {
-            throw new Error(`An error occurred on the server`);
+            Error.throwServerError();
         }
 
         // Unset the username cookie 
@@ -117,7 +118,7 @@ export default {
 
         if (userExists) {
             // If query doesn't error then the user already exists
-            throw new Error(`User '${username}' already exists`);   
+            return Error.throwUsernameAlreadyExistsError(username);
         }
 
         // Hash password
@@ -141,25 +142,25 @@ export default {
         const userData = await helpers.getUser(currUsername);
 
         if (!userData) {
-            throw new Error(`User '${currUsername}' does not exist`);
+            return Error.throwUsernameNotExistsError(currUsername);
         }
 
         const { password: sCurrPasswordHash } = userData;
 
         if (newUsername) {
             if (!Utilities.isUsername(newUsername)) {
-                throw new Error(`The username '${newUsername}' is not valid`);
+                Error.throwUsernameInvalidError(newUsername);
             }
 
             if (currUsername === newUsername) {
-                throw new Error("New username must be different than the current one");
+                return Error.throwUsernameTheSameError();
             }
 
             // Validate that new newUsername is not used anywhere else
             const usernameInUse = await helpers.userExists(newUsername);
 
             if (usernameInUse) {
-                throw new Error("Username already in use");
+                return Error.throwUsernameAlreadyExistsError(newUsername);
             }
         }
 
@@ -168,7 +169,7 @@ export default {
             let samePass = bcrypt.compareSync(newPassword, sCurrPasswordHash);
             // Make sure the new password is not the same as the current one
             if (samePass) {
-                throw new Error("New password must be different");
+                return Error.throwPasswordTheSameError();
             }
 
             // Hash password
@@ -186,12 +187,12 @@ export default {
         const userExists = await helpers.userExists(username);
 
         if (!userExists) {
-            throw new Error(`User '${username}' does not exist`);
+            Error.throwUsernameNotExistsError(username);
         }
 
         // Make sure role exists
         if (!roles[updatedRole]) {
-            throw new Error(`Role '${updatedRole}' does not exist`);
+            return Error.throwRoleNotExistsError(updatedRole);
         }
 
         // Update the user's role
@@ -206,7 +207,7 @@ export default {
         const userExists = helpers.userExists(username);
 
         if (!userExists) {
-            throw new Error(`User '${username}' does not exist`);
+            Error.throwUsernameNotExistsError(username);
         }
 
         // Delete the user

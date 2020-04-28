@@ -2,11 +2,13 @@ import { GraphQLModule } from "@graphql-modules/core";
 import typeDefs from "./catalogue.typeDefs";
 import resolvers from "./catalogue.resolvers";
 
-import UploadModule from "@/graphql/modules/upload";
+import UploadScalar from "@/graphql/scalars/upload";
+import DateScalar from "@/graphql/scalars/date";
 
 export default new GraphQLModule({
     imports: [
-        UploadModule
+        UploadScalar,
+        DateScalar
     ],
     typeDefs,
     resolvers,
