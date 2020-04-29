@@ -1,6 +1,6 @@
 import { observable, computed, action } from "mobx";
 import Themer, { Theme as ThemeSchema } from "themer";
-import { schema as SCHEMA, mixins as MIXINS } from "../../theme/definition";
+import { schema as SCHEMA, mixins as MIXINS } from "@/theme/definition";
 
 // -------------------------
 // --- Type Declarations ---
@@ -24,6 +24,11 @@ interface Themes {
 interface Namespaces {
     [namespaceId: string]: ThemeName;
 }
+
+
+// -------------------
+// --- Store Class ---
+// -------------------
 
 class ThemeStore {
     @observable
