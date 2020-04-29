@@ -8,10 +8,11 @@ const DARK_1 = "#141414";
 const DARK_2 = "#313131";
 const DARK_3 = "#444444";
 const DARK_4 = "#707070"; // TODO: tweak this color
+const DARK_5 = "#646464";
 
 const LIGHT_1 = "#FFFFFF";
 const LIGHT_2 = "#F6F6F6";
-const LIGHT_3 = "#EAEAEA"; // TODO: tweak this color
+const LIGHT_3 = "#C3C3C3"; // TODO: tweak this color
 
 const BLUE_1 = "#C3E2FF";
 const BLUE_2 = "#3176A8";
@@ -21,6 +22,7 @@ const BLUE_5 = "#4BC1D1";
 const BLUE_6 = "#B3F6FF";
 const BLUE_7 = "#6AE8F9";
 const BLUE_8 = "#64829E";
+const BLUE_9 = "#4A5E72";
 
 export default {
     name: "dark",
@@ -72,6 +74,12 @@ export default {
         NavBar: {
             background: {
                 primary: BLUE_8
+            }
+        },
+        NormalButton: {
+            accent: {
+                primary: BLUE_9,
+                disabled: DARK_5
             }
         }
     }
