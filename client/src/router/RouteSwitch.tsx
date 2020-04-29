@@ -31,7 +31,7 @@ export interface Props extends BaseProps {
 //     // { name: "PageNotFound", Component: PageNotFoundView }
 // ];
 
-const RouteView: FunctionComponent<Props> = (props) => {
+const RouteSwitch: FunctionComponent<Props> = (props) => {
     // return (
     //     <Suspense fallback={<div>Loading...</div>}>
     //         <div className="Container">
@@ -104,4 +104,4 @@ const RouteView: FunctionComponent<Props> = (props) => {
     // );
 };
 
-export default RouteView;
+export default RouteSwitch;

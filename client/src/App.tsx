@@ -9,8 +9,8 @@ import { themeStore } from "@/store/theme/theme.store";
 import ThemeProvider from "@/components/wrappers/ThemeProvider";
 
 import NavBar from "@/components/nav/NavBar/NavBar";
-import RouteView from "@/router/RouteView";
-import RouteTransitions from "@/router/RouteTransitions";
+import RouteSwitch from "@/router/RouteSwitch";
+import RouteTransition from "@/router/RouteTransition";
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Location } from "history";
@@ -28,18 +28,7 @@ const Layout: FunctionComponent = ({ children }) => (
     </div>
 );
 
-interface FactoryProps {
-    classNames: string;
-    timeout: number;
-}
-
-const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneElement(child, props);
-
 const history = createBrowserHistory<AppLocationState>();
-
-interface RouteProps {
-    location: Location<AppLocationState>;
-}
 
 class App extends Component {
 
@@ -83,37 +72,93 @@ class App extends Component {
                             </div>
                     </BrowserRouter> */}
                     {/* </Router> */}
-                    <Route path="/" render={({ location }) => {
-                        const test = location as Location<AppLocationState>;
+                    <Route path="/" 
+                        // render={({ location }) => {
+                        //     const test = location as Location<AppLocationState>;
 
-                        return (
-                            <Layout>
-                                {/* <RouteTransitions pageKey={location.key}>
-                                    <RouteView location={location} />
-                                </RouteTransitions> */}
+                        //     return (
+                        //         <Layout>
+                        //             {/* <RouteTransitions pageKey={location.key}>
+                        //                 <RouteView location={location} />
+                        //             </RouteTransitions> */}
 
-                                <TransitionGroup
-                                    childFactory={childFactoryCreator({ 
-                                        classNames: test?.state?.transition || "page", 
-                                        timeout: test?.state?.duration || 300 
-                                    })}
-                                >
-                                    <CSSTransition
-                                        key={location.pathname}
-                                        addEndListener={() => {}}
+                        //             <TransitionGroup
+                        //                 childFactory={childFactoryCreator({ 
+                        //                     classNames: test?.state?.transition || "page", 
+                        //                     timeout: test?.state?.duration || 300 
+                        //                 })}
+                        //             >
+                        //                 <CSSTransition
+                        //                     key={location.pathname}
+                        //                     addEndListener={() => {}}
+                        //                 >
+                        //                     <RouteSwitch location={location} />
+                        //                 </CSSTransition>
+                        //             </TransitionGroup>
+                        //         </Layout>
+                        //     );
+                        // }}
+                        // component={RouteTransition}
+                        render={(routeProps) => {
+                            const location = routeProps.location as Location<AppLocationState>;
+
+                            return (
+                                <Layout>
+                                    <RouteTransition 
+                                        pageKey={location.pathname}
+                                        transition={location?.state?.transition}
+                                        duration={location?.state?.duration}
                                     >
-                                        <RouteView location={location} />
-                                    </CSSTransition>
-                                </TransitionGroup>
-                            </Layout>
-                        );
-                    }}/>
+                                        <RouteSwitch location={location} />
+                                    </RouteTransition>
+                                </Layout>
+                            )
+                        }}
+                    />
                 </ThemeProvider>
             </Router>
             // </BrowserRouter>
         );
     }
 }
+
+// const RouteTransition: FunctionComponent<any> = (props) => (
+//     <TransitionGroup
+//         childFactory={childFactoryCreator({ 
+//             classNames: props.location?.state?.transition || "page", 
+//             timeout: props.location?.state?.duration || 300 
+//         })}
+//     >
+//         <CSSTransition
+//             key={props.location.pathname}
+//             addEndListener={() => {}}
+//         >
+            
+//             {props.children}
+//         </CSSTransition>
+//     </TransitionGroup>
+// );
+
+
+interface TransitionProps {
+    location: Location<AppLocationState>;
+}
+
+// const RouteTransition = ({ location }: Data) => (
+//     <TransitionGroup
+//         childFactory={childFactoryCreator({ 
+//             classNames: location?.state?.transition || "page", 
+//             timeout: location?.state?.duration || 300 
+//         })}
+//     >
+//         <CSSTransition
+//             key={location.pathname}
+//             addEndListener={() => {}}
+//         >
+//             <RouteSwitch location={location} />
+//         </CSSTransition>
+//     </TransitionGroup>
+// );
 
 // const Main = () => (
 //     <BrowserRouter>
