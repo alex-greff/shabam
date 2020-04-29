@@ -21,31 +21,20 @@ const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneE
 const RouteTransition: FunctionComponent<Props> = (props) => {
     const { transition, duration, pageKey, children } = props;
 
+    console.log(`pageKey: ${pageKey}, transition: ${transition}`);
+
     return (
-        // <TransitionGroup
-        //     childFactory={childFactoryCreator({ classNames: transition!, timeout: duration! })}
-        // >
-        //     <CSSTransition 
-        //         key={pageKey} addEndListener={() => {}}
-        //         // classNames={transition}
-        //         // timeout={duration}
-        //         // mountOnEnter={true}
-        //         // unmountOnExit={true}
-        //     >
-        //         <div>{children}</div>
-        //     </CSSTransition>
-        // </TransitionGroup>
         <TransitionGroup
             childFactory={childFactoryCreator({ 
-                classNames: props.transition!, 
-                timeout: props.duration! 
+                classNames: transition!, 
+                timeout: duration! 
             })}
         >
             <CSSTransition
-                key={props.pageKey}
+                key={pageKey}
                 addEndListener={() => {}}
             >
-                {props.children}
+                {children}
             </CSSTransition>
         </TransitionGroup>
     );

@@ -1,11 +1,11 @@
 import React, { Component } from "react";
+import { AppLinkProps } from "@/types";
 import "./HomeNavItem.scss";
-import { Link, LinkProps } from "react-router-dom";
 import classnames from "classnames";
 
 import NavItemBase from "@/components/nav/items/NavItemBase/NavItemBase";
 
-export interface Props extends LinkProps {
+export interface Props extends AppLinkProps {
 
 };
 

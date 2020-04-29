@@ -1,3 +1,4 @@
+import { AppLocationState } from "@/types";
 import React, { Component, FunctionComponent } from 'react';
 import './App.scss';
 import { Router, Route } from 'react-router-dom';
@@ -14,10 +15,6 @@ import RouteSwitch from "@/router/RouteSwitch";
 import RouteTransition from "@/router/RouteTransition";
 import { Location } from "history";
 
-interface AppLocationState {
-    transition?: string;
-    duration?: number;
-}
 
 // TODO: move out to separate component?
 const Layout: FunctionComponent = ({ children }) => (
@@ -46,7 +43,6 @@ class App extends Component {
         this.instantiateNamespaces();
         this.instantiateThemes();
     }
-    
 
     render() {
         return (

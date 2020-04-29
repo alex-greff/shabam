@@ -1,20 +1,14 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps } from "@/types";
+import { BaseProps, AppRouteComponentProps, AppLinkProps } from "@/types";
 import "./NavItemBase.scss";
 import classnames from "classnames";
-import { Link, LinkProps, RouteComponentProps, withRouter } from "react-router-dom";
-import { StaticContext } from "react-router";
+import { Link, withRouter } from "react-router-dom";
 
-type LocationState = {
-    test: string;
-}
-
-export interface Props extends BaseProps, Pick<LinkProps, "to"> {
-// export interface Props extends BaseProps, RouteComponentProps<{}, StaticContext, LocationState>  {
+export interface Props extends BaseProps, Pick<AppLinkProps, "to"> {
 
 };
 
-const NavItem: FunctionComponent<Props & RouteComponentProps<{}, StaticContext, LocationState>> = (props) => {
+const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const isActive = props.location.pathname === props.to;
 
     const { className, ...rest} = props;

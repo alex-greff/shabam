@@ -38,7 +38,8 @@ class NavBar extends Component<Props, any> {
 
                 <div className="NavBar__right-items">
                     <NavItem to="/search">Search</NavItem>
-                    <NavItem to="/catalog">Catalog</NavItem>
+                    {/* <NavItem to="/catalog">Catalog</NavItem> */}
+                    <NavItem to={{ pathname: "/catalog", state: { transition: "fade" }}}>Catalog</NavItem>
 
                     <div className="NavBar__divider-line">&nbsp;</div>
 
