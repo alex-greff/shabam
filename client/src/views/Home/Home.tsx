@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps } from "@/types/baseProps.ts"
+import { BaseProps } from "@/types"
 import "./Home.scss";
 import classnames from "classnames";
 

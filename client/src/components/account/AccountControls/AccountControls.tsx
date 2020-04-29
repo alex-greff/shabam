@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BaseProps } from "@/types/baseProps.ts"
+import { BaseProps } from "@/types"
 import "./AccountControls.scss";
 import classnames from "classnames";
 import { observer } from "mobx-react";

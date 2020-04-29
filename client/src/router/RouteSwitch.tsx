@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, FunctionComponent } from "react";
 import { Switch, Route } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-import { BaseProps } from "@/types/baseProps";
+import { BaseProps } from "@/types";
 import { Location } from "history";
 
 import HomeView from "@/views/Home/Home";

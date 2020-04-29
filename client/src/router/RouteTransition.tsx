@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps } from "@/types/baseProps.ts"
+import { BaseProps } from "@/types"
 import classnames from "classnames";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 

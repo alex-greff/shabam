@@ -1,5 +1,5 @@
 import React, { FunctionComponent, MouseEvent } from "react";
-import { BaseProps } from "@/types/baseProps.ts"
+import { BaseProps } from "@/types"
 import "./ButtonBase.scss";
 import classnames from "classnames";
 import { Link, LinkProps } from "react-router-dom";
