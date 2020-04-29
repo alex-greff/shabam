@@ -1,0 +1,30 @@
+.NormalButton.NormalButton {
+    $transition-time: 0.2s;
+
+    font-weight: 400;
+    font-size: 1.5rem;
+
+    color: color-link("NavItem", "text", "secondary");
+
+    transition: color $transition-time, box-shadow $transition-time;
+
+    &.outlined {
+        box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "primary");
+
+        padding: 0.1rem 0.7rem;
+
+        border-radius: 0.2rem;
+    }
+
+    &:hover {
+        color: color-link("NavItem", "selected", "primary");
+    }
+
+    &.disabled {
+        color: color-link("NavItem", "text", "disabled");
+
+        &.outlined {
+            box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "disabled");
+        }
+    }
+}
