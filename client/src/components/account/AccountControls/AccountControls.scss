@@ -1,0 +1,7 @@
+.AccountControls {
+    & .AccountControls__logged-out {
+        & > *:not(:last-child) {
+            margin-right: 1rem;
+        }
+    }
+}

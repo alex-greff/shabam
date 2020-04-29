@@ -4,6 +4,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import HomeNavItem from "@/components/nav/items/HomeNavItem/HomeNavItem";
 import NavItem from "@/components/nav/items/NavItem/NavItem";
+import AccountControls from "@/components/account/AccountControls/AccountControls";
 
 export interface Props extends RouteComponentProps {
 
@@ -40,6 +41,8 @@ class NavBar extends Component<Props, any> {
                     <NavItem to="/catalog">Catalog</NavItem>
 
                     <div className="NavBar__divider-line">&nbsp;</div>
+
+                    <AccountControls className="NavBar__account-controls" />
                 </div>
             </div>
         );

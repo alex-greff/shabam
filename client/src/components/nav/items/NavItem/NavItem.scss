@@ -1,6 +1,9 @@
 .NavItem {
     $transition-time: 0.2s;
 
+    font-weight: 600;
+    font-size: 1.5rem;
+
     color: color-link("NavItem", "text", "secondary");
 
     transition: color $transition-time;
