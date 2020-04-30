@@ -5,9 +5,9 @@ import classnames from "classnames";
 
 import NavItemBase, { Props as NavItemBaseProps } from "@/components/nav/items/NavItemBase/NavItemBase";
 
-export interface Props extends BaseProps, NavItemBaseProps {
+export type Props = {
 
-};
+} & BaseProps & NavItemBaseProps;
 
 const NavItem: FunctionComponent<Props> = (props) => {
     const { className, ...rest } = props;
@@ -17,7 +17,7 @@ const NavItem: FunctionComponent<Props> = (props) => {
             {...rest}
             className={classnames("NavItem", className)}
         >
-            
+            {props.children}
         </NavItemBase>
     );
 };

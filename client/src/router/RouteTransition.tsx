@@ -1,12 +1,10 @@
 import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types"
-import classnames from "classnames";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 
 export interface Props extends BaseProps {
     transition?: string;
-    duration?: number;
     pageKey?: string;
 };
 
@@ -19,15 +17,13 @@ const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneE
 
 
 const RouteTransition: FunctionComponent<Props> = (props) => {
-    const { transition, duration, pageKey, children } = props;
-
-    console.log(`pageKey: ${pageKey}, transition: ${transition}`);
+    const { transition, pageKey, children } = props;
 
     return (
         <TransitionGroup
             childFactory={childFactoryCreator({ 
                 classNames: transition!, 
-                timeout: duration! 
+                timeout: 300
             })}
         >
             <CSSTransition
@@ -41,8 +37,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
 };
 
 RouteTransition.defaultProps = {
-    transition: "page",
-    duration: 300,
+    transition: "page"
 } as Partial<Props>;
 
 export default RouteTransition;

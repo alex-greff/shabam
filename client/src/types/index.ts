@@ -7,7 +7,7 @@ export interface BaseProps {
 
 export interface AppLocationState {
     transition?: string;
-    duration?: number;
+    prevPathname: string;
 }
 
 export type AppRouteComponentProps = RouteComponentProps<{}, StaticContext, AppLocationState>;

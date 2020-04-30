@@ -1,30 +1,27 @@
-import React, { Component } from "react";
-import { AppLinkProps } from "@/types";
+import React, { FunctionComponent } from "react";
 import "./HomeNavItem.scss";
 import classnames from "classnames";
 
-import NavItemBase from "@/components/nav/items/NavItemBase/NavItemBase";
+import NavItemBase, { Props as NavItemBaseProps } from "@/components/nav/items/NavItemBase/NavItemBase";
 
-export interface Props extends AppLinkProps {
+export interface Props extends NavItemBaseProps {
 
 };
 
-class HomeNavItem extends Component<Props, any> {
-    static defaultProps = {
+const HomeNavItem: FunctionComponent<Props> = (props) => {
+    return (
+        <NavItemBase 
+            { ...props }
+            className={classnames("HomeNavItem", props.className)} 
+        >
+            <span className="HomeNavItem__text-first">Sha</span>
+            <span className="HomeNavItem__text-second">bam</span>
+        </NavItemBase>
+    );
+};
 
-    } as Partial<Props>;
+HomeNavItem.defaultProps = {
 
-    render() {
-        return (
-            <NavItemBase 
-                { ...this.props }
-                className={classnames("HomeNavItem", this.props.className)} 
-            >
-                <span className="HomeNavItem__text-first">Sha</span>
-                <span className="HomeNavItem__text-second">bam</span>
-            </NavItemBase>
-        );
-    }
-}
+} as Partial<Props>;
 
 export default HomeNavItem;

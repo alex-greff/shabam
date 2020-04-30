@@ -1,7 +1,7 @@
 import { AppLocationState } from "@/types";
 import React, { Component, FunctionComponent } from 'react';
 import './App.scss';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, matchPath } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
 import { createBrowserHistory } from "history";
 
@@ -53,13 +53,13 @@ class App extends Component {
                     <Route path="/" 
                         render={(routeProps) => {
                             const location = routeProps.location as Location<AppLocationState>;
+                            const transition = location?.state?.transition;
 
                             return (
                                 <Layout>
                                     <RouteTransition 
                                         pageKey={location.pathname}
-                                        transition={location?.state?.transition}
-                                        duration={location?.state?.duration}
+                                        transition={transition}
                                     >
                                         <RouteSwitch location={location} />
                                     </RouteTransition>
