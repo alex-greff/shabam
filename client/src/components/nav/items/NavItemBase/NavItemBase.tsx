@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps, AppRouteComponentProps, AppLinkProps, AppLocationState } from "@/types";
+import { BaseProps, AppRouteComponentProps, AppLocationState } from "@/types";
 import "./NavItemBase.scss";
 import classnames from "classnames";
 import { Link, withRouter, matchPath } from "react-router-dom";

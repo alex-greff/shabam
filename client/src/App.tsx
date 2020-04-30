@@ -1,7 +1,7 @@
 import { AppLocationState } from "@/types";
 import React, { Component, FunctionComponent } from 'react';
 import './App.scss';
-import { Router, Route, matchPath } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
 import { createBrowserHistory } from "history";
 
@@ -16,7 +16,6 @@ import RouteTransition from "@/router/RouteTransition";
 import { Location } from "history";
 
 
-// TODO: move out to separate component?
 const Layout: FunctionComponent = ({ children }) => (
     <div id="App">
         <NavBar />
