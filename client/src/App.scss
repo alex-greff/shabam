@@ -1,5 +1,22 @@
 #App {
+    height: 100%;
+    width: 100%;
+
+    & .App__overlay-container {
+        height: 100%;
+        position: relative;
     
+        display: flex;
+        flex-direction: column;
+    }
+    
+    & .App__route-transition {
+        
+    }
+    
+    & .App__route-view {
+        
+    }
 }
 
 

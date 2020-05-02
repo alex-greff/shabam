@@ -31,3 +31,8 @@ body {
     color: color-link("GLOBAL", "text", "primary");
     background-color: color-link("GLOBAL", "background", "primary");
 }
+
+#root {
+    height: 100%;
+    width: 100%;
+}

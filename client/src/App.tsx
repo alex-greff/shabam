@@ -11,15 +11,27 @@ import ThemeProvider from "@/components/wrappers/ThemeProvider";
 
 import NavBar from "@/components/nav/NavBar/NavBar";
 
-import RouteSwitch from "@/router/RouteSwitch";
+import RouteView from "@/router/RouteView";
 import RouteTransition from "@/router/RouteTransition";
 import { Location } from "history";
+
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 
 
 const Layout: FunctionComponent = ({ children }) => (
     <div id="App">
-        <NavBar />
-        {children}
+        <OverlayScrollbarsComponent 
+            className="App__overlay-container"
+            options={{
+                paddingAbsolute: true,
+                scrollbars: {
+                    autoHide: 'leave'
+                }
+            }}
+        >
+            <NavBar />
+            {children}
+        </OverlayScrollbarsComponent>
     </div>
 );
 
@@ -57,10 +69,14 @@ class App extends Component {
                             return (
                                 <Layout>
                                     <RouteTransition 
+                                        className="App__route-transition"
                                         pageKey={location.pathname}
                                         transition={transition}
                                     >
-                                        <RouteSwitch location={location} />
+                                        <RouteView 
+                                            className="App__route-view"
+                                            location={location} 
+                                        />
                                     </RouteTransition>
                                 </Layout>
                             )

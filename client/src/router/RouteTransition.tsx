@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types"
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import classnames from "classnames";
 
 
 export interface Props extends BaseProps {
@@ -25,6 +26,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
                 classNames: transition!, 
                 timeout: 300
             })}
+            className={classnames("RouteTransition", props.className)}
         >
             <CSSTransition
                 key={pageKey}

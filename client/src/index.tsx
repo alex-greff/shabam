@@ -4,6 +4,8 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import 'overlayscrollbars/css/OverlayScrollbars.css';
+
 ReactDOM.render(
     <React.StrictMode>
         <App />

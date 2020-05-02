@@ -2,6 +2,7 @@ import React, { Suspense, lazy, FunctionComponent } from "react";
 import { Switch, Route } from "react-router-dom";
 import { BaseProps, AppLocationState } from "@/types";
 import { Location } from "history";
+import classnames from "classnames";
 
 import HomeView from "@/views/Home/Home";
 import SearchView from "@/views/Search/Search";
@@ -17,11 +18,11 @@ export interface Props extends BaseProps {
     location: Location<AppLocationState>;
 };
 
-const RouteSwitch: FunctionComponent<Props> = (props) => {
+const RouteView: FunctionComponent<Props> = (props) => {
     const { location } = props;
 
     return (
-        <div>
+        <div className={classnames("RouteView", props.className)}>
             <Suspense fallback={null}>
                 <Switch location={location}>
                     <Route exact path="/" component={HomeView} />
@@ -39,4 +40,4 @@ const RouteSwitch: FunctionComponent<Props> = (props) => {
     );
 };
 
-export default RouteSwitch;
+export default RouteView;
