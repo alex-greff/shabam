@@ -30,7 +30,7 @@ class NavBar extends Component<Props, any> {
 
     render() {
         return (
-            <div id="NavBar">
+            <nav id="NavBar">
                 <HomeNavItem 
                     className="NavBar__home-nav-item" 
                     path="/"
@@ -53,7 +53,7 @@ class NavBar extends Component<Props, any> {
 
                     <AccountControls className="NavBar__account-controls" />
                 </div>
-            </div>
+            </nav>
         );
     }
 }
