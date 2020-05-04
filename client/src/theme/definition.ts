@@ -26,6 +26,9 @@ export const schema: Schema = {
         },
         gradient_disabled: {
             $mixins: ['start_modifier', 'end_modifier']
+        },
+        form_error: {
+            $mixins: ['primary_modifier', 'secondary_modifier']
         }
     },
     // --- Component Scope Declarations ---

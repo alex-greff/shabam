@@ -3,7 +3,7 @@
     flex-direction: column;
 
     & > *:not(:last-child) {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.7rem;
     }
 
     & .SigninForm__title {
@@ -12,7 +12,6 @@
     }
 
     & .SigninForm__submit-button {
-        // justify-self: flex-end;
         align-self: flex-end;
     }
 }

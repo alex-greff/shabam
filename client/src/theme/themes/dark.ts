@@ -26,6 +26,10 @@ const BLUE_7 = "#6AE8F9";
 const BLUE_8 = "#64829E";
 const BLUE_9 = "#4A5E72";
 const BLUE_10 = "#4D5965";
+const BLUE_11 = "#CCD7E2";
+
+const FORM_ERROR_1 = "#F08787";
+const FORM_ERROR_2 = "#523B3B";
 
 export default {
     name: "dark",
@@ -51,7 +55,7 @@ export default {
                 primary: BLUE_1,
                 secondary: BLUE_2,
                 tertiary: BLUE_3,
-                disabled: Color(BLUE_1).darken(0.2).round().toString() // TODO: tweak this
+                disabled: BLUE_11
             },
             selected: {
                 // TODO: find colors for these
@@ -72,6 +76,10 @@ export default {
                 // TODO: tweak these values
                 start: Color(BLUE_4).lighten(0.2).round().toString(),
                 end: Color(BLUE_5).lighten(0.2).round().toString()
+            },
+            form_error: {
+                primary: FORM_ERROR_1,
+                secondary: FORM_ERROR_2
             }
         },
         NavBar: {
