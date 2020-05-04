@@ -1,0 +1,53 @@
+.AccentContainer {
+    $width: 50rem;
+    $height: 40rem;
+
+    max-width: $width;
+    width: 100vw;
+
+    max-height: $height;
+    height: 300vh;
+
+    padding: 2rem;
+
+    display: flex;
+    flex-direction: column;
+
+    & .AccentContainer__container {
+        flex-grow: 1;
+
+        background-color: color-link("AccentContainer", "background", "secondary");
+
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 100%;
+        gap: 1rem;
+        grid-template-areas: 
+            "accent content";
+
+        @include respond(phone) {
+            grid-template-columns: 20% auto;
+        }
+
+        & .AccentContainer__accent {
+            grid-area: accent;
+
+            background: color-link("AccentContainer", "gradient", "start");
+            background: linear-gradient(135deg, color-link("AccentContainer", "gradient", "start") 0%, color-link("AccentContainer", "gradient", "end"));
+        }
+
+        & .AccentContainer__content {
+            grid-area: content;
+
+            padding: 1.5rem;
+
+            @include respond(phone) {
+                padding: 1rem;
+            }
+        }
+    }
+
+    @include respond(phone) {
+        padding: 1rem;
+    }
+}

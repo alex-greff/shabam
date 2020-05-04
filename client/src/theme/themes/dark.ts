@@ -9,10 +9,12 @@ const DARK_2 = "#313131";
 const DARK_3 = "#444444";
 const DARK_4 = "#707070"; // TODO: tweak this color
 const DARK_5 = "#646464";
+const DARK_6 = "#494747";
 
 const LIGHT_1 = "#FFFFFF";
 const LIGHT_2 = "#F6F6F6";
 const LIGHT_3 = "#C3C3C3"; // TODO: tweak this color
+const LIGHT_4 = "#BFBFBF"
 
 const BLUE_1 = "#C3E2FF";
 const BLUE_2 = "#3176A8";
@@ -80,6 +82,17 @@ export default {
             accent: {
                 primary: BLUE_9,
                 disabled: DARK_5
+            }
+        },
+        FormInput: {
+            text: {
+                secondary: LIGHT_4
+            },
+            background: {
+                primary: DARK_6
+            },
+            accent: {
+                secondary: BLUE_3
             }
         }
     }

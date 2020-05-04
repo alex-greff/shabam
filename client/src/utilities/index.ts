@@ -77,3 +77,9 @@ export const getBreakpoint = (width: number): Breakpoint => {
         return Breakpoint.bigDesktop;
     }
 }
+
+let lastId = -1;
+export const generateId = (prefix = 'id-') => {
+    lastId++;
+    return `${prefix}${lastId}`;
+}

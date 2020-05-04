@@ -46,6 +46,9 @@ export const schema: Schema = {
     HomeNavItem: { $inherits: "GLOBAL" },
     ButtonBase: { $inherits: "GLOBAL" },
     NormalButton: { $inherits: "GLOBAL" },
+    AccentContainer: { $inherits: "GLOBAL" },
+    FormButton: { $inherits: "GLOBAL" },
+    FormInput: { $inherits: "GLOBAL" },
 };
 
 export const mixins: MixinDefinitions = {

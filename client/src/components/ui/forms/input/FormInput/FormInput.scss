@@ -1,0 +1,211 @@
+.FormInput {
+    $transition-time: 0.3s;
+
+    position: relative;
+
+    display: grid;
+
+    font-size: 1.5rem;
+
+    & .FormInput__title {
+        grid-area: title;
+
+        color: color-link("FormInput", "accent", "primary");
+        opacity: 1;
+
+        z-index: 2;
+
+        transition: opacity 0.05s, color $transition-time, background-color 0.2s;
+    }
+
+    & .FormInput__input {
+        // Clear default input styles
+        background: none;
+        outline: none;
+        border: none;
+        color: inherit;
+        font-weight: inherit;
+        font-size: inherit;
+
+        grid-area: input;
+
+        width: 100%;
+
+        z-index: 1;
+
+        transition: background-color 0.2s;
+
+        &::placeholder {
+            color: color-link("FormInput", "text", "secondary");
+        }
+    }
+
+    & .FormInput__accent-line {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+
+        z-index: 2;
+
+        background-color: color-link("FormInput", "accent", "primary");
+
+        transition: background-color 0.2s;
+    }
+
+    & .FormInput__input:focus + * + .FormInput__accent-line, 
+    & .FormInput__input:active + * + .FormInput__accent-line {
+        background-color: color-link("FormInput", "accent", "secondary");
+    }
+
+    & .FormInput__icon-container {
+        grid-area: icon;
+
+        color: color-link("FormInput", "accent", "primary");
+
+        z-index: 1;
+
+        padding-left: 0.3rem;
+
+        transition: color $transition-time, background-color 0.2s;
+    }
+
+    // Styles for specific layouts
+
+    &.layout-style-classic {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        grid-template-areas: 
+            "title title"
+            "input icon";
+        
+        $radius-amount: 0.2rem;
+        $padding-horiz-amount: 0.7rem;
+        $padding-vert-amount: 0.8rem;
+
+        & .FormInput__input {
+            background-color: color-link("FormInput", "background", "primary");
+
+            border-radius: $radius-amount 0 0 $radius-amount;
+            padding: $padding-horiz-amount 0 $padding-horiz-amount $padding-vert-amount;
+        }
+
+        & .FormInput__icon-container {
+            background-color: color-link("FormInput", "background", "primary");
+
+            border-radius: 0 $radius-amount $radius-amount 0;
+            padding: $padding-horiz-amount $padding-vert-amount $padding-horiz-amount 0;
+        }
+
+        & .FormInput__accent-line {
+            bottom: $padding-horiz-amount;
+            left: auto;
+            right: 0;
+            width: 0;
+
+            clip-path: polygon($padding-horiz-amount 0, calc(100% - #{$padding-horiz-amount}) 0, calc(100% - #{$padding-horiz-amount}) 100%, $padding-horiz-amount 100%);
+
+            background-color: color-link("FormInput", "accent", "primary");
+
+            opacity: 0;
+            transition: opacity 0.2s ease, width 0.2s ease;
+        }
+
+        & .FormInput__input:focus + * + .FormInput__accent-line,
+        & .FormInput__input:active + * + .FormInput__accent-line, {
+            width: 100%;
+            left: 0;
+            opacity: 1;
+
+            background-color: color-link("FormInput", "accent", "primary");
+        }
+    }
+
+    &.layout-style-minimal {
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto;
+        grid-template-areas: 
+            "title input icon";
+
+        $radius-amount: 0rem;
+        $padding-horiz-amount: 0.5rem;
+        $padding-vert-amount: 0.3rem;
+        
+        & .FormInput__title {
+            border-radius: $radius-amount 0 0 0;
+            padding: $padding-horiz-amount 0.3rem $padding-horiz-amount $padding-vert-amount;
+        }
+
+        & .FormInput__icon-container {
+            border-radius: 0 $radius-amount 0 0;
+            padding: $padding-horiz-amount $padding-vert-amount $padding-horiz-amount 0.3rem;
+        }
+
+        & .FormInput__input {
+            padding: $padding-horiz-amount 0;
+        }
+
+        & .FormInput__input:focus, 
+        & .FormInput__input:active {
+            background-color: color-link("FormInput", "background", "primary");
+    
+            & + .FormInput__title {
+                background-color: color-link("FormInput", "background", "primary");
+            }
+    
+            & + * + * + .FormInput__icon-container {
+                background-color: color-link("FormInput", "background", "primary");
+            }
+        }
+    }
+
+    &.layout-style-minimal-condensed {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+        grid-template-areas: 
+            "input icon";
+
+        $radius-amount: 0rem;
+        $padding-horiz-amount: 0.5rem;
+        $padding-vert-amount: 0.3rem;
+        
+        & .FormInput__title {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            pointer-events: none;
+
+            padding: $padding-horiz-amount 0.3rem $padding-horiz-amount $padding-vert-amount;
+        }
+
+        & .FormInput__icon-container {
+            border-radius: 0 $radius-amount 0 0;
+            padding: $padding-horiz-amount $padding-vert-amount $padding-horiz-amount 0.3rem;
+        }
+
+        & .FormInput__input {
+            border-radius: $radius-amount 0 0 0;
+            padding: $padding-horiz-amount 0.3rem $padding-horiz-amount $padding-vert-amount;
+
+            // Hide placeholder
+            &::placeholder {
+                color: transparent;
+            }
+        }
+
+        & .FormInput__input:focus,
+        & .FormInput__input:active {
+            background-color: color-link("FormInput", "background", "primary");
+    
+            & + * + * + .FormInput__icon-container {
+                background-color: color-link("FormInput", "background", "primary");
+            }
+        }
+
+        & .FormInput__input:not(:placeholder-shown) + .FormInput__title {
+            opacity: 0;
+        }
+    }
+}
