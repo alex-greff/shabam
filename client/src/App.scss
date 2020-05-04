@@ -11,14 +11,19 @@
     }
     
     & .App__route-transition {
-        
+        flex-grow: 1;
     }
     
     & .App__route-view {
-        
+        height: 100%;
     }
 }
 
+.os-content {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
 
 // TODO: remove this
 .Container {

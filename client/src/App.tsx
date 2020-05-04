@@ -1,9 +1,10 @@
 import { AppLocationState } from "@/types";
-import React, { Component, FunctionComponent } from 'react';
+import React, { Component } from 'react';
 import './App.scss';
 import { Router, Route } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
 import { createBrowserHistory } from "history";
+import update from "immutability-helper";
 
 import themes from "@/theme/themes";
 import { themeStore } from "@/store/theme/theme.store";
@@ -17,27 +18,20 @@ import { Location } from "history";
 
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 
-
-const Layout: FunctionComponent = ({ children }) => (
-    <div id="App">
-        <OverlayScrollbarsComponent 
-            className="App__overlay-container"
-            options={{
-                paddingAbsolute: true,
-                scrollbars: {
-                    autoHide: 'leave'
-                }
-            }}
-        >
-            <NavBar />
-            {children}
-        </OverlayScrollbarsComponent>
-    </div>
-);
-
 const history = createBrowserHistory<AppLocationState>();
 
-class App extends Component {
+interface State {
+    scrollAmount: number;
+}
+
+class App extends Component<{}, State> {
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            scrollAmount: 0
+        };
+    }
 
     private instantiateNamespaces() {
         themeStore.addNamespace(DEFAULT_NAMESPACE, DEFAULT_THEME, true);
@@ -55,6 +49,14 @@ class App extends Component {
         this.instantiateThemes();
     }
 
+    onScroll(args?: UIEvent) {
+        const target = args?.target as HTMLElement;
+
+        this.setState((prevState) => update(prevState, { 
+            scrollAmount: { $set: target.scrollTop }
+        }));
+    }
+
     render() {
         return (
             <Router history={history}>
@@ -67,19 +69,34 @@ class App extends Component {
                             const transition = location?.state?.transition;
 
                             return (
-                                <Layout>
-                                    <RouteTransition 
-                                        className="App__route-transition"
-                                        pageKey={location.pathname}
-                                        transition={transition}
+                                <div id="App">
+                                    <OverlayScrollbarsComponent 
+                                        className="App__overlay-container"
+                                        options={{
+                                            scrollbars: {
+                                                autoHide: 'leave'
+                                            },
+                                            callbacks: {
+                                                onScroll: (args) => this.onScroll(args)
+                                            }
+                                        }}
                                     >
-                                        <RouteView 
-                                            className="App__route-view"
-                                            location={location} 
+                                        <NavBar 
+                                            scrollAmount={this.state.scrollAmount}
                                         />
-                                    </RouteTransition>
-                                </Layout>
-                            )
+                                        <RouteTransition 
+                                            className="App__route-transition"
+                                            pageKey={location.pathname}
+                                            transition={transition}
+                                        >
+                                            <RouteView 
+                                                className="App__route-view"
+                                                location={location} 
+                                            />
+                                        </RouteTransition>
+                                    </OverlayScrollbarsComponent>
+                                </div>
+                            );
                         }}
                     />
                 </ThemeProvider>
