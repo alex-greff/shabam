@@ -25,6 +25,7 @@ const BLUE_6 = "#B3F6FF";
 const BLUE_7 = "#6AE8F9";
 const BLUE_8 = "#64829E";
 const BLUE_9 = "#4A5E72";
+const BLUE_10 = "#4D5965";
 
 export default {
     name: "dark",
@@ -92,7 +93,8 @@ export default {
                 primary: DARK_6
             },
             accent: {
-                secondary: BLUE_3
+                secondary: BLUE_3,
+                tertiary: BLUE_10
             }
         }
     }
