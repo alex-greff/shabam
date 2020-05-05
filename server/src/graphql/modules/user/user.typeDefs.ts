@@ -6,6 +6,8 @@ export default gql`
         login(credentials: UserCredentialsInput!): Boolean!
         """Logout the current user, destroying the session."""
         logout: Boolean!
+        """Checks if the given username is available."""
+        checkUsernameAvailability(username: String!): Boolean!
     }
 
     type Mutation {

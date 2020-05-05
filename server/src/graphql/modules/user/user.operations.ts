@@ -1,7 +1,12 @@
 import { DEFAULT_ROLE, SESSION_EXPIRE_LENGTH, USERNAME_COOKIE_NAME } from "@/constants";
 import { AppContext } from "@/types";
-import { promisify } from "util";
-import { LoginArgs, SignupArgs, EditUserArgs, EditUserRoleArgs, RemoveUserArgs } from "./user.operations.types";
+import { 
+    LoginArgs, 
+    CheckUsernameAvailabilityArgs, 
+    SignupArgs, 
+    EditUserArgs, 
+    EditUserRoleArgs, 
+    RemoveUserArgs } from "./user.operations.types";
 import bcrypt from "bcryptjs";
 import * as helpers from "./user.helpers";
 import KEYS from "@/keys";
@@ -109,6 +114,11 @@ export default {
         }));
 
         return true;
+    },
+    checkAvailability: async (root: any, { username }: CheckUsernameAvailabilityArgs, context: AppContext): Promise<boolean> => {
+        // See if the user already exists
+        const userExists = await helpers.userExists(username);
+        return !userExists;
     },
     signup: async (root: any, { credentials }: SignupArgs, context: AppContext): Promise<boolean> => {
         const { username, password } = credentials;

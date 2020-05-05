@@ -1,3 +1,6 @@
+import * as ValidationImport from "./validation";
+export const Validation = ValidationImport;
+
 // -----------------------------------------------
 // --- Helpers for the helpers (helperception) ---
 // -----------------------------------------------

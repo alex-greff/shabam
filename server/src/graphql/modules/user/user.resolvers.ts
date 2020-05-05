@@ -6,7 +6,8 @@ import * as Utilities from "@/utilities";
 export default {
     Query: {
         login: Utilities.middlewareChain()(UserOperations.login),
-        logout: Utilities.middlewareChain()(UserOperations.logout)
+        logout: Utilities.middlewareChain()(UserOperations.logout),
+        checkUsernameAvailability: Utilities.middlewareChain()(UserOperations.checkAvailability)
     },
     Mutation: { 
         signup: Utilities.middlewareChain()(UserOperations.signup),

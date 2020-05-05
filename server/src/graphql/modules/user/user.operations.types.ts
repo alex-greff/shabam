@@ -7,6 +7,10 @@ export interface LoginArgs {
     credentials: UserCredentials;
 }
 
+export interface CheckUsernameAvailabilityArgs {
+    username: string;
+}
+
 export interface SignupArgs {
     credentials: UserCredentials;
 }

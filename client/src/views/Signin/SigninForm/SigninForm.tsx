@@ -4,6 +4,8 @@ import "./SigninForm.scss";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
 
+import { Validation } from "@/utilities";
+
 import FormButton from "@/components/ui/forms/button/FormButton/FormButton";
 import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 
@@ -19,9 +21,17 @@ interface FormData {
     password: string;
 }
 
+const validateUsername = async (username: string) => {
+    const isAvailable = await Validation.checkUsername(username);
+
+    return isAvailable || "Username not available";
+}
+
 const SigninForm: FunctionComponent<Props> = (props) => {
     const [submitting, setSubmitting] = useState(false);
-    const { register, setValue, handleSubmit, errors, setError } = useForm<FormData>();
+    const { register, setValue, handleSubmit, errors, setError } = useForm<FormData>({
+        mode: "onChange",
+    });
 
     const onSubmit = handleSubmit(async (data) => {
         console.log("Signin form data", data);
@@ -38,7 +48,10 @@ const SigninForm: FunctionComponent<Props> = (props) => {
 
             <FormInput 
                 className="SigninForm__username-input"
-                ref={register({ required: "Username is required." })}
+                ref={register({ 
+                    required: "Username is required",
+                    validate: validateUsername
+                })}
                 error={errors.username}
                 name="username"
                 type="text"
