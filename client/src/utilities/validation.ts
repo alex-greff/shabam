@@ -1,4 +1,5 @@
 import axios from "axios";
+import KEYS from "@/keys";
 
 interface CheckUsernameResponse {
     data: {
@@ -22,7 +23,8 @@ export const checkUsername = async (username: string) => {
         variables
     }
 
-    const result = await axios.post<CheckUsernameResponse>("/api/graphql", data, {
+    // TODO: implement some form of debouncing
+    const result = await axios.post<CheckUsernameResponse>(KEYS.GRAPHQL_API_ENDPOINT, data, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

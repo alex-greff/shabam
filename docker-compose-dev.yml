@@ -99,6 +99,7 @@ services:
             - ./client:/app
         environment: 
             - CHOKIDAR_USEPOLLING=true
+            - REACT_APP_GRAPHQL_API_ENDPOINT=/api/graphql
         networks:
             - app-network
         privileged: true
