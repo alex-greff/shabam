@@ -14,14 +14,18 @@
     padding: 0.5rem 2rem;
 
     color: color-link("FormButton", "text", "primary");
-    background-color: color-link("FormButton", "accent", "secondary");
+    background-color: color-link("FormButton", "background", "primary");
 
     box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.3);
 
     transition: background-color $transition-time, color $transition-time;
 
+    &.secondary {
+        background-color: color-link("FormButton", "background", "secondary");
+    }
+
     &:hover {
-        background-color: color-link("FormButton", "accent", "tertiary");
+        background-color: color-link("FormButton", "accent", "primary");
     }
 
     &:disabled {

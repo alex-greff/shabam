@@ -302,6 +302,39 @@
     // --- Modifiers ---
     // -----------------
     &.has-error {
+        & .FormInput__input {
+            // Override the autofill styles on Chrome
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus {
+                border: none;
+                -webkit-text-fill-color: color-link("FormInput", "text", "primary");
+                box-shadow: 0 0 0px 1000px color-link("FormInput", "form_error", "secondary") inset;
+                transition: background-color 5000s ease-in-out 0s;
+                caret-color: color-link("FormInput", "text", "primary");
+    
+                & + * + * + .FormInput__icon-container {
+                    border: none;
+                    -webkit-text-fill-color: color-link("FormInput", "text", "primary");
+                    box-shadow: 0 0 0px 1000px color-link("FormInput", "form_error", "secondary") inset;
+                    transition: background-color 5000s ease-in-out 0s;
+                }
+            }
+        }
+
+        & .FormInput__input:disabled {
+            // Override the autofill styles on Chrome
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus {
+                -webkit-text-fill-color: color-link("FormInput", "text", "disabled");
+    
+                & + * + * + .FormInput__icon-container {
+                    -webkit-text-fill-color: color-link("FormInput", "text", "disabled");
+                }
+            }
+        }
+
         &.layout-style-classic {
             & .FormInput__input {
                 background-color: color-link("FormInput", "form_error", "secondary");

@@ -10,11 +10,12 @@ const DARK_3 = "#444444";
 const DARK_4 = "#707070"; // TODO: tweak this color
 const DARK_5 = "#646464";
 const DARK_6 = "#494747";
+const DARK_7 = "#6A6A6A";
 
 const LIGHT_1 = "#FFFFFF";
 const LIGHT_2 = "#F6F6F6";
 const LIGHT_3 = "#C3C3C3"; // TODO: tweak this color
-const LIGHT_4 = "#BFBFBF"
+const LIGHT_4 = "#BFBFBF";
 
 const BLUE_1 = "#C3E2FF";
 const BLUE_2 = "#3176A8";
@@ -103,6 +104,16 @@ export default {
             accent: {
                 secondary: BLUE_3,
                 tertiary: BLUE_10
+            }
+        },
+        FormButton: {
+            background: {
+                primary: BLUE_2,
+                secondary: DARK_7,
+                disabled: DARK_6
+            },
+            accent: {
+                primary: BLUE_3
             }
         }
     }
