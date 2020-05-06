@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types"
-import "./SigninForm.scss";
+import "./SignupForm.scss";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
 import { withRouter, RouteComponentProps } from "react-router-dom";
@@ -20,23 +20,28 @@ export interface Props extends BaseProps, RouteComponentProps {
 interface FormData {
     username: string;
     password: string;
+    confirmPassword: string;
 }
 
-const SigninForm: FunctionComponent<Props> = (props) => {
+const SignupForm: FunctionComponent<Props> = (props) => {
     const [submitting, setSubmitting] = useState(false);
     const [globalError, setGlobalError] = useState<string | null>(null);
-    const { register, setValue, handleSubmit, errors, setError, reset } = useForm<FormData>({
+    const { register, setValue, handleSubmit, errors, setError, reset, watch } = useForm<FormData>({
         mode: "onChange",
     });
+    const currPassword = watch("password", "");
 
     const onSubmit = handleSubmit(async (data) => {
         setSubmitting(true);
 
         try {
+            const signedUp = await API.signup(data.username, data.password);
+            if (!signedUp) throw new Error("Not signed up");
+
             const signedIn = await API.signin(data.username, data.password);
             if (!signedIn) throw new Error("Not signed in");
         } catch(err) {
-            setGlobalError("Invalid username or password");
+            setGlobalError("An error occurred while signing up");
             setSubmitting(false);
             return;
         }
@@ -48,25 +53,39 @@ const SigninForm: FunctionComponent<Props> = (props) => {
         props.history.push("/");
     });
 
+    const validateUsername = async (username: string) => {
+        const isAvailable = await API.checkUsername(username);
+    
+        return isAvailable || "Username not available";
+    }
+
+    const validateConfirmPassword = (confirmPassword: string) => {
+        const passwordsMatch = currPassword === confirmPassword;
+
+        return passwordsMatch || "Passwords do not match";
+    }
+
     const hasErrors = Object.keys(errors).length > 0;
 
     return (
         <form 
-            className={classnames("SigninForm", props.className)}
+            className={classnames("SignupForm", props.className)}
             onSubmit={onSubmit}
         >
-            <div className="SigninForm__title">
-                Signin
+            <div className="SignupForm__title">
+                Signup
             </div>
 
             <FormInput 
-                className="SigninForm__username-input"
+                className="SignupForm__username-input"
                 ref={register({ 
                     required: "Username is required",
+                    validate: validateUsername
                 })}
                 error={errors.username}
                 name="username"
                 type="text"
+                autoComplete="off"
                 layoutStyle="minimal-condensed"
                 renderTitle={() => "Username"}
                 renderIcon={() => <PersonIcon />}
@@ -74,7 +93,7 @@ const SigninForm: FunctionComponent<Props> = (props) => {
             />
 
             <FormInput 
-                className="SigninForm__password-input"
+                className="SignupForm__password-input"
                 ref={register({ 
                     required: "Password is required"
                 })}
@@ -87,18 +106,32 @@ const SigninForm: FunctionComponent<Props> = (props) => {
                 disabled={submitting}
             />
 
+            <FormInput 
+                className="SignupForm__password-input"
+                ref={register({ 
+                    validate: validateConfirmPassword
+                })}
+                error={errors.confirmPassword}
+                type="password"
+                name="confirmPassword"
+                layoutStyle="minimal-condensed"
+                renderTitle={() => "Confirm Password"}
+                renderIcon={() => <LockIcon />}
+                disabled={submitting}
+            />
+
             <FormButton 
-                className="SigninForm__submit-button"
+                className="SignupForm__submit-button"
                 type="submit"
                 colorStyle="primary"
                 disabled={submitting || hasErrors}
             >
-                Signin
+                Signup
             </FormButton>
 
-            <div className="SigninForm__global-error-container">
+            <div className="SignupForm__global-error-container">
                 {(!globalError) ? null : (
-                    <div className="SigninForm__global-error">
+                    <div className="SignupForm__global-error">
                         { globalError }
                     </div>
                 )}
@@ -107,8 +140,8 @@ const SigninForm: FunctionComponent<Props> = (props) => {
     );
 };
 
-SigninForm.defaultProps = {
+SignupForm.defaultProps = {
 
 } as Partial<Props>;
 
-export default withRouter(SigninForm);
+export default withRouter(SignupForm);
