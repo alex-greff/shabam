@@ -3,11 +3,21 @@ import { BaseProps } from "@/types"
 import "./AccountCatalog.scss";
 import classnames from "classnames";
 
-const AccountCatalog: FunctionComponent<BaseProps> = (props) => {
+import Page, { Props as PageProps } from "@/components/page/Page";
+
+export interface Props extends BaseProps, PageProps {
+
+}
+
+const AccountCatalog: FunctionComponent<Props> = (props) => {
     return (
-        <div id="AccountCatalog" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="AccountCatalog" 
+            className={classnames(props.className)}
+        >
             Account Catalog View
-        </div>
+        </Page>
     );
 };
 

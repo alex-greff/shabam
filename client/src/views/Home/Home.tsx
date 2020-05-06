@@ -3,9 +3,19 @@ import { BaseProps } from "@/types"
 import "./Home.scss";
 import classnames from "classnames";
 
-const Home: FunctionComponent<BaseProps> = (props) => {
+import Page, { Props as PageProps } from "@/components/page/Page";
+
+export interface Props extends BaseProps, PageProps {
+
+}
+
+const Home: FunctionComponent<Props> = (props) => {
     return (
-        <div id="Home" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="Home" 
+            className={classnames(props.className)}
+        >
             Home View
             content
             <br/>
@@ -91,7 +101,7 @@ const Home: FunctionComponent<BaseProps> = (props) => {
             <br/>
             content
             <br/>
-        </div>
+        </Page>
     );
 };
 

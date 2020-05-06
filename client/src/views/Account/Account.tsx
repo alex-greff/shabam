@@ -3,11 +3,22 @@ import { BaseProps } from "@/types"
 import "./Account.scss";
 import classnames from "classnames";
 
-const Account: FunctionComponent<BaseProps> = (props) => {
+import Page, { Props as PageProps } from "@/components/page/Page";
+
+export interface Props extends BaseProps, PageProps {
+
+}
+
+
+const Account: FunctionComponent<Props> = (props) => {
     return (
-        <div id="Account" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="Account" 
+            className={classnames(props.className)}
+        >
             Account View
-        </div>
+        </Page>
     );
 };
 

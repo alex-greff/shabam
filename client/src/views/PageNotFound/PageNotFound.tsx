@@ -3,11 +3,21 @@ import { BaseProps } from "@/types"
 import "./PageNotFound.scss";
 import classnames from "classnames";
 
-const PageNotFound: FunctionComponent<BaseProps> = (props) => {
+import Page, { Props as PageProps } from "@/components/page/Page";
+
+export interface Props extends BaseProps, PageProps {
+
+}
+
+const PageNotFound: FunctionComponent<Props> = (props) => {
     return (
-        <div id="PageNotFound" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="PageNotFound" 
+            className={classnames(props.className)}
+        >
             404 View
-        </div>
+        </Page>
     );
 };
 

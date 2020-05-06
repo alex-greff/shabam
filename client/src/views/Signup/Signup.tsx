@@ -3,12 +3,21 @@ import { BaseProps } from "@/types"
 import "./Signup.scss";
 import classnames from "classnames";
 
+import Page, { Props as PageProps } from "@/components/page/Page";
 import AccentContainer from "@/components/ui/containers/AccentContainer";
 import SignupForm from "./SignupForm/SignupForm";
 
-const Signup: FunctionComponent<BaseProps> = (props) => {
+export interface Props extends BaseProps, PageProps {
+
+}
+
+const Signup: FunctionComponent<Props> = (props) => {
     return (
-        <div id="Signup" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="Signup" 
+            className={classnames(props.className)}
+        >
             <AccentContainer
                 className="Signup__accent-container"
             >
@@ -18,7 +27,7 @@ const Signup: FunctionComponent<BaseProps> = (props) => {
                     />
                 </div>
             </AccentContainer>
-        </div>
+        </Page>
     );
 };
 

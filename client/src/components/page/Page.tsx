@@ -3,9 +3,20 @@ import { BaseProps } from "@/types"
 import "./Page.scss";
 import classnames from "classnames";
 
-const Page: FunctionComponent<BaseProps> = (props) => {
+export interface Props extends BaseProps {
+    id?: string;
+    navbarHeight: number;
+}
+
+const Page: FunctionComponent<Props> = (props) => {
     return (
-        <div className={classnames("Page", props.className)}>
+        <div 
+            id={props.id}
+            className={classnames("Page", props.className)}
+            style={{
+                minHeight: `calc(100vh - ${props.navbarHeight}px)`
+            }}
+        >
             {props.children}
         </div>
     );

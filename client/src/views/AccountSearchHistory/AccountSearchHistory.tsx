@@ -3,11 +3,21 @@ import { BaseProps } from "@/types"
 import "./AccountSearchHistory.scss";
 import classnames from "classnames";
 
-const AccountSearchHistory: FunctionComponent<BaseProps> = (props) => {
+import Page, { Props as PageProps } from "@/components/page/Page";
+
+export interface Props extends BaseProps, PageProps {
+
+}
+
+const AccountSearchHistory: FunctionComponent<Props> = (props) => {
     return (
-        <div id="AccountSearchHistory" className={classnames(props.className)}>
+        <Page 
+            {...props}
+            id="AccountSearchHistory" 
+            className={classnames(props.className)}
+        >
             Account Search History View
-        </div>
+        </Page>
     );
 };
 

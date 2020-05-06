@@ -5,6 +5,7 @@ import { Router, Route } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
 import { createBrowserHistory } from "history";
 import update from "immutability-helper";
+import { SizeMeProps } from "react-sizeme";
 
 import themes from "@/theme/themes";
 import { themeStore } from "@/store/theme/theme.store";
@@ -22,6 +23,8 @@ const history = createBrowserHistory<AppLocationState>();
 
 interface State {
     scrollAmount: number;
+    navbarHeight: number;
+    navbarWidth: number;
 }
 
 class App extends Component<{}, State> {
@@ -29,7 +32,9 @@ class App extends Component<{}, State> {
         super(props);
 
         this.state = {
-            scrollAmount: 0
+            scrollAmount: 0,
+            navbarHeight: 0,
+            navbarWidth: 0
         };
     }
 
@@ -54,6 +59,13 @@ class App extends Component<{}, State> {
 
         this.setState((prevState) => update(prevState, { 
             scrollAmount: { $set: target.scrollTop }
+        }));
+    }
+
+    handleNavbarResize(size: SizeMeProps['size']) {
+        this.setState((prevState) => update(prevState, {
+            navbarHeight: { $set: size.height! },
+            navbarWidth: { $set: size.width! }
         }));
     }
 
@@ -83,6 +95,8 @@ class App extends Component<{}, State> {
                                     >
                                         <NavBar 
                                             scrollAmount={this.state.scrollAmount}
+                                            onSize={(size) => this.handleNavbarResize(size)}
+                                            width={this.state.navbarWidth}
                                         />
                                         <RouteTransition 
                                             className="App__route-transition"
@@ -92,6 +106,7 @@ class App extends Component<{}, State> {
                                             <RouteView 
                                                 className="App__route-view"
                                                 location={location} 
+                                                navbarHeight={this.state.navbarHeight}
                                             />
                                         </RouteTransition>
                                     </OverlayScrollbarsComponent>

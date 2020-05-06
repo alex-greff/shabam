@@ -2,7 +2,7 @@ import React, { Component, RefObject } from "react";
 import { BaseProps } from "@/types";
 import "./NavBar.scss";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { withSize, SizeMeProps } from "react-sizeme";
+import { withSize, SizeMeProps, WithSizeProps } from "react-sizeme";
 import classnames from "classnames";
 import * as Utilities from "@/utilities";
 
@@ -10,15 +10,16 @@ import HomeNavItem from "@/components/nav/items/HomeNavItem/HomeNavItem";
 import NavItem from "@/components/nav/items/NavItem/NavItem";
 import AccountControls from "@/components/account/AccountControls/AccountControls";
 
-export interface Props extends BaseProps, RouteComponentProps, SizeMeProps {
+export interface Props extends BaseProps, RouteComponentProps, WithSizeProps {
     scrollAmount: number;
+    width: number;
 }
 
 
 // This just keeps it quiet until they get the declaration working with decorators
 // Source: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/24077
 @(withRouter as any)
-@(withSize({ monitorWidth: true }) as any)
+@(withSize({ monitorWidth: true, monitorHeight: true, refreshRate: 50 }) as any)
 class NavBar extends Component<Props, any> {
     static defaultProps = {
 
@@ -35,8 +36,8 @@ class NavBar extends Component<Props, any> {
     }
 
     render() {
-        const { className, size, scrollAmount } = this.props;
-        const mobile = Utilities.getBreakpoint(size.width!) <= Utilities.Breakpoint.phone;
+        const { className, width, scrollAmount } = this.props;
+        const mobile = Utilities.getBreakpoint(width!) <= Utilities.Breakpoint.phone;
         const scrolled = scrollAmount > 0;
 
         return (
