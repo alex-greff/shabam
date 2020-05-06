@@ -1,12 +1,11 @@
 .AccentContainer {
-    $width: 50rem;
+    $width: 55rem;
     $height: 40rem;
 
     max-width: $width;
     width: 100vw;
 
-    max-height: $height;
-    height: 300vh;
+    min-height: $height;
 
     padding: 2rem;
 
@@ -21,7 +20,6 @@
         display: grid;
         grid-template-columns: 30% auto;
         grid-template-rows: 100%;
-        gap: 1rem;
         grid-template-areas: 
             "accent content";
 
@@ -39,10 +37,10 @@
         & .AccentContainer__content {
             grid-area: content;
 
-            padding: 1.5rem;
+            padding: 2rem;
 
             @include respond(phone) {
-                padding: 1rem;
+                padding: 1.5rem;
             }
         }
     }
