@@ -1,5 +1,5 @@
 import { AppLocationState } from "@/types";
-import React, { Component } from 'react';
+import React, { Component, createRef, RefObject } from 'react';
 import './App.scss';
 import { Router, Route } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
@@ -17,6 +17,7 @@ import RouteView from "@/router/RouteView";
 import RouteTransition from "@/router/RouteTransition";
 import { Location } from "history";
 
+import OverlayScrollbars from "overlayscrollbars";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 
 const history = createBrowserHistory<AppLocationState>();
@@ -25,17 +26,23 @@ interface State {
     scrollAmount: number;
     navbarHeight: number;
     navbarWidth: number;
+    osInstance?: OverlayScrollbars | null;
 }
 
 class App extends Component<{}, State> {
+    osRef: RefObject<OverlayScrollbarsComponent>;
+
     constructor(props: any) {
         super(props);
 
         this.state = {
             scrollAmount: 0,
             navbarHeight: 0,
-            navbarWidth: 0
+            navbarWidth: 0,
+            osInstance: null
         };
+
+        this.osRef = createRef<OverlayScrollbarsComponent>();
     }
 
     private instantiateNamespaces() {
@@ -49,9 +56,23 @@ class App extends Component<{}, State> {
         });
     }
 
+    private updateOsInstance() {
+        if (!this.state.osInstance) {
+            this.setState((prevState) => update(prevState, {
+                osInstance: { $set: this.osRef.current?.osInstance() }
+            }));
+        }
+    }
+
     componentDidMount() {
         this.instantiateNamespaces();
         this.instantiateThemes();
+
+        this.updateOsInstance();
+    }
+
+    componentDidUpdate() {
+        this.updateOsInstance();
     }
 
     onScroll(args?: UIEvent) {
@@ -84,6 +105,7 @@ class App extends Component<{}, State> {
                                 <div id="App">
                                     <OverlayScrollbarsComponent 
                                         className="App__overlay-container"
+                                        ref={this.osRef}
                                         options={{
                                             scrollbars: {
                                                 autoHide: 'leave'
@@ -102,6 +124,7 @@ class App extends Component<{}, State> {
                                             className="App__route-transition"
                                             pageKey={location.pathname}
                                             transition={transition}
+                                            osInstance={this.state.osInstance}
                                         >
                                             <RouteView 
                                                 className="App__route-view"
