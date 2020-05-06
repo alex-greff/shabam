@@ -4,6 +4,7 @@ import "./SigninForm.scss";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { BackNavigation } from "@/utilities";
 
 import * as API from "@/api";
 
@@ -43,9 +44,13 @@ const SigninForm: FunctionComponent<Props> = (props) => {
 
         setSubmitting(false);
 
-        // TODO: add a mechanism to direct back to the previous page 
-        // (for when the user tries accessing a page when they're not logged in)
-        props.history.push("/");
+        // Navigate back to the previous page, if given
+        if (BackNavigation.hasBackPath) {
+            BackNavigation.clearBackPath();
+            props.history.push(BackNavigation.backPath!);
+        } else {
+            props.history.push("/");
+        }
     });
 
     const hasErrors = Object.keys(errors).length > 0;
