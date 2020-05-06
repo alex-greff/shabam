@@ -76,10 +76,6 @@ class App extends Component<{}, State> {
                                             scrollbars: {
                                                 autoHide: 'leave'
                                             },
-                                            overflowBehavior: {
-                                                x: "hidden",
-                                                y: "hidden"
-                                            },
                                             callbacks: {
                                                 onScroll: (args) => this.onScroll(args)
                                             }
