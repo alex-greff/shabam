@@ -3,21 +3,20 @@ import { BaseProps } from "@/types"
 import "./Catalog.scss";
 import classnames from "classnames";
 
-import Page, { Props as PageProps } from "@/components/page/Page";
+import PageView from "@/components/page/PageView/PageView";
 
-export interface Props extends BaseProps, PageProps {
+export interface Props extends BaseProps {
 
 }
 
 const Catalog: FunctionComponent<Props> = (props) => {
     return (
-        <Page 
-            {...props}
+        <PageView
             id="Catalog" 
             className={classnames(props.className)}
         >
             Catalog View
-        </Page>
+        </PageView>
     );
 };
 

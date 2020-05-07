@@ -6,6 +6,7 @@ import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
 import { createBrowserHistory } from "history";
 import update from "immutability-helper";
 import { SizeMeProps } from "react-sizeme";
+import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 
 import themes from "@/theme/themes";
 import { themeStore } from "@/store/theme/theme.store";
@@ -19,6 +20,7 @@ import { Location } from "history";
 
 import OverlayScrollbars from "overlayscrollbars";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
+
 
 const history = createBrowserHistory<AppLocationState>();
 
@@ -100,7 +102,7 @@ class App extends Component<{}, State> {
                         render={(routeProps) => {
                             const location = routeProps.location as Location<AppLocationState>;
                             const transition = location?.state?.transition;
-
+                            
                             return (
                                 <div id="App">
                                     <OverlayScrollbarsComponent 
@@ -126,11 +128,12 @@ class App extends Component<{}, State> {
                                             transition={transition}
                                             osInstance={this.state.osInstance}
                                         >
-                                            <RouteView 
-                                                className="App__route-view"
-                                                location={location} 
-                                                navbarHeight={this.state.navbarHeight}
-                                            />
+                                            <NavBarHeightContext.Provider value={this.state.navbarHeight}>
+                                                <RouteView 
+                                                    className="App__route-view"
+                                                    location={location} 
+                                                />
+                                            </NavBarHeightContext.Provider>
                                         </RouteTransition>
                                     </OverlayScrollbarsComponent>
                                 </div>

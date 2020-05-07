@@ -3,21 +3,20 @@ import { BaseProps } from "@/types"
 import "./Search.scss";
 import classnames from "classnames";
 
-import Page, { Props as PageProps } from "@/components/page/Page";
+import PageView from "@/components/page/PageView/PageView";
 
-export interface Props extends BaseProps, PageProps {
+export interface Props extends BaseProps {
 
 }
 
 const Search: FunctionComponent<Props> = (props) => {
     return (
-        <Page 
-            {...props}
+        <PageView 
             id="Search" 
             className={classnames(props.className)}
         >
             Search View
-        </Page>
+        </PageView>
     );
 };
 

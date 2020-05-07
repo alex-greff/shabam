@@ -19,7 +19,7 @@
     }
     
     & .App__route-view {
-        min-height: 100%;
+        flex-grow: 1;
         width: 100%;
 
         display: flex;
@@ -110,26 +110,60 @@
 
 
 @keyframes slideOut {
-    0% { }
-    25% { opacity: .5; transform: translateZ(-500px); }
-    75% { opacity: .5; transform: translateZ(-500px) translateX(-200%); }
-    100% { opacity: .5; transform: translateZ(-500px) translateX(-200%); }
+    0% { 
+        background-color: rgba(112, 112, 112, 0); 
+    }
+    25% { 
+        opacity: .5; 
+        transform: translateZ(-500px); 
+        background-color: rgba(112, 112, 112, 0.2); 
+    }
+    75% { 
+        opacity: .5; 
+        transform: translateZ(-500px) translateX(-200%); 
+        background-color: rgba(112, 112, 112, 0.2); 
+    }
+    100% { 
+        opacity: .5; 
+        transform: translateZ(-500px) translateX(-200%); 
+        background-color: rgba(112, 112, 112, 0); 
+    }
 }
 
 @keyframes slideIn {
-    0% { opacity: .5; transform: translateZ(-500px) translateX(200%); }
-    25% { opacity: .5; transform: translateZ(-500px) translateX(200%); }
-    75% { opacity: .5; transform: translateZ(-500px); }
-    100% { opacity: 1; transform: translateZ(0) translateX(0); }
+    0% { 
+        opacity: .5; 
+        transform: translateZ(-500px) translateX(200%); 
+        background-color: rgba(112, 112, 112, 0); 
+    }
+    25% { 
+        opacity: .5; 
+        transform: translateZ(-500px) translateX(200%); 
+        background-color: rgba(112, 112, 112, 0.2); 
+    }
+    75% { 
+        opacity: .5; 
+        transform: translateZ(-500px); 
+        background-color: rgba(112, 112, 112, 0.2); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateZ(0) translateX(0); 
+        background-color: rgba(112, 112, 112, 0); 
+    }
 }
 
 
 .slide-exit-active {
     position: absolute;
     animation: slideOut 1000ms both ease;
+    overflow: hidden;
+    height: 100vh;
 }
 
 .slide-enter-active {
     position: absolute;
     animation: slideIn 1000ms both ease;
+    overflow: hidden;
+    height: 100vh;
 }

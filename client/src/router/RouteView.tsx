@@ -15,26 +15,25 @@ const SignupView = lazy(() => import(/* webpackChunkName: "signup" */ "@/views/S
 const PageNotFoundView = lazy(() => import(/* webpackChunkName: "page-not-found" */ "@/views/PageNotFound/PageNotFound"));
 
 export interface Props extends BaseProps {
-    navbarHeight: number;
     location: Location<AppLocationState>;
 };
 
 const RouteView: FunctionComponent<Props> = (props) => {
-    const { location, navbarHeight } = props;
+    const { location } = props;
 
     return (
         <div className={classnames("RouteView", props.className)}>
             <Suspense fallback={null}>
                 <Switch location={location}>
-                    <Route exact path="/" component={() => <HomeView navbarHeight={navbarHeight} />}/>
-                    <Route exact path="/search" component={() => <SearchView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/catalog" component={() => <CatalogView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/account/:id" component={() => <AccountView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/account/:id/search-history" component={() => <AccountSearchHistoryView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/account/:id/catalog" component={() => <AccountCatalogView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/signin" component={() => <SigninView navbarHeight={navbarHeight} />} />
-                    <Route exact path="/signup" component={() => <SignupView navbarHeight={navbarHeight} />} />
-                    <Route component={() => <PageNotFoundView navbarHeight={navbarHeight} />} />
+                    <Route exact path="/" component={HomeView} />
+                    <Route exact path="/search" component={SearchView} />
+                    <Route exact path="/catalog" component={CatalogView} />
+                    <Route exact path="/account/:id" component={AccountView} />
+                    <Route exact path="/account/:id/search-history" component={AccountSearchHistoryView} />
+                    <Route exact path="/account/:id/catalog" component={AccountCatalogView} />
+                    <Route exact path="/signin" component={SigninView} />
+                    <Route exact path="/signup" component={SignupView} />
+                    <Route component={PageNotFoundView} />
                 </Switch>
             </Suspense>
         </div>
