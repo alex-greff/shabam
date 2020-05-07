@@ -4,7 +4,6 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import classnames from "classnames";
 import OverlayScrollbars from "overlayscrollbars";
 
-
 export interface Props extends BaseProps {
     transition?: string;
     pageKey?: string;
@@ -23,14 +22,16 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
     const { transition, pageKey, osInstance, children } = props;
 
     const handleOnEntering = () => {
-        // Hide page scrollbars (and scroll to top) when the animation is running
-        osInstance?.scroll(0);
+        // Hide page scrollbars when the animation is running
         osInstance?.options({
             overflowBehavior: {
                 x: "hidden",
                 y: "hidden"
             }
         });
+
+        // Scroll the page to the top when when the page is entering
+        osInstance?.scroll(0, 100);
     };
 
     const handleOnExited = () => {
@@ -47,15 +48,15 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
         <TransitionGroup
             childFactory={childFactoryCreator({ 
                 classNames: transition!, 
-                timeout: 300
+                timeout: 1000
             })}
             className={classnames("RouteTransition", props.className)}
         >
             <CSSTransition
                 key={pageKey}
                 addEndListener={() => {}}
-                onEntering={handleOnEntering}
                 onExited={handleOnExited}
+                onEntering={handleOnEntering}
             >
                 {children}
             </CSSTransition>
@@ -64,7 +65,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
 };
 
 RouteTransition.defaultProps = {
-    transition: "page"
+    transition: "slide"
 } as Partial<Props>;
 
 export default RouteTransition;

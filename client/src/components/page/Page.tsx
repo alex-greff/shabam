@@ -14,7 +14,7 @@ const Page: FunctionComponent<Props> = (props) => {
             id={props.id}
             className={classnames("Page", props.className)}
             style={{
-                minHeight: `calc(100vh - ${props.navbarHeight}px)`
+                paddingTop: `${props.navbarHeight}px`
             }}
         >
             {props.children}

@@ -2,6 +2,8 @@
     height: 100%;
     width: 100%;
 
+    perspective: 1200px;
+
     & .App__overlay-container {
         height: 100%;
         position: relative;
@@ -97,10 +99,37 @@
     position: absolute;
 }
 .fade-enter-active {
-    animation: fadeIn 300ms ease both;
+    animation: fadeIn 1000ms ease both;
     z-index: 2;
 }
 .fade-exit-active {
-    animation: fadeOut 300ms ease both;
+    animation: fadeOut 1000ms ease both;
     z-index: 1;
+}
+
+
+
+@keyframes slideOut {
+    0% { }
+    25% { opacity: .5; transform: translateZ(-500px); }
+    75% { opacity: .5; transform: translateZ(-500px) translateX(-200%); }
+    100% { opacity: .5; transform: translateZ(-500px) translateX(-200%); }
+}
+
+@keyframes slideIn {
+    0% { opacity: .5; transform: translateZ(-500px) translateX(200%); }
+    25% { opacity: .5; transform: translateZ(-500px) translateX(200%); }
+    75% { opacity: .5; transform: translateZ(-500px); }
+    100% { opacity: 1; transform: translateZ(0) translateX(0); }
+}
+
+
+.slide-exit-active {
+    position: absolute;
+    animation: slideOut 1000ms both ease;
+}
+
+.slide-enter-active {
+    position: absolute;
+    animation: slideIn 1000ms both ease;
 }

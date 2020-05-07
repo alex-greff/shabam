@@ -4,6 +4,8 @@ import "./AccountControls.scss";
 import classnames from "classnames";
 import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
+// import Popup from "reactjs-popup";
+// import { CSSTransition } from 'react-transition-group';
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 
@@ -30,16 +32,34 @@ class AccountControls extends Component<Props, State> {
 
         return (
             <div className={classnames("AccountControls", this.props.className)}>
-                 {(loggedIn) ? this.renderLoggedInControls() : this.renderLoggedOutControls() }
+                { (loggedIn) ? this.renderLoggedInControls() : this.renderLoggedOutControls() }
             </div>
         );
     }
 
     private renderLoggedInControls() {
+        const username = accountStore.username!;
+
         return (
             <div className="AccountControls__logged-in">
-                TODO: Logged-In Stuff
+                { username }
             </div>
+
+            // <Popup
+            //     trigger={open => (
+            //         <div className="AccountControls__logged-in">{ username }</div>
+            //     )}
+            //     className="AccountControls__dropdown"
+            //     position="bottom right"
+            //     closeOnDocumentClick
+            // >
+            //     <CSSTransition
+            //         addEndListener={() => {}}
+            //         classNames="page"
+            //     >
+            //         <span> Popup content </span>
+            //     </CSSTransition>
+            // </Popup>
         );
     }
 
