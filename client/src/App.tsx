@@ -1,5 +1,6 @@
 import { AppLocationState } from "@/types";
 import React, { Component, createRef, RefObject } from 'react';
+import KEYS from "@/keys";
 import './App.scss';
 import { Router, Route } from 'react-router-dom';
 import { DEFAULT_NAMESPACE, DEFAULT_THEME } from "@/constants";
@@ -7,6 +8,10 @@ import { createBrowserHistory } from "history";
 import update from "immutability-helper";
 import { SizeMeProps } from "react-sizeme";
 import { Location } from "history";
+
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
+
 import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 
 import PageAlignment from "@/components/page/PageAlignment/PageAlignment";
@@ -23,8 +28,13 @@ import NavBar from "@/components/nav/NavBar/NavBar";
 import RouteView from "@/router/RouteView";
 import RouteTransition from "@/router/RouteTransition";
 
-
+// Create the browser history that we will use
 const history = createBrowserHistory<AppLocationState>();
+
+// Create the GraphQL client that we will use to connect to the backend
+const client = new ApolloClient({
+    uri: KEYS.GRAPHQL_API_ENDPOINT
+});
 
 interface State {
     scrollAmount: number;
@@ -119,26 +129,28 @@ class App extends Component<{}, State> {
                                             }
                                         }}
                                     >
-                                        <NavBar 
-                                            scrollAmount={this.state.scrollAmount}
-                                            onSize={(size) => this.handleNavbarResize(size)}
-                                            width={this.state.navbarWidth}
-                                        />
-                                        <RouteTransition 
-                                            className="App__route-transition"
-                                            pageKey={location.pathname}
-                                            transition={transition}
-                                            osInstance={this.state.osInstance}
-                                        >
-                                            <NavBarHeightContext.Provider value={this.state.navbarHeight}>
-                                                <PageAlignment className="App__page-alignment">
-                                                    <RouteView 
-                                                        className="App__route-view"
-                                                        location={location} 
-                                                    />
-                                                </PageAlignment>
-                                            </NavBarHeightContext.Provider>
-                                        </RouteTransition>
+                                        <ApolloProvider client={client}>
+                                            <NavBar 
+                                                scrollAmount={this.state.scrollAmount}
+                                                onSize={(size) => this.handleNavbarResize(size)}
+                                                width={this.state.navbarWidth}
+                                            />
+                                            <RouteTransition 
+                                                className="App__route-transition"
+                                                pageKey={location.pathname}
+                                                transition={transition}
+                                                osInstance={this.state.osInstance}
+                                            >
+                                                <NavBarHeightContext.Provider value={this.state.navbarHeight}>
+                                                    <PageAlignment className="App__page-alignment">
+                                                        <RouteView 
+                                                            className="App__route-view"
+                                                            location={location} 
+                                                        />
+                                                    </PageAlignment>
+                                                </NavBarHeightContext.Provider>
+                                            </RouteTransition>
+                                        </ApolloProvider>
                                     </OverlayScrollbarsComponent>
                                 </div>
                             );
