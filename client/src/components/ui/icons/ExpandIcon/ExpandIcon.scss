@@ -1,7 +1,7 @@
 .ExpandIcon {
     transform: rotateZ(0deg);
 
-    transition: transform 150ms ease-in-out;
+    transition: transform 0.2s ease-in-out;
 
     & .ExpandIcon__icon {
         width: 2rem;
