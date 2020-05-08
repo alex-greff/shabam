@@ -2,15 +2,15 @@ import { gql } from "apollo-server-express";
 
 export default gql`
     type Query {
-        """Login a user, creating a session."""
-        login(credentials: UserCredentialsInput!): Boolean!
-        """Logout the current user, destroying the session."""
-        logout: Boolean!
         """Checks if the given username is available."""
         checkUsernameAvailability(username: String!): Boolean!
     }
 
     type Mutation {
+        """Login a user, creating a session."""
+        login(credentials: UserCredentialsInput!): Boolean!
+        """Logout the current user, destroying the session."""
+        logout: Boolean!
         """Signup and create a new user."""
         signup(credentials: UserCredentialsInput!): Boolean!
         """Edit user account details."""

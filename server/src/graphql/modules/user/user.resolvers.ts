@@ -5,11 +5,11 @@ import * as Utilities from "@/utilities";
 
 export default {
     Query: {
-        login: Utilities.middlewareChain()(UserOperations.login),
-        logout: Utilities.middlewareChain()(UserOperations.logout),
         checkUsernameAvailability: Utilities.middlewareChain()(UserOperations.checkAvailability)
     },
     Mutation: { 
+        login: Utilities.middlewareChain()(UserOperations.login),
+        logout: Utilities.middlewareChain()(UserOperations.logout),
         signup: Utilities.middlewareChain()(UserOperations.signup),
         editUser: Utilities.middlewareChain(permit({}, "edit-user", "edit-self"))(UserOperations.editUser),
         editUserRole: Utilities.middlewareChain(permit({}, "edit-user-roles"))(UserOperations.editUserRole),

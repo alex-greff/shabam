@@ -28,7 +28,7 @@ interface SignoutResponse {
 
 export const checkUsername = async (username: string) => {
     const query = `
-        query checkUsername($username: String!) {
+        mutation checkUsername($username: String!) {
             checkUsernameAvailability(username: $username)
         }
     `;
@@ -50,7 +50,7 @@ export const checkUsername = async (username: string) => {
 
 export const signin = async (username: string, password: string) => {
     const query = `
-        query signin($username: String!, $password: String!) {
+        mutation signin($username: String!, $password: String!) {
             login(credentials: { username: $username, password: $password })
         }
     `;
