@@ -14,9 +14,19 @@
 
         cursor: pointer;
 
+        color: color-link("AccountControls", "text", "primary");
+
+        transition: color 0.3s;
+
         & .AccountControls__expand-icon {
+            color: color-link("IconButton", "selected", "primary");
+
             width: 2rem;
             height: 2rem;
+        }
+
+        &:hover {
+            color: color-link("IconButton", "selected", "primary");
         }
     }
 
