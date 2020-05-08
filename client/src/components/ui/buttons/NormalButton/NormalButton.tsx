@@ -5,7 +5,7 @@ import classnames from "classnames";
 
 import ButtonBase, { Props as ButtonBaseProps } from "@/components/ui/buttons/ButtonBase/ButtonBase";
 
-interface Props extends BaseProps, ButtonBaseProps {
+export interface Props extends BaseProps, ButtonBaseProps {
     outlined?: boolean;
 };
 

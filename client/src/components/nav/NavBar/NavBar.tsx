@@ -2,7 +2,7 @@ import React, { Component, RefObject } from "react";
 import { BaseProps } from "@/types";
 import "./NavBar.scss";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { withSize, SizeMeProps, WithSizeProps } from "react-sizeme";
+import { withSize, WithSizeProps } from "react-sizeme";
 import classnames from "classnames";
 import * as Utilities from "@/utilities";
 

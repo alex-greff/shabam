@@ -1,0 +1,28 @@
+.IconButton {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+    width: 100%;
+
+    align-items: center;
+
+    & .IconButton__children {
+
+    }
+
+    & .IconButton__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin-left: 0.5rem;
+
+        & svg {
+            width: 2rem;
+            height: 2rem;  
+            
+            color: color-link("IconButton", "selected", "primary");
+        }
+    }
+}

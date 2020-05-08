@@ -1,69 +1,106 @@
-import React, { Component } from "react";
+import React, { FunctionComponent, useState, useEffect, useRef } from "react";
 import { BaseProps } from "@/types"
 import "./AccountControls.scss";
 import classnames from "classnames";
 import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
-// import Popup from "reactjs-popup";
-// import { CSSTransition } from 'react-transition-group';
+import * as API from "@/api";
+import { CSSTransition } from 'react-transition-group';
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
+import IconButton from "@/components/ui/buttons/IconButton/IconButton";
+
+import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
+import AccountIcon from "@material-ui/icons/Person";
+import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 interface Props extends BaseProps {
 
 };
 
-interface State {
+const AccountControls: FunctionComponent<Props> = (props) => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
-};
+    const rootRef = useRef<HTMLDivElement>(null);
 
-@observer
-class AccountControls extends Component<Props, State> {
-    static defaultProps = {
+    const handleDocumentClick = (e: MouseEvent) => {
+        // Stop if the click was inside the element
+        if (rootRef.current?.contains(e.target as Node)) {
+            return;
+        }
 
-    } as Partial<Props>;
+        // Close the dropdown if the click was outside the element
+        if (dropdownOpen) {
+            setDropdownOpen(false);
+        }
+    };
 
-    constructor(props: Props) {
-       super(props);
+    useEffect(() => {
+        window.addEventListener("mousedown", handleDocumentClick, false);
+      
+        // returned function will be called on component unmount 
+        return () => {
+            window.removeEventListener("mousedown", handleDocumentClick, false);
+        }
+    }, [dropdownOpen]);
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
     }
+    
+    const handleLogoutClick = async () => {
+        await API.signout();
+    };
 
-    render() {
-        const loggedIn = accountStore.loggedIn;
+    const loggedIn = accountStore.loggedIn;
 
-        return (
-            <div className={classnames("AccountControls", this.props.className)}>
-                { (loggedIn) ? this.renderLoggedInControls() : this.renderLoggedOutControls() }
-            </div>
-        );
-    }
-
-    private renderLoggedInControls() {
+    const renderLoggedInControls = () => {
         const username = accountStore.username!;
 
         return (
-            <div className="AccountControls__logged-in">
-                { username }
-            </div>
+            <>
+                <div 
+                    className="AccountControls__logged-in"
+                    onClick={toggleDropdown}
+                >
+                    <div className="AccountControls__username">
+                        { username }
+                    </div>
+                    <ExpandIcon 
+                        className="AccountControls__expand-icon" 
+                        expanded={dropdownOpen}
+                    />
+                </div>
 
-            // <Popup
-            //     trigger={open => (
-            //         <div className="AccountControls__logged-in">{ username }</div>
-            //     )}
-            //     className="AccountControls__dropdown"
-            //     position="bottom right"
-            //     closeOnDocumentClick
-            // >
-            //     <CSSTransition
-            //         addEndListener={() => {}}
-            //         classNames="page"
-            //     >
-            //         <span> Popup content </span>
-            //     </CSSTransition>
-            // </Popup>
+                <CSSTransition
+                    in={dropdownOpen}
+                    timeout={200}
+                    classNames="my-node" // TODO: use an actual animation 
+                    unmountOnExit={true}
+                >
+                    <div className="AccountControls__dropdown">
+                        <IconButton 
+                            className="AccountControls__account-button"
+                            renderIcon={() => (<AccountIcon />)}
+                            to={`/account/${accountStore.username}`}
+                        >
+                            Account
+                        </IconButton>
+
+                        <IconButton 
+                            className="AccountControls__signout-button"
+                            renderIcon={() => (<LogoutIcon />)}
+                            onClick={handleLogoutClick}
+                        >
+                            Signout
+                        </IconButton>
+                    </div>
+                </CSSTransition>
+            </>
         );
     }
-
-    private renderLoggedOutControls() {
+    
+    const renderLoggedOutControls = () => {
         return (
             <div className="AccountControls__logged-out">
                 <NormalButton 
@@ -83,6 +120,15 @@ class AccountControls extends Component<Props, State> {
             </div>
         );
     }
-}
 
-export default AccountControls;
+    return (
+        <div 
+            className={classnames("AccountControls", props.className)}
+            ref={rootRef}
+        >
+            { (loggedIn) ? renderLoggedInControls() : renderLoggedOutControls() }
+        </div>
+    );
+};
+
+export default observer(AccountControls);

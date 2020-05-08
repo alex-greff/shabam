@@ -1,0 +1,14 @@
+.ExpandIcon {
+    transform: rotateZ(0deg);
+
+    transition: transform 150ms ease-in-out;
+
+    & .ExpandIcon__icon {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    &.expanded {
+        transform: rotateZ(-180deg);
+    }
+}

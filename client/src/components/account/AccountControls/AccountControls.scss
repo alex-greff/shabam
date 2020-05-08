@@ -1,7 +1,59 @@
 .AccountControls {
+    position: relative;
+
     & .AccountControls__logged-out {
         & > *:not(:last-child) {
             margin-right: 1rem;
         }
     }
+
+    & .AccountControls__logged-in {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        cursor: pointer;
+
+        & .AccountControls__expand-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+    }
+
+    & .AccountControls__dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        min-width: 100%;
+
+        padding: 0.8rem 1.7rem;
+        margin-top: 0.3rem;
+        border-radius: 0.2rem;
+
+        overflow: auto;
+
+        background-color: color-link("AccountControls", "background", "tertiary");
+
+        box-shadow: 2px 2px 6px 0px rgba(0,0,0,0.3);
+
+        & > *:not(:last-child) {
+            margin-bottom: 0.3rem;
+        }
+    }
+}
+
+// TODO: make into an actual transition
+.my-node-enter {
+    opacity: 0;
+}
+.my-node-enter-active {
+    opacity: 1;
+    transition: opacity 200ms;
+}
+.my-node-exit {
+    opacity: 1;
+}
+.my-node-exit-active {
+    opacity: 0;
+    transition: opacity 200ms;
 }
