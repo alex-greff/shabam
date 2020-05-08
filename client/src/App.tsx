@@ -32,7 +32,7 @@ import RouteTransition from "@/router/RouteTransition";
 const history = createBrowserHistory<AppLocationState>();
 
 // Create the GraphQL client that we will use to connect to the backend
-const client = new ApolloClient({
+export const apolloClient = new ApolloClient({
     uri: KEYS.GRAPHQL_API_ENDPOINT
 });
 
@@ -129,7 +129,7 @@ class App extends Component<{}, State> {
                                             }
                                         }}
                                     >
-                                        <ApolloProvider client={client}>
+                                        <ApolloProvider client={apolloClient}>
                                             <NavBar 
                                                 scrollAmount={this.state.scrollAmount}
                                                 onSize={(size) => this.handleNavbarResize(size)}

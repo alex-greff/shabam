@@ -1,73 +1,52 @@
-import axios from "axios";
-import KEYS from "@/keys";
 import { accountStore } from "@/store/account/account.store";
+import { apolloClient } from "@/App";
 
-interface CheckUsernameResponse {
-    data: {
-        checkUsernameAvailability: boolean;
-    }
-}
+import {
+    query as CheckUsernameQuery,
+    Data as CheckUsernameData,
+    Variables as CheckUsernameVariables
+} from "@/graphql/user/CheckUsername";
 
-interface SigninResponse {
-    data: {
-        login: boolean;
-    }
-}
+import { 
+    mutation as SigninMutation,
+    Data as SigninData,
+    Variables as SigninVariables 
+} from "@/graphql/user/Signin";
 
-interface SignupResponse {
-    data: {
-        signup: boolean;
-    }
-}
+import { 
+    mutation as SignupMutation,
+    Data as SignupData,
+    Variables as SignupVariables 
+} from "@/graphql/user/Signup";
 
-interface SignoutResponse {
-    data: {
-        logout: boolean;
-    }
-}
+import {
+    mutation as SignoutMutation,
+    Data as SignoutData
+} from "@/graphql/user/Signout";
+
 
 export const checkUsername = async (username: string) => {
-    const query = `
-        mutation checkUsername($username: String!) {
-            checkUsernameAvailability(username: $username)
+    const result = await apolloClient.query<CheckUsernameData, CheckUsernameVariables>({
+        query: CheckUsernameQuery,
+        variables: {
+            username
         }
-    `;
+    });
 
-    const variables = {
-        username
-    };
-
-    const data = {
-        query,
-        variables
-    }
-
-    const result = await axios.post<CheckUsernameResponse>(KEYS.GRAPHQL_API_ENDPOINT, data);
-
-    return result.data.data.checkUsernameAvailability;
+    return result.data.checkUsernameAvailability;
 };
 
 
 export const signin = async (username: string, password: string) => {
-    const query = `
-        mutation signin($username: String!, $password: String!) {
-            login(credentials: { username: $username, password: $password })
+    const result = await apolloClient.mutate<SigninData, SigninVariables>({
+        mutation: SigninMutation,
+        variables: {
+            username,
+            password
         }
-    `;
+    });
 
-    const variables = {
-        username,
-        password
-    };
-
-    const data = {
-        query,
-        variables
-    };
-
-    const result = await axios.post<SigninResponse>(KEYS.GRAPHQL_API_ENDPOINT, data);
-
-    const signedIn = result.data.data.login;
+    const signedIn = result.data!.login;
 
     if (signedIn) {
         // Update the mobx store
@@ -78,39 +57,28 @@ export const signin = async (username: string, password: string) => {
 };
 
 export const signup = async (username: string, password: string) => {
-    const query = `
-        mutation signup($username: String!, $password: String!) {
-            signup(credentials: { username: $username, password: $password })
+    const result = await apolloClient.mutate<SignupData, SignupVariables>({
+        mutation: SignupMutation,
+        variables: {
+            username,
+            password
         }
-    `;
+    });
 
-    const variables = {
-        username,
-        password
-    };
-
-    const data = {
-        query,
-        variables
-    };
-
-    const result = await axios.post<SignupResponse>(KEYS.GRAPHQL_API_ENDPOINT, data);
-
-    return result.data.data.signup;
+    return result.data!.signup;
 };
 
 export const signout = async () => {
-    const query = `
-        query signout() {
-            logout
-        }
-    `;
+    const result = await apolloClient.mutate<SignoutData>({
+        mutation: SignoutMutation
+    });
 
-    const data = {
-        query
-    };
+    const signedOut = result.data!.logout;
 
-    const result = await axios.post<SignoutResponse>(KEYS.GRAPHQL_API_ENDPOINT, data);
+    if (signedOut) {
+        // Update the mobx store
+        accountStore.setLoggedOut();
+    }
 
-    return result.data.data.logout;
+    return signedOut;
 }
