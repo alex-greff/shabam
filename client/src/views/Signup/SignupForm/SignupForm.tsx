@@ -95,6 +95,7 @@ const SignupForm: FunctionComponent<Props> = (props) => {
                 renderTitle={() => "Username"}
                 renderIcon={() => <PersonIcon />}
                 disabled={submitting}
+                autoFocus
             />
 
             <FormInput 
