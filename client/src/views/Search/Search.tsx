@@ -11,7 +11,7 @@ export interface Props extends BaseProps {
 }
 
 const Search: FunctionComponent<Props> = (props) => {
-    const temp = () => NotificationManager.showErrorNotification("hi wad awd a dawdwadadawd", 500000);
+    const temp = () => NotificationManager.showNotification("success", "hi wad awd a dawdwadadawd", 500000);
 
     return (
         <PageView 

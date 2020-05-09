@@ -53,7 +53,7 @@
         }
     }
 
-    &.Toastify__toast--warn {
+    &.Toastify__toast--warning {
         &::before, &::after {
             background-color: color-link("Notification", "notification_warning", "primary");
         }
