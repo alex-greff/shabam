@@ -1,0 +1,67 @@
+.Notification__container {
+    &.Toastify__toast-container--bottom-center {
+        bottom: 0.5rem;
+    }
+}
+
+.Notification {
+    $width: 1rem;
+    $padding: 0.7rem;
+
+    position: relative;
+
+    color: color-link("Notification", "text", "primary");
+    background-color: color-link("Notification", "background", "primary");
+
+    box-shadow: 2px 2px 6px 0px rgba(0,0,0,0.3);
+
+    padding: $padding ($width + $padding);
+
+    & .Notification__body {
+        text-align: center;
+    }
+
+    &::before {
+        content: "";
+
+        position: absolute;
+        left: 0;
+        top: 0;
+
+        height: 100%;
+        width: $width;
+
+        background-color: color-link("Notification", "notification_info", "primary");
+    }
+
+    &::after {
+        content: "";
+
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        height: 100%;
+        width: $width;
+
+        background-color: color-link("Notification", "notification_info", "primary");
+    }
+
+    &.Toastify__toast--error {
+        &::before, &::after {
+            background-color: color-link("Notification", "notification_error", "primary");
+        }
+    }
+
+    &.Toastify__toast--warn {
+        &::before, &::after {
+            background-color: color-link("Notification", "notification_warning", "primary");
+        }
+    }
+
+    &.Toastify__toast--success {
+        &::before, &::after {
+            background-color: color-link("Notification", "notification_success", "primary");
+        }
+    }
+}

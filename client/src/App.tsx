@@ -9,6 +9,10 @@ import update from "immutability-helper";
 import { SizeMeProps } from "react-sizeme";
 import { Location } from "history";
 
+import '@/styling/override-styles/ReactToastify.scss';
+import "@/styling/override-styles/Notification.scss";
+import { ToastContainer } from "react-toastify";
+
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
 
@@ -117,6 +121,11 @@ class App extends Component<{}, State> {
                             
                             return (
                                 <div id="App">
+                                    <ToastContainer
+                                        className="Notification__container"
+                                        newestOnTop={true}
+                                    />
+
                                     <OverlayScrollbarsComponent 
                                         className="App__overlay-container"
                                         ref={this.osRef}
@@ -135,6 +144,7 @@ class App extends Component<{}, State> {
                                                 onSize={(size) => this.handleNavbarResize(size)}
                                                 width={this.state.navbarWidth}
                                             />
+
                                             <RouteTransition 
                                                 className="App__route-transition"
                                                 pageKey={location.pathname}

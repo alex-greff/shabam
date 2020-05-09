@@ -32,6 +32,11 @@ const BLUE_11 = "#CCD7E2";
 const FORM_ERROR_1 = "#F08787";
 const FORM_ERROR_2 = "#523B3B";
 
+const NOTIFICATION_ERROR_1 = "#D44B4B";
+const NOTIFICATION_WARNING_1 = "#D4B64B";
+const NOTIFICATION_SUCCESS_1 = "#4ED44B";
+const NOTIFICATION_INFO_1 = "#4BB4D4";
+
 export default {
     name: "dark",
     theme: {
@@ -81,7 +86,24 @@ export default {
             form_error: {
                 primary: FORM_ERROR_1,
                 secondary: FORM_ERROR_2
+            },
+            notification_error: {
+                primary: NOTIFICATION_ERROR_1
+            },
+            notification_warning: {
+                primary: NOTIFICATION_WARNING_1
+            },
+            notification_success: {
+                primary: NOTIFICATION_SUCCESS_1
+            },
+            notification_info: {
+                primary: NOTIFICATION_INFO_1
             }
+        },
+        Notification: {
+            background: {
+                primary: DARK_3
+            }  
         },
         NavBar: {
             background: {

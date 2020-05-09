@@ -1,8 +1,8 @@
 #App {
+    position: relative;
+
     height: 100%;
     width: 100%;
-
-    perspective: 1200px;
 
     & .App__overlay-container {
         height: 100%;
@@ -11,6 +11,8 @@
     
         display: flex;
         flex-direction: column;
+
+        perspective: 1200px;
     }
     
     & .App__route-transition {

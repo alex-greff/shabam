@@ -29,6 +29,18 @@ export const schema: Schema = {
         },
         form_error: {
             $mixins: ['primary_modifier', 'secondary_modifier']
+        },
+        notification_error: {
+            $mixins: ['primary_modifier']
+        },
+        notification_warning: {
+            $mixins: ['primary_modifier']
+        },
+        notification_success: {
+            $mixins: ['primary_modifier']
+        },
+        notification_info: {
+            $mixins: ['primary_modifier']
         }
     },
     // --- Component Scope Declarations ---
@@ -43,6 +55,7 @@ export const schema: Schema = {
     Signup: { $inherits: "GLOBAL" },
     PageNotFound: { $inherits: "GLOBAL" },
     // Components
+    Notification: { $inherits: "GLOBAL" },
     NavBar: { $inherits: "GLOBAL" },
     NavItemBase: { $inherits: "GLOBAL" },
     NavItem: { $inherits: "GLOBAL" },
