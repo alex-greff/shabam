@@ -75,7 +75,7 @@ export const signout = async () => {
 
     const signedOut = result.data!.logout;
 
-    if (signedOut) {
+    if (accountStore.loggedIn) {
         // Update the mobx store
         accountStore.setLoggedOut();
     }
