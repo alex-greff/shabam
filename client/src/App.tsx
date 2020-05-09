@@ -8,6 +8,7 @@ import { createBrowserHistory } from "history";
 import update from "immutability-helper";
 import { SizeMeProps } from "react-sizeme";
 import { Location } from "history";
+import "mobx-react/batchingForReactDom";
 
 import '@/styling/override-styles/ReactToastify.scss';
 import "@/styling/override-styles/Notification.scss";
