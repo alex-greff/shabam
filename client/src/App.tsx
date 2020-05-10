@@ -33,6 +33,8 @@ import NavBar from "@/components/nav/NavBar/NavBar";
 import RouteView from "@/router/RouteView";
 import RouteTransition from "@/router/RouteTransition";
 
+import ThreeJSBackground from "@/components/background/ThreeJSBackground";
+
 // Create the browser history that we will use
 const history = createBrowserHistory<AppLocationState>();
 
@@ -122,6 +124,8 @@ class App extends Component<{}, State> {
                             
                             return (
                                 <div id="App">
+                                    <ThreeJSBackground />
+
                                     <ToastContainer
                                         className="Notification__container"
                                         newestOnTop={true}

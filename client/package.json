@@ -59,6 +59,7 @@
         "react-toastify": "^6.0.0-rc.2-1",
         "react-transition-group": "^4.3.0",
         "themer": "github:alex-greff/themer#33603823d14f882f0999422ab5a771a1deaa0909",
+        "three": "^0.116.1",
         "typescript": "^3.7.5"
     },
     "devDependencies": {
