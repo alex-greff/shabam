@@ -1,5 +1,5 @@
 // Note: keep up to date with @/styling/transitions/index.scss
-export type Transition = "page-slide" | "fade" | "top-slide";
+export type Transition = "page-slide" | "fade" | "top-slide" | "none";
 export type Duration = "short" | "medium" | "long";
 const GLOBAL_PREFIX = "transition";
 
