@@ -43,7 +43,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
         return () => {
             window.removeEventListener("mousedown", handleDocumentClick, false);
         }
-    }, [dropdownOpen]);
+    }, [dropdownOpen, handleDocumentClick]);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
