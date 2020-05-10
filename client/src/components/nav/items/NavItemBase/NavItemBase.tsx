@@ -34,8 +34,7 @@ const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
 };
 
 NavItem.defaultProps = {
-    transitionIn: "page",
-    transitionOut: "page"
+    
 } as Partial<Props>;
 
 export default withRouter(NavItem);

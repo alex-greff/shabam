@@ -1,0 +1,67 @@
+@import "../utils.scss";
+
+@mixin register-page-slide-transition($prefix, $direction: "both", $duration: 1) {
+    @include check-direction($direction);
+
+    @keyframes pageSlideOut {
+        0% { 
+            background-color: rgba(112, 112, 112, 0); 
+        }
+        25% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px); 
+            background-color: rgba(112, 112, 112, 0.2); 
+        }
+        75% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px) translateX(-200%); 
+            background-color: rgba(112, 112, 112, 0.2); 
+        }
+        100% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px) translateX(-200%); 
+            background-color: rgba(112, 112, 112, 0); 
+        }
+    }
+    
+    @keyframes pageSlideIn {
+        0% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px) translateX(200%); 
+            background-color: rgba(112, 112, 112, 0); 
+        }
+        25% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px) translateX(200%); 
+            background-color: rgba(112, 112, 112, 0.2); 
+        }
+        75% { 
+            opacity: 0.5; 
+            transform: translateZ(-500px); 
+            background-color: rgba(112, 112, 112, 0.2); 
+        }
+        100% { 
+            opacity: 1; 
+            transform: translateZ(0) translateX(0); 
+            background-color: rgba(112, 112, 112, 0); 
+        }
+    }
+
+    @if $direction == "both" or $direction == "in" {
+        .#{$prefix}-enter-active {
+            position: absolute;
+            animation: pageSlideIn #{$duration}s both ease;
+            overflow: hidden;
+            height: 100vh;
+        }
+    }
+
+    @if $direction == "both" or $direction == "out" {
+        .#{$prefix}-exit-active {
+            position: absolute;
+            animation: pageSlideOut #{$duration}s both ease;
+            overflow: hidden;
+            height: 100vh;
+        }
+    }
+}

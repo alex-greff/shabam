@@ -46,24 +46,10 @@
 
         box-shadow: 2px 2px 6px 0px rgba(0,0,0,0.3);
 
+        z-index: -1;
+
         & > *:not(:last-child) {
             margin-bottom: 0.3rem;
         }
     }
-}
-
-// TODO: make into an actual transition
-.my-node-enter {
-    opacity: 0;
-}
-.my-node-enter-active {
-    opacity: 1;
-    transition: opacity 200ms;
-}
-.my-node-exit {
-    opacity: 1;
-}
-.my-node-exit-active {
-    opacity: 0;
-    transition: opacity 200ms;
 }

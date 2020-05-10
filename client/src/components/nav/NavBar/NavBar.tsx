@@ -62,7 +62,7 @@ class NavBar extends Component<Props, any> {
                                     </NavItem>
                                     <NavItem 
                                         path="/catalog"
-                                        // transition="fade"
+                                        // transition="fade" // TODO: make sure to use TransitionUtilities
                                     >
                                         Catalog
                                     </NavItem>

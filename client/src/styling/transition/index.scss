@@ -1,0 +1,60 @@
+@use "sass:list";
+@import "./utils.scss";
+
+@import "./transitions/page-slide-transition.scss";
+@import "./transitions/fade-transition.scss";
+@import "./transitions/top-slide-transition.scss";
+
+// Note: keep up to date with @/utilities/transitionUtilities.ts
+$transitions: "page-slide", "fade", "top-slide";
+$duration-types: "short", "medium", "long";
+$global-prefix: "transition";
+
+@mixin register-all-transitions() {
+    @each $in-transition in $transitions {
+        @each $out-transition in $transitions {
+            @each $duration-type in $duration-types {
+                @include register-transition($in-transition, $out-transition, $global-prefix, $duration-type);
+            }
+        }
+    }
+}
+
+@mixin register-transition($in-transition, $out-transition, $prefix, $duration-type) {
+    @include check-duration-type($duration-type);
+
+    $duration: get-duration($duration-type);
+
+    $transition-id: "#{$prefix}-#{$duration-type}-in-#{$in-transition}-out-#{$out-transition}";
+
+    @include inject-transition($in-transition, $transition-id, "in", $duration);
+    @include inject-transition($out-transition, $transition-id, "out", $duration);
+}
+
+
+@mixin inject-transition($transition-name, $prefix, $direction: "both", $duration: 1) {
+    // Big 'ol map of transition names to their register functions
+    @if $transition-name == "page-slide" {
+        @include register-page-slide-transition($prefix, $direction, $duration);
+    }
+
+    @if $transition-name == "fade" {
+        @include register-fade-transition($prefix, $direction, $duration);
+    }
+
+    @if $transition-name == "top-slide" {
+        @include register-top-slide-transition($prefix, $direction, $duration);
+    }
+}
+
+@function get-duration($duration-type) {
+    @if $duration-type == "short" {
+        @return 0.2;
+    }
+    @if $duration-type == "medium" {
+        @return 0.5;
+    }
+    @if $duration-type == "long" {
+        @return 1;
+    }
+}

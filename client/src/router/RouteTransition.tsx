@@ -3,6 +3,7 @@ import { BaseProps } from "@/types"
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import classnames from "classnames";
 import OverlayScrollbars from "overlayscrollbars";
+import { TransitionUtilities } from "@/utilities";
 
 export interface Props extends BaseProps {
     transition?: string;
@@ -17,6 +18,8 @@ interface FactoryProps {
 
 const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneElement(child, props);
 
+const defaultTransition = TransitionUtilities.getTransitionId("page-slide", "page-slide", "long");
+const defaultTransitionDuration = TransitionUtilities.getDuration("long"); // Seconds
 
 const RouteTransition: FunctionComponent<Props> = (props) => {
     const { transition, pageKey, osInstance, children } = props;
@@ -48,7 +51,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
         <TransitionGroup
             childFactory={childFactoryCreator({ 
                 classNames: transition!, 
-                timeout: 1000
+                timeout: defaultTransitionDuration * 1000
             })}
             className={classnames("RouteTransition", props.className)}
         >
@@ -65,7 +68,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
 };
 
 RouteTransition.defaultProps = {
-    transition: "slide"
+    transition: defaultTransition
 } as Partial<Props>;
 
 export default RouteTransition;
