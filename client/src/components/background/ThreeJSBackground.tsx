@@ -3,52 +3,107 @@ import { BaseProps } from "@/types"
 import "./ThreeJSBackground.scss";
 import classnames from "classnames";
 import * as THREE from "three";
+import { TweenLite } from "gsap";
+import * as Utilities from "@/utilities";
 
 export interface Props extends BaseProps {
 
 };
 
 const ThreeJSBackground: FunctionComponent<Props> = (props) => {
-    const rootRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        const width = rootRef.current!.clientWidth;
-        const height = rootRef.current!.clientWidth;
+        function createMainCircle() {
+            const geometry = new THREE.CircleGeometry(5, 128);
+            const material = new THREE.MeshBasicMaterial( { color: "#262626" } );
+            const circle = new THREE.Mesh( geometry, material );
+
+            return circle;
+        }
+
+        function resizeRendererToDisplaySize(renderer: THREE.WebGLRenderer) {
+            const canvas = renderer.domElement;
+            const pixelRatio = window.devicePixelRatio;
+            const width = canvas.clientWidth * pixelRatio | 0;
+            const height = canvas.clientHeight * pixelRatio | 0;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+              renderer.setSize(width, height, false);
+            }
+            return needResize;
+        }
+
+        function isMobile() {
+            const canvas = renderer.domElement;
+            const pixelRatio = window.devicePixelRatio;
+            const width = canvas.clientWidth * pixelRatio | 0;
+
+            return Utilities.getBreakpoint(width) <= Utilities.Breakpoint.tabLand;
+        }
 
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(width, height);
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 1000;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-        rootRef.current!.appendChild(renderer.domElement);
-
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, canvas: canvasRef.current! });
 
         camera.position.z = 5;
 
-        const animate = function () {
-            requestAnimationFrame(animate);
+        // const geometry = new THREE.BoxGeometry();
+        // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        // const cube = new THREE.Mesh(geometry, material);
+        // scene.add(cube);
 
-            // cube.rotation.x += 0.01;
-            // cube.rotation.y += 0.01;
+        // cube.position.x = 0;
+        // cube.position.y = 0;
+
+        const mainCircle = createMainCircle();
+        mainCircle.position.z = -1;
+        scene.add(mainCircle);
+
+        // Render loop
+        function render() {
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+
+            if (isMobile()) {
+                if (mainCircle.position.z !== -8) {
+                    mainCircle.position.z = -8;
+                }
+            } else {
+                if (mainCircle.position.z !== -1) {
+                    mainCircle.position.z = -1;
+                }
+            }
 
             renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
         };
 
-        animate();
+        requestAnimationFrame(render);
 
+        // One-shot test anim
+        // TweenLite.to(cube.rotation, 1, {
+        //     x: 1,
+        //     y: 1
+        // });
     }, []);
 
     return (
-        <div 
-            className={classnames("ThreeJSBackground", props.className)}
-            ref={rootRef}
-        >
-            {/* WebGL canvas is injected here */}
+        <div className={classnames("ThreeJSBackground", props.className)}>
+            <canvas 
+                className="ThreeJSBackground__canvas"
+                ref={canvasRef}
+            ></canvas>
         </div>
     );
 };

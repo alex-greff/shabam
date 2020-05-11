@@ -35,6 +35,9 @@ import RouteTransition from "@/router/RouteTransition";
 
 import ThreeJSBackground from "@/components/background/ThreeJSBackground";
 
+// No type declarations for these
+const { CSSPlugin, AttrPlugin } = require("gsap/all");
+
 // Create the browser history that we will use
 const history = createBrowserHistory<AppLocationState>();
 
@@ -86,6 +89,10 @@ class App extends Component<{}, State> {
     }
 
     componentDidMount() {
+        // NOTE: this prevents the CSSPlugin and the AttrPlugin from getting tree shaken
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const plugins = [ CSSPlugin, AttrPlugin ];
+
         this.instantiateNamespaces();
         this.instantiateThemes();
 
@@ -124,8 +131,6 @@ class App extends Component<{}, State> {
                             
                             return (
                                 <div id="App">
-                                    <ThreeJSBackground />
-
                                     <ToastContainer
                                         className="Notification__container"
                                         newestOnTop={true}
@@ -167,6 +172,8 @@ class App extends Component<{}, State> {
                                             </RouteTransition>
                                         </ApolloProvider>
                                     </OverlayScrollbarsComponent>
+
+                                    <ThreeJSBackground />
                                 </div>
                             );
                         }}
