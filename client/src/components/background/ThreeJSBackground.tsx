@@ -3,6 +3,7 @@ import { BaseProps } from "@/types"
 import "./ThreeJSBackground.scss";
 import classnames from "classnames";
 import * as THREE from "three";
+import { OrbitControls } from "three-orbitcontrols-ts";
 import { TweenLite } from "gsap";
 import * as Utilities from "@/utilities";
 
@@ -16,8 +17,8 @@ const ThreeJSBackground: FunctionComponent<Props> = (props) => {
     useEffect(() => {
         function createMainCircle() {
             const geometry = new THREE.CircleGeometry(5, 128);
-            const material = new THREE.MeshBasicMaterial( { color: "#262626" } );
-            const circle = new THREE.Mesh( geometry, material );
+            const material = new THREE.MeshBasicMaterial({ color: "#262626" });
+            const circle = new THREE.Mesh(geometry, material);
 
             return circle;
         }
@@ -49,10 +50,19 @@ const ThreeJSBackground: FunctionComponent<Props> = (props) => {
         const near = 0.1;
         const far = 1000;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 5;
 
         const renderer = new THREE.WebGLRenderer({ alpha: true, canvas: canvasRef.current! });
 
-        camera.position.z = 5;
+        // const controls = new OrbitControls(camera, renderer.domElement);
+        // controls.minDistance = 0;
+        // controls.maxDistance = Infinity;
+        // controls.enableDamping = true;
+        // controls.dampingFactor = 0.25;
+        // controls.enableZoom = true;
+        // controls.autoRotate = true;
+
+        // orbitControls.autoRotate = 
 
         // const geometry = new THREE.BoxGeometry();
         // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -96,6 +106,12 @@ const ThreeJSBackground: FunctionComponent<Props> = (props) => {
         //     x: 1,
         //     y: 1
         // });
+        // TweenLite.to(camera.position, 1, {
+        //     x: 1,
+        //     y: 1
+        // });
+
+        TweenLite.to(mainCircle.scale, 1, { x: 1.2, y: 1.2 });
     }, []);
 
     return (
