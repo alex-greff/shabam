@@ -83,7 +83,7 @@
             // width: 110vh;
             // height: 110vh;
 
-            $size: 110vh;
+            $size: 112vh;
             width: $size;
             height: $size;
 
@@ -94,7 +94,7 @@
             }
 
             @include respond(tab-port) {
-                $size: 110vw;
+                $size: 115vw;
                 width: $size;
                 height: $size;
             }
