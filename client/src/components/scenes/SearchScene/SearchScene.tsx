@@ -7,7 +7,7 @@ import { TweenLite } from "gsap";
 
 import BaseArc from "@/components/ui/arcs/BaseArc/BaseArc";
 
-const MAX_DEG = 5;
+const MAX_DEG = 1;
 const THROTTLE_DELAY = 100;
 const TWEEN_DELAY = 300;
 
