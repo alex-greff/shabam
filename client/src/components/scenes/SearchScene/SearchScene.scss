@@ -1,4 +1,6 @@
 .SearchScene {
+    $perspective-amount: 200px;
+
     position: fixed;
     top: 0;
     left: 0;
@@ -6,7 +8,27 @@
     width: 100%;
     z-index: -1;
 
-    perspective: 400px;
+    perspective: $perspective-amount;
+
+    $distance1: 50px;
+    @keyframes rotating1 {
+        from {
+            transform: translate(-50%, -50%) translateZ($distance1) rotateZ(0deg);
+        }
+        to {
+            transform: translate(-50%, -50%) translateZ($distance1) rotateZ(-360deg);
+        }
+    }
+
+    $distance2: 20px;
+    @keyframes rotating2 {
+        from {
+            transform: translate(-50%, -50%) translateZ($distance2) rotateZ(270deg);
+        }
+        to {
+            transform: translate(-50%, -50%) translateZ($distance2) rotateZ(630deg);
+        }
+    }
 
     .SearchScene__scene {
         position: relative;
@@ -14,15 +36,15 @@
         width: 100%;
         height: 100%;
 
-        perspective: 400px;
+        perspective: $perspective-amount;
 
         transform-origin: 50% 50%;
 
         // This transform should be animated
-        // transform: rotateY(8deg);
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
         // transform: translateZ(-20px);
 
-        transition: transform 0.5s;
+        // transition: transform 0.1s;
 
         & .SearchScene__main-circle {
             $diameter: 110vh;
@@ -32,7 +54,7 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) translateZ(0px);
 
             transition: transform 0.5s;
 
@@ -53,21 +75,55 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate3d(-50%, -50%, 30px);
+            // transform: translate(-50%, -50%) translateZ(30px) rotateZ(0deg);
             // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
 
             transition: transform 0.5s;
 
-            width: 110vh;
-            height: 110vh;
+            // width: 110vh;
+            // height: 110vh;
+
+            $size: 110vh;
+            width: $size;
+            height: $size;
+
+            animation: rotating1 6s linear infinite;
 
             & circle {
                 stroke: rgb(86, 117, 255);
             }
 
             @include respond(tab-port) {
-                width: 110vw;
-                height: 110vw;
+                $size: 110vw;
+                width: $size;
+                height: $size;
+            }
+        }
+
+        & .SearchScene__test-arc-2 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            // transform: translate(-50%, -50%) translateZ(20px) rotateZ(270deg);
+            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
+
+            transition: transform 0.5s;
+
+            $size: 110vh;
+            width: $size;
+            height: $size;
+
+            animation: rotating2 5s linear infinite;
+            // animation-delay: 0.5s;
+
+            & circle {
+                stroke: rgb(86, 117, 255);
+            }
+
+            @include respond(tab-port) {
+                $size: 110vh;
+                width: $size;
+                height: $size;
             }
         }
     }
