@@ -53,7 +53,8 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
+            transform: translate3d(-50%, -50%, 30px);
+            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
 
             transition: transform 0.5s;
 
@@ -61,10 +62,7 @@
             height: 110vh;
 
             & circle {
-                transform: rotate(-90deg);
-                transform-origin: 50% 50%;
-
-                stroke: white;
+                stroke: rgb(86, 117, 255);
             }
 
             @include respond(tab-port) {
