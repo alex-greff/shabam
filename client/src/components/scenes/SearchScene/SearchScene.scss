@@ -1,0 +1,76 @@
+.SearchScene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+
+    perspective: 400px;
+
+    .SearchScene__scene {
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        perspective: 400px;
+
+        transform-origin: 50% 50%;
+
+        // This transform should be animated
+        // transform: rotateY(8deg);
+        // transform: translateZ(-20px);
+
+        transition: transform 0.5s;
+
+        & .SearchScene__main-circle {
+            $diameter: 110vh;
+            $translateX-base: 50%;
+            $translateY-base: 50%;
+
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+            transition: transform 0.5s;
+
+            width: 110vh;
+            height: 110vh;
+
+            border-radius: 50%;
+
+            background-color: #262626;
+
+            @include respond(tab-port) {
+                width: 110vw;
+                height: 110vw;
+            }
+        }
+
+        & .SearchScene__test-arc {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
+
+            transition: transform 0.5s;
+
+            width: 110vh;
+            height: 110vh;
+
+            & circle {
+                transform: rotate(-90deg);
+                transform-origin: 50% 50%;
+
+                stroke: white;
+            }
+
+            @include respond(tab-port) {
+                width: 110vw;
+                height: 110vw;
+            }
+        }
+    }
+}

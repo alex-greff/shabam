@@ -34,6 +34,7 @@ import RouteView from "@/router/RouteView";
 import RouteTransition from "@/router/RouteTransition";
 
 import ThreeJSBackground from "@/components/background/ThreeJSBackground";
+import SearchScene from "@/components/scenes/SearchScene/SearchScene";
 
 // No type declarations for these
 const { CSSPlugin, AttrPlugin } = require("gsap/all");
@@ -173,7 +174,8 @@ class App extends Component<{}, State> {
                                         </ApolloProvider>
                                     </OverlayScrollbarsComponent>
 
-                                    <ThreeJSBackground />
+                                    {/* <ThreeJSBackground /> */}
+                                    <SearchScene />
                                 </div>
                             );
                         }}
