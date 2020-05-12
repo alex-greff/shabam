@@ -1,12 +1,15 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useState, createRef, useCallback } from "react";
 import { BaseProps } from "@/types"
 import "./SearchScene.scss";
 import classnames from "classnames";
 import { throttle } from "throttle-debounce";
+import { TweenLite } from "gsap";
 
 import BaseArc from "@/components/ui/arcs/BaseArc/BaseArc";
 
 const MAX_DEG = 5;
+const THROTTLE_DELAY = 100;
+const TWEEN_DELAY = 300;
 
 export interface Props extends BaseProps {
 
@@ -18,44 +21,49 @@ interface MousePositionState {
 }
 
 const SearchScene: FunctionComponent<Props> = (props) => {
+    const sceneRef = createRef<HTMLDivElement>();
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
 
-    const handleMouseMove = throttle(10, (e: MouseEvent) => {
-        const height = document.body.clientHeight;
-        const width = document.body.clientWidth;
-
-        const xPercent = e.x / width;
-        const yPercent = e.y / height;
-
-        // console.log("Mouse move", e.x, e.y);
-        // console.log(`Mouse move ${xPercent}% - ${yPercent}%`);
-
-        setMousePosition({
-            x: xPercent,
-            y: yPercent
-        });
-    });
-
+    // Handle tracking the mouse position state
     useEffect(() => {
+        const handleMouseMove = throttle(THROTTLE_DELAY, false, (e: MouseEvent) => {
+            const height = document.body.clientHeight;
+            const width = document.body.clientWidth;
+    
+            const xPercent = e.x / width;
+            const yPercent = e.y / height;
+    
+            setMousePosition({
+                x: xPercent,
+                y: yPercent
+            });
+        });
+
         window.addEventListener("mousemove", handleMouseMove);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
         };
-    }, [handleMouseMove]);
+    }, []);
 
-    const rotateX = -1 * (mousePosition.y - 0.5) * 2 * MAX_DEG;
-    const rotateY = (mousePosition.x - 0.5) * 2 * MAX_DEG;
+    // Rotate the scene view to follow the mouse
+    useEffect(() => {
+        const rotateX = -1 * (mousePosition.y - 0.5) * 2 * MAX_DEG;
+        const rotateY = (mousePosition.x - 0.5) * 2 * MAX_DEG;
 
-    // console.log(`Rotation ${rotateX}deg, ${rotateY}deg`);
+        if (sceneRef.current) {
+            TweenLite.to(sceneRef.current, TWEEN_DELAY / 1000, {
+                rotationX: rotateX,
+                rotationY: rotateY
+            });
+        }
+    }, [mousePosition, sceneRef]);
 
     return (
         <div className={classnames("SearchScene", props.className)}>
             <div 
                 className="SearchScene__scene"
-                style={{
-                    transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-                }}
+                ref={sceneRef}
             >
                 <div className="SearchScene__main-circle"></div>
 
