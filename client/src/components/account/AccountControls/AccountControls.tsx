@@ -24,26 +24,26 @@ const AccountControls: FunctionComponent<Props> = (props) => {
 
     const rootRef = useRef<HTMLDivElement>(null);
 
-    const handleDocumentClick = (e: MouseEvent) => {
-        // Stop if the click was inside the element
-        if (rootRef.current?.contains(e.target as Node)) {
-            return;
-        }
-
-        // Close the dropdown if the click was outside the element
-        if (dropdownOpen) {
-            setDropdownOpen(false);
-        }
-    };
-
     useEffect(() => {
+        const handleDocumentClick = (e: MouseEvent) => {
+            // Stop if the click was inside the element
+            if (rootRef.current?.contains(e.target as Node)) {
+                return;
+            }
+    
+            // Close the dropdown if the click was outside the element
+            if (dropdownOpen) {
+                setDropdownOpen(false);
+            }
+        };
+
         window.addEventListener("mousedown", handleDocumentClick, false);
       
         // returned function will be called on component unmount 
         return () => {
             window.removeEventListener("mousedown", handleDocumentClick, false);
         }
-    }, [dropdownOpen, handleDocumentClick]);
+    }, [dropdownOpen]);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
