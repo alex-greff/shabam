@@ -7,16 +7,24 @@ import gsap from "gsap";
 import BaseArc, { Props as BaseArcProps } from "@/components/ui/arcs/BaseArc/BaseArc";
 
 export interface Props extends BaseProps, BaseArcProps {
+    style?: React.CSSProperties;
     rotationSpeed?: number;
     rotateForward?: boolean;
+    initialRotation?: number;
 };
 
 
 const RotatingArc: FunctionComponent<Props> = (props) => {
-    const { rotationSpeed, rotateForward, ...rest } = props;
+    const { rotationSpeed, rotateForward, className, style, initialRotation, ...rest } = props;
 
     const baseRef = useRef<SVGSVGElement>(null);
     const [rotationTween, setRotationTween] = useState<gsap.core.Tween | null>(null);
+
+    useEffect(() => {
+        gsap.set(baseRef.current!, { 
+            rotationZ: initialRotation
+        });
+    }, [baseRef]);
 
     // Remake tween whenever one of the parameters changes (also sets it up initially)
     useEffect(() => {
@@ -31,7 +39,7 @@ const RotatingArc: FunctionComponent<Props> = (props) => {
         const tween = gsap.to(baseRef.current!, { 
             rotateZ: `${directionSign}=360`, 
             repeat: -1,
-            duration: rotationSpeed! / 1000,
+            duration: rotationSpeed!,
             ease: "linear"
         });
 
@@ -40,7 +48,10 @@ const RotatingArc: FunctionComponent<Props> = (props) => {
     }, [baseRef, rotationSpeed, rotateForward]);
 
     return (
-        <div className={classnames("RotatingArc", props.className)}>
+        <div 
+            className={classnames("RotatingArc", className)}
+            style={style}
+        >
             <BaseArc 
                 {...rest}
                 className="RotatingArc__base-arc"
@@ -52,7 +63,8 @@ const RotatingArc: FunctionComponent<Props> = (props) => {
 
 RotatingArc.defaultProps = {
     rotationSpeed: 6000,
-    rotateForward: true
+    rotateForward: true,
+    initialRotation: 0
 } as Partial<Props>;
 
 export default RotatingArc;

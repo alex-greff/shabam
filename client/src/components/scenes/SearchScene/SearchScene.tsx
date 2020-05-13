@@ -1,16 +1,40 @@
 import React, { FunctionComponent, useEffect, useState, createRef } from "react";
-import { BaseProps } from "@/types"
+import { BaseProps, AppRouteComponentProps } from "@/types"
 import "./SearchScene.scss";
 import classnames from "classnames";
 import { throttle } from "throttle-debounce";
 import { TweenLite } from "gsap";
+import { withRouter, matchPath } from "react-router-dom";
 
-import BaseArc from "@/components/ui/arcs/BaseArc/BaseArc";
 import RotatingArc from "@/components/ui/arcs/RotatingArc/RotatingArc";
 
 const MAX_DEG = 1;
 const THROTTLE_DELAY = 100;
 const TWEEN_DELAY = 300;
+
+interface Arc {
+    forward: boolean;
+    speed: number; // seconds
+    progress: number; // 0-100%
+    distance: number; // px
+    initialRotation: number; // degrees
+    color: "primary" | "secondary" | "tertiary";
+}
+
+const ARC_STROKE = 3;
+
+const ARCS: Arc[] = [
+    // Group 1
+    { forward: true, speed: 25, progress: 10, distance: 5, initialRotation: 0, color: "primary" },
+    { forward: true, speed: 25, progress: 7, distance: 12, initialRotation: 20, color: "secondary" },
+    // Group 2
+    { forward: false, speed: 20, progress: 7, distance: 20, initialRotation: -90, color: "tertiary" },
+    { forward: false, speed: 20, progress: 5, distance: 30, initialRotation: -100, color: "secondary" },
+    // Group 3
+    { forward: true, speed: 30, progress: 7, distance: 40, initialRotation: 180, color: "primary" },
+    // Group 4
+    { forward: false, speed: 30, progress: 7, distance: 35, initialRotation: -20, color: "tertiary" },
+];
 
 export interface Props extends BaseProps {
 
@@ -21,12 +45,9 @@ interface MousePositionState {
     y: number;
 }
 
-const SearchScene: FunctionComponent<Props> = (props) => {
+const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const sceneRef = createRef<HTMLDivElement>();
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
-
-    const [temp, setTemp] = useState(true);
-    const [temp2, setTemp2] = useState(6000);
 
     // Handle tracking the mouse position state
     useEffect(() => {
@@ -42,22 +63,6 @@ const SearchScene: FunctionComponent<Props> = (props) => {
                 y: yPercent
             });
         });
-
-        setTimeout(() => {
-            setTemp(false);
-        }, 2000);
-
-        setTimeout(() => {
-            setTemp(true);
-        }, 5000);
-
-        setTimeout(() => {
-            setTemp2(12000);
-        }, 3000);
-
-        setTimeout(() => {
-            setTemp2(6000);
-        }, 6000);
 
         window.addEventListener("mousemove", handleMouseMove);
 
@@ -87,25 +92,21 @@ const SearchScene: FunctionComponent<Props> = (props) => {
             >
                 <div className="SearchScene__main-circle"></div>
 
-                {/* <BaseArc 
-                    className="SearchScene__test-arc"
-                    stroke={0.5}
-                    progress={20}
-                />
-
-                <BaseArc 
-                    className="SearchScene__test-arc-2"
-                    stroke={0.5}
-                    progress={10}
-                /> */}
-
-                <RotatingArc 
-                    className="SearchScene__test-arc-3"
-                    rotateForward={temp}
-                    rotationSpeed={temp2}
-                    stroke={0.5}
-                    progress={10}
-                />
+                {ARCS.map((arc, num) => (
+                    <div className="SearchScene__arc-container">
+                        <RotatingArc 
+                            className={`SearchScene__arc SearchScene__arc-num-${num} ${arc.color}`}
+                            style={{
+                                transform: `translateZ(${arc.distance}px)`
+                            }}
+                            rotateForward={arc.forward}
+                            rotationSpeed={arc.speed}
+                            stroke={ARC_STROKE}
+                            progress={arc.progress}
+                            initialRotation={arc.initialRotation}
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );
@@ -115,4 +116,4 @@ SearchScene.defaultProps = {
 
 } as Partial<Props>;
 
-export default SearchScene;
+export default withRouter(SearchScene);

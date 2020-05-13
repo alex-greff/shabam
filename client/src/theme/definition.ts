@@ -65,6 +65,7 @@ export const schema: Schema = {
     AccentContainer: { $inherits: "GLOBAL" },
     FormButton: { $inherits: "GLOBAL" },
     FormInput: { $inherits: "GLOBAL" },
+    SearchScene: { $inherits: "GLOBAL" },
 };
 
 export const mixins: MixinDefinitions = {

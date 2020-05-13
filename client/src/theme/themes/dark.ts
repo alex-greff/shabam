@@ -37,6 +37,10 @@ const NOTIFICATION_WARNING_1 = "#D4B64B";
 const NOTIFICATION_SUCCESS_1 = "#4ED44B";
 const NOTIFICATION_INFO_1 = "#4BB4D4";
 
+const SEARCH_SCENE_ACCENT_1 = "#4240C9";
+const SEARCH_SCENE_ACCENT_2 = "#4A6ABE";
+const SEARCH_SCENE_ACCENT_3 = "#6461EE";
+
 export default {
     name: "dark",
     theme: {
@@ -136,6 +140,13 @@ export default {
             },
             accent: {
                 primary: BLUE_3
+            }
+        },
+        SearchScene: {
+            accent: {
+                primary: SEARCH_SCENE_ACCENT_1,
+                secondary: SEARCH_SCENE_ACCENT_2,
+                tertiary: SEARCH_SCENE_ACCENT_3
             }
         }
     }

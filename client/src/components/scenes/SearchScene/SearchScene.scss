@@ -1,6 +1,6 @@
-.SearchScene {
-    $perspective-amount: 200px;
+$perspective-amount: 100px;
 
+.SearchScene {
     position: fixed;
     top: 0;
     left: 0;
@@ -9,26 +9,6 @@
     z-index: -1;
 
     perspective: $perspective-amount;
-
-    $distance1: 50px;
-    @keyframes rotating1 {
-        from {
-            transform: translate(-50%, -50%) translateZ($distance1) rotateZ(0deg);
-        }
-        to {
-            transform: translate(-50%, -50%) translateZ($distance1) rotateZ(-360deg);
-        }
-    }
-
-    $distance2: 20px;
-    @keyframes rotating2 {
-        from {
-            transform: translate(-50%, -50%) translateZ($distance2) rotateZ(270deg);
-        }
-        to {
-            transform: translate(-50%, -50%) translateZ($distance2) rotateZ(630deg);
-        }
-    }
 
     .SearchScene__scene {
         position: relative;
@@ -71,87 +51,45 @@
             }
         }
 
-        & .SearchScene__test-arc {
+        & .SearchScene__arc-container {
             position: absolute;
             left: 50%;
             top: 50%;
-            // transform: translate(-50%, -50%) translateZ(30px) rotateZ(0deg);
-            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
-
-            transition: transform 0.5s;
+            transform: translate(-50%, -50%);
 
             $size: 110vh;
             width: $size;
             height: $size;
 
-            animation: rotating1 6s linear infinite;
-            animation-fill-mode: both;
+            perspective: $perspective-amount;
 
-            & circle {
-                stroke: rgb(86, 117, 255);
+            & .SearchScene__arc {
+                & circle {
+                    // stroke: rgb(86, 117, 255);
+                    stroke: color-link("SearchScene", "accent", "primary");
+                }
+
+                &.primary {
+                    & circle {
+                        stroke: color-link("SearchScene", "accent", "primary");
+                    }
+                }
+
+                &.secondary {
+                    & circle {
+                        stroke: color-link("SearchScene", "accent", "secondary");
+                    }
+                }
+
+                &.tertiary {
+                    & circle {
+                        stroke: color-link("SearchScene", "accent", "tertiary");
+                    }
+                }
             }
 
             @include respond(tab-port) {
                 $size: 110vw;
-                width: $size;
-                height: $size;
-            }
-        }
-
-        & .SearchScene__test-arc-2 {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            // transform: translate(-50%, -50%) translateZ(20px) rotateZ(270deg);
-            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
-
-            transition: transform 0.5s;
-
-            $size: 110vh;
-            width: $size;
-            height: $size;
-
-            animation: rotating2 5s linear infinite;
-            animation-fill-mode: both;
-            // animation-delay: 0.5s;
-
-            & circle {
-                stroke: rgb(86, 117, 255);
-            }
-
-            @include respond(tab-port) {
-                $size: 110vh;
-                width: $size;
-                height: $size;
-            }
-        }
-
-        & .SearchScene__test-arc-3 {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            // transform: translate(-50%, -50%) translateZ(20px) rotateZ(270deg);
-            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
-
-            $distance3: 20px;
-            transform: translate(-50%, -50%) translateZ($distance3);
-
-            transition: transform 0.5s;
-
-            $size: 110vh;
-            width: $size;
-            height: $size;
-
-            // animation: rotating2 5s linear infinite;
-            // animation-fill-mode: both;
-            // animation-delay: 0.5s;
-
-            & circle {
-                stroke: rgb(86, 117, 255);
-            }
-
-            @include respond(tab-port) {
-                $size: 110vh;
                 width: $size;
                 height: $size;
             }

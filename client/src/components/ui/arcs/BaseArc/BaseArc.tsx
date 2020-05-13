@@ -8,7 +8,7 @@ export interface Props extends BaseProps {
     progress?: number;
 };
 
-const RADIUS = 50;
+const RADIUS = 250;
 
 const BaseArc = forwardRef<SVGSVGElement, Props>((props, ref) => {
     const { progress, stroke } = props;
@@ -19,7 +19,7 @@ const BaseArc = forwardRef<SVGSVGElement, Props>((props, ref) => {
     return (
         <svg 
             className={classnames("BaseArc", props.className)}
-            viewBox="0 0 100 100"
+            viewBox="0 0 500 500"
             ref={ref}
         >
             <circle 
