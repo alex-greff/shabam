@@ -17,6 +17,8 @@
 
     padding: $padding ($width + $padding);
 
+    user-select: none;
+
     & .Notification__body {
         text-align: center;
     }
