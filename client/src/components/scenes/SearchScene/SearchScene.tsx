@@ -25,6 +25,9 @@ const SearchScene: FunctionComponent<Props> = (props) => {
     const sceneRef = createRef<HTMLDivElement>();
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
 
+    const [temp, setTemp] = useState(true);
+    const [temp2, setTemp2] = useState(6000);
+
     // Handle tracking the mouse position state
     useEffect(() => {
         const handleMouseMove = throttle(THROTTLE_DELAY, false, (e: MouseEvent) => {
@@ -39,6 +42,22 @@ const SearchScene: FunctionComponent<Props> = (props) => {
                 y: yPercent
             });
         });
+
+        setTimeout(() => {
+            setTemp(false);
+        }, 2000);
+
+        setTimeout(() => {
+            setTemp(true);
+        }, 5000);
+
+        setTimeout(() => {
+            setTemp2(12000);
+        }, 3000);
+
+        setTimeout(() => {
+            setTemp2(6000);
+        }, 6000);
 
         window.addEventListener("mousemove", handleMouseMove);
 
@@ -82,7 +101,8 @@ const SearchScene: FunctionComponent<Props> = (props) => {
 
                 <RotatingArc 
                     className="SearchScene__test-arc-3"
-                    rotationSpeed={6000}
+                    rotateForward={temp}
+                    rotationSpeed={temp2}
                     stroke={0.5}
                     progress={10}
                 />
