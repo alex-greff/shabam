@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, forwardRef } from "react";
 import { BaseProps } from "@/types"
 import "./BaseArc.scss";
 import classnames from "classnames";
@@ -8,11 +8,11 @@ export interface Props extends BaseProps {
     progress?: number;
 };
 
-const radius = 50;
+const RADIUS = 50;
 
-const BaseArc: FunctionComponent<Props> = (props) => {
+const BaseArc = forwardRef<SVGSVGElement, Props>((props, ref) => {
     const { progress, stroke } = props;
-    const normalizedRadius = radius - stroke! / 2;
+    const normalizedRadius = RADIUS - stroke! / 2;
     const circumference = normalizedRadius * 2 * Math.PI;
     const strokeDashoffset = circumference - progress! / 100 * circumference;
 
@@ -20,6 +20,7 @@ const BaseArc: FunctionComponent<Props> = (props) => {
         <svg 
             className={classnames("BaseArc", props.className)}
             viewBox="0 0 100 100"
+            ref={ref}
         >
             <circle 
                 stroke-dasharray={circumference + ' ' + circumference}  
@@ -28,12 +29,12 @@ const BaseArc: FunctionComponent<Props> = (props) => {
                 fill="transparent"
                 stroke-width={stroke}
                 stroke-linecap="butt"
-                cx={radius}
-                cy={radius}
+                cx={RADIUS}
+                cy={RADIUS}
             />
         </svg>
     );
-};
+});
 
 BaseArc.defaultProps = {
     stroke: 0.5,

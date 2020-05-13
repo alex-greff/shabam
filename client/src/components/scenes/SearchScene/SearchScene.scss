@@ -85,6 +85,7 @@
             height: $size;
 
             animation: rotating1 6s linear infinite;
+            animation-fill-mode: both;
 
             & circle {
                 stroke: rgb(86, 117, 255);
@@ -111,6 +112,38 @@
             height: $size;
 
             animation: rotating2 5s linear infinite;
+            animation-fill-mode: both;
+            // animation-delay: 0.5s;
+
+            & circle {
+                stroke: rgb(86, 117, 255);
+            }
+
+            @include respond(tab-port) {
+                $size: 110vh;
+                width: $size;
+                height: $size;
+            }
+        }
+
+        & .SearchScene__test-arc-3 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            // transform: translate(-50%, -50%) translateZ(20px) rotateZ(270deg);
+            // transform: translate3d(-50%, -50%, 30px) rotateZ(90deg);
+
+            $distance3: 20px;
+            transform: translate(-50%, -50%) translateZ($distance3);
+
+            transition: transform 0.5s;
+
+            $size: 110vh;
+            width: $size;
+            height: $size;
+
+            // animation: rotating2 5s linear infinite;
+            // animation-fill-mode: both;
             // animation-delay: 0.5s;
 
             & circle {

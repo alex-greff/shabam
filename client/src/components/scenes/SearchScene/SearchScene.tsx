@@ -6,6 +6,7 @@ import { throttle } from "throttle-debounce";
 import { TweenLite } from "gsap";
 
 import BaseArc from "@/components/ui/arcs/BaseArc/BaseArc";
+import RotatingArc from "@/components/ui/arcs/RotatingArc/RotatingArc";
 
 const MAX_DEG = 1;
 const THROTTLE_DELAY = 100;
@@ -67,7 +68,7 @@ const SearchScene: FunctionComponent<Props> = (props) => {
             >
                 <div className="SearchScene__main-circle"></div>
 
-                <BaseArc 
+                {/* <BaseArc 
                     className="SearchScene__test-arc"
                     stroke={0.5}
                     progress={20}
@@ -75,6 +76,13 @@ const SearchScene: FunctionComponent<Props> = (props) => {
 
                 <BaseArc 
                     className="SearchScene__test-arc-2"
+                    stroke={0.5}
+                    progress={10}
+                /> */}
+
+                <RotatingArc 
+                    className="SearchScene__test-arc-3"
+                    rotationSpeed={6000}
                     stroke={0.5}
                     progress={10}
                 />
