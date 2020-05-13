@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState, createRef, useCallback } from "react";
+import React, { FunctionComponent, useEffect, useState, createRef } from "react";
 import { BaseProps } from "@/types"
 import "./SearchScene.scss";
 import classnames from "classnames";

@@ -80,10 +80,7 @@
 
             transition: transform 0.5s;
 
-            // width: 110vh;
-            // height: 110vh;
-
-            $size: 112vh;
+            $size: 110vh;
             width: $size;
             height: $size;
 
@@ -94,7 +91,7 @@
             }
 
             @include respond(tab-port) {
-                $size: 115vw;
+                $size: 110vw;
                 width: $size;
                 height: $size;
             }
