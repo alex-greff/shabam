@@ -1,6 +1,9 @@
 $perspective-amount: 100px;
 $opacity-duration: 0.8s;
 
+$desktop-size: 110vh;
+$mobile-size: 130vw;
+
 .SearchScene {
     position: fixed;
     top: 0;
@@ -34,17 +37,16 @@ $opacity-duration: 0.8s;
             top: 50%;
             transform: translate(-50%, -50%) translateZ(0px);
 
-            width: 110vh;
-            height: 110vh;
+            width: $desktop-size;
+            height: $desktop-size;
 
             border-radius: 50%;
 
             background-color: #262626;
 
             @include respond(tab-port) {
-                $size: 110vw;
-                width: $size;
-                height: $size;
+                width: $mobile-size;
+                height: $mobile-size;
             }
 
             &::after {
@@ -73,9 +75,8 @@ $opacity-duration: 0.8s;
             top: 50%;
             transform: translate(-50%, -50%);
 
-            $size: 110vh;
-            width: $size;
-            height: $size;
+            width: $desktop-size;
+            height: $desktop-size;
 
             & .SearchScene__arc-container {
                 position: absolute;
@@ -83,9 +84,8 @@ $opacity-duration: 0.8s;
                 top: 50%;
                 transform: translate(-50%, -50%);
     
-                $size: 110vh;
-                width: $size;
-                height: $size;
+                width: $desktop-size;
+                height: $desktop-size;
 
                 opacity: 0.5;
     
@@ -116,11 +116,15 @@ $opacity-duration: 0.8s;
                         }
                     }
                 }
-    
-                @include respond(tab-port) {
-                    $size: 110vw;
-                    width: $size;
-                    height: $size;
+            }
+
+            @include respond(tab-port) {
+                width: $mobile-size;
+                height: $mobile-size;
+
+                & .SearchScene__arc-container {
+                    width: $mobile-size;
+                    height: $mobile-size;
                 }
             }
         }
