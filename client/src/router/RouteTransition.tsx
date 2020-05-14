@@ -18,7 +18,7 @@ interface FactoryProps {
 
 const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneElement(child, props);
 
-const defaultTransition = TransitionUtilities.getTransitionId("fade", "fade", "medium");
+const defaultTransition = TransitionUtilities.getTransitionId("fade", "fade", "long");
 const defaultTransitionDuration = TransitionUtilities.getDuration("long"); // Seconds
 
 const RouteTransition: FunctionComponent<Props> = (props) => {

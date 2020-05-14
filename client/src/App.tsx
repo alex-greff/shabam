@@ -19,8 +19,6 @@ import { ApolloProvider } from "@apollo/react-hooks";
 
 import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 
-import PageAlignment from "@/components/page/PageAlignment/PageAlignment";
-
 import OverlayScrollbars from "overlayscrollbars";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 
@@ -163,12 +161,10 @@ class App extends Component<{}, State> {
                                                 osInstance={this.state.osInstance}
                                             >
                                                 <NavBarHeightContext.Provider value={this.state.navbarHeight}>
-                                                    <PageAlignment className="App__page-alignment">
-                                                        <RouteView 
-                                                            className="App__route-view"
-                                                            location={location} 
-                                                        />
-                                                    </PageAlignment>
+                                                    <RouteView 
+                                                        className="App__route-view"
+                                                        location={location} 
+                                                    />
                                                 </NavBarHeightContext.Provider>
                                             </RouteTransition>
                                         </ApolloProvider>
