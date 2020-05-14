@@ -26,14 +26,14 @@ const ARC_STROKE = 3;
 const ARCS: Arc[] = [
     // Group 1
     { forward: true, speed: 25, progress: 10, distance: 5, initialRotation: 0, color: "primary" },
-    { forward: true, speed: 25, progress: 7, distance: 12, initialRotation: 20, color: "secondary" },
+    { forward: true, speed: 27, progress: 7, distance: 12, initialRotation: 20, color: "secondary" },
     // Group 2
     { forward: false, speed: 20, progress: 7, distance: 20, initialRotation: -90, color: "tertiary" },
-    { forward: false, speed: 20, progress: 5, distance: 30, initialRotation: -100, color: "secondary" },
+    { forward: false, speed: 22, progress: 5, distance: 30, initialRotation: -100, color: "secondary" },
     // Group 3
     { forward: true, speed: 30, progress: 7, distance: 40, initialRotation: 180, color: "primary" },
     // Group 4
-    { forward: false, speed: 30, progress: 7, distance: 35, initialRotation: -20, color: "tertiary" },
+    { forward: false, speed: 33, progress: 7, distance: 35, initialRotation: -20, color: "tertiary" },
 ];
 
 export interface Props extends BaseProps {
@@ -103,7 +103,6 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
 
     // Handle route change
     useEffect(() => {
-        console.log("Route changed", location);
         const currPathName = location.pathname;
         const prevPathName = location.state?.prevPathname;
 
@@ -154,8 +153,6 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
 
         const SEARCH_Z_TRANSFORM = -100;
         const HOME_OUT_Z_TRANSFORM = 50;
-
-        console.log("Animation state change", animationState);
 
         // Play intro animation / setup initial values
         if (isFirstLoad) {
