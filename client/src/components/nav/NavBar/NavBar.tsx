@@ -20,7 +20,7 @@ export interface Props extends BaseProps, RouteComponentProps, WithSizeProps {
 const NavBar: FunctionComponent<Props> = (props) => {
     const { className, width, scrollAmount, location } = props;
 
-    const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
 
     const mobile = Utilities.getBreakpoint(width!) <= Utilities.Breakpoint.phone;
     const scrolled = scrollAmount > 0;
