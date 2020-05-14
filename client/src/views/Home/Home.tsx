@@ -4,6 +4,7 @@ import "./Home.scss";
 import classnames from "classnames";
 
 import PageView from "@/components/page/PageView/PageView";
+import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 
 export interface Props extends BaseProps {
 
@@ -17,6 +18,14 @@ const Home: FunctionComponent<Props> = (props) => {
             ignoreNavbarHeight={true}
         >
             Home View
+
+            <br />
+
+            <NormalButton
+                path="/search"
+            >
+                Click me
+            </NormalButton>
         </PageView>
     );
 };

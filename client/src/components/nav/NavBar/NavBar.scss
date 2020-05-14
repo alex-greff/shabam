@@ -3,7 +3,12 @@
     top: 0;
     width: 100%;
 
-    transition: background-color 0.3s;
+    opacity: 0;
+    pointer-events: none;
+
+    z-index: 10;
+
+    transition: background-color 0.3s, opacity 0.5s;
 
     & .NavBar__content {
         display: flex;
@@ -60,4 +65,9 @@
     // &.mobile {
     //     background-color: rgba(0, 0, 0, 0.8);
     // }
+
+    &.is-visible {
+        opacity: 1;
+        pointer-events: initial;
+    }
 }
