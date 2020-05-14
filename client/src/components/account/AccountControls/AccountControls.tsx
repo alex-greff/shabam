@@ -75,7 +75,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
 
                 <CSSTransition
                     in={dropdownOpen}
-                    timeout={TransitionUtilities.getDuration("short")}
+                    timeout={TransitionUtilities.getDuration("short") * 1000}
                     classNames={TransitionUtilities.getTransitionId("top-slide", "top-slide", "short")}
                     unmountOnExit={true}
                 >
