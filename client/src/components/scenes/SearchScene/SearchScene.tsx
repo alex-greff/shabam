@@ -57,6 +57,7 @@ type AnimationState =
 const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const { location } = props;
 
+    const sceneRootRef = createRef<HTMLDivElement>();
     const sceneRef = createRef<HTMLDivElement>();
     const mainCircleRef = createRef<HTMLDivElement>();
     const sRef = createRef<HTMLDivElement>();
@@ -158,6 +159,9 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         // Play intro animation / setup initial values
         if (isFirstLoad) {
             if (isHomeView) {
+                gsap.set(sceneRootRef.current!, {
+                    zIndex: -1
+                });
                 gsap.fromTo(sceneRef.current!, {
                     translateZ: 0,
                     opacity: 0,
@@ -170,6 +174,9 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                     opacity: 0
                 });
             } else if (isSearchView) {
+                gsap.set(sceneRootRef.current!, {
+                    zIndex: 100
+                });
                 gsap.set(sceneRef.current!, {
                     translateZ: SEARCH_Z_TRANSFORM,
                 });
@@ -187,10 +194,17 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
 
         // Run corresponding animation
         if (animationState === "home-to-search") {
+            // Note: this is important because for some reason it becomes null after a while
+            // if directly referenced...
+            const sceneRootEl = sceneRootRef.current!;
+
             gsap.to(sceneRef.current!,  {
                 duration: 0.8,
                 translateZ: SEARCH_Z_TRANSFORM,
-                ease: "power1.inOut"
+                ease: "power1.inOut",
+                onComplete: () => {
+                    gsap.set(sceneRootEl, { zIndex: 100 });
+                }
             });
 
             gsap.to(sRef.current!, {
@@ -200,6 +214,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
             });
 
         } else if (animationState === "search-to-home") {
+            gsap.set(sceneRootRef.current!, { zIndex: -1 });
             gsap.to(sceneRef.current!,  {
                 duration: 0.8,
                 translateZ: 0,
@@ -228,6 +243,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
             });
 
         } else if (animationState === "other-to-home") {
+            gsap.set(sceneRootRef.current!, { zIndex: -1 });
             gsap.fromTo(sceneRef.current!, {
                 translateZ: HOME_OUT_Z_TRANSFORM,
                 opacity: 0,
@@ -239,10 +255,11 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
             });
 
             gsap.set(sRef.current!, {
-                opacity: 0 
+                opacity: 0,
             });
 
         } else if (animationState === "other-to-search") {
+            gsap.set(sceneRootRef.current!, { zIndex: 100 });
             gsap.fromTo(sceneRef.current!, {
                 translateZ: SEARCH_Z_TRANSFORM,
                 opacity: 0,
@@ -272,6 +289,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 props.className,
                 { "is-search-view": isToSearchView }
             )}
+            ref={sceneRootRef}
         >
             <div 
                 className="SearchScene__scene"
