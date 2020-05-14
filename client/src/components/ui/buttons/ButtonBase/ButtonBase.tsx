@@ -1,17 +1,20 @@
 import React, { FunctionComponent, MouseEvent } from "react";
-import { BaseProps } from "@/types"
+import { BaseProps, AppRouteComponentProps, AppLocationState } from "@/types"
 import "./ButtonBase.scss";
 import classnames from "classnames";
-import { Link, LinkProps } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
+import { LocationDescriptor } from "history";
 
-export interface Props extends BaseProps, Partial<Pick<LinkProps, "to">> {
+export interface Props extends BaseProps {
+    path?: string;
+    transition?: string;
     href?: string;
     onClick?: (event: MouseEvent<HTMLButtonElement>) => any;
     disabled?: boolean;
 };
 
-const ButtonBase: FunctionComponent<Props> = (props) => {
-    const { to, href, className, disabled, onClick, ...rest } = props;
+const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
+    const { path, transition, href, className, disabled, onClick, ...rest } = props;
 
     const classNameComputed = classnames("ButtonBase", className, { "disabled": disabled });
 
@@ -24,7 +27,15 @@ const ButtonBase: FunctionComponent<Props> = (props) => {
         if (onClick) onClick(event);
     };
 
-    if (to) {
+    if (path) {
+        const to: LocationDescriptor<AppLocationState> = {
+            pathname: path,
+            state: {
+                transition,
+                prevPathname: props.location.pathname
+            }
+        };
+
         return (
             <Link 
                 {...rest}
@@ -62,4 +73,4 @@ ButtonBase.defaultProps = {
     disabled: false
 } as Partial<Props>;
 
-export default ButtonBase;
+export default withRouter(ButtonBase);

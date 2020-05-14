@@ -24,7 +24,7 @@ const RotatingArc: FunctionComponent<Props> = (props) => {
         gsap.set(baseRef.current!, { 
             rotationZ: initialRotation
         });
-    }, [baseRef]);
+    }, [baseRef, initialRotation]);
 
     // Remake tween whenever one of the parameters changes (also sets it up initially)
     useEffect(() => {

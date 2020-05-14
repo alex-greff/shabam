@@ -83,7 +83,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                         <IconButton 
                             className="AccountControls__account-button"
                             renderIcon={() => (<AccountIcon />)}
-                            to={`/account/${accountStore.username}`}
+                            path={`/account/${accountStore.username}`}
                         >
                             Account
                         </IconButton>
@@ -106,14 +106,14 @@ const AccountControls: FunctionComponent<Props> = (props) => {
             <div className="AccountControls__logged-out">
                 <NormalButton 
                     className="AccountControls__signin-button"
-                    to="/signin"
+                    path="/signin"
                 >
                     Signin
                 </NormalButton>
 
                 <NormalButton 
                     className="AccountControls__signup-button"
-                    to="/signup"
+                    path="/signup"
                     outlined
                 >
                     Signup

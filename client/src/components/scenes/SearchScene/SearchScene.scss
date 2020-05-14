@@ -1,4 +1,5 @@
 $perspective-amount: 100px;
+$opacity-duration: 0.8s;
 
 .SearchScene {
     position: fixed;
@@ -22,9 +23,6 @@ $perspective-amount: 100px;
 
         // This transform should be animated
         transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-        // transform: translateZ(-20px);
-
-        // transition: transform 0.1s;
 
         & .SearchScene__main-circle {
             $diameter: 110vh;
@@ -36,8 +34,6 @@ $perspective-amount: 100px;
             top: 50%;
             transform: translate(-50%, -50%) translateZ(0px);
 
-            transition: transform 0.5s;
-
             width: 110vh;
             height: 110vh;
 
@@ -46,13 +42,33 @@ $perspective-amount: 100px;
             background-color: #262626;
 
             @include respond(tab-port) {
-                width: 110vw;
-                height: 110vw;
+                $size: 110vw;
+                width: $size;
+                height: $size;
+            }
+
+            &::after {
+                content: "";
+
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+
+                border-radius: 50%;
+
+                background: color-link("SearchScene", "gradient", "start");
+                background: linear-gradient(135deg, color-link("SearchScene", "gradient", "start") 0%, color-link("SearchScene", "gradient", "end"));
+
+                opacity: 0;
+                transition: opacity $opacity-duration ease-in-out;
             }
         }
 
-        & .SearchScene__arc-container {
+        & .SearchScene__arcs-container {
             position: absolute;
+
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -61,37 +77,61 @@ $perspective-amount: 100px;
             width: $size;
             height: $size;
 
-            perspective: $perspective-amount;
+            & .SearchScene__arc-container {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+    
+                $size: 110vh;
+                width: $size;
+                height: $size;
 
-            & .SearchScene__arc {
-                & circle {
-                    // stroke: rgb(86, 117, 255);
-                    stroke: color-link("SearchScene", "accent", "primary");
-                }
+                opacity: 0.5;
+    
+                perspective: $perspective-amount;
 
-                &.primary {
+                transition: opacity $opacity-duration ease-in-out;
+    
+                & .SearchScene__arc {
                     & circle {
                         stroke: color-link("SearchScene", "accent", "primary");
                     }
-                }
-
-                &.secondary {
-                    & circle {
-                        stroke: color-link("SearchScene", "accent", "secondary");
+    
+                    &.primary {
+                        & circle {
+                            stroke: color-link("SearchScene", "accent", "primary");
+                        }
+                    }
+    
+                    &.secondary {
+                        & circle {
+                            stroke: color-link("SearchScene", "accent", "secondary");
+                        }
+                    }
+    
+                    &.tertiary {
+                        & circle {
+                            stroke: color-link("SearchScene", "accent", "tertiary");
+                        }
                     }
                 }
-
-                &.tertiary {
-                    & circle {
-                        stroke: color-link("SearchScene", "accent", "tertiary");
-                    }
+    
+                @include respond(tab-port) {
+                    $size: 110vw;
+                    width: $size;
+                    height: $size;
                 }
             }
+        }
 
-            @include respond(tab-port) {
-                $size: 110vw;
-                width: $size;
-                height: $size;
+        &.is-search-view {
+            & .SearchScene__main-circle::after {
+                opacity: 1;
+            }
+
+            & .SearchScene__arcs-container .SearchScene__arc-container {
+                opacity: 1;
             }
         }
     }

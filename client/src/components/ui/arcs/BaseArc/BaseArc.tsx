@@ -23,12 +23,12 @@ const BaseArc = forwardRef<SVGSVGElement, Props>((props, ref) => {
             ref={ref}
         >
             <circle 
-                stroke-dasharray={circumference + ' ' + circumference}  
+                strokeDasharray={circumference + ' ' + circumference}  
                 style={{ strokeDashoffset: strokeDashoffset }}
                 r={normalizedRadius} 
                 fill="transparent"
-                stroke-width={stroke}
-                stroke-linecap="butt"
+                strokeWidth={stroke}
+                strokeLinecap="butt"
                 cx={RADIUS}
                 cy={RADIUS}
             />

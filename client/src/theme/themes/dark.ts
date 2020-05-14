@@ -39,7 +39,7 @@ const NOTIFICATION_INFO_1 = "#4BB4D4";
 
 const SEARCH_SCENE_ACCENT_1 = "#4240C9";
 const SEARCH_SCENE_ACCENT_2 = "#4A6ABE";
-const SEARCH_SCENE_ACCENT_3 = "#6461EE";
+const SEARCH_SCENE_ACCENT_3 = "#6B69D7";
 
 export default {
     name: "dark",
