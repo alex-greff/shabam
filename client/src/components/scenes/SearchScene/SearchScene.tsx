@@ -59,6 +59,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
 
     const sceneRef = createRef<HTMLDivElement>();
     const mainCircleRef = createRef<HTMLDivElement>();
+    const sRef = createRef<HTMLDivElement>();
     const arcsContainerRef = createRef<HTMLDivElement>();
 
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
@@ -165,9 +166,15 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                     opacity: 1,
                     ease: "power1.inOut"
                 });
+                gsap.set(sRef.current!, {
+                    opacity: 0
+                });
             } else if (isSearchView) {
                 gsap.set(sceneRef.current!, {
                     translateZ: SEARCH_Z_TRANSFORM,
+                });
+                gsap.set(sRef.current!, {
+                    opacity: 1
                 });
             } else { // other view
                 gsap.set(sceneRef.current!, {
@@ -186,10 +193,22 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 ease: "power1.inOut"
             });
 
+            gsap.to(sRef.current!, {
+                duration: 0.8,
+                opacity: 1,
+                ease: "power1.inOut"
+            });
+
         } else if (animationState === "search-to-home") {
             gsap.to(sceneRef.current!,  {
                 duration: 0.8,
                 translateZ: 0,
+                ease: "power1.inOut"
+            });
+
+            gsap.to(sRef.current!, {
+                duration: 0.8,
+                opacity: 0,
                 ease: "power1.inOut"
             });
 
@@ -219,12 +238,24 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 ease: "power1.inOut"
             });
 
+            gsap.set(sRef.current!, {
+                opacity: 0 
+            });
+
         } else if (animationState === "other-to-search") {
             gsap.fromTo(sceneRef.current!, {
                 translateZ: SEARCH_Z_TRANSFORM,
                 opacity: 0,
             }, {
                 duration: 1,
+                opacity: 1,
+                ease: "power1.inOut"
+            });
+
+            gsap.fromTo(sRef.current!, {
+                opacity: 0,
+            }, {
+                duration: 0.8,
                 opacity: 1,
                 ease: "power1.inOut"
             });
@@ -235,18 +266,28 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
     const isToSearchView = !!toSearchMatch && toSearchMatch.isExact;
 
     return (
-        <div className={classnames("SearchScene", props.className)}>
+        <div 
+            className={classnames(
+                "SearchScene", 
+                props.className,
+                { "is-search-view": isToSearchView }
+            )}
+        >
             <div 
-                className={classnames(
-                    "SearchScene__scene",
-                    { "is-search-view": isToSearchView }
-                )}
+                className="SearchScene__scene"
                 ref={sceneRef}
             >
                 <div 
                     className={"SearchScene__main-circle"}
                     ref={mainCircleRef}
-                ></div>
+                >
+                    <div 
+                        className="SearchScene__main-circle-s"
+                        ref={sRef}
+                    >
+                        S
+                    </div>
+                </div>
 
                 <div 
                     className="SearchScene__arcs-container"

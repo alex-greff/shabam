@@ -135,6 +135,9 @@ class App extends Component<{}, State> {
                                         newestOnTop={true}
                                     />
 
+                                    {/* <ThreeJSBackground /> */}
+                                    <SearchScene />
+
                                     <OverlayScrollbarsComponent 
                                         className="App__overlay-container"
                                         ref={this.osRef}
@@ -169,9 +172,6 @@ class App extends Component<{}, State> {
                                             </RouteTransition>
                                         </ApolloProvider>
                                     </OverlayScrollbarsComponent>
-
-                                    {/* <ThreeJSBackground /> */}
-                                    <SearchScene />
                                 </div>
                             );
                         }}

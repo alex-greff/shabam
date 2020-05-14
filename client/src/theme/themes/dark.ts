@@ -148,6 +148,11 @@ export default {
                 secondary: SEARCH_SCENE_ACCENT_2,
                 tertiary: SEARCH_SCENE_ACCENT_3
             }
+        },
+        Home: {
+            background: {
+                primary: BLUE_6
+            }
         }
     }
 }
