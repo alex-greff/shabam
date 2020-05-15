@@ -9,7 +9,7 @@ COPY --from=emscripten_base /emsdk_portable /emsdk_portable
 WORKDIR /
 
 # Install required packages
-RUN apk update && \
+RUN apk update --no-cache && \
     apk add --no-cache \
         bash git make g++ \
         python py-pip ca-certificates
