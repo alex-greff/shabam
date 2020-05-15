@@ -4,17 +4,19 @@ import "./ButtonBase.scss";
 import classnames from "classnames";
 import { Link, withRouter } from "react-router-dom";
 import { LocationDescriptor } from "history";
+import { Duration } from "@/utilities/transitionUtilities";
 
 export interface Props extends BaseProps {
     path?: string;
-    transition?: string;
+    transitionId?: string;
+    transitionDuration?: Duration;
     href?: string;
     onClick?: (event: MouseEvent<HTMLButtonElement>) => any;
     disabled?: boolean;
 };
 
 const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
-    const { path, transition, href, className, disabled, onClick, ...rest } = props;
+    const { path, transitionId, transitionDuration, href, className, disabled, onClick, staticContext, ...rest } = props;
 
     const classNameComputed = classnames("ButtonBase", className, { "disabled": disabled });
 
@@ -31,7 +33,8 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
         const to: LocationDescriptor<AppLocationState> = {
             pathname: path,
             state: {
-                transition,
+                transitionId,
+                transitionDuration,
                 prevPathname: props.location.pathname
             }
         };

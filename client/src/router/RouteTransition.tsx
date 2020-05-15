@@ -1,12 +1,14 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps } from "@/types"
+import { BaseProps, AppRouteComponentProps } from "@/types"
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import classnames from "classnames";
 import OverlayScrollbars from "overlayscrollbars";
-import { TransitionUtilities } from "@/utilities";
+import * as TransitionUtilities from "@/utilities/transitionUtilities";
+import { withRouter } from "react-router-dom";
 
 export interface Props extends BaseProps {
-    transition?: string;
+    transitionId?: string;
+    transitionDuration?: TransitionUtilities.Duration
     pageKey?: string;
     osInstance?: OverlayScrollbars | null;
 };
@@ -18,11 +20,14 @@ interface FactoryProps {
 
 const childFactoryCreator = (props: FactoryProps) => (child:any) => React.cloneElement(child, props);
 
-const defaultTransition = TransitionUtilities.getTransitionId("fade", "fade", "long");
-const defaultTransitionDuration = TransitionUtilities.getDuration("long"); // Seconds
-
-const RouteTransition: FunctionComponent<Props> = (props) => {
-    const { transition, pageKey, osInstance, children } = props;
+const RouteTransition: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
+    const { 
+        transitionId: transitionIdOverride, 
+        transitionDuration: transitionDurationOverride, 
+        pageKey, 
+        osInstance, 
+        children 
+    } = props;
 
     const handleOnEntering = () => {
         // Hide page scrollbars when the animation is running
@@ -47,11 +52,19 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
         });
     };
 
+    // TLDR: use the transitions assigned to each page transitions 
+    // unless a specific override transition is supplied as a prop
+    const defaultDuration: TransitionUtilities.Duration = (transitionIdOverride && transitionDurationOverride) ? transitionDurationOverride : "medium";
+    const currView = TransitionUtilities.matchPathnameToView(props.location.pathname);
+    const prevView = TransitionUtilities.matchPathnameToView(props.location.state?.prevPathname);
+    const transitionId = (transitionIdOverride) ? transitionIdOverride : TransitionUtilities.getViewTransitionId(prevView, currView);
+    const transitionDurationNum = (transitionIdOverride) ? TransitionUtilities.getDuration(defaultDuration) : TransitionUtilities.getViewTransitionDuration(prevView, currView);
+
     return (
         <TransitionGroup
             childFactory={childFactoryCreator({ 
-                classNames: transition!, 
-                timeout: defaultTransitionDuration * 1000
+                classNames: transitionId!, 
+                timeout: transitionDurationNum * 1000
             })}
             className={classnames("RouteTransition", props.className)}
         >
@@ -68,7 +81,7 @@ const RouteTransition: FunctionComponent<Props> = (props) => {
 };
 
 RouteTransition.defaultProps = {
-    transition: defaultTransition
+
 } as Partial<Props>;
 
-export default RouteTransition;
+export default withRouter(RouteTransition);

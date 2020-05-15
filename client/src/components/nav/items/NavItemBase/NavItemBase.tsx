@@ -4,21 +4,24 @@ import "./NavItemBase.scss";
 import classnames from "classnames";
 import { Link, withRouter, matchPath } from "react-router-dom";
 import { LocationDescriptor } from "history";
+import { Duration } from "@/utilities/transitionUtilities";
 
 export interface Props extends BaseProps {
     path: string;
-    transition?: string;
+    transitionId?: string;
+    transitionDuration?: Duration;
 };
 
 const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
-    const { className, path, transition, ...rest} = props;
+    const { className, path, transitionId, transitionDuration,  ...rest} = props;
 
     const isActive = !!matchPath(props.location.pathname, path);
 
     const to: LocationDescriptor<AppLocationState> = {
         pathname: path,
         state: {
-            transition,
+            transitionId,
+            transitionDuration,
             prevPathname: props.location.pathname
         }
     }

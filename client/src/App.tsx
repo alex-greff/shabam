@@ -126,7 +126,8 @@ class App extends Component<{}, State> {
                     <Route path="/" 
                         render={(routeProps) => {
                             const location = routeProps.location as Location<AppLocationState>;
-                            const transition = location?.state?.transition;
+                            const transitionId = location?.state?.transitionId;
+                            const transitionDuration = location?.state?.transitionDuration;
                             
                             return (
                                 <div id="App">
@@ -160,7 +161,8 @@ class App extends Component<{}, State> {
                                             <RouteTransition 
                                                 className="App__route-transition"
                                                 pageKey={location.pathname}
-                                                transition={transition}
+                                                transitionId={transitionId}
+                                                transitionDuration={transitionDuration}
                                                 osInstance={this.state.osInstance}
                                             >
                                                 <NavBarHeightContext.Provider value={this.state.navbarHeight}>

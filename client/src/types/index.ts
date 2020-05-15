@@ -1,12 +1,14 @@
 import { RouteComponentProps, LinkProps } from "react-router-dom";
 import { StaticContext } from "react-router";
+import { Duration } from "@/utilities/transitionUtilities";
 
 export interface BaseProps {
     className?: string;
 }
 
 export interface AppLocationState {
-    transition?: string;
+    transitionId?: string;
+    transitionDuration?: Duration;
     prevPathname: string;
 }
 
