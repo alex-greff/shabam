@@ -1,16 +1,18 @@
-FROM ubuntu:16.04
+FROM trzeci/emscripten:sdk-tag-1.39.4-64bit as emscripten_base
+
+# FROM ubuntu:16.04
+FROM node:14.2-alpine
+
+# Copy pre-compiled content of Emscripten SDK to target iamge
+COPY --from=emscripten_base /emsdk_portable /emsdk_portable
 
 WORKDIR /
 
-# Install apt-add-repository
-RUN apt-get update && \
-    apt-get install -y software-properties-common
-
-WORKDIR /
-
-RUN apt-get install -y curl dos2unix bash git && \
-    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    apt-get install -y nodejs
+# Install required packages
+RUN apk update && \
+    apk add --no-cache \
+        bash git make g++ \
+        python py-pip ca-certificates
 
 # Install the client    
 WORKDIR /app
@@ -25,6 +27,18 @@ RUN npm install gulp-cli -g
 
 # Copy all the client files
 COPY . .
+
+# Setup Emscripten Environment variables
+ENV EMSDK /emsdk_portable
+ENV EMSCRIPTEN=${EMSDK}/emscripten/sdk
+
+ENV EM_DATA ${EMSDK}/.data
+ENV EM_CONFIG ${EMSDK}/.emscripten
+ENV EM_CACHE ${EM_DATA}/cache
+ENV EM_PORTS ${EM_DATA}/ports
+
+# Expose tools to system PATH
+ENV PATH="${EMSDK}:${EMSDK}/emscripten/sdk:${EMSDK}/llvm/clang/bin:${EMSDK}/node/current/bin:${EMSDK}/binaryen/bin:${PATH}"
 
 # Start dev server
 CMD ["npm", "run", "start"]
