@@ -32,6 +32,7 @@ type PathNameToViewMap = {
 }
 
 const PAGE_TRANSITIONS: PageTransitionMap = {
+    // TODO: make real transitions here
     "home-to-search": {
         outTransition: "fade",
         inTransition: "top-slide",
