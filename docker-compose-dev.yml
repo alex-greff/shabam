@@ -95,7 +95,6 @@ services:
             context: ./client
         volumes: 
             - /app/node_modules
-            - /root
             - ./client:/app
             - client_emscripten_cache:/emsdk_portable/.emscripten_cache
         environment: 
