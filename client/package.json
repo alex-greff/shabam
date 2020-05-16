@@ -3,8 +3,10 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "react-app-rewired start",
-        "build": "react-app-rewired build",
+        "start:dev": "npm run build:wasm && npm run start:react-dev",
+        "start:react-dev": "react-app-rewired start",
+        "build:react": "react-app-rewired build",
+        "build:wasm": "bash -l /app/src/wasm/build.sh",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
     },
@@ -47,7 +49,7 @@
         "immutability-helper": "^3.0.2",
         "mobx": "^5.15.4",
         "mobx-react": "^6.2.2",
-        "node-sass": "^4.13.1",
+        "node-sass": "^4.14.1",
         "overlayscrollbars": "^1.12.0",
         "overlayscrollbars-react": "^0.2.2",
         "prop-types": "^15.7.2",
