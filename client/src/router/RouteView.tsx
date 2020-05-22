@@ -7,6 +7,7 @@ import classnames from "classnames";
 import HomeView from "@/views/Home/Home";
 import SearchView from "@/views/Search/Search";
 const CatalogView = lazy(() => import(/* webpackChunkName: "catalog" */ "@/views/Catalog/Catalog"));
+const BenchmarksView = lazy(() => import(/* webpackChunkName: "benchmarks" */ "@/views/Benchmarks/Benchmarks"));
 const AccountView = lazy(() => import(/* webpackChunkName: "account" */ "@/views/Account/Account"));
 const AccountSearchHistoryView = lazy(() => import(/* webpackChunkName: "account-search-history" */ "@/views/AccountSearchHistory/AccountSearchHistory"));
 const AccountCatalogView = lazy(() => import(/* webpackChunkName: "account-catalog" */ "@/views/AccountCatalog/AccountCatalog"));
@@ -28,6 +29,7 @@ const RouteView: FunctionComponent<Props> = (props) => {
                     <Route exact path="/" component={HomeView} />
                     <Route exact path="/search" component={SearchView} />
                     <Route exact path="/catalog" component={CatalogView} />
+                    <Route exact path="/benchmarks" component={BenchmarksView} />
                     <Route exact path="/account/:id" component={AccountView} />
                     <Route exact path="/account/:id/search-history" component={AccountSearchHistoryView} />
                     <Route exact path="/account/:id/catalog" component={AccountCatalogView} />

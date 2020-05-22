@@ -6,11 +6,11 @@ import { withSize, WithSizeProps } from "react-sizeme";
 import classnames from "classnames";
 import * as Utilities from "@/utilities";
 import { TransitionUtilities } from "@/utilities";
-import { CSSTransition } from "react-transition-group";
 
 import HomeNavItem from "@/components/nav/items/HomeNavItem/HomeNavItem";
 import NavItem from "@/components/nav/items/NavItem/NavItem";
 import AccountControls from "@/components/account/AccountControls/AccountControls";
+import HamburgerMenu from "@/components/ui/icons/HamburgerMenu/HamburgerMenu";
 
 export interface Props extends BaseProps, RouteComponentProps, WithSizeProps {
     scrollAmount: number;
@@ -21,6 +21,7 @@ const NavBar: FunctionComponent<Props> = (props) => {
     const { className, width, scrollAmount, location } = props;
 
     const [isVisible, setIsVisible] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const mobile = Utilities.getBreakpoint(width!) <= Utilities.Breakpoint.phone;
     const scrolled = scrollAmount > 0;
@@ -36,12 +37,42 @@ const NavBar: FunctionComponent<Props> = (props) => {
         }
     }, [location]);
 
+    const handleHamburgerMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setDropdownOpen(!dropdownOpen);
+    };
+
+    const renderNavItems = () => (
+        <>
+            <NavItem 
+                path="/search"
+            >
+                Search
+            </NavItem>
+            <NavItem 
+                path="/catalog"
+                // transition="fade" // TODO: make sure to use TransitionUtilities
+            >
+                Catalog
+            </NavItem>
+            <NavItem 
+                path="/benchmarks"
+            >
+                Benchmarks
+            </NavItem>
+        </>
+    );
+
     return (
         <nav 
             id="NavBar" 
             className={classnames(
                 className, 
-                { mobile, scrolled, "is-visible": isVisible },
+                { 
+                    mobile, 
+                    scrolled, 
+                    "is-visible": isVisible,
+                    "dropdown-open": dropdownOpen
+                },
             )}
         >
             <div className="NavBar__content">
@@ -54,17 +85,7 @@ const NavBar: FunctionComponent<Props> = (props) => {
                     {(mobile) ? null : (
                         <>
                             <div className="NavBar__nav-items">
-                                <NavItem 
-                                    path="/search"
-                                >
-                                    Search
-                                </NavItem>
-                                <NavItem 
-                                    path="/catalog"
-                                    // transition="fade" // TODO: make sure to use TransitionUtilities
-                                >
-                                    Catalog
-                                </NavItem>
+                                {renderNavItems()}
                             </div>
                             <div className="NavBar__divider-line">&nbsp;</div>
                         </>
@@ -72,12 +93,26 @@ const NavBar: FunctionComponent<Props> = (props) => {
 
                     <AccountControls className="NavBar__account-controls" />
 
-                    {/* TODO: render the actual hamburger icon here */}
                     {(!mobile) ? null : (
-                        <div>=</div>
+                        <HamburgerMenu 
+                            className="NavBar__hamburger-menu"
+                            open={dropdownOpen}
+                            disabled={false}
+                            onClick={handleHamburgerMenuClick}
+                        />
                     )}
                 </div>
             </div>
+
+            {(!mobile) ? null : (
+                <div className="NavBar__mobile-dropdown">
+                    <div className="NavBar__mobile-divider-line">&nbsp;</div>
+
+                    <div className="Navbar__mobile-nav-items">
+                        {renderNavItems()}
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };
