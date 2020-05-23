@@ -10,10 +10,17 @@ export interface Props extends BaseProps {
     path: string;
     transitionId?: string;
     transitionDuration?: Duration;
+    onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => unknown;
 };
 
 const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
-    const { className, path, transitionId, transitionDuration,  ...rest} = props;
+    const { 
+        className, 
+        path, 
+        transitionId, 
+        transitionDuration, 
+        onClick,
+        ...rest} = props;
 
     const isActive = !!matchPath(props.location.pathname, path);
 
@@ -30,6 +37,7 @@ const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
         <Link 
             to={to}
             className={classnames("NavItemBase", className, { "active": isActive })}
+            onClick={onClick}
         >
             {props.children}
         </Link>

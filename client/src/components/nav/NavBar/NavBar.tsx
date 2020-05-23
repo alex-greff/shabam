@@ -37,6 +37,12 @@ const NavBar: FunctionComponent<Props> = (props) => {
         }
     }, [location]);
 
+    const handleNavItemClick = () => {
+        if (dropdownOpen) {
+            setDropdownOpen(false);
+        }
+    };
+
     const handleHamburgerMenuClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         setDropdownOpen(!dropdownOpen);
     };
@@ -45,17 +51,20 @@ const NavBar: FunctionComponent<Props> = (props) => {
         <>
             <NavItem 
                 path="/search"
+                onClick={handleNavItemClick}
             >
                 Search
             </NavItem>
             <NavItem 
                 path="/catalog"
                 // transition="fade" // TODO: make sure to use TransitionUtilities
+                onClick={handleNavItemClick}
             >
                 Catalog
             </NavItem>
             <NavItem 
                 path="/benchmarks"
+                onClick={handleNavItemClick}
             >
                 Benchmarks
             </NavItem>
@@ -79,6 +88,7 @@ const NavBar: FunctionComponent<Props> = (props) => {
                 <HomeNavItem 
                     className="NavBar__home-nav-item" 
                     path="/"
+                    onClick={handleNavItemClick}
                 />
                 
                 <div className="NavBar__right-items">
@@ -91,7 +101,10 @@ const NavBar: FunctionComponent<Props> = (props) => {
                         </>
                     )}
 
-                    <AccountControls className="NavBar__account-controls" />
+                    <AccountControls 
+                        className="NavBar__account-controls" 
+                        onNavItemClick={handleNavItemClick}
+                    />
 
                     {(!mobile) ? null : (
                         <HamburgerMenu 

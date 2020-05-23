@@ -11,7 +11,9 @@ export interface Props extends BaseProps {
     transitionId?: string;
     transitionDuration?: Duration;
     href?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => any;
+    onClick?: (event: MouseEvent<HTMLButtonElement> 
+        | React.MouseEvent<HTMLAnchorElement>
+        | React.MouseEvent<HTMLAnchorElement>) => any;
     disabled?: boolean;
 };
 
@@ -44,6 +46,7 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
                 {...rest}
                 to={to}
                 className={classNameComputed}
+                onClick={onClick}
             >
                 {props.children}
             </Link>
@@ -55,6 +58,7 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
             <a
                 {...rest}
                 className={classNameComputed}
+                onClick={onClick}
             >
                 {props.children}
             </a>
