@@ -1,0 +1,10 @@
+.PageContent {
+    $width: 90rem;
+    $side-padding: 1.5rem;
+
+    margin: 5rem auto 0 auto;
+    padding: 0 $side-padding;
+
+    max-width: $width + $side-padding;
+    width: 100vw;
+}

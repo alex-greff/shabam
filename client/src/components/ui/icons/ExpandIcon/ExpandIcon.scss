@@ -1,14 +1,27 @@
 .ExpandIcon {
-    transform: rotateZ(0deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
+    transform: rotateZ(0deg);
     transition: transform 0.2s ease-in-out;
 
     & .ExpandIcon__icon {
-        width: 2rem;
-        height: 2rem;
+        color: color-link("ExpandIcon", "text", "primary");
+
+        transition: color 0.2s;
     }
 
     &.expanded {
         transform: rotateZ(-180deg);
+    }
+
+    &.clickable {
+        cursor: pointer;
+
+        & .ExpandIcon__icon:hover {
+            color: color-link("ExpandIcon", "selected", "primary");
+        }
     }
 }
