@@ -63,10 +63,10 @@ const NavBar: FunctionComponent<Props> = (props) => {
                 Catalog
             </NavItem>
             <NavItem 
-                path="/benchmarks"
+                path="/benchmark"
                 onClick={handleNavItemClick}
             >
-                Benchmarks
+                Benchmark
             </NavItem>
         </>
     );

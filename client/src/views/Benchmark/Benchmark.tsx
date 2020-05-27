@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types"
-import "./Benchmarks.scss";
+import "./Benchmark.scss";
 import classnames from "classnames";
 
 import PageView from "@/components/page/PageView/PageView";
@@ -13,31 +13,32 @@ export interface Props extends Omit<BaseProps, "id"> {
 
 };
 
-const Benchmarks: FunctionComponent<Props> = (props) => {
+const Benchmark: FunctionComponent<Props> = (props) => {
     const renderTitle = () => (
-        <div className="Benchmarks__title">
+        <div className="Benchmark__title">
             Fingerprinting Benchmark 
         </div>
     );
 
     return (
         <PageView 
-            id="Benchmarks"
+            id="Benchmark"
             className={classnames(props.className)}
             style={props.style}
         >
             <PageContent
-                className="Benchmarks__content"
+                className="Benchmark__content"
             >
                 <ConfigurationContainer
+                    className="Benchmark__config-container"
                     renderTitle={renderTitle}
                 >
                     <NormalButton
                         appearance="solid"
-                        mode="warning"
+                        mode="success"
                         // disabled
                     >
-                        Stuff
+                        Run Benchmark
                     </NormalButton>
                 </ConfigurationContainer>
 
@@ -47,8 +48,8 @@ const Benchmarks: FunctionComponent<Props> = (props) => {
     );
 };
 
-Benchmarks.defaultProps = {
+Benchmark.defaultProps = {
 
 } as Partial<Props>;
 
-export default Benchmarks;
+export default Benchmark;
