@@ -51,6 +51,7 @@ export const schema: Schema = {
     AccountSearchHistory: { $inherits: "GLOBAL" },
     Catalog: { $inherits: "GLOBAL" },
     Search: { $inherits: "GLOBAL" },
+    Benchmark: { $inherits: "GLOBAL" },
     Signin: { $inherits: "GLOBAL" },
     Signup: { $inherits: "GLOBAL" },
     PageNotFound: { $inherits: "GLOBAL" },
@@ -66,6 +67,7 @@ export const schema: Schema = {
     FormButton: { $inherits: "GLOBAL" },
     FormInput: { $inherits: "GLOBAL" },
     SearchScene: { $inherits: "GLOBAL" },
+    DividerLine: { $inherits: "GLOBAL" },
 };
 
 export const mixins: MixinDefinitions = {

@@ -11,6 +11,7 @@ const DARK_4 = "#707070"; // TODO: tweak this color
 const DARK_5 = "#646464";
 const DARK_6 = "#494747";
 const DARK_7 = "#6A6A6A";
+const DARK_8 = "#C0C0C0"
 
 const LIGHT_1 = "#FFFFFF";
 const LIGHT_2 = "#F6F6F6";
@@ -126,6 +127,14 @@ export default {
                 primary: BLUE_8
             }
         },
+        DividerLine: {
+            text: {
+                secondary: DARK_8
+            },
+            background: {
+                primary: BLUE_8
+            }
+        },
         NormalButton: {
             accent: {
                 primary: BLUE_9,
@@ -185,6 +194,11 @@ export default {
         Home: {
             background: {
                 primary: BLUE_6
+            }
+        },
+        Benchmark: {
+            text: {
+                secondary: DARK_8
             }
         }
     }

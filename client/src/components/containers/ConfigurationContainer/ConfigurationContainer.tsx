@@ -9,6 +9,9 @@ import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
 export interface Props extends BaseProps {
     renderTitle?: () => React.ReactNode;
     collapsible?: boolean;
+    titleClassName?: string;
+    iconClassName?: string;
+    contentClassName?: string;
 };
 
 const ConfigurationContainer: FunctionComponent<Props> = (props) => {
@@ -37,10 +40,14 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
             id={props.id}
         >
             <div className="ConfigurationContainer__header">
-                <div className="ConfigurationContainer__title">
+                <div 
+                    className={classnames("ConfigurationContainer__title", props.titleClassName)}
+                >
                     {(renderTitle) ? renderTitle() : null}
                 </div>
-                <div className="ConfigurationContainer__collapse-icon-container">
+                <div 
+                    className={classnames("ConfigurationContainer__collapse-icon-container", props.iconClassName)}
+                >
                     {(!collapsible) ? null : (
                         <ExpandIcon 
                             className="ConfigurationContainer__collapse-icon"
@@ -59,7 +66,7 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
                 mountOnEnter={true}
                 unmountOnExit={true}
             >
-                <div className="ConfigurationContainer__content">
+                <div className={classnames("ConfigurationContainer__content", props.contentClassName)}>
                     {props.children}
                 </div>
             </CSSTransition>

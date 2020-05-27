@@ -1,0 +1,48 @@
+.DividerLine {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .DividerLine__line {
+        position: relative;
+        font-size: 1px;
+        flex-grow: 1;
+        flex-shrink: 1;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-color: color-link("DividerLine", "background", "primary");
+        }
+    }
+
+    & .DividerLine__content {
+        font-size: 1.3rem;
+        color: color-link("DividerLine", "text", "secondary");
+        font-style: italic;
+    }
+
+    &.orientation-vertical {
+        flex-direction: column;
+    }
+
+    &.orientation-horizontal {
+        flex-direction: row;
+
+        &.has-children {
+            & .DividerLine__line-left {
+                margin-right: 0.3rem;
+            }
+    
+            & .DividerLine__line-right {
+                margin-left: 0.3rem;
+            }
+        }
+    }
+}
