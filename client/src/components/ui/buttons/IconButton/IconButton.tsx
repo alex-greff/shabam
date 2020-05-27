@@ -5,7 +5,7 @@ import classnames from "classnames";
 
 import NormalButton, { Props as NormalButtonProps } from "@/components/ui/buttons/NormalButton/NormalButton";
 
-export interface Props extends BaseProps, NormalButtonProps {
+export interface Props extends Omit<BaseProps, "style">, NormalButtonProps {
     renderIcon?: () => JSX.Element;
 };
 
