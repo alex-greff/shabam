@@ -38,6 +38,8 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
                     'has-error': hasError
                 }
             )}
+            style={props.style}
+            id={props.id}
         >
             <div className="FormInput__container">
                 {/* Note: most of these items MUST be in this order to allow the stylesheet to work properly */}

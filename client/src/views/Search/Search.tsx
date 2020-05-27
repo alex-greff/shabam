@@ -6,7 +6,7 @@ import * as NotificationManager from "@/managers/NotificationManager";
 
 import PageView from "@/components/page/PageView/PageView";
 
-export interface Props extends BaseProps {
+export interface Props extends Omit<BaseProps, "id"> {
 
 }
 
@@ -17,6 +17,7 @@ const Search: FunctionComponent<Props> = (props) => {
         <PageView 
             id="Search" 
             className={classnames(props.className)}
+            style={props.style}
         >
             Search View
 

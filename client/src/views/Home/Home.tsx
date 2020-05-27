@@ -7,7 +7,7 @@ import PageView from "@/components/page/PageView/PageView";
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import MouseIcon from "@material-ui/icons/MouseOutlined";
 
-export interface Props extends BaseProps {
+export interface Props extends Omit<BaseProps, "id"> {
 
 }
 
@@ -16,6 +16,7 @@ const Home: FunctionComponent<Props> = (props) => {
         <PageView 
             id="Home" 
             className={classnames(props.className)}
+            style={props.style}
             ignoreNavbarHeight={true}
         >
             <div className="Home__content">

@@ -7,7 +7,6 @@ import gsap from "gsap";
 import BaseArc, { Props as BaseArcProps } from "@/components/ui/arcs/BaseArc/BaseArc";
 
 export interface Props extends BaseProps, BaseArcProps {
-    style?: React.CSSProperties;
     rotationSpeed?: number;
     rotateForward?: boolean;
     initialRotation?: number;
@@ -50,7 +49,8 @@ const RotatingArc: FunctionComponent<Props> = (props) => {
     return (
         <div 
             className={classnames("RotatingArc", className)}
-            style={style}
+            style={props.style}
+            id={props.id}
         >
             <BaseArc 
                 {...rest}

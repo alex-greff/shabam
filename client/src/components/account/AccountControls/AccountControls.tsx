@@ -116,7 +116,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                 <NormalButton 
                     className="AccountControls__signup-button"
                     path="/signup"
-                    outlined
+                    appearance="outlined"
                     onClick={props.onNavItemClick}
                 >
                     Signup
@@ -128,6 +128,8 @@ const AccountControls: FunctionComponent<Props> = (props) => {
     return (
         <div 
             className={classnames("AccountControls", props.className)}
+            style={props.style}
+            id={props.id}
             ref={rootRef}
         >
             { (loggedIn) ? renderLoggedInControls() : renderLoggedOutControls() }

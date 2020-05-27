@@ -8,12 +8,16 @@
 
     transition: color $transition-time, box-shadow $transition-time;
 
-    &.outlined {
+    &.appearance-outlined {
         box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "primary");
 
         padding: 0.1rem 0.7rem;
 
         border-radius: 0.2rem;
+    }
+
+    &.appearance-solid {
+        background-color: color-link("NormalButton", "background", "primary");
     }
 
     &:hover {

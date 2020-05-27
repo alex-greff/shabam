@@ -23,7 +23,11 @@ const RouteView: FunctionComponent<Props> = (props) => {
     const { location } = props;
 
     return (
-        <div className={classnames("RouteView", props.className)}>
+        <div 
+            className={classnames("RouteView", props.className)}
+            style={props.style}
+            id={props.id}
+        >
             <Suspense fallback={null}>
                 <Switch location={location}>
                     <Route exact path="/" component={HomeView} />

@@ -161,7 +161,11 @@ const ThreeJSBackground: FunctionComponent<Props> = (props) => {
     }, []);
 
     return (
-        <div className={classnames("ThreeJSBackground", props.className)}>
+        <div 
+            className={classnames("ThreeJSBackground", props.className)}
+            style={props.style}
+            id={props.id}
+        >
             <canvas 
                 className="ThreeJSBackground__canvas"
                 ref={canvasRef}

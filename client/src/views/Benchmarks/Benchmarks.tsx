@@ -7,7 +7,9 @@ import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
 import ConfigurationContainer from "@/components/containers/ConfigurationContainer/ConfigurationContainer";
 
-export interface Props extends BaseProps {
+import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
+
+export interface Props extends Omit<BaseProps, "id"> {
 
 };
 
@@ -22,6 +24,7 @@ const Benchmarks: FunctionComponent<Props> = (props) => {
         <PageView 
             id="Benchmarks"
             className={classnames(props.className)}
+            style={props.style}
         >
             <PageContent
                 className="Benchmarks__content"
@@ -29,7 +32,11 @@ const Benchmarks: FunctionComponent<Props> = (props) => {
                 <ConfigurationContainer
                     renderTitle={renderTitle}
                 >
-                    Hey
+                    <NormalButton
+                        appearance="solid"
+                    >
+                        Stuff
+                    </NormalButton>
                 </ConfigurationContainer>
 
                 More stuff

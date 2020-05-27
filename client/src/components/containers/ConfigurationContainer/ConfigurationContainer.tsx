@@ -31,7 +31,11 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
     }, [collapsible])
 
     return (
-        <div className={classnames("ConfigurationContainer", props.className)}>
+        <div 
+            className={classnames("ConfigurationContainer", props.className)}
+            style={props.style}
+            id={props.id}
+        >
             <div className="ConfigurationContainer__header">
                 <div className="ConfigurationContainer__title">
                     {(renderTitle) ? renderTitle() : null}

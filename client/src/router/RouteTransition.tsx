@@ -67,6 +67,8 @@ const RouteTransition: FunctionComponent<Props & AppRouteComponentProps> = (prop
                 timeout: transitionDurationNum * 1000
             })}
             className={classnames("RouteTransition", props.className)}
+            style={props.style}
+            id={props.id}
         >
             <CSSTransition
                 key={pageKey}

@@ -12,7 +12,7 @@ import NavItem from "@/components/nav/items/NavItem/NavItem";
 import AccountControls from "@/components/account/AccountControls/AccountControls";
 import HamburgerMenu from "@/components/ui/icons/HamburgerMenu/HamburgerMenu";
 
-export interface Props extends BaseProps, RouteComponentProps, WithSizeProps {
+export interface Props extends Omit<BaseProps, "id">, RouteComponentProps, WithSizeProps {
     scrollAmount: number;
     width: number;
 }
@@ -83,6 +83,7 @@ const NavBar: FunctionComponent<Props> = (props) => {
                     "dropdown-open": dropdownOpen
                 },
             )}
+            style={props.style}
         >
             <div className="NavBar__content">
                 <HomeNavItem 

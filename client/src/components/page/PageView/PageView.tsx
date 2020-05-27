@@ -7,6 +7,7 @@ import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 export interface Props extends BaseProps {
     id?: string;
     ignoreNavbarHeight?: boolean;
+    style?: Omit<React.CSSProperties, "marginTop" | "minHeight">
 }
 
 const PageView: FunctionComponent<Props> = (props) => {
@@ -17,6 +18,7 @@ const PageView: FunctionComponent<Props> = (props) => {
             id={props.id}
             className={classnames("PageView", props.className)}
             style={{
+                ...props.style,
                 marginTop: (!props.ignoreNavbarHeight) ? `${navbarHeight}px` : 0,
                 minHeight: (!props.ignoreNavbarHeight) ? `calc(100vh - ${navbarHeight}px)` : "100vh"
             }}

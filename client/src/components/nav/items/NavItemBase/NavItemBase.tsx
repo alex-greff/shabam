@@ -37,6 +37,8 @@ const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
         <Link 
             to={to}
             className={classnames("NavItemBase", className, { "active": isActive })}
+            style={props.style}
+            id={props.id}
             onClick={onClick}
         >
             {props.children}

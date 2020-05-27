@@ -75,6 +75,8 @@ const SignupForm: FunctionComponent<Props> = (props) => {
     return (
         <form 
             className={classnames("SignupForm", props.className)}
+            style={props.style}
+            id={props.id}
             onSubmit={onSubmit}
         >
             <div className="SignupForm__title">

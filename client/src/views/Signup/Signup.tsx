@@ -7,7 +7,7 @@ import PageView from "@/components/page/PageView/PageView";
 import AccentContainer from "@/components/ui/containers/AccentContainer";
 import SignupForm from "./SignupForm/SignupForm";
 
-export interface Props extends BaseProps {
+export interface Props extends Omit<BaseProps, "id"> {
 
 }
 
@@ -16,6 +16,7 @@ const Signup: FunctionComponent<Props> = (props) => {
         <PageView 
             id="Signup" 
             className={classnames(props.className)}
+            style={props.style}
         >
             <AccentContainer
                 className="Signup__accent-container"

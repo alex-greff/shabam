@@ -9,6 +9,7 @@ export interface Props extends BaseProps {
     onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => unknown;
     size?: string;
     barThickness?: string;
+    style?: Omit<React.CSSProperties, "height" | "width">
 };
 
 const HEIGHT_TO_WIDTH_RATIO = 0.6;
@@ -40,9 +41,11 @@ const HamburgerMenu: FunctionComponent<Props> = (props) => {
             )}
             onClick={handleClick}
             style={{
+                ...props.style,
                 height: `calc(${size}*${HEIGHT_TO_WIDTH_RATIO})`,
                 width: size
             }}
+            id={props.id}
         >
             <span 
                 className="HamburgerMenu__bar HamburgerMenu__top-bar"

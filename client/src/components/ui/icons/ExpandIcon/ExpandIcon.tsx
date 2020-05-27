@@ -22,6 +22,8 @@ const ExpandIcon: FunctionComponent<Props> = (props) => {
                 props.className, 
                 { expanded, clickable }
             )}
+            style={props.style}
+            id={props.id}
             onClick={(clickable) ? onClick : undefined}
         >
             <ExpandMoreIcon 

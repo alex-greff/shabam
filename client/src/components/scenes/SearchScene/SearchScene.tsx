@@ -289,6 +289,8 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 props.className,
                 { "is-search-view": isToSearchView }
             )}
+            style={props.style}
+            id={props.id}
             ref={sceneRootRef}
         >
             <div 

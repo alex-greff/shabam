@@ -4,6 +4,8 @@ import { Duration } from "@/utilities/transitionUtilities";
 
 export interface BaseProps {
     className?: string;
+    style?: React.CSSProperties;
+    id?: string;
 }
 
 export interface AppLocationState {

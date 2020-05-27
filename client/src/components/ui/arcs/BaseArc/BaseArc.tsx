@@ -19,6 +19,8 @@ const BaseArc = forwardRef<SVGSVGElement, Props>((props, ref) => {
     return (
         <svg 
             className={classnames("BaseArc", props.className)}
+            style={props.style}
+            id={props.id}
             viewBox="0 0 500 500"
             ref={ref}
         >

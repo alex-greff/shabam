@@ -28,6 +28,7 @@ const BLUE_8 = "#64829E";
 const BLUE_9 = "#4A5E72";
 const BLUE_10 = "#4D5965";
 const BLUE_11 = "#CCD7E2";
+const BLUE_12 = "#479AB4";
 
 const FORM_ERROR_1 = "#F08787";
 const FORM_ERROR_2 = "#523B3B";
@@ -118,6 +119,9 @@ export default {
             accent: {
                 primary: BLUE_9,
                 disabled: DARK_5
+            },
+            background: {
+                primary: BLUE_12
             }
         },
         FormInput: {

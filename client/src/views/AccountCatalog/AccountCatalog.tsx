@@ -5,7 +5,7 @@ import classnames from "classnames";
 
 import PageView from "@/components/page/PageView/PageView";
 
-export interface Props extends BaseProps {
+export interface Props extends Omit<BaseProps, "id"> {
 
 }
 
@@ -14,6 +14,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
         <PageView 
             id="AccountCatalog" 
             className={classnames(props.className)}
+            style={props.style}
         >
             Account Catalog View
         </PageView>

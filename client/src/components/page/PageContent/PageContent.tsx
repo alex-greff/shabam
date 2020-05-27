@@ -9,7 +9,11 @@ export interface Props extends BaseProps {
 
 const PageContent: FunctionComponent<Props> = (props) => {
     return (
-        <div className={classnames("PageContent", props.className)}>
+        <div 
+            className={classnames("PageContent", props.className)}
+            style={props.style}
+            id={props.id}
+        >
             {props.children}
         </div>
     );
