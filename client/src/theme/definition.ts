@@ -30,17 +30,17 @@ export const schema: Schema = {
         form_error: {
             $mixins: ['primary_modifier', 'secondary_modifier']
         },
-        notification_error: {
-            $mixins: ['primary_modifier']
+        error: {
+            $mixins: ['primary_modifier', "secondary_modifier", "disabled_modifier"]
         },
-        notification_warning: {
-            $mixins: ['primary_modifier']
+        warning: {
+            $mixins: ['primary_modifier', "secondary_modifier", "disabled_modifier"]
         },
-        notification_success: {
-            $mixins: ['primary_modifier']
+        success: {
+            $mixins: ['primary_modifier', "secondary_modifier", "disabled_modifier"]
         },
-        notification_info: {
-            $mixins: ['primary_modifier']
+        info: {
+            $mixins: ['primary_modifier', "secondary_modifier", "disabled_modifier"]
         }
     },
     // --- Component Scope Declarations ---

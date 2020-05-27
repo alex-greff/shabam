@@ -33,7 +33,7 @@
         height: 100%;
         width: $width;
 
-        background-color: color-link("Notification", "notification_info", "primary");
+        background-color: color-link("Notification", "info", "primary");
     }
 
     &::after {
@@ -46,24 +46,24 @@
         height: 100%;
         width: $width;
 
-        background-color: color-link("Notification", "notification_info", "primary");
+        background-color: color-link("Notification", "info", "primary");
     }
 
     &.Toastify__toast--error {
         &::before, &::after {
-            background-color: color-link("Notification", "notification_error", "primary");
+            background-color: color-link("Notification", "error", "primary");
         }
     }
 
     &.Toastify__toast--warning {
         &::before, &::after {
-            background-color: color-link("Notification", "notification_warning", "primary");
+            background-color: color-link("Notification", "warning", "primary");
         }
     }
 
     &.Toastify__toast--success {
         &::before, &::after {
-            background-color: color-link("Notification", "notification_success", "primary");
+            background-color: color-link("Notification", "success", "primary");
         }
     }
 }

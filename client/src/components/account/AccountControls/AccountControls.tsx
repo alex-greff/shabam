@@ -108,6 +108,9 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                 <NormalButton 
                     className="AccountControls__signin-button"
                     path="/signin"
+                    appearance="none"
+                    textColor="secondary"
+                    style={{ fontSize: "1.5rem" }}
                     onClick={props.onNavItemClick}
                 >
                     Signin
@@ -117,6 +120,8 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                     className="AccountControls__signup-button"
                     path="/signup"
                     appearance="outlined"
+                    textColor="secondary"
+                    style={{ fontSize: "1.5rem" }}
                     onClick={props.onNavItemClick}
                 >
                     Signup

@@ -33,10 +33,13 @@ const BLUE_12 = "#479AB4";
 const FORM_ERROR_1 = "#F08787";
 const FORM_ERROR_2 = "#523B3B";
 
-const NOTIFICATION_ERROR_1 = "#D44B4B";
-const NOTIFICATION_WARNING_1 = "#D4B64B";
-const NOTIFICATION_SUCCESS_1 = "#4ED44B";
-const NOTIFICATION_INFO_1 = "#4BB4D4";
+const ERROR_1 = "#D44B4B";
+const ERROR_2 = "#CD5757";
+const WARNING_1 = "#D4B64B";
+const WARNING_2 = "#C0AB60";
+const SUCCESS_1 = "#4ED44B";
+const SUCCESS_2 = "#31A861";
+const INFO_1 = "#4BB4D4";
 
 const SEARCH_SCENE_ACCENT_1 = "#4240C9";
 const SEARCH_SCENE_ACCENT_2 = "#4A6ABE";
@@ -92,17 +95,25 @@ export default {
                 primary: FORM_ERROR_1,
                 secondary: FORM_ERROR_2
             },
-            notification_error: {
-                primary: NOTIFICATION_ERROR_1
+            error: {
+                primary: ERROR_1,
+                secondary: Color(ERROR_1).darken(0.2).round().toString(),
+                disabled: Color(ERROR_1).desaturate(0.5).round().toString()
             },
-            notification_warning: {
-                primary: NOTIFICATION_WARNING_1
+            warning: {
+                primary: WARNING_1,
+                secondary: Color(WARNING_1).darken(0.2).round().toString(),
+                disabled: Color(WARNING_1).desaturate(0.5).round().toString()
             },
-            notification_success: {
-                primary: NOTIFICATION_SUCCESS_1
+            success: {
+                primary: SUCCESS_1,
+                secondary: Color(SUCCESS_1).darken(0.2).round().toString(),
+                disabled: Color(SUCCESS_1).desaturate(0.5).round().toString()
             },
-            notification_info: {
-                primary: NOTIFICATION_INFO_1
+            info: {
+                primary: INFO_1,
+                secondary: Color(INFO_1).darken(0.2).round().toString(),
+                disabled: Color(INFO_1).desaturate(0.5).round().toString()
             }
         },
         Notification: {
@@ -118,10 +129,28 @@ export default {
         NormalButton: {
             accent: {
                 primary: BLUE_9,
+                secondary: BLUE_11,
                 disabled: DARK_5
             },
-            background: {
-                primary: BLUE_12
+            error: {
+                primary: ERROR_2,
+                secondary: Color(ERROR_2).darken(0.05).round().toString(),
+                disabled: Color(ERROR_2).desaturate(0.5).round().toString()
+            },
+            success: {
+                primary: SUCCESS_2,
+                secondary: Color(SUCCESS_2).darken(0.1).round().toString(),
+                disabled: Color(SUCCESS_2).desaturate(0.5).round().toString()
+            },
+            warning: {
+                primary: WARNING_2,
+                secondary: Color(WARNING_2).darken(0.1).round().toString(),
+                disabled: Color(WARNING_2).desaturate(0.5).round().toString()
+            },
+            info: {
+                primary: BLUE_12,
+                secondary: Color(BLUE_12).darken(0.1).round().toString(),
+                disabled: Color(BLUE_12).desaturate(0.5).round().toString()
             }
         },
         FormInput: {

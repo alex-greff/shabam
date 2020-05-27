@@ -5,16 +5,29 @@ import classnames from "classnames";
 
 import ButtonBase, { Props as ButtonBaseProps } from "@/components/ui/buttons/ButtonBase/ButtonBase";
 
-type Mode = "outlined" | "solid" | "none";
+type Appearance = "outlined" | "solid" | "none";
+type TextColor = "primary" | "secondary";
+type Mode = "info" | "error" | "success" | "warning";
 
 export interface Props extends BaseProps, ButtonBaseProps {
     outlined?: boolean;
-    appearance?: Mode;
-    size?: string;
+    appearance?: Appearance;
+    textColor?: TextColor;
+    mode?: Mode;
+    disabled?: boolean;
 };
 
 const NormalButton: FunctionComponent<Props> = (props) => {
-    const { appearance, outlined, className, ...rest } = props;
+    const { 
+        appearance, 
+        outlined, 
+        className, 
+        style, 
+        textColor,
+        mode,
+        disabled,
+        ...rest 
+    } = props;
     
     return (
         <ButtonBase 
@@ -22,8 +35,14 @@ const NormalButton: FunctionComponent<Props> = (props) => {
             className={classnames(
                 "NormalButton", 
                 className, 
-                { [`appearance-${appearance}`]: true }
+                { 
+                    disabled,
+                    [`appearance-${appearance}`]: true,
+                    [`text-color-${textColor}`]: true,
+                    [`mode-${mode}`]: true
+                }
             )}
+            style={style}
         >
             {props.children}    
         </ButtonBase>
@@ -33,7 +52,9 @@ const NormalButton: FunctionComponent<Props> = (props) => {
 NormalButton.defaultProps = {
     outlined: false,
     appearance: "none",
-    size: "1.5rem"
+    textColor: "primary",
+    mode: "info",
+    disabled: false
 } as Partial<Props>;
 
 export default NormalButton;

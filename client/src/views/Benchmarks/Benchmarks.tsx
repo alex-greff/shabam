@@ -34,6 +34,8 @@ const Benchmarks: FunctionComponent<Props> = (props) => {
                 >
                     <NormalButton
                         appearance="solid"
+                        mode="warning"
+                        // disabled
                     >
                         Stuff
                     </NormalButton>
