@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types"
 import "./Benchmark.scss";
 import classnames from "classnames";
@@ -20,12 +20,20 @@ export interface Props extends Omit<BaseProps, "id"> {
 
 };
 
+type AudioBlobSource = "recording" | "file" | null;
+
 const Benchmark: FunctionComponent<Props> = (props) => {
-    const renderTitle = () => (
-        <div className="Benchmark__title">
-            Fingerprinting Benchmark 
-        </div>
-    );
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+    const [audioBlobSource, setAudioBlobSource] = useState<AudioBlobSource>(null);
+    const [isRecording, setIsRecording] = useState<boolean>(false);
+
+    const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const audioFile = (e.target.files) ? e.target.files[0] : null;
+        setAudioBlob(audioFile);
+        setAudioBlobSource("file");
+    };
+
+    const hasAudioBlob = !!audioBlob;
 
     return (
         <PageView 
@@ -39,7 +47,11 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                 <ConfigurationContainer
                     className="Benchmark__config-container"
                     contentClassName="Benchmark__config-content-container"
-                    renderTitle={renderTitle}
+                    renderTitle={() => (
+                        <div className="Benchmark__title">
+                            Fingerprinting Benchmark 
+                        </div>
+                    )}
                 >
                     <div className="Benchmark__config-controls">
                         <div className="Benchmark__record-controls-container">
@@ -52,12 +64,14 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                                     className="Benchmark__record-button"
                                     size="3.6rem"
                                     stroke={40}
+                                    disabled={isRecording}
                                 />
 
                                 <StopRecordButton 
                                     className="Benchmark__stop-record-button"
                                     size="3.6rem"
                                     stroke={40}
+                                    disabled={!isRecording}
                                 />
                             </div>
                         </div>
@@ -77,6 +91,8 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                             <FileUploadButtonWrapper 
                                 className="Benchmark__file-upload-button"
                                 accept="audio/*"
+                                onChange={handleAudioFileChange}
+                                disabled={isRecording}
 
                                 renderContent={({ disabled }) => (
                                     <IconButton 
@@ -98,6 +114,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                         className="Benchmark__run-benchmark-button"
                         appearance="solid"
                         mode="success"
+                        disabled={!hasAudioBlob}
                     >
                         Run Benchmark
                     </NormalButton>
