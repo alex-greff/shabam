@@ -1,6 +1,8 @@
 .AccountControls {
     position: relative;
 
+    font-size: 1.7rem;
+
     & .AccountControls__logged-out {
         & > *:not(:last-child) {
             margin-right: 1rem;

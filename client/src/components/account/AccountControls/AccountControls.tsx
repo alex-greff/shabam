@@ -110,7 +110,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                     path="/signin"
                     appearance="none"
                     textColor="secondary"
-                    style={{ fontSize: "1.5rem" }}
+                    style={{ fontSize: "1.7rem" }}
                     onClick={props.onNavItemClick}
                 >
                     Signin
@@ -121,7 +121,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
                     path="/signup"
                     appearance="outlined"
                     textColor="secondary"
-                    style={{ fontSize: "1.5rem" }}
+                    style={{ fontSize: "1.7rem" }}
                     onClick={props.onNavItemClick}
                 >
                     Signup
