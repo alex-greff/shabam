@@ -16,8 +16,9 @@ import AccountIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 
 interface Props extends BaseProps {
-    onNavItemClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> 
-        | React.MouseEvent<HTMLAnchorElement, MouseEvent>) => any;
+    onNavItemClick?: (event: React.MouseEvent<HTMLButtonElement> 
+        | React.MouseEvent<HTMLAnchorElement>
+        | React.MouseEvent<HTMLDivElement>) => any;
 };
 
 const AccountControls: FunctionComponent<Props> = (props) => {

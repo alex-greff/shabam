@@ -11,18 +11,32 @@ export interface Props extends BaseProps {
     transitionId?: string;
     transitionDuration?: Duration;
     href?: string;
-    onClick?: (event: MouseEvent<HTMLButtonElement> 
+    onClick?: (event: React.MouseEvent<HTMLButtonElement> 
         | React.MouseEvent<HTMLAnchorElement>
-        | React.MouseEvent<HTMLAnchorElement>) => any;
+        | React.MouseEvent<HTMLAnchorElement>
+        | React.MouseEvent<HTMLDivElement>) => any;
     disabled?: boolean;
+    // For if the button ever gets put into a FileUploadWrapper
+    forceDiv?: boolean;
 };
 
 const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
-    const { path, transitionId, transitionDuration, href, className, disabled, onClick, staticContext, ...rest } = props;
+    const { 
+        path, 
+        transitionId, 
+        transitionDuration, 
+        href, 
+        className, 
+        disabled, 
+        onClick, 
+        staticContext, 
+        forceDiv,
+        ...rest 
+    } = props;
 
     const classNameComputed = classnames("ButtonBase", className, { "disabled": disabled });
 
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement> | React.MouseEvent<HTMLDivElement>) => {
         if (disabled) {
             event.preventDefault();
             return;
@@ -30,6 +44,18 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
 
         if (onClick) onClick(event);
     };
+
+    if (forceDiv) {
+        return (
+            <div
+                {...rest}
+                className={classNameComputed}
+                onClick={handleClick}
+            >
+                {props.children}
+            </div>
+        )
+    }
 
     if (path) {
         const to: LocationDescriptor<AppLocationState> = {
@@ -77,7 +103,8 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
 };
 
 ButtonBase.defaultProps = {
-    disabled: false
+    disabled: false,
+    forceDiv: false
 } as Partial<Props>;
 
 export default withRouter(ButtonBase);

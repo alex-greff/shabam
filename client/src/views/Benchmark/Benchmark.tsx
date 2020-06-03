@@ -12,6 +12,7 @@ import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import RecordButton from "@/components/ui/buttons/RecordButton/RecordButton";
 import StopRecordButton from "@/components/ui/buttons/StopRecordButton/StopRecordButton";
+import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
@@ -49,13 +50,13 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                             <div className="Benchmark__record-controls">
                                 <RecordButton 
                                     className="Benchmark__record-button"
-                                    size="3.5rem"
+                                    size="3.6rem"
                                     stroke={40}
                                 />
 
                                 <StopRecordButton 
                                     className="Benchmark__stop-record-button"
-                                    size="3.5rem"
+                                    size="3.6rem"
                                     stroke={40}
                                 />
                             </div>
@@ -73,14 +74,22 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                                 Upload File    
                             </div>
 
-                            <IconButton 
+                            <FileUploadButtonWrapper 
                                 className="Benchmark__file-upload-button"
-                                appearance="solid"
-                                mode="info"
-                                renderIcon={() => <UploadIcon />}
-                            >
-                                Audio File
-                            </IconButton>
+                                disabled={false}
+                                renderContent={({ disabled }) => (
+                                    <IconButton 
+                                        className="Benchmark__file-upload-button-content"
+                                        appearance="solid"
+                                        mode="info"
+                                        renderIcon={() => <UploadIcon />}
+                                        forceDiv
+                                        disabled={disabled}
+                                    >
+                                        Audio File
+                                    </IconButton>
+                                )}
+                            />
                         </div>
                     </div>
 
@@ -88,7 +97,6 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                         className="Benchmark__run-benchmark-button"
                         appearance="solid"
                         mode="success"
-                        // disabled
                     >
                         Run Benchmark
                     </NormalButton>
