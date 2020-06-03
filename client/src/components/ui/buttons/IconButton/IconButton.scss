@@ -1,4 +1,6 @@
 .IconButton {
+    $transition-time: 0.2s;
+
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -22,7 +24,25 @@
             width: 2rem;
             height: 2rem;  
             
-            color: color-link("IconButton", "selected", "primary");
+            color: color-link("IconButton", "accent", "primary");
+
+            transition: color $transition-time;
+        }
+    }
+
+    &:hover {
+        & .IconButton__icon {
+            & svg {
+                color: color-link("IconButton", "accent", "secondary");
+            }
+        }
+    }
+
+    &.disabled {
+        & .IconButton__icon {
+            & svg {
+                color: color-link("IconButton", "accent", "disabled");
+            }
         }
     }
 }

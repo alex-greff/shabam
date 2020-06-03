@@ -46,6 +46,8 @@ const SEARCH_SCENE_ACCENT_1 = "#4240C9";
 const SEARCH_SCENE_ACCENT_2 = "#4A6ABE";
 const SEARCH_SCENE_ACCENT_3 = "#6B69D7";
 
+const RED = "#FF0000";
+
 export default {
     name: "dark",
     theme: {
@@ -162,6 +164,12 @@ export default {
                 disabled: Color(BLUE_12).desaturate(0.5).round().toString()
             }
         },
+        IconButton: {
+            accent: {
+                primary: BLUE_6,
+                secondary: Color(BLUE_6).desaturate(0.3).round().toString()
+            }
+        },
         FormInput: {
             text: {
                 secondary: LIGHT_4
@@ -199,6 +207,13 @@ export default {
         Benchmark: {
             text: {
                 secondary: DARK_8
+            }
+        },
+        RecordButton: {
+            accent: {
+                primary: RED,
+                secondary: Color(RED).darken(0.2).round().toString(),
+                disabled: Color(RED).desaturate(0.5).round().toString()
             }
         }
     }

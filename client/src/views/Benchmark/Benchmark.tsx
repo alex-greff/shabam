@@ -10,6 +10,8 @@ import DividerLine from "@/components/ui/dividers/DividerLine/DividerLine";
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
+import RecordButton from "@/components/ui/buttons/RecordButton/RecordButton";
+import StopRecordButton from "@/components/ui/buttons/StopRecordButton/StopRecordButton";
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
@@ -45,7 +47,17 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                             </div>
 
                             <div className="Benchmark__record-controls">
-                                O X
+                                <RecordButton 
+                                    className="Benchmark__record-button"
+                                    size="3.5rem"
+                                    stroke={40}
+                                />
+
+                                <StopRecordButton 
+                                    className="Benchmark__stop-record-button"
+                                    size="3.5rem"
+                                    stroke={40}
+                                />
                             </div>
                         </div>
 

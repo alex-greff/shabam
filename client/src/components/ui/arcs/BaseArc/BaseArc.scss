@@ -1,9 +1,21 @@
 .BaseArc {
-    & circle {
-        transform: rotate(-90deg);
-        transform-origin: 50% 50%;
-        transition: stroke-dashoffset 0.1s;
+    position: relative;
 
-        stroke: white;
+    & .BaseArc__arc {
+        & circle {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.1s;
+    
+            stroke: white;
+        }
+    }
+
+    & .BaseArc__children-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
     }
 }
