@@ -8,7 +8,7 @@ interface RenderPropsData {
     disabled: boolean;
 }
 
-export interface Props extends React.HTMLAttributes<HTMLInputElement>, BaseProps {
+export interface Props extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps {
     disabled?: boolean;
     renderContent: (data: RenderPropsData) => JSX.Element;
 };

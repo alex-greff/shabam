@@ -76,7 +76,8 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
                             <FileUploadButtonWrapper 
                                 className="Benchmark__file-upload-button"
-                                disabled={false}
+                                accept="audio/*"
+
                                 renderContent={({ disabled }) => (
                                     <IconButton 
                                         className="Benchmark__file-upload-button-content"
