@@ -20,7 +20,7 @@
 		"prefix": "starter-code-fp",
 		"body": [
 			"import React, { FunctionComponent } from \"react\";",
-			"import { BaseProps } from \"@/types\"",
+			"import { BaseProps } from \"@/types\";",
 			"import \"./$TM_FILENAME_BASE.scss\";",
 			"import classnames from \"classnames\";",
 			"",
@@ -53,7 +53,7 @@
 		"prefix": "starter-code-f",
 		"body": [
 			"import React, { FunctionComponent } from \"react\";",
-			"import { BaseProps } from \"@/types\"",
+			"import { BaseProps } from \"@/types\";",
 			"import \"./$TM_FILENAME_BASE.scss\";",
 			"import classnames from \"classnames\";",
 			"",
@@ -78,7 +78,7 @@
 		"prefix": "starter-code-cps",
 		"body": [
 			"import React, { Component } from \"react\";",
-			"import { BaseProps } from \"@/types\"",
+			"import { BaseProps } from \"@/types\";",
 			"import \"./$TM_FILENAME_BASE.scss\";",
 			"import classnames from \"classnames\";",
 			"",
@@ -121,7 +121,7 @@
 		"prefix": "starter-code-cp",
 		"body": [
 			"import React, { Component } from \"react\";",
-			"import { BaseProps } from \"@/types\"",
+			"import { BaseProps } from \"@/types\";",
 			"import \"./$TM_FILENAME_BASE.scss\";",
 			"import classnames from \"classnames\";",
 			"",
@@ -156,7 +156,7 @@
 		"prefix": "starter-code-cs",
 		"body": [
 			"import React, { Component } from \"react\";",
-			"import { BaseProps } from \"@/types\"",
+			"import { BaseProps } from \"@/types\";",
 			"import \"./$TM_FILENAME_BASE.scss\";",
 			"import classnames from \"classnames\";",
 			"",
