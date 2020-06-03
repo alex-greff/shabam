@@ -13,7 +13,7 @@ export interface Props extends BaseProps {
     onClick?: (e: React.MouseEvent<HTMLDivElement>) => unknown;
 };
 
-const RecordButton: FunctionComponent<Props> = (props) => {
+const CircularButton: FunctionComponent<Props> = (props) => {
     const { disabled, size, onClick } = props;
 
     const handleOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -43,16 +43,17 @@ const RecordButton: FunctionComponent<Props> = (props) => {
             id={props.id}
             progress={100}
             stroke={props.stroke}
+            onClick={handleOnClick}
         >
             {props.children}
         </BaseArc>
     );
 };
 
-RecordButton.defaultProps = {
+CircularButton.defaultProps = {
     disabled: false,
     size: "4rem",
     stroke: 30
 } as Partial<Props>;
 
-export default RecordButton;
+export default CircularButton;

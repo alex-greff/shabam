@@ -2,6 +2,8 @@ import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types"
 import "./Benchmark.scss";
 import classnames from "classnames";
+import * as NotificationManager from "@/managers/NotificationManager";
+import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -26,11 +28,32 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const [audioBlobSource, setAudioBlobSource] = useState<AudioBlobSource>(null);
     const [isRecording, setIsRecording] = useState<boolean>(false);
+    const [audioRecorder, setAudioRecorder] = useState<AudioRecorder | null>(null);
+    const [benchmarkIsRunning, setBenchmarkIsRunning] = useState<boolean>(false);
 
     const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const audioFile = (e.target.files) ? e.target.files[0] : null;
         setAudioBlob(audioFile);
         setAudioBlobSource("file");
+    };
+
+    const handleStartRecording = async () => {
+        try {
+            const audioRecorder = await AudioRecorderFactory.create();
+            audioRecorder.start();
+            setAudioRecorder(audioRecorder);
+            setIsRecording(true);
+        } catch(err) {
+            NotificationManager.showErrorNotification("Unable to access microphone");
+        }
+    };
+
+    const handleStopRecording = async () => {
+        const audioBlob = await audioRecorder?.stop();
+        setAudioRecorder(null);
+        setIsRecording(false);
+        setAudioBlob(audioBlob!);
+        setAudioBlobSource("recording");
     };
 
     const hasAudioBlob = !!audioBlob;
@@ -64,14 +87,16 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                                     className="Benchmark__record-button"
                                     size="3.6rem"
                                     stroke={40}
-                                    disabled={isRecording}
+                                    disabled={isRecording || benchmarkIsRunning}
+                                    onClick={handleStartRecording}
                                 />
 
                                 <StopRecordButton 
                                     className="Benchmark__stop-record-button"
                                     size="3.6rem"
                                     stroke={40}
-                                    disabled={!isRecording}
+                                    disabled={!isRecording || benchmarkIsRunning}
+                                    onClick={handleStopRecording}
                                 />
                             </div>
                         </div>
@@ -92,7 +117,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                                 className="Benchmark__file-upload-button"
                                 accept="audio/*"
                                 onChange={handleAudioFileChange}
-                                disabled={isRecording}
+                                disabled={isRecording || benchmarkIsRunning}
 
                                 renderContent={({ disabled }) => (
                                     <IconButton 
@@ -114,7 +139,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                         className="Benchmark__run-benchmark-button"
                         appearance="solid"
                         mode="success"
-                        disabled={!hasAudioBlob}
+                        disabled={!hasAudioBlob || benchmarkIsRunning}
                     >
                         Run Benchmark
                     </NormalButton>

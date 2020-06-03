@@ -8,7 +8,7 @@ export interface Props extends CircularButtonProps {
     
 };
 
-const RecordButton: FunctionComponent<Props> = (props) => {
+const StopRecordButton: FunctionComponent<Props> = (props) => {
     return (
         <CircularButton
             {...props}
@@ -25,8 +25,8 @@ const RecordButton: FunctionComponent<Props> = (props) => {
     );
 };
 
-RecordButton.defaultProps = {
+StopRecordButton.defaultProps = {
     size: "4rem"
 } as Partial<Props>;
 
-export default RecordButton;
+export default StopRecordButton;
