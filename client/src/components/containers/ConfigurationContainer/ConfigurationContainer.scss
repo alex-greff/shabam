@@ -58,7 +58,7 @@
     & .ConfigurationContainer__content {
         background-color: color-link("ConfigurationContainer", "background", "secondary");
 
-        padding: 1rem;
+        padding: 1.5rem;
     }
 
     @include config-transition();
