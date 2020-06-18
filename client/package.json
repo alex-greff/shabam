@@ -83,6 +83,7 @@
         "@types/react-router-dom": "^5.1.4",
         "@types/react-transition-group": "^4.2.4",
         "@types/throttle-debounce": "^2.1.0",
-        "react-app-rewired": "^2.1.5"
+        "react-app-rewired": "^2.1.5",
+        "worker-plugin": "^4.0.3"
     }
 }

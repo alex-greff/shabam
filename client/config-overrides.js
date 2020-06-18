@@ -1,5 +1,13 @@
 const path = require("path");
-const { addWebpackAlias, useEslintRc, adjustStyleLoaders } = require("customize-cra");
+const { 
+    addWebpackAlias, 
+    useEslintRc, 
+    adjustStyleLoaders, 
+    addWebpackModuleRule,
+    addWebpackPlugin,
+} = require("customize-cra");
+
+const WorkerPlugin = require('worker-plugin');
 
 
 module.exports = function override(config, env) {
@@ -20,6 +28,8 @@ module.exports = function override(config, env) {
             sass.options.prependData = `@import "@/styling/global.scss";`;
         }
     })(config);
+
+    config = addWebpackPlugin(new WorkerPlugin())(config);
 
     return config;
 }

@@ -18,6 +18,9 @@ import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWra
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
+// TODO: remove
+const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
+
 export interface Props extends Omit<BaseProps, "id"> {
 
 };
@@ -54,6 +57,13 @@ const Benchmark: FunctionComponent<Props> = (props) => {
         setIsRecording(false);
         setAudioBlob(audioBlob!);
         setAudioBlobSource("recording");
+    };
+
+    const runBenchmark = async () => {
+        console.log("TODO: run benchmarks");
+
+        // TODO: remove
+        testWorker.postMessage("Hello there");
     };
 
     const hasAudioBlob = !!audioBlob;
@@ -140,6 +150,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
                         appearance="solid"
                         mode="success"
                         disabled={!hasAudioBlob || benchmarkIsRunning}
+                        onClick={runBenchmark}
                     >
                         Run Benchmark
                     </NormalButton>
