@@ -40,15 +40,15 @@ export class AudioRecorder {
     }
 
     get isInactive() {
-        return this.state == "inactive";
+        return this.state === "inactive";
     }
 
     get isRecording() {
-        return this.state == "recording";
+        return this.state === "recording";
     }
 
     get isPaused() {
-        return this.state == "paused";
+        return this.state === "paused";
     }
 }
 

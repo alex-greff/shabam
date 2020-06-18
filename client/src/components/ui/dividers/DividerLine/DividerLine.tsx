@@ -14,7 +14,7 @@ export interface Props extends BaseProps {
 const DividerLine: FunctionComponent<Props> = (props) => {
     const { orientation, size, ...rest } = props;
 
-    const lineStyles = (orientation == "horizontal") ? { width: "100%", height: size } : { width: size, height: "100%" };
+    const lineStyles = (orientation === "horizontal") ? { width: "100%", height: size } : { width: size, height: "100%" };
 
     const hasChildren = !!props.children;
 
