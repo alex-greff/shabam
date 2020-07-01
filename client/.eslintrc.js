@@ -1,6 +1,6 @@
 module.exports = {
     "extends": "react-app",
-    rules: {
+    "rules": {
         "no-throw-literal": 0
     }
 }

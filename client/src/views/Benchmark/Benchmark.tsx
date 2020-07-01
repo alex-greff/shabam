@@ -18,6 +18,8 @@ import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWra
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
+import { loadWasmModule } from "@/loaders/WASMLoader";
+
 // TODO: remove
 const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
 
@@ -64,6 +66,8 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
         // TODO: remove
         testWorker.postMessage("Hello there");
+
+        loadWasmModule("main");
     };
 
     const hasAudioBlob = !!audioBlob;

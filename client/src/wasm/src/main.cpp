@@ -12,5 +12,6 @@ extern "C" {
 EMSCRIPTEN_KEEPALIVE
 int test(int n) {
     std::cout << "Hello World" << std::endl;
+    // printf("Sup\n");
     return fib(n);
 }

@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "start:dev": "npm run build:wasm && npm run start:react-dev",
-        "start:react-dev": "react-app-rewired start",
-        "build:react": "react-app-rewired build",
+        "start:react-dev": "export EXTEND_ESLINT=true; react-app-rewired start",
+        "build:react": "export EXTEND_ESLINT=true; react-app-rewired build",
         "build:wasm": "bash -l /app/src/wasm/build.sh",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject"
@@ -69,6 +69,9 @@
         "typescript": "^3.7.5"
     },
     "devDependencies": {
+        "@babel/plugin-proposal-class-properties": "^7.10.4",
+        "@babel/plugin-proposal-decorators": "^7.10.4",
+        "@babel/plugin-syntax-import-meta": "^7.10.4",
         "@types/classnames": "^2.2.10",
         "@types/color": "^3.0.1",
         "@types/cookie": "^0.3.3",
@@ -83,6 +86,8 @@
         "@types/react-router-dom": "^5.1.4",
         "@types/react-transition-group": "^4.2.4",
         "@types/throttle-debounce": "^2.1.0",
+        "exports-loader": "^1.1.0",
+        "file-loader": "^6.0.0",
         "react-app-rewired": "^2.1.5",
         "worker-plugin": "^4.0.3"
     }

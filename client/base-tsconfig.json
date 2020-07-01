@@ -2,7 +2,8 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "@WASM/*": ["src/wasm/build/*"]
         },
         "experimentalDecorators": true,
         "isolatedModules": false

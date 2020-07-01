@@ -13,7 +13,9 @@ ROOT_FLAGS = \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s MODULARIZE=1 \
 	-s ENVIRONMENT=web \
+	-s BUILD_AS_WORKER=1 \
 	-s FILESYSTEM=0	\
+	# -s EXPORT_ES6=1 \
 
 COMMON_FLAGS = \
 	-std=c++14 \
@@ -26,8 +28,12 @@ OUT_DIR = /app/src/wasm/build
 
 # --- Compile steps ---
 
+# Note: there's a hack here where I prepend the following into main-wasm.js
+# 1. "var document = {};" to allow for it to be loaded in a web-worker where document does not exist
+
 main-wasm.js : main.bc
 	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
+	sed -i.old '1s;^;var document = {}\;;' $(OUT_DIR)/$@ 
 
 main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
 	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
