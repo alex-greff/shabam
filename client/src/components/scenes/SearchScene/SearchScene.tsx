@@ -156,6 +156,8 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         const SEARCH_Z_TRANSFORM = -100;
         const HOME_OUT_Z_TRANSFORM = 50;
 
+        gsap.killTweensOf(sceneRef.current!);
+
         // Play intro animation / setup initial values
         if (isFirstLoad) {
             if (isHomeView) {
