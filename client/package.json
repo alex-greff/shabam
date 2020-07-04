@@ -70,9 +70,6 @@
         "typescript": "^3.7.5"
     },
     "devDependencies": {
-        "@babel/plugin-proposal-class-properties": "^7.10.4",
-        "@babel/plugin-proposal-decorators": "^7.10.4",
-        "@babel/plugin-syntax-import-meta": "^7.10.4",
         "@types/classnames": "^2.2.10",
         "@types/color": "^3.0.1",
         "@types/cookie": "^0.3.3",

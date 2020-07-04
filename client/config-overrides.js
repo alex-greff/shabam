@@ -5,7 +5,6 @@ const {
     adjustStyleLoaders, 
     addWebpackModuleRule,
     addWebpackPlugin,
-    addBabelPlugin, 
 } = require("customize-cra");
 
 const WorkerPlugin = require('worker-plugin');
@@ -46,11 +45,6 @@ module.exports = function override(config, env) {
             exports: "default Module"
         }
     })(config);
-
-    // TODO: remove and uninstall plugins
-    // config = addBabelPlugin("@babel/plugin-syntax-import-meta")(config);
-    // config = addBabelPlugin(["@babel/plugin-proposal-decorators", { "legacy": true }])(config);
-    // config = addBabelPlugin(["@babel/plugin-proposal-class-properties", { "loose": true }])(config);
 
     config = addWebpackModuleRule({
         test: /.wasm$/,
