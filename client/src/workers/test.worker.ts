@@ -1,20 +1,30 @@
 import * as Utilities from "@/utilities";
 import { loadWasmModule } from "@/loaders/WASMLoader";
+import { expose } from "comlink";
+
+const exports = {
+    test() {
+        console.log("Test");
+    }
+};
+
+export type TestWorker = typeof exports;
+
+expose(exports);
 
 /* eslint-disable no-restricted-globals */
-// @ts-ignore
-const ctx: Worker = self as any;
+// const ctx: Worker = self as any;
 
-ctx.addEventListener('message', (event) => console.log("Test worker:", Utilities.generateId(), event));
+// ctx.addEventListener('message', (event) => console.log("Test worker:", Utilities.generateId(), event));
 
-ctx.addEventListener("message", (event) => {
-    // const { type } = event.data;
+// ctx.addEventListener("message", (event) => {
+//     // const { type } = event.data;
 
-    // if (type === "test") {
+//     // if (type === "test") {
 
-    // }
+//     // }
 
-    console.log("Here");
+//     console.log("Here");
 
-    loadWasmModule("main");
-});
+//     loadWasmModule("main");
+// });

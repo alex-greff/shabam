@@ -4,6 +4,7 @@ import "./Benchmark.scss";
 import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
 import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
+import { wrap } from "comlink";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -18,16 +19,17 @@ import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWra
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
-import { loadWasmModule } from "@/loaders/WASMLoader";
+import { loadWasmModule, WasmModuleWrapper } from "@/loaders/WASMLoader";
 
 // TODO: remove
-const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
+// const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
 
 export interface Props extends Omit<BaseProps, "id"> {
 
 };
 
 type AudioBlobSource = "recording" | "file" | null;
+
 
 const Benchmark: FunctionComponent<Props> = (props) => {
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -65,9 +67,33 @@ const Benchmark: FunctionComponent<Props> = (props) => {
         console.log("TODO: run benchmarks");
 
         // TODO: remove
-        testWorker.postMessage("Hello there");
+        // testWorker.postMessage("Hello there");
 
-        loadWasmModule("main");
+        // testWorker.onmessage()
+
+        // loadWasmModule("main");
+
+        // const test = import("@WASM/main-wasm.js");
+        // const test2 = import("@WASM/main-wasm.wasm");
+    
+        // loadWasmModule(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"), (err, module) => {
+        //     console.log("Error", err);
+        //     console.log("Module", module);
+        // });
+
+        const test = new WasmModuleWrapper(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"));
+
+        try {
+            await test.initialize();
+
+            console.log("Module", test.module);
+        } catch(err) {
+            console.error("Error", test.error);
+        }
+
+        const worker = new Worker("@/workers/test.worker.ts", { name: "test-worker", type: "module" });
+        const workerApi = wrap<import("@/workers/test.worker").TestWorker>(worker);
+        await workerApi.test();
     };
 
     const hasAudioBlob = !!audioBlob;

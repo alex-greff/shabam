@@ -41,6 +41,7 @@
         "axios": "^0.19.2",
         "classnames": "^2.2.6",
         "color": "^3.1.2",
+        "comlink": "^4.3.0",
         "cookie": "^0.4.1",
         "customize-cra": "^0.9.1",
         "graphql": "^15.0.0",
