@@ -29,15 +29,4 @@ export interface FingerprintGeneratorOptions {
     partitionCurve: number;
 }
 
-export interface FingerprintGeneratorStatic {
-    /**
-     * Generates the fingerprint for the given spectrogram data.
-     * 
-     * @param SpectrogramData The spectrogram data.
-     * @param options The configuration options for the fingerprint generator
-     */
-    generateFingerprint(
-        SpectrogramData: SpectrogramData, 
-        options: Partial<FingerprintGeneratorOptions>
-    ): Fingerprint;
-}
+export type FingerprintGeneratorFunction = (spectrogramData: SpectrogramData, options: Partial<FingerprintGeneratorOptions>) => Promise<Fingerprint>;

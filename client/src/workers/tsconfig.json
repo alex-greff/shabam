@@ -1,6 +1,12 @@
 {
     "compilerOptions": {
         "strict": true,
+        "baseUrl": "../../",
+        "paths": {
+            "@/*": ["src/*"],
+            "@WASM/*": ["src/wasm/build/*"]
+        },
+        "experimentalDecorators": true,
         "target": "esnext",
         "module": "esnext",
         "lib": [
@@ -11,6 +17,5 @@
         "noUnusedLocals": true,
         "sourceMap": true,
         "allowJs": false,
-        "baseUrl": "."
     }
 }

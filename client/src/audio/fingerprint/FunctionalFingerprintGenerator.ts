@@ -1,12 +1,10 @@
 import range from "lodash/range";
 import { 
-    FingerprintGeneratorStatic, 
     SpectrogramData, 
     FingerprintGeneratorOptions, 
-    Fingerprint, 
-    PartitionRanges
+    PartitionRanges,
+    FingerprintGeneratorFunction
 } from "@/audio/types";
-import { staticImplements } from "@/typescript/decorators";
 import { MeanStorage } from "@/audio/MeanStorage";
 import { computePartitionRanges } from "@/audio/utilities"
 import * as AudioConstants from "@/audio/constants";
@@ -72,105 +70,90 @@ function computeSliderStandardDeviation(
     return sliderStandardDeviation;
 }
 
-@staticImplements<FingerprintGeneratorStatic>()
-export class FunctionalFingerprintGenerator {
-    /**
-     * Generates the fingerprint for the given spectrogram data using functional
-     * JavaScript methods. This method should be wickedly inefficient and miles
-     * behind the imperative/WebAssembly implementations.
-     * 
-     * @param SpectrogramData The spectrogram data.
-     * @param options The configuration options for the fingerprint generator
-     */
-    public static generateFingerprint(
-        spectrogramData: SpectrogramData, 
-        options: Partial<FingerprintGeneratorOptions>
-    ): Fingerprint {
+export const generateFingerprint: FingerprintGeneratorFunction = async (spectrogramData, options) => {
+    const defaultOptions: FingerprintGeneratorOptions = {
+        FFTSize: AudioConstants.FFT_SIZE,
+        partitionAmount: AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
+        partitionCurve: AudioConstants.FINGERPRINT_PARTITION_CURVE
+    };
+    const optionsNormalized = { ...defaultOptions, ...options };
+    const {
+        partitionAmount, 
+        FFTSize,
+        partitionCurve
+    } = optionsNormalized;
 
-        const defaultOptions: FingerprintGeneratorOptions = {
-            FFTSize: AudioConstants.FFT_SIZE,
-            partitionAmount: AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
-            partitionCurve: AudioConstants.FINGERPRINT_PARTITION_CURVE
-        };
-        const optionsNormalized = { ...defaultOptions, ...options };
-        const {
-            partitionAmount, 
-            FFTSize,
-            partitionCurve
-        } = optionsNormalized;
+    // Get the partition ranges
+    const partitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
 
-        // Get the partition ranges
-        const partitionRanges = computePartitionRanges(partitionAmount, FFTSize, partitionCurve);
+    // Initialize mean storage instance
+    const meanStorage = new MeanStorage(spectrogramData, partitionRanges);
 
-        // Initialize mean storage instance
-        const meanStorage = new MeanStorage(spectrogramData, partitionRanges);
+    const numWindows = spectrogramData.numberOfWindows;
+    const numPartitions = partitionRanges.length;
 
-        const numWindows = spectrogramData.numberOfWindows;
-        const numPartitions = partitionRanges.length;
+    const fingerprintData = new Uint8Array(numWindows * numPartitions);
 
-        const fingerprintData = new Uint8Array(numWindows * numPartitions);
+    Array(numWindows).fill(0).forEach((_, currWindowIdx) => {
+        const currWindowData = new Uint8Array(numPartitions).map((_, currPartitionIdx) => {
+            const currPartitionRange = partitionRanges[currPartitionIdx];
+            const partitionStartIdx = currPartitionRange[0];
+            const partitionEndIdx = currPartitionRange[1];
+            const currPartitionAmount = currPartitionRange[1] - currPartitionRange[0];
 
-        Array(numWindows).fill(0).forEach((_, currWindowIdx) => {
-            const currWindowData = new Uint8Array(numPartitions).map((_, currPartitionIdx) => {
-                const currPartitionRange = partitionRanges[currPartitionIdx];
-                const partitionStartIdx = currPartitionRange[0];
-                const partitionEndIdx = currPartitionRange[1];
-                const currPartitionAmount = currPartitionRange[1] - currPartitionRange[0];
+            const sliderStartIdx = Math.max(0, currWindowIdx - AudioConstants.FINGERPRINT_SLIDER_WIDTH);
+            const sliderEndIdx = Math.min(numWindows, currWindowIdx + AudioConstants.FINGERPRINT_SLIDER_WIDTH + 1);
+            const sliderPartitionIdxs = range(sliderStartIdx, sliderEndIdx);
 
-                const sliderStartIdx = Math.max(0, currWindowIdx - AudioConstants.FINGERPRINT_SLIDER_WIDTH);
-                const sliderEndIdx = Math.min(numWindows, currWindowIdx + AudioConstants.FINGERPRINT_SLIDER_WIDTH + 1);
-                const sliderPartitionIdxs = range(sliderStartIdx, sliderEndIdx);
+            // Compute the average frequency value of the entire slider
+            const sliderMean = computeSliderMean(currPartitionIdx, sliderPartitionIdxs, meanStorage);
 
-                // Compute the average frequency value of the entire slider
-                const sliderMean = computeSliderMean(currPartitionIdx, sliderPartitionIdxs, meanStorage);
+            // Compute the standard deviation of the slider
+            const sliderStandardDeviation = computeSliderStandardDeviation(spectrogramData, currPartitionIdx, sliderPartitionIdxs, sliderMean, partitionRanges);
 
-                // Compute the standard deviation of the slider
-                const sliderStandardDeviation = computeSliderStandardDeviation(spectrogramData, currPartitionIdx, sliderPartitionIdxs, sliderMean, partitionRanges);
+            // TODO: remove debug statements
+            // console.log("Slider partition indexes", sliderPartitionIdxs);
+            // console.log(`(${currWindowIdx}, ${currPartitionIdx}): sliderMean=${sliderMean} sliderStandardDeviation=${sliderStandardDeviation}`);
 
-                // TODO: remove debug statements
-                // console.log("Slider partition indexes", sliderPartitionIdxs);
-                // console.log(`(${currWindowIdx}, ${currPartitionIdx}): sliderMean=${sliderMean} sliderStandardDeviation=${sliderStandardDeviation}`);
+            // Iterate through each frequency band in the current cell
+            const spectrogramSliceStartIdx = numWindows * currWindowIdx + partitionStartIdx;
+            const spectrogramSliceEndIdx = numWindows * currWindowIdx + partitionEndIdx;
 
-                // Iterate through each frequency band in the current cell
-                const spectrogramSliceStartIdx = numWindows * currWindowIdx + partitionStartIdx;
-                const spectrogramSliceEndIdx = numWindows * currWindowIdx + partitionEndIdx;
+            const currCellFreqs = spectrogramData.data.slice(spectrogramSliceStartIdx, spectrogramSliceEndIdx);
 
-                const currCellFreqs = spectrogramData.data.slice(spectrogramSliceStartIdx, spectrogramSliceEndIdx);
+            const totalCellFreqs = currPartitionAmount;
+            const neededFreqPassAmount = totalCellFreqs * AudioConstants.FINGERPRINT_FREQ_PASS_PERCENT;
 
-                const totalCellFreqs = currPartitionAmount;
-                const neededFreqPassAmount = totalCellFreqs * AudioConstants.FINGERPRINT_FREQ_PASS_PERCENT;
+            let passedFreqs = 0;
 
-                let passedFreqs = 0;
+            for (let i = 0; i < currCellFreqs.length; i++) {
+                const nCurrFreqValue = currCellFreqs[i];
 
-                for (let i = 0; i < currCellFreqs.length; i++) {
-                    const nCurrFreqValue = currCellFreqs[i];
-
-                    // Frequency passes
-                    const freqPasses = nCurrFreqValue > (sliderMean + sliderStandardDeviation) * AudioConstants.FINGERPRINT_THRESHOLD_MULTIPLIER;
-                    if (freqPasses) {
-                        passedFreqs++;
-                    }
-
-                    // The entire cell passes
-                    if (passedFreqs >= neededFreqPassAmount) {
-                        return 1;
-                    }
+                // Frequency passes
+                const freqPasses = nCurrFreqValue > (sliderMean + sliderStandardDeviation) * AudioConstants.FINGERPRINT_THRESHOLD_MULTIPLIER;
+                if (freqPasses) {
+                    passedFreqs++;
                 }
 
-                // Cell does not pass
-                return 0;
-            });
+                // The entire cell passes
+                if (passedFreqs >= neededFreqPassAmount) {
+                    return 1;
+                }
+            }
 
-            // Save the current window to the fingerprint
-            const startIdx = numWindows * currWindowIdx;
-            fingerprintData.set(currWindowData, startIdx);
+            // Cell does not pass
+            return 0;
         });
 
-        return {
-            numberOfWindows: numWindows,
-            numberOfPartitions: numPartitions,
-            data: fingerprintData,
-            partitionRanges: partitionRanges
-        }
+        // Save the current window to the fingerprint
+        const startIdx = numWindows * currWindowIdx;
+        fingerprintData.set(currWindowData, startIdx);
+    });
+
+    return {
+        numberOfWindows: numWindows,
+        numberOfPartitions: numPartitions,
+        data: fingerprintData,
+        partitionRanges: partitionRanges
     }
-}
+};

@@ -81,19 +81,23 @@ const Benchmark: FunctionComponent<Props> = (props) => {
         //     console.log("Module", module);
         // });
 
-        const test = new WasmModuleWrapper(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"));
+        // const test = new WasmModuleWrapper(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"));
 
-        try {
-            await test.initialize();
+        // try {
+        //     await test.initialize();
 
-            console.log("Module", test.module);
-        } catch(err) {
-            console.error("Error", test.error);
-        }
+        //     console.log("Module", test.module);
+        // } catch(err) {
+        //     console.error("Error", test.error);
+        // }
 
-        const worker = new Worker("@/workers/test.worker.ts", { name: "test-worker", type: "module" });
-        const workerApi = wrap<import("@/workers/test.worker").TestWorker>(worker);
-        await workerApi.test();
+        // const worker = new Worker("@/workers/test.worker.ts", { name: "test-worker", type: "module" });
+        // const workerApi = wrap<import("@/workers/test.worker").TestWorker>(worker);
+        // await workerApi.test();
+
+        const wasmFpWorker = new Worker("@/workers/fingerprint/WasmFingerprint.worker.ts", { name: "wasm-fingerprint-worker", type: "module" });
+        const wasmFpWorkerApi = wrap<import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker>(wasmFpWorker);
+        await wasmFpWorkerApi.generateFingerprint({ data: new Uint8Array(0), frequencyBinCount: 0, numberOfWindows: 0}, {});
     };
 
     const hasAudioBlob = !!audioBlob;

@@ -12,13 +12,13 @@ type ModuleLoadedCb = (err: any, module: any) => unknown;
 /**
  * A wrapper class for loading WebAssembly modules.
  */
-export class WasmModuleWrapper {
+export class WasmModuleWrapper<M = any> {
     private jsLinkageModule: Promise<JsLinkageModule>;
     private wasmModule: Promise<JsLinkageModule>;
 
     private _loaderPromise: Promise<void> | null;
     private _err: any | null;
-    private _module: any | null;
+    private _module: M | null;
     private _status: "uninitialized" | "loading" | "load-succeeded" | "load-failed";
 
     constructor(jsLinkageModule: Promise<JsLinkageModule>, wasmModule: Promise<WasmModule>) {

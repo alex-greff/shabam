@@ -31,6 +31,16 @@ OUT_DIR = /app/src/wasm/build
 # Note: there's a hack here where I prepend the following into main-wasm.js
 # 1. "var document = {};" to allow for it to be loaded in a web-worker where document does not exist
 
+# Fingerprint compile code
+
+fingerprint.js : fingerprint.bc
+	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/fingerprint.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
+	sed -i.old '1s;^;var document = {}\;;' $(OUT_DIR)/$@ 
+
+fingerprint.bc : $(SOURCE_DIR)/fingerprint.cpp
+	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/fingerprint.cpp $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
+
+# Temp compile code, TODO: remove
 main-wasm.js : main.bc
 	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
 	sed -i.old '1s;^;var document = {}\;;' $(OUT_DIR)/$@ 
