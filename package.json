@@ -35,7 +35,9 @@
         "shell:api": "docker exec -it shabam_api sh",
         "shell:fingerprint-worker": "docker exec -it shabam_fingerprint_worker sh",
         "shell:identification-worker": "docker exec -it shabam_identification_worker sh",
-        "shell:records-worker": "docker exec -it shabam_records_worker sh"
+        "shell:records-worker": "docker exec -it shabam_records_worker sh",
+
+        "build:client--wasm": "docker exec shabam_client npm run build:wasm"
     },
     "repository": {
         "type": "git",
