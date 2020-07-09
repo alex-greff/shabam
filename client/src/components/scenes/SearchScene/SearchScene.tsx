@@ -6,6 +6,8 @@ import { throttle } from "throttle-debounce";
 import gsap, { TweenLite } from "gsap";
 import { withRouter, matchPath } from "react-router-dom";
 
+import { useTransition } from 'react-route-transition';
+
 import RotatingArc from "@/components/ui/arcs/RotatingArc/RotatingArc";
 
 const MAX_DEG = 1;
@@ -36,7 +38,7 @@ const ARCS: Arc[] = [
     { forward: false, speed: 33, progress: 7, distance: 35, initialRotation: -20, color: "tertiary" },
 ];
 
-export interface Props extends BaseProps {
+export interface Props extends Omit<BaseProps, "id"> {
 
 }
 
@@ -45,27 +47,21 @@ interface MousePositionState {
     y: number;
 }
 
-type AnimationState = 
-    "other-to-search" 
-    | "other-to-home" 
-    | "search-to-other"
-    | "home-to-other"
-    | "home-to-search"
-    | "search-to-home" 
-    | null;
+const SEARCH_Z_TRANSFORM = -100;
+const HOME_OUT_Z_TRANSFORM = 50;
+
+// Selectors
+const SCENE_REF_SEL = "#SearchScene .SearchScene__scene";
+const SCENE_ROOT_REF_SEL = "#SearchScene";
+const S_REF_SEL = "#SearchScene .SearchScene__main-circle-s";
 
 const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const { location } = props;
 
-    const sceneRootRef = createRef<HTMLDivElement>();
     const sceneRef = createRef<HTMLDivElement>();
-    const mainCircleRef = createRef<HTMLDivElement>();
-    const sRef = createRef<HTMLDivElement>();
-    const arcsContainerRef = createRef<HTMLDivElement>();
 
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
     const [lockView, setLockView] = useState(true);
-    const [animationState, setAnimationState] = useState<AnimationState>(null);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
 
     // Handle tracking the mouse position state
@@ -103,68 +99,181 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         }
     }, [mousePosition, sceneRef, lockView]);
 
-    // Handle route change
-    useEffect(() => {
-        const currPathName = location.pathname;
-        const prevPathName = location.state?.prevPathname;
+    useTransition({
+        handlers: [
+            {
+                from: "/",
+                to: "/search",
+                // home-to-search
+                onEnter: async () => {
+                    gsap.killTweensOf(SCENE_REF_SEL);
 
-        const toHomeMatch = matchPath(currPathName, "/");
-        const isToHomeView = !!toHomeMatch && toHomeMatch.isExact;
-        const toSearchMatch = matchPath(currPathName, "/search");
-        const isToSearchView = !!toSearchMatch && toSearchMatch.isExact;
+                    setLockView(true);
 
-        const fromHomeMatch = matchPath(prevPathName, "/");
-        const isFromHomeView = !!fromHomeMatch && fromHomeMatch.isExact;
-        const fromSearchMatch = matchPath(prevPathName, "/search");
-        const isFromSearchView = !!fromSearchMatch && fromSearchMatch.isExact;
+                    const anim1 = gsap.to(SCENE_REF_SEL,  {
+                        duration: 0.8,
+                        translateZ: SEARCH_Z_TRANSFORM,
+                        ease: "power1.inOut",
+                        onComplete: () => {
+                            gsap.set(SCENE_ROOT_REF_SEL, { zIndex: 100 });
+                        }
+                    });
 
-        // Update view lock
-        if (isToHomeView) {
-            setLockView(false);
-        } else {
-            setLockView(true);
-        }
+                    const anim2 = await gsap.to(S_REF_SEL, {
+                        duration: 0.8,
+                        opacity: 1,
+                        ease: "power1.inOut"
+                    });
 
-        if (isFirstLoad) return;
+                    await Promise.all([anim1, anim2]);
+                }
+            },
+            {
+                from: "/search",
+                to: "/",
+                // search-to-home
+                onEnter: async () => {
+                    gsap.killTweensOf(SCENE_REF_SEL);
+                    gsap.set(SCENE_ROOT_REF_SEL, { zIndex: -1 });
 
-        // Update animation state
-        if (isFromHomeView && isToSearchView) { // home to search screen
-            setAnimationState("home-to-search");
-        } else if (isFromSearchView && isToHomeView) { // search to home screen
-            setAnimationState("search-to-home");
-        } else if (!isFromHomeView && isToHomeView) { // other to home screen
-            setAnimationState("other-to-home");
-        } else if (!isFromSearchView && isToSearchView) { // other to search screen
-            setAnimationState("other-to-search");
-        } else if (isFromHomeView && !isToHomeView) { // home to other screen
-            setAnimationState("home-to-other");
-        } else if (isFromSearchView && !isToSearchView) { // search to other screen
-            setAnimationState("search-to-other");
-        } else { // other to other screen
-            setAnimationState(null);
-        }
-    }, [location]);
+                    const anim1 = gsap.to(SCENE_REF_SEL,  {
+                        duration: 0.8,
+                        translateZ: 0,
+                        ease: "power1.inOut"
+                    });
+
+                    const anim2 = gsap.to(S_REF_SEL, {
+                        duration: 0.8,
+                        opacity: 0,
+                        ease: "power1.inOut"
+                    });
+
+                    await Promise.all([anim1, anim2]);
+                    
+                    setLockView(false);
+                }
+            },
+            {
+                from: "/",
+                to: "*",
+                // home-to-other
+                onEnter: async (data) => {
+                    // Make sure we're not going to the root or search path
+                    if (!!matchPath("/search", { path: data.to, exact: true, strict: false })
+                        || !!matchPath("/", { path: data.to, exact: true, strict: false }))
+                        return;
+
+                    setLockView(true);
+
+                    gsap.killTweensOf(SCENE_REF_SEL);
+
+                    await gsap.to(SCENE_REF_SEL,  {
+                        duration: 0.8,
+                        translateZ: HOME_OUT_Z_TRANSFORM,
+                        opacity: 0,
+                        ease: "power1.inOut"
+                    });
+                }
+            },
+            {
+                from: "*",
+                to: "/",
+                // other-to-home
+                onEnter: async (data) => {
+                    // Make sure we're not the search path or the root path
+                    if (!!matchPath("/search", { path: data.from, exact: true, strict: false }) 
+                        || !!matchPath("/", { path: data.from, exact: true, strict: false }))
+                        return;
+
+                    gsap.killTweensOf(SCENE_REF_SEL);
+                    gsap.set(SCENE_ROOT_REF_SEL, { zIndex: -1 });
+                    gsap.set(S_REF_SEL, {
+                        opacity: 0,
+                    });
+
+                    await gsap.fromTo(SCENE_REF_SEL, {
+                        translateZ: HOME_OUT_Z_TRANSFORM,
+                        opacity: 0,
+                    }, {
+                        duration: 0.8,
+                        translateZ: 0,
+                        opacity: 1,
+                        ease: "power1.inOut"
+                    });
+
+                    setLockView(false);
+                }
+            },
+            {
+                from: "/search",
+                to: "*",
+                // search-to-other
+                onEnter: async (data) => {
+                    // Make sure we're not going to the root path
+                    if (!!matchPath("/", { path: data.to, exact: true, strict: false }))
+                        return;
+
+                    gsap.killTweensOf(SCENE_REF_SEL);
+
+                    await gsap.to(SCENE_REF_SEL,  {
+                        duration: 0.5,
+                        opacity: 0,
+                        ease: "power1.inOut"
+                    });
+                }
+            },
+            {
+                from: "*",
+                to: "/search",
+                // other-to-search
+                onEnter: async (data) => {
+                    // Make sure we're not going to the root or search path
+                    if (!!matchPath("/", { path: data.from, exact: true, strict: false })
+                        || !!matchPath("/search", { path: data.from, exact: true, strict: false }))
+                        return;
+
+                    gsap.killTweensOf(SCENE_REF_SEL);
+
+                    gsap.set(SCENE_ROOT_REF_SEL, { zIndex: 100 });
+                    const anim1 = gsap.fromTo(SCENE_REF_SEL, {
+                        translateZ: SEARCH_Z_TRANSFORM,
+                        opacity: 0,
+                    }, {
+                        duration: 1,
+                        opacity: 1,
+                        ease: "power1.inOut"
+                    });
+
+                    const anim2 = gsap.fromTo(S_REF_SEL, {
+                        opacity: 0,
+                    }, {
+                        duration: 0.8,
+                        opacity: 1,
+                        ease: "power1.inOut"
+                    });
+
+                    await Promise.all([anim1, anim2]);
+                }
+            },
+        ]
+    });
 
     // Handle animation state changes
     useEffect(() => {
         const currPathName = location.pathname;
-        const homeMatch = matchPath(currPathName, "/");
-        const isHomeView = !!homeMatch && homeMatch.isExact;
-        const searchMatch = matchPath(currPathName, "/search");
-        const isSearchView = !!searchMatch && searchMatch.isExact;
+        const isHomeView = matchPath(currPathName, { path: "/", exact: true, strict: false });
+        const isSearchView = matchPath(currPathName, { path: "/search", exact: true, strict: false });
 
-        const SEARCH_Z_TRANSFORM = -100;
-        const HOME_OUT_Z_TRANSFORM = 50;
-
-        gsap.killTweensOf(sceneRef.current!);
+        gsap.killTweensOf(SCENE_REF_SEL);
 
         // Play intro animation / setup initial values
         if (isFirstLoad) {
             if (isHomeView) {
-                gsap.set(sceneRootRef.current!, {
+                setLockView(false);
+                gsap.set(SCENE_ROOT_REF_SEL, {
                     zIndex: -1
                 });
-                gsap.fromTo(sceneRef.current!, {
+                gsap.fromTo(SCENE_REF_SEL, {
                     translateZ: 0,
                     opacity: 0,
                 }, {
@@ -172,114 +281,31 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                     opacity: 1,
                     ease: "power1.inOut"
                 });
-                gsap.set(sRef.current!, {
+                gsap.set(S_REF_SEL, {
                     opacity: 0
                 });
             } else if (isSearchView) {
-                gsap.set(sceneRootRef.current!, {
+                console.log("Search intro anim");
+                setLockView(true);
+                gsap.set(SCENE_ROOT_REF_SEL, {
                     zIndex: 100
                 });
-                gsap.set(sceneRef.current!, {
+                gsap.set(SCENE_REF_SEL, {
                     translateZ: SEARCH_Z_TRANSFORM,
                 });
-                gsap.set(sRef.current!, {
+                gsap.set(S_REF_SEL, {
                     opacity: 1
                 });
             } else { // other view
-                gsap.set(sceneRef.current!, {
+                setLockView(true);
+                gsap.set(SCENE_REF_SEL, {
                     opacity: 0
                 });
             }
 
             setIsFirstLoad(false);
         }
-
-        // Run corresponding animation
-        if (animationState === "home-to-search") {
-            // Note: this is important because for some reason it becomes null after a while
-            // if directly referenced...
-            const sceneRootEl = sceneRootRef.current!;
-
-            gsap.to(sceneRef.current!,  {
-                duration: 0.8,
-                translateZ: SEARCH_Z_TRANSFORM,
-                ease: "power1.inOut",
-                onComplete: () => {
-                    gsap.set(sceneRootEl, { zIndex: 100 });
-                }
-            });
-
-            gsap.to(sRef.current!, {
-                duration: 0.8,
-                opacity: 1,
-                ease: "power1.inOut"
-            });
-
-        } else if (animationState === "search-to-home") {
-            gsap.set(sceneRootRef.current!, { zIndex: -1 });
-            gsap.to(sceneRef.current!,  {
-                duration: 0.8,
-                translateZ: 0,
-                ease: "power1.inOut"
-            });
-
-            gsap.to(sRef.current!, {
-                duration: 0.8,
-                opacity: 0,
-                ease: "power1.inOut"
-            });
-
-        } else if (animationState === "home-to-other") {
-            gsap.to(sceneRef.current!,  {
-                duration: 0.8,
-                translateZ: HOME_OUT_Z_TRANSFORM,
-                opacity: 0,
-                ease: "power1.inOut"
-            });
-
-        } else if (animationState === "search-to-other") {
-            gsap.to(sceneRef.current!,  {
-                duration: 0.5,
-                opacity: 0,
-                ease: "power1.inOut"
-            });
-
-        } else if (animationState === "other-to-home") {
-            gsap.set(sceneRootRef.current!, { zIndex: -1 });
-            gsap.fromTo(sceneRef.current!, {
-                translateZ: HOME_OUT_Z_TRANSFORM,
-                opacity: 0,
-            }, {
-                duration: 0.8,
-                translateZ: 0,
-                opacity: 1,
-                ease: "power1.inOut"
-            });
-
-            gsap.set(sRef.current!, {
-                opacity: 0,
-            });
-
-        } else if (animationState === "other-to-search") {
-            gsap.set(sceneRootRef.current!, { zIndex: 100 });
-            gsap.fromTo(sceneRef.current!, {
-                translateZ: SEARCH_Z_TRANSFORM,
-                opacity: 0,
-            }, {
-                duration: 1,
-                opacity: 1,
-                ease: "power1.inOut"
-            });
-
-            gsap.fromTo(sRef.current!, {
-                opacity: 0,
-            }, {
-                duration: 0.8,
-                opacity: 1,
-                ease: "power1.inOut"
-            });
-        }
-    }, [animationState]);
+    }, []);
 
     const toSearchMatch = matchPath(location.pathname, "/search");
     const isToSearchView = !!toSearchMatch && toSearchMatch.isExact;
@@ -292,8 +318,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 { "is-search-view": isToSearchView }
             )}
             style={props.style}
-            id={props.id}
-            ref={sceneRootRef}
+            id="SearchScene"
         >
             <div 
                 className="SearchScene__scene"
@@ -301,11 +326,9 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
             >
                 <div 
                     className={"SearchScene__main-circle"}
-                    ref={mainCircleRef}
                 >
                     <div 
                         className="SearchScene__main-circle-s"
-                        ref={sRef}
                     >
                         S
                     </div>
@@ -313,7 +336,6 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
 
                 <div 
                     className="SearchScene__arcs-container"
-                    ref={arcsContainerRef}
                 >
                     {ARCS.map((arc, num) => (
                         <div 

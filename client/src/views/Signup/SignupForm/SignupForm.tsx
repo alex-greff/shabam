@@ -5,6 +5,7 @@ import classnames from "classnames";
 import { useForm } from "react-hook-form";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { BackNavigation } from "@/utilities";
+import { useTransitionHistory } from 'react-route-transition';
 
 import * as API from "@/api";
 
@@ -14,7 +15,7 @@ import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 import PersonIcon from "@material-ui/icons/Person";
 import LockIcon from "@material-ui/icons/Lock";
 
-export interface Props extends BaseProps, RouteComponentProps {
+export interface Props extends BaseProps {
 
 };
 
@@ -25,6 +26,7 @@ interface FormData {
 }
 
 const SignupForm: FunctionComponent<Props> = (props) => {
+    const history = useTransitionHistory();
     const [submitting, setSubmitting] = useState(false);
     const [globalError, setGlobalError] = useState<string | null>(null);
     const { register, setValue, handleSubmit, errors, setError, reset, watch } = useForm<FormData>({
@@ -52,9 +54,9 @@ const SignupForm: FunctionComponent<Props> = (props) => {
         // Navigate back to the previous page, if given
         if (BackNavigation.hasBackPath) {
             BackNavigation.clearBackPath();
-            props.history.push(BackNavigation.backPath!);
+            history.push(BackNavigation.backPath!);
         } else {
-            props.history.push("/");
+            history.push("/");
         }
     });
 
@@ -151,4 +153,4 @@ SignupForm.defaultProps = {
 
 } as Partial<Props>;
 
-export default withRouter(SignupForm);
+export default SignupForm;

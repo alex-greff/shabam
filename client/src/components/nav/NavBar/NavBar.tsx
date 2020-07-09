@@ -5,7 +5,6 @@ import { withRouter, RouteComponentProps, matchPath } from "react-router-dom";
 import { withSize, WithSizeProps } from "react-sizeme";
 import classnames from "classnames";
 import * as Utilities from "@/utilities";
-import { TransitionUtilities } from "@/utilities";
 
 import HomeNavItem from "@/components/nav/items/HomeNavItem/HomeNavItem";
 import NavItem from "@/components/nav/items/NavItem/NavItem";

@@ -5,44 +5,43 @@ import classnames from "classnames";
 import { Link, withRouter, matchPath } from "react-router-dom";
 import { LocationDescriptor } from "history";
 import { Duration } from "@/utilities/transitionUtilities";
+import { useTransitionHistory } from 'react-route-transition';
+
 
 export interface Props extends BaseProps {
     path: string;
-    transitionId?: string;
-    transitionDuration?: Duration;
     onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => unknown;
 };
 
 const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const { 
         className, 
-        path, 
-        transitionId, 
-        transitionDuration, 
+        path,
         onClick,
-        ...rest} = props;
+        ...rest } = props;
+    const history = useTransitionHistory();
 
     const isActive = !!matchPath(props.location.pathname, path);
 
-    const to: LocationDescriptor<AppLocationState> = {
-        pathname: path,
-        state: {
-            transitionId,
-            transitionDuration,
-            prevPathname: props.location.pathname
-        }
-    }
+    // console.log("test", matchPath("/account/:id", "/account/test")); // TODO: remove
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault();
+        history.push(path);
+
+        if (onClick) onClick(e);
+    };
 
     return (
-        <Link 
-            to={to}
+        <a 
+            href={path}
             className={classnames("NavItemBase", className, { "active": isActive })}
             style={props.style}
             id={props.id}
-            onClick={onClick}
+            onClick={handleClick}
         >
             {props.children}
-        </Link>
+        </a>
     );
 };
 

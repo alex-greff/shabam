@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import { BaseProps, AppLocationState } from "@/types";
 import { Location } from "history";
 import classnames from "classnames";
+import { RouteTransitionProvider } from 'react-route-transition';
 
 import HomeView from "@/views/Home/Home";
 import SearchView from "@/views/Search/Search";
@@ -16,11 +17,11 @@ const SignupView = lazy(() => import(/* webpackChunkName: "signup" */ "@/views/S
 const PageNotFoundView = lazy(() => import(/* webpackChunkName: "page-not-found" */ "@/views/PageNotFound/PageNotFound"));
 
 export interface Props extends BaseProps {
-    location: Location<AppLocationState>;
+    // location: Location<AppLocationState>;
 };
 
 const RouteView: FunctionComponent<Props> = (props) => {
-    const { location } = props;
+    // const { location } = props;
 
     return (
         <div 
@@ -29,7 +30,7 @@ const RouteView: FunctionComponent<Props> = (props) => {
             id={props.id}
         >
             <Suspense fallback={null}>
-                <Switch location={location}>
+                <Switch>
                     <Route exact path="/" component={HomeView} />
                     <Route exact path="/search" component={SearchView} />
                     <Route exact path="/catalog" component={CatalogView} />

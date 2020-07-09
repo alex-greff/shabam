@@ -1,15 +1,11 @@
-import React, { FunctionComponent, MouseEvent } from "react";
-import { BaseProps, AppRouteComponentProps, AppLocationState } from "@/types"
+import React, { FunctionComponent } from "react";
+import { BaseProps } from "@/types"
 import "./ButtonBase.scss";
 import classnames from "classnames";
-import { Link, withRouter } from "react-router-dom";
-import { LocationDescriptor } from "history";
-import { Duration } from "@/utilities/transitionUtilities";
+import { useTransitionHistory } from 'react-route-transition';
 
 export interface Props extends BaseProps {
     path?: string;
-    transitionId?: string;
-    transitionDuration?: Duration;
     href?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement> 
         | React.MouseEvent<HTMLAnchorElement>
@@ -20,19 +16,18 @@ export interface Props extends BaseProps {
     forceDiv?: boolean;
 };
 
-const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
+const ButtonBase: FunctionComponent<Props> = (props) => {
     const { 
-        path, 
-        transitionId, 
-        transitionDuration, 
+        path,
         href, 
         className, 
         disabled, 
         onClick, 
-        staticContext, 
         forceDiv,
         ...rest 
     } = props;
+
+    const history = useTransitionHistory();
 
     const classNameComputed = classnames("ButtonBase", className, { "disabled": disabled });
 
@@ -58,24 +53,23 @@ const ButtonBase: FunctionComponent<Props & AppRouteComponentProps> = (props) =>
     }
 
     if (path) {
-        const to: LocationDescriptor<AppLocationState> = {
-            pathname: path,
-            state: {
-                transitionId,
-                transitionDuration,
-                prevPathname: props.location.pathname
-            }
-        };
+        const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+            e.preventDefault();
+            if (disabled) return;
+
+            history.push(path);
+            if (onClick) onClick(e);
+        }
 
         return (
-            <Link 
+            <a 
                 {...rest}
-                to={to}
+                href={path}
                 className={classNameComputed}
-                onClick={onClick}
+                onClick={handleLinkClick}
             >
                 {props.children}
-            </Link>
+            </a>
         );
     }
 
@@ -107,4 +101,4 @@ ButtonBase.defaultProps = {
     forceDiv: false
 } as Partial<Props>;
 
-export default withRouter(ButtonBase);
+export default ButtonBase;

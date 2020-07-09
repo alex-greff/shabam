@@ -1,5 +1,7 @@
 import { matchPath } from "react-router-dom";
 
+// TODO: remove this ugly hack
+
 // Note 1: keep up to date with @/styling/transitions/index.scss
 // Note 2: some of these types and functions should probably be moved out to somewhere else
 export type Transition = "page-slide" | "fade" | "top-slide" | "none";

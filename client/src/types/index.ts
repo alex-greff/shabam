@@ -8,11 +8,7 @@ export interface BaseProps {
     id?: string;
 }
 
-export interface AppLocationState {
-    transitionId?: string;
-    transitionDuration?: Duration;
-    prevPathname: string;
-}
+export interface AppLocationState {}
 
 export type AppRouteComponentProps = RouteComponentProps<{}, StaticContext, AppLocationState>;
 export type AppLinkProps = LinkProps<AppLocationState>;
