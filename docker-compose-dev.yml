@@ -97,6 +97,7 @@ services:
             - /app/node_modules
             - ./client:/app
             - client_emscripten_cache:/emsdk_portable/.emscripten_cache
+            - .:/workspace:cached # For vscode dev container
         environment: 
             - CHOKIDAR_USEPOLLING=true
             - REACT_APP_GRAPHQL_API_ENDPOINT=/api/graphql

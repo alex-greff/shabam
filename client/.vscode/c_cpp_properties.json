@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/emsdk_portable/emscripten/tag-1.39.4/system/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/emsdk_portable/llvm/clang/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

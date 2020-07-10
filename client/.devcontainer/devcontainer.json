@@ -1,0 +1,11 @@
+{
+	"name": "Shabam Client",
+	"dockerComposeFile": ["..\\..\\docker-compose-dev.yml"],
+	"service": "client",
+	"workspaceFolder": "/app",
+	"shutdownAction": "none",
+	"extensions": [
+        "ms-vscode.cpptools",
+        "streetsidesoftware.code-spell-checker"
+	]
+}
