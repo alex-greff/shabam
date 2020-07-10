@@ -61,6 +61,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
     const sceneRef = createRef<HTMLDivElement>();
 
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
+    const [isSearchView, setIsSearchView] = useState<boolean>(false);
     const [lockView, setLockView] = useState(true);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
 
@@ -99,16 +100,18 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         }
     }, [mousePosition, sceneRef, lockView]);
 
+    // Handle route change animation effects
     useTransition({
         handlers: [
             {
                 from: "/",
                 to: "/search",
                 // home-to-search
-                onEnter: async () => {
-                    gsap.killTweensOf(SCENE_REF_SEL);
-
+                onLeave: async () => {
                     setLockView(true);
+                    setIsSearchView(true);
+
+                    gsap.killTweensOf(SCENE_REF_SEL);
 
                     const anim1 = gsap.to(SCENE_REF_SEL,  {
                         duration: 0.8,
@@ -119,7 +122,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                         }
                     });
 
-                    const anim2 = await gsap.to(S_REF_SEL, {
+                    const anim2 = gsap.to(S_REF_SEL, {
                         duration: 0.8,
                         opacity: 1,
                         ease: "power1.inOut"
@@ -133,6 +136,8 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                 to: "/",
                 // search-to-home
                 onEnter: async () => {
+                    setIsSearchView(false);
+
                     gsap.killTweensOf(SCENE_REF_SEL);
                     gsap.set(SCENE_ROOT_REF_SEL, { zIndex: -1 });
 
@@ -213,6 +218,8 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                     if (!!matchPath("/", { path: data.to, exact: true, strict: false }))
                         return;
 
+                    setIsSearchView(false);
+
                     gsap.killTweensOf(SCENE_REF_SEL);
 
                     await gsap.to(SCENE_REF_SEL,  {
@@ -231,6 +238,8 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
                     if (!!matchPath("/", { path: data.from, exact: true, strict: false })
                         || !!matchPath("/search", { path: data.from, exact: true, strict: false }))
                         return;
+
+                    setIsSearchView(true);
 
                     gsap.killTweensOf(SCENE_REF_SEL);
 
@@ -258,11 +267,13 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         ]
     });
 
-    // Handle animation state changes
+    // Handle initial animation effects
     useEffect(() => {
         const currPathName = location.pathname;
-        const isHomeView = matchPath(currPathName, { path: "/", exact: true, strict: false });
-        const isSearchView = matchPath(currPathName, { path: "/search", exact: true, strict: false });
+        const isHomeView = !!matchPath(currPathName, { path: "/", exact: true, strict: false });
+        const isSearchView = !!matchPath(currPathName, { path: "/search", exact: true, strict: false });
+
+        setIsSearchView(isSearchView);
 
         gsap.killTweensOf(SCENE_REF_SEL);
 
@@ -307,15 +318,12 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         }
     }, []);
 
-    const toSearchMatch = matchPath(location.pathname, "/search");
-    const isToSearchView = !!toSearchMatch && toSearchMatch.isExact;
-
     return (
         <div 
             className={classnames(
                 "SearchScene", 
                 props.className,
-                { "is-search-view": isToSearchView }
+                { "is-search-view": isSearchView }
             )}
             style={props.style}
             id="SearchScene"

@@ -1,9 +1,7 @@
 import React, { Suspense, lazy, FunctionComponent } from "react";
 import { Switch, Route } from "react-router-dom";
-import { BaseProps, AppLocationState } from "@/types";
-import { Location } from "history";
+import { BaseProps } from "@/types";
 import classnames from "classnames";
-import { RouteTransitionProvider } from 'react-route-transition';
 
 import HomeView from "@/views/Home/Home";
 import SearchView from "@/views/Search/Search";
@@ -17,12 +15,9 @@ const SignupView = lazy(() => import(/* webpackChunkName: "signup" */ "@/views/S
 const PageNotFoundView = lazy(() => import(/* webpackChunkName: "page-not-found" */ "@/views/PageNotFound/PageNotFound"));
 
 export interface Props extends BaseProps {
-    // location: Location<AppLocationState>;
 };
 
 const RouteView: FunctionComponent<Props> = (props) => {
-    // const { location } = props;
-
     return (
         <div 
             className={classnames("RouteView", props.className)}
