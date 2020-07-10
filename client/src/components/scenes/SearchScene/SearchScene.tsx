@@ -61,7 +61,7 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
     const sceneRef = createRef<HTMLDivElement>();
 
     const [mousePosition, setMousePosition] = useState<MousePositionState>({ x: 0, y: 0 });
-    const [isSearchView, setIsSearchView] = useState<boolean>(false);
+    const [isSearchView, setIsSearchView] = useState<boolean>(!!matchPath("/search", { path: window.location.pathname, exact: true, strict: false }));
     const [lockView, setLockView] = useState(true);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
 
@@ -267,55 +267,76 @@ const SearchScene: FunctionComponent<Props & AppRouteComponentProps> = (props) =
         ]
     });
 
+    const setInitAnimState = (isHomeView: boolean, isSearchView: boolean) => {
+        setIsSearchView(isSearchView);
+
+        gsap.killTweensOf(SCENE_REF_SEL);
+
+        if (isHomeView) {
+            setLockView(false);
+            gsap.set(SCENE_ROOT_REF_SEL, {
+                zIndex: -1
+            });
+            gsap.fromTo(SCENE_REF_SEL, {
+                translateZ: 0,
+                opacity: 0,
+            }, {
+                duration: 1,
+                opacity: 1,
+                ease: "power1.inOut"
+            });
+            gsap.set(S_REF_SEL, {
+                opacity: 0
+            });
+        } else if (isSearchView) {
+            setLockView(true);
+            gsap.set(SCENE_ROOT_REF_SEL, {
+                zIndex: 100
+            });
+            gsap.set(SCENE_REF_SEL, {
+                translateZ: SEARCH_Z_TRANSFORM,
+                opacity: 1
+            });
+            gsap.set(S_REF_SEL, {
+                opacity: 1
+            });
+        } else { // other view
+            setLockView(true);
+            gsap.set(SCENE_REF_SEL, {
+                opacity: 0
+            });
+        }
+    };
+
     // Handle initial animation effects
     useEffect(() => {
         const currPathName = location.pathname;
         const isHomeView = !!matchPath(currPathName, { path: "/", exact: true, strict: false });
         const isSearchView = !!matchPath(currPathName, { path: "/search", exact: true, strict: false });
 
-        setIsSearchView(isSearchView);
-
-        gsap.killTweensOf(SCENE_REF_SEL);
-
         // Play intro animation / setup initial values
         if (isFirstLoad) {
-            if (isHomeView) {
-                setLockView(false);
-                gsap.set(SCENE_ROOT_REF_SEL, {
-                    zIndex: -1
-                });
-                gsap.fromTo(SCENE_REF_SEL, {
-                    translateZ: 0,
-                    opacity: 0,
-                }, {
-                    duration: 1,
-                    opacity: 1,
-                    ease: "power1.inOut"
-                });
-                gsap.set(S_REF_SEL, {
-                    opacity: 0
-                });
-            } else if (isSearchView) {
-                console.log("Search intro anim");
-                setLockView(true);
-                gsap.set(SCENE_ROOT_REF_SEL, {
-                    zIndex: 100
-                });
-                gsap.set(SCENE_REF_SEL, {
-                    translateZ: SEARCH_Z_TRANSFORM,
-                });
-                gsap.set(S_REF_SEL, {
-                    opacity: 1
-                });
-            } else { // other view
-                setLockView(true);
-                gsap.set(SCENE_REF_SEL, {
-                    opacity: 0
-                });
-            }
+            setInitAnimState(isHomeView, isSearchView);
 
             setIsFirstLoad(false);
         }
+    }, []);
+
+    // Handles if the screws with the popstate
+    useEffect(() => {
+        const onPopState = () => {
+            const currPathName = window.location.pathname;
+            const isHomeView = !!matchPath(currPathName, { path: "/", exact: true, strict: false });
+            const isSearchView = !!matchPath(currPathName, { path: "/search", exact: true, strict: false });
+
+            setInitAnimState(isHomeView, isSearchView);
+        };
+
+        window.addEventListener("popstate", onPopState);
+
+        return () => {
+            window.removeEventListener("popstate", onPopState);
+        };
     }, []);
 
     return (
