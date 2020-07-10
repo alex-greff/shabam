@@ -37,7 +37,8 @@
         "shell:identification-worker": "docker exec -it shabam_identification_worker sh",
         "shell:records-worker": "docker exec -it shabam_records_worker sh",
 
-        "build:client--wasm": "docker exec shabam_client npm run build:wasm"
+        "build:client--wasm": "docker exec shabam_client npm run build:wasm",
+        "init-schema--main": "cd ./postgres_client && npm run exec:init-schema--main ; cd .."
     },
     "repository": {
         "type": "git",
