@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
 import * as API from "@/api";
 import { CSSTransition } from 'react-transition-group';
-import { TransitionUtilities } from "@/utilities";
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
@@ -77,8 +76,8 @@ const AccountControls: FunctionComponent<Props> = (props) => {
 
                 <CSSTransition
                     in={dropdownOpen}
-                    timeout={TransitionUtilities.getDuration("short") * 1000}
-                    classNames={TransitionUtilities.getTransitionId("top-slide", "top-slide", "short")}
+                    timeout={200}
+                    classNames={"AccountControls-anim"}
                     unmountOnExit={true}
                 >
                     <div className="AccountControls__dropdown">

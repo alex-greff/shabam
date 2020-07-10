@@ -1,4 +1,6 @@
 .AccountControls {
+    @include register-top-slide-transition(AccountControls-anim, 200ms);
+
     position: relative;
 
     font-size: 1.7rem;

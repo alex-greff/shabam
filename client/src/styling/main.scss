@@ -1,10 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Passion+One:wght@700&display=swap');
-@import "./transition/index.scss";
-
-// TODO: strip out this ugly system
-// Register all the transitions
-@include register-all-transitions();
 
 * {
     // Global resets

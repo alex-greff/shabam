@@ -1,8 +1,6 @@
 import * as BackNavigationImport from "./backNavigation";
-import * as TransitionUtilitiesImport from "./transitionUtilities";
 
 export const BackNavigation = BackNavigationImport.default;
-export const TransitionUtilities = TransitionUtilitiesImport;
 
 // -----------------------------------------------
 // --- Helpers for the helpers (helperception) ---

@@ -1,10 +1,8 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps, AppRouteComponentProps, AppLocationState } from "@/types";
+import { BaseProps, AppRouteComponentProps } from "@/types";
 import "./NavItemBase.scss";
 import classnames from "classnames";
-import { Link, withRouter, matchPath } from "react-router-dom";
-import { LocationDescriptor } from "history";
-import { Duration } from "@/utilities/transitionUtilities";
+import { withRouter, matchPath } from "react-router-dom";
 import { useTransitionHistory } from 'react-route-transition';
 
 
@@ -22,8 +20,6 @@ const NavItem: FunctionComponent<Props & AppRouteComponentProps> = (props) => {
     const history = useTransitionHistory();
 
     const isActive = !!matchPath(props.location.pathname, path);
-
-    // console.log("test", matchPath("/account/:id", "/account/test")); // TODO: remove
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault();

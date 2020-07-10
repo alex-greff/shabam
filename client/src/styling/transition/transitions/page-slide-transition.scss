@@ -1,9 +1,5 @@
-@import "../utils.scss";
-
-@mixin register-page-slide-transition($prefix, $direction: "both", $duration: 1) {
-    @include check-direction($direction);
-
-    @keyframes pageSlideOut {
+@mixin register-page-slide-transition($prefix, $duration: 1000ms) {
+    @keyframes #{$prefix}PageSlideOut {
         0% { 
             background-color: rgba(112, 112, 112, 0); 
         }
@@ -24,7 +20,7 @@
         }
     }
     
-    @keyframes pageSlideIn {
+    @keyframes #{$prefix}PageSlideIn {
         0% { 
             opacity: 0.5; 
             transform: translateZ(-500px) translateX(200%); 
@@ -47,21 +43,17 @@
         }
     }
 
-    @if $direction == "both" or $direction == "in" {
-        .#{$prefix}-enter-active {
-            position: absolute;
-            animation: pageSlideIn #{$duration}s both ease;
-            overflow: hidden;
-            height: 100vh;
-        }
+    .#{$prefix}-enter-active {
+        position: absolute;
+        animation: #{$prefix}PageSlideIn #{$duration} both ease;
+        overflow: hidden;
+        height: 100vh;
     }
 
-    @if $direction == "both" or $direction == "out" {
-        .#{$prefix}-exit-active {
-            position: absolute;
-            animation: pageSlideOut #{$duration}s both ease;
-            overflow: hidden;
-            height: 100vh;
-        }
+    .#{$prefix}-exit-active {
+        position: absolute;
+        animation: #{$prefix}PageSlideOut #{$duration} both ease;
+        overflow: hidden;
+        height: 100vh;
     }
 }

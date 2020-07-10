@@ -56,7 +56,6 @@ const NavBar: FunctionComponent<Props> = (props) => {
             </NavItem>
             <NavItem 
                 path="/catalog"
-                // transition="fade" // TODO: make sure to use TransitionUtilities
                 onClick={handleNavItemClick}
             >
                 Catalog

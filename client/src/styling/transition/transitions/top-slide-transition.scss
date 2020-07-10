@@ -1,9 +1,5 @@
-@import "../utils.scss";
-
-@mixin register-top-slide-transition($prefix, $direction: "both", $duration: 1) {
-    @include check-direction($direction);
-
-    @keyframes topSlideIn {
+@mixin register-top-slide-transition($prefix, $duration: 1000ms) {
+    @keyframes #{$prefix}TopSlideIn {
         from { 
             opacity: 0; 
             transform: translateY(-10px);
@@ -13,32 +9,28 @@
             transform: translateY(0px);
         }
     }
-    @keyframes topSlideOut { 
+    @keyframes #{$prefix}TopSlideOut { 
         to { 
             opacity: 0;
             transform: translateY(-10px);
         }
     }
 
-    @if $direction == "both" or $direction == "in" {
-        .#{$prefix}-enter {
-            position: absolute;
-        }
-
-        .#{$prefix}-enter-active {
-            animation: topSlideIn #{$duration}s ease both;
-            z-index: 2;
-        }
+    .#{$prefix}-enter {
+        position: absolute;
     }
 
-    @if $direction == "both" or $direction == "out" {
-        .#{$prefix}-exit {
-            position: absolute;
-        }
+    .#{$prefix}-enter-active {
+        animation: #{$prefix}TopSlideIn #{$duration} ease both;
+        z-index: 2;
+    }
 
-        .#{$prefix}-exit-active {
-            animation: topSlideOut #{$duration}s ease both;
-            z-index: 1;
-        }
+    .#{$prefix}-exit {
+        position: absolute;
+    }
+
+    .#{$prefix}-exit-active {
+        animation: #{$prefix}TopSlideOut #{$duration} ease both;
+        z-index: 1;
     }
 }
