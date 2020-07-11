@@ -1,4 +1,10 @@
-import { Router, Request, Response, NextFunction, RequestHandler } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -20,10 +26,16 @@ app.use(bodyParser.json());
 
 // Setup CORS headers
 const corsOptions: CorsOptions = {
-    origin: "*",
-    methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-    optionsSuccessStatus: 200
+  origin: "*",
+  methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+  ],
+  optionsSuccessStatus: 200,
 };
 // Handle CORS preflight options request
 app.options("*", cors(corsOptions));
@@ -37,19 +49,19 @@ app.use("/", rootRoute);
 // Handle 404 error
 // If it gets down there, then there is no route for the given request
 app.use((req: Request, res: Response, next: NextFunction) => {
-    const error = new HTTPError("Request endpoint not found");
-    error.status = 404;
-    next(error);
+  const error = new HTTPError("Request endpoint not found");
+  error.status = 404;
+  next(error);
 });
 
 // Handle 500 errors
-app.use((error : HTTPError, req: Request, res: Response, next: NextFunction) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
-    });
+app.use((error: HTTPError, req: Request, res: Response, next: NextFunction) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
 });
 
 // module.exports = app;
