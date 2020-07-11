@@ -1,69 +1,72 @@
 .Notification__container {
-    &.Toastify__toast-container--bottom-center {
-        bottom: 0.5rem;
-    }
+  &.Toastify__toast-container--bottom-center {
+    bottom: 0.5rem;
+  }
 }
 
 .Notification {
-    $width: 1rem;
-    $padding: 0.7rem;
+  $width: 1rem;
+  $padding: 0.7rem;
 
-    position: relative;
+  position: relative;
 
-    color: color-link("Notification", "text", "primary");
-    background-color: color-link("Notification", "background", "primary");
+  color: color-link("Notification", "text", "primary");
+  background-color: color-link("Notification", "background", "primary");
 
-    box-shadow: 2px 2px 6px 0px rgba(0,0,0,0.3);
+  box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
 
-    padding: $padding ($width + $padding);
+  padding: $padding ($width + $padding);
 
-    user-select: none;
+  user-select: none;
 
-    & .Notification__body {
-        text-align: center;
-    }
+  & .Notification__body {
+    text-align: center;
+  }
 
-    &::before {
-        content: "";
+  &::before {
+    content: "";
 
-        position: absolute;
-        left: 0;
-        top: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
 
-        height: 100%;
-        width: $width;
+    height: 100%;
+    width: $width;
 
-        background-color: color-link("Notification", "info", "primary");
-    }
+    background-color: color-link("Notification", "info", "primary");
+  }
 
+  &::after {
+    content: "";
+
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    height: 100%;
+    width: $width;
+
+    background-color: color-link("Notification", "info", "primary");
+  }
+
+  &.Toastify__toast--error {
+    &::before,
     &::after {
-        content: "";
-
-        position: absolute;
-        right: 0;
-        top: 0;
-
-        height: 100%;
-        width: $width;
-
-        background-color: color-link("Notification", "info", "primary");
+      background-color: color-link("Notification", "error", "primary");
     }
+  }
 
-    &.Toastify__toast--error {
-        &::before, &::after {
-            background-color: color-link("Notification", "error", "primary");
-        }
+  &.Toastify__toast--warning {
+    &::before,
+    &::after {
+      background-color: color-link("Notification", "warning", "primary");
     }
+  }
 
-    &.Toastify__toast--warning {
-        &::before, &::after {
-            background-color: color-link("Notification", "warning", "primary");
-        }
+  &.Toastify__toast--success {
+    &::before,
+    &::after {
+      background-color: color-link("Notification", "success", "primary");
     }
-
-    &.Toastify__toast--success {
-        &::before, &::after {
-            background-color: color-link("Notification", "success", "primary");
-        }
-    }
+  }
 }

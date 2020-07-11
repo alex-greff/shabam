@@ -1,22 +1,21 @@
 .FileUploadButtonWrapper {
-    position: relative;
+  position: relative;
 
-    & .FileUploadButtonWrapper__file-input {
-        // Overlay the original file input over the entire component
-        // in order to catch all click events
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 0;
-        height: 0;
-        opacity: 0;
+  & .FileUploadButtonWrapper__file-input {
+    // Overlay the original file input over the entire component
+    // in order to catch all click events
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    opacity: 0;
 
-        & + .FileUploadButtonWrapper__label-container {
-
-        }
+    & + .FileUploadButtonWrapper__label-container {
     }
+  }
 
-    &.disabled {
-        pointer-events: none;
-    }
+  &.disabled {
+    pointer-events: none;
+  }
 }

@@ -3,9 +3,9 @@
 import { expose } from "comlink";
 
 const exports = {
-    test() {
-        console.log("Test");
-    }
+  test() {
+    console.log("Test");
+  },
 };
 
 export type TestWorker = typeof exports;

@@ -1,59 +1,59 @@
 @mixin register-page-slide-transition($prefix, $duration: 1000ms) {
-    @keyframes #{$prefix}PageSlideOut {
-        0% { 
-            background-color: rgba(112, 112, 112, 0); 
-        }
-        25% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px); 
-            background-color: rgba(112, 112, 112, 0.2); 
-        }
-        75% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px) translateX(-200%); 
-            background-color: rgba(112, 112, 112, 0.2); 
-        }
-        100% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px) translateX(-200%); 
-            background-color: rgba(112, 112, 112, 0); 
-        }
+  @keyframes #{$prefix}PageSlideOut {
+    0% {
+      background-color: rgba(112, 112, 112, 0);
     }
-    
-    @keyframes #{$prefix}PageSlideIn {
-        0% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px) translateX(200%); 
-            background-color: rgba(112, 112, 112, 0); 
-        }
-        25% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px) translateX(200%); 
-            background-color: rgba(112, 112, 112, 0.2); 
-        }
-        75% { 
-            opacity: 0.5; 
-            transform: translateZ(-500px); 
-            background-color: rgba(112, 112, 112, 0.2); 
-        }
-        100% { 
-            opacity: 1; 
-            transform: translateZ(0) translateX(0); 
-            background-color: rgba(112, 112, 112, 0); 
-        }
+    25% {
+      opacity: 0.5;
+      transform: translateZ(-500px);
+      background-color: rgba(112, 112, 112, 0.2);
     }
+    75% {
+      opacity: 0.5;
+      transform: translateZ(-500px) translateX(-200%);
+      background-color: rgba(112, 112, 112, 0.2);
+    }
+    100% {
+      opacity: 0.5;
+      transform: translateZ(-500px) translateX(-200%);
+      background-color: rgba(112, 112, 112, 0);
+    }
+  }
 
-    .#{$prefix}-enter-active {
-        position: absolute;
-        animation: #{$prefix}PageSlideIn #{$duration} both ease;
-        overflow: hidden;
-        height: 100vh;
+  @keyframes #{$prefix}PageSlideIn {
+    0% {
+      opacity: 0.5;
+      transform: translateZ(-500px) translateX(200%);
+      background-color: rgba(112, 112, 112, 0);
     }
+    25% {
+      opacity: 0.5;
+      transform: translateZ(-500px) translateX(200%);
+      background-color: rgba(112, 112, 112, 0.2);
+    }
+    75% {
+      opacity: 0.5;
+      transform: translateZ(-500px);
+      background-color: rgba(112, 112, 112, 0.2);
+    }
+    100% {
+      opacity: 1;
+      transform: translateZ(0) translateX(0);
+      background-color: rgba(112, 112, 112, 0);
+    }
+  }
 
-    .#{$prefix}-exit-active {
-        position: absolute;
-        animation: #{$prefix}PageSlideOut #{$duration} both ease;
-        overflow: hidden;
-        height: 100vh;
-    }
+  .#{$prefix}-enter-active {
+    position: absolute;
+    animation: #{$prefix}PageSlideIn #{$duration} both ease;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .#{$prefix}-exit-active {
+    position: absolute;
+    animation: #{$prefix}PageSlideOut #{$duration} both ease;
+    overflow: hidden;
+    height: 100vh;
+  }
 }

@@ -1,25 +1,25 @@
 class BackNavigation {
-    private _backPath: string | null;
+  private _backPath: string | null;
 
-    constructor() {
-        this._backPath = null;
-    }
+  constructor() {
+    this._backPath = null;
+  }
 
-    get backPath() {
-        return this._backPath;
-    }
+  get backPath() {
+    return this._backPath;
+  }
 
-    set backPath(value) {
-        this._backPath = value;
-    }
+  set backPath(value) {
+    this._backPath = value;
+  }
 
-    get hasBackPath() {
-        return !!this._backPath;
-    }
+  get hasBackPath() {
+    return !!this._backPath;
+  }
 
-    public clearBackPath() {
-        this._backPath = null;
-    }
+  public clearBackPath() {
+    this._backPath = null;
+  }
 }
 
 export default new BackNavigation();

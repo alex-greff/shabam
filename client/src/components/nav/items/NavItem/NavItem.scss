@@ -1,14 +1,14 @@
 .NavItem {
-    $transition-time: 0.2s;
+  $transition-time: 0.2s;
 
-    font-weight: 600;
-    font-size: 1.7rem;
+  font-weight: 600;
+  font-size: 1.7rem;
 
-    color: color-link("NavItem", "text", "secondary");
+  color: color-link("NavItem", "text", "secondary");
 
-    transition: color $transition-time;
+  transition: color $transition-time;
 
-    &:hover {
-        color: color-link("NavItem", "selected", "primary");
-    }
+  &:hover {
+    color: color-link("NavItem", "selected", "primary");
+  }
 }

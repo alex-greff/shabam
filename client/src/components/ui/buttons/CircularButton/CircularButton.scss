@@ -1,35 +1,35 @@
 .CircularButton {
-    $size: 4rem;
-    $transition: 0.2s;
+  $size: 4rem;
+  $transition: 0.2s;
 
-    width: $size;
-    height: $size;
+  width: $size;
+  height: $size;
 
-    cursor: pointer;
+  cursor: pointer;
+
+  & circle {
+    stroke: color-link("CircularButton", "text", "primary");
+
+    transition: stroke $transition !important;
+  }
+
+  & .CircularButton__center-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    & circle {
+      stroke: color-link("CircularButton", "selected", "primary");
+    }
+  }
+
+  &.disabled {
+    pointer-events: none;
 
     & circle {
-        stroke: color-link("CircularButton", "text", "primary");
-
-        transition: stroke $transition !important;
+      stroke: color-link("CircularButton", "text", "disabled");
     }
-
-    & .CircularButton__center-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    &:hover {
-        & circle {
-            stroke: color-link("CircularButton", "selected", "primary");
-        }
-    }
-
-    &.disabled {
-        pointer-events: none;
-
-        & circle {
-            stroke: color-link("CircularButton", "text", "disabled");
-        }
-    }
+  }
 }

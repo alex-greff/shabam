@@ -1,65 +1,69 @@
 @mixin config-transition() {
-    $name: "config-transition";
-    $duration: 0.3s;
-    $translation-amount: -10px;
+  $name: "config-transition";
+  $duration: 0.3s;
+  $translation-amount: -10px;
 
-    @keyframes configTransitionIn {
-        from { 
-            opacity: 0; 
-            transform: translateY($translation-amount);
-        }
-        to { 
-            opacity: 1;
-            transform: translateY(0px);
-        }
+  @keyframes configTransitionIn {
+    from {
+      opacity: 0;
+      transform: translateY($translation-amount);
     }
-    @keyframes configTransitionOut { 
-        to { 
-            opacity: 0;
-            transform: translateY($translation-amount);
-        }
+    to {
+      opacity: 1;
+      transform: translateY(0px);
     }
+  }
+  @keyframes configTransitionOut {
+    to {
+      opacity: 0;
+      transform: translateY($translation-amount);
+    }
+  }
 
-    & .#{$name}-enter-active {
-        animation: configTransitionIn #{$duration} ease both;
-        z-index: 2;
-    }
+  & .#{$name}-enter-active {
+    animation: configTransitionIn #{$duration} ease both;
+    z-index: 2;
+  }
 
-    .#{$name}-exit-active {
-        animation: configTransitionOut #{$duration} ease both;
-        z-index: 1;
-    }
+  .#{$name}-exit-active {
+    animation: configTransitionOut #{$duration} ease both;
+    z-index: 1;
+  }
 }
 
 .ConfigurationContainer {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  & .ConfigurationContainer__header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
-    width: 100%;
+    & .ConfigurationContainer__title {
+      font-size: 2.5rem;
+      font-weight: bold;
 
-    & .ConfigurationContainer__header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-        & .ConfigurationContainer__title {
-            font-size: 2.5rem;
-            font-weight: bold;
-
-            z-index: 10;
-        }
-
-        & .ConfigurationContainer__collapse-icon-container {
-            z-index: 10;
-        }
+      z-index: 10;
     }
 
-    & .ConfigurationContainer__content {
-        background-color: color-link("ConfigurationContainer", "background", "secondary");
-
-        padding: 1.5rem;
+    & .ConfigurationContainer__collapse-icon-container {
+      z-index: 10;
     }
+  }
 
-    @include config-transition();
+  & .ConfigurationContainer__content {
+    background-color: color-link(
+      "ConfigurationContainer",
+      "background",
+      "secondary"
+    );
+
+    padding: 1.5rem;
+  }
+
+  @include config-transition();
 }

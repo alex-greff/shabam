@@ -1,18 +1,17 @@
 #Signin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  & .Signin__content {
+    height: 100%;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
 
-    & .Signin__content {
-        height: 100%;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-
-        & .Signin__form {
-
-        }
+    & .Signin__form {
     }
+  }
 }

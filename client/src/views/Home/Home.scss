@@ -1,133 +1,141 @@
 #Home {
-    $width: 115rem;
+  $width: 115rem;
 
-    position: relative;
+  position: relative;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-    & .Home__content {
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: 1fr 1fr 1fr;
-        grid-template-areas: 
-            "empty"
-            "intro"
-            "enter";
+  & .Home__content {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas:
+      "empty"
+      "intro"
+      "enter";
 
+    max-width: $width;
+    width: 100vw;
 
-        max-width: $width;
-        width: 100vw;
+    padding: 0 1rem;
 
-        padding: 0 1rem;
+    & .Home__intro {
+      grid-area: intro;
 
-        & .Home__intro {
-            grid-area: intro;
+      display: flex;
+      flex-direction: column;
 
-            display: flex;
-            flex-direction: column;
+      & > *:not(:last-child) {
+        margin-bottom: 1rem;
+      }
 
-            & > *:not(:last-child) {
-                margin-bottom: 1rem;
-            }
-    
-            & .Home__logo {
-                align-self: flex-start;
-        
-                font-weight: bold;
-                font-size: 13rem;
-    
-                padding: 1rem 3rem;
-                background-color: rgba(0, 0, 0, 0.5);
-        
-                & .Home__logo-text-first {
-                    color: color-link("Home", "text", "primary");
-                }
-        
-                & .Home__logo-text-second {
-                    color: color-link("Home", "text_inverse", "primary");
-                    // background-color: color-link("Home", "text", "primary");
-                    background-color: color-link("Home", "background", "primary");
-                }
+      & .Home__logo {
+        align-self: flex-start;
 
-                @include respond(tab-port) {
-                    align-self: center;
+        font-weight: bold;
+        font-size: 13rem;
 
-                    font-size: 10rem;
-                }
+        padding: 1rem 3rem;
+        background-color: rgba(0, 0, 0, 0.5);
 
-                @include respond(phone) {
-                    font-size: 5rem;
-                }
-            }
-    
-            & .Home__blurb {
-                align-self: flex-end;
-    
-                font-weight: bold;
-                font-size: 5rem;
-    
-                color: color-link("Home", "text", "primary");
-    
-                padding: 0.5rem 1.5rem;
-                background-color: rgba(0, 0, 0, 0.5);
-
-                @include respond(tab-port) {
-                    align-self: center;
-
-                    font-size: 4rem;
-                }
-
-                @include respond(phone) {
-                    font-size: 3rem;
-                }
-            }
+        & .Home__logo-text-first {
+          color: color-link("Home", "text", "primary");
         }
 
-        & .Home__enter-button {
-            grid-area: enter;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            color: color-link("Home", "text", "primary");
-
-            justify-self: center;
-            align-self: center;
-
-            transition: color 0.5s;
-
-            $icon-size: 4.5rem;
-            $start-x: calc(50% - #{$icon-size / 2});
-            $end-x: calc(50% + #{$icon-size / 2});
-            clip-path: polygon(#{$start-x} 0%, #{$end-x} 0%, #{$end-x} #{$start-x}, 100% #{$icon-size}, 100% 100%, 0 100%, 0 #{$icon-size}, #{$start-x} #{$start-x});
-
-            & .Home__mouse-icon {
-                color: color-link("Home", "selected", "primary");
-
-                width: $icon-size;
-                height: $icon-size;
-            }
-
-            & .Home__enter-text {
-                font-size: 2rem;
-                font-weight: 300;
-            }
-
-            &:hover {
-                color: color-link("Home", "selected", "primary");
-            }
-
-            @include respond(tab-port) {
-                margin-top: 5rem;
-            }
+        & .Home__logo-text-second {
+          color: color-link("Home", "text_inverse", "primary");
+          // background-color: color-link("Home", "text", "primary");
+          background-color: color-link("Home", "background", "primary");
         }
 
         @include respond(tab-port) {
-            grid-template-rows: auto 1fr auto;
+          align-self: center;
+
+          font-size: 10rem;
         }
+
+        @include respond(phone) {
+          font-size: 5rem;
+        }
+      }
+
+      & .Home__blurb {
+        align-self: flex-end;
+
+        font-weight: bold;
+        font-size: 5rem;
+
+        color: color-link("Home", "text", "primary");
+
+        padding: 0.5rem 1.5rem;
+        background-color: rgba(0, 0, 0, 0.5);
+
+        @include respond(tab-port) {
+          align-self: center;
+
+          font-size: 4rem;
+        }
+
+        @include respond(phone) {
+          font-size: 3rem;
+        }
+      }
     }
+
+    & .Home__enter-button {
+      grid-area: enter;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      color: color-link("Home", "text", "primary");
+
+      justify-self: center;
+      align-self: center;
+
+      transition: color 0.5s;
+
+      $icon-size: 4.5rem;
+      $start-x: calc(50% - #{$icon-size / 2});
+      $end-x: calc(50% + #{$icon-size / 2});
+      clip-path: polygon(
+        #{$start-x} 0%,
+        #{$end-x} 0%,
+        #{$end-x} #{$start-x},
+        100% #{$icon-size},
+        100% 100%,
+        0 100%,
+        0 #{$icon-size},
+        #{$start-x} #{$start-x}
+      );
+
+      & .Home__mouse-icon {
+        color: color-link("Home", "selected", "primary");
+
+        width: $icon-size;
+        height: $icon-size;
+      }
+
+      & .Home__enter-text {
+        font-size: 2rem;
+        font-weight: 300;
+      }
+
+      &:hover {
+        color: color-link("Home", "selected", "primary");
+      }
+
+      @include respond(tab-port) {
+        margin-top: 5rem;
+      }
+    }
+
+    @include respond(tab-port) {
+      grid-template-rows: auto 1fr auto;
+    }
+  }
 }

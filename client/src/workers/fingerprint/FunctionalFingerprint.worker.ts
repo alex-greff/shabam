@@ -3,7 +3,7 @@ import { expose } from "comlink";
 import { generateFingerprint } from "@/audio/fingerprint/FunctionalFingerprintGenerator";
 
 const exports: FingerprintWorker = {
-    generateFingerprint
+  generateFingerprint,
 };
 
 export type FunctionalFingerprintWorker = typeof exports;

@@ -1,8 +1,8 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import { render } from "@testing-library/react";
+import App from "./App";
 
-test('App renders', () => {
-    const app = render(<App />);
-    expect(app.baseElement).toBeInTheDocument();
+test("App renders", () => {
+  const app = render(<App />);
+  expect(app.baseElement).toBeInTheDocument();
 });

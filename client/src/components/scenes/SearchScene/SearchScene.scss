@@ -5,163 +5,167 @@ $desktop-size: 110vh;
 $mobile-size: 130vw;
 
 .SearchScene {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+
+  perspective: $perspective-amount;
+
+  pointer-events: none;
+
+  .SearchScene__scene {
+    position: relative;
+
     width: 100%;
-    z-index: -1;
+    height: 100%;
 
     perspective: $perspective-amount;
 
-    pointer-events: none;
+    transform-origin: 50% 50%;
 
-    .SearchScene__scene {
-        position: relative;
+    & .SearchScene__main-circle {
+      $diameter: 110vh;
+      $translateX-base: 50%;
+      $translateY-base: 50%;
 
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateZ(0px);
+
+      width: $desktop-size;
+      height: $desktop-size;
+
+      border-radius: 50%;
+
+      background-color: #262626;
+
+      z-index: 100;
+
+      & .SearchScene__main-circle-s {
+        font-family: "Passion One", cursive;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        font-weight: bold;
+        font-size: 60rem;
+
+        z-index: 2;
+
+        @include respond(phone) {
+          font-size: 35rem;
+        }
+      }
+
+      &::after {
+        content: "";
+
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
 
+        border-radius: 50%;
+
+        background: color-link("SearchScene", "gradient", "start");
+        background: linear-gradient(
+          135deg,
+          color-link("SearchScene", "gradient", "start") 0%,
+          color-link("SearchScene", "gradient", "end")
+        );
+
+        opacity: 0;
+        transition: opacity $opacity-duration ease-in-out;
+      }
+
+      @include respond(tab-port) {
+        width: $mobile-size;
+        height: $mobile-size;
+      }
+    }
+
+    & .SearchScene__arcs-container {
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      width: $desktop-size;
+      height: $desktop-size;
+
+      & .SearchScene__arc-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        width: $desktop-size;
+        height: $desktop-size;
+
+        opacity: 0.5;
+
         perspective: $perspective-amount;
 
-        transform-origin: 50% 50%;
+        transition: opacity $opacity-duration ease-in-out;
 
-        & .SearchScene__main-circle {
-            $diameter: 110vh;
-            $translateX-base: 50%;
-            $translateY-base: 50%;
+        & .SearchScene__arc {
+          & circle {
+            stroke: color-link("SearchScene", "accent", "primary");
+          }
 
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) translateZ(0px);
-
-            width: $desktop-size;
-            height: $desktop-size;
-
-            border-radius: 50%;
-
-            background-color: #262626;
-
-            z-index: 100;
-
-            & .SearchScene__main-circle-s {
-                font-family: 'Passion One', cursive;
-
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-
-                font-weight: bold;
-                font-size: 60rem;
-
-                z-index: 2;
-
-                @include respond(phone) {
-                    font-size: 35rem;
-                }
+          &.primary {
+            & circle {
+              stroke: color-link("SearchScene", "accent", "primary");
             }
+          }
 
-            &::after {
-                content: "";
-
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-
-                border-radius: 50%;
-
-                background: color-link("SearchScene", "gradient", "start");
-                background: linear-gradient(135deg, color-link("SearchScene", "gradient", "start") 0%, color-link("SearchScene", "gradient", "end"));
-
-                opacity: 0;
-                transition: opacity $opacity-duration ease-in-out;
+          &.secondary {
+            & circle {
+              stroke: color-link("SearchScene", "accent", "secondary");
             }
+          }
 
-            @include respond(tab-port) {
-                width: $mobile-size;
-                height: $mobile-size;
+          &.tertiary {
+            & circle {
+              stroke: color-link("SearchScene", "accent", "tertiary");
             }
+          }
         }
+      }
 
-        & .SearchScene__arcs-container {
-            position: absolute;
+      @include respond(tab-port) {
+        width: $mobile-size;
+        height: $mobile-size;
 
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-
-            width: $desktop-size;
-            height: $desktop-size;
-
-            & .SearchScene__arc-container {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-    
-                width: $desktop-size;
-                height: $desktop-size;
-
-                opacity: 0.5;
-    
-                perspective: $perspective-amount;
-
-                transition: opacity $opacity-duration ease-in-out;
-    
-                & .SearchScene__arc {
-                    & circle {
-                        stroke: color-link("SearchScene", "accent", "primary");
-                    }
-    
-                    &.primary {
-                        & circle {
-                            stroke: color-link("SearchScene", "accent", "primary");
-                        }
-                    }
-    
-                    &.secondary {
-                        & circle {
-                            stroke: color-link("SearchScene", "accent", "secondary");
-                        }
-                    }
-    
-                    &.tertiary {
-                        & circle {
-                            stroke: color-link("SearchScene", "accent", "tertiary");
-                        }
-                    }
-                }
-            }
-
-            @include respond(tab-port) {
-                width: $mobile-size;
-                height: $mobile-size;
-
-                & .SearchScene__arc-container {
-                    width: $mobile-size;
-                    height: $mobile-size;
-                }
-            }
+        & .SearchScene__arc-container {
+          width: $mobile-size;
+          height: $mobile-size;
         }
+      }
     }
+  }
 
-    &.is-search-view {
-        & .SearchScene__scene {
-            & .SearchScene__main-circle {
-                pointer-events: all;
+  &.is-search-view {
+    & .SearchScene__scene {
+      & .SearchScene__main-circle {
+        pointer-events: all;
 
-                &::after {
-                    opacity: 1;
-                }
-            }
-    
-            & .SearchScene__arcs-container .SearchScene__arc-container {
-                opacity: 1;
-            }
+        &::after {
+          opacity: 1;
         }
+      }
+
+      & .SearchScene__arcs-container .SearchScene__arc-container {
+        opacity: 1;
+      }
     }
+  }
 }

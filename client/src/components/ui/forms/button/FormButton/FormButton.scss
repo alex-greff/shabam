@@ -1,37 +1,37 @@
 .FormButton {
-    $transition-time: 0.3s;
+  $transition-time: 0.3s;
 
-    // Clear default button styles
-    background: none;
-    outline: none;
-    border: none;
-    color: inherit;
-    font-weight: inherit;
-    font-size: inherit;
+  // Clear default button styles
+  background: none;
+  outline: none;
+  border: none;
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    padding: 0.5rem 2rem;
+  padding: 0.5rem 2rem;
 
-    color: color-link("FormButton", "text", "primary");
-    background-color: color-link("FormButton", "background", "primary");
+  color: color-link("FormButton", "text", "primary");
+  background-color: color-link("FormButton", "background", "primary");
 
-    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.3);
+  box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.3);
 
-    transition: background-color $transition-time, color $transition-time;
+  transition: background-color $transition-time, color $transition-time;
 
-    &.secondary {
-        background-color: color-link("FormButton", "background", "secondary");
-    }
+  &.secondary {
+    background-color: color-link("FormButton", "background", "secondary");
+  }
 
-    &:hover {
-        background-color: color-link("FormButton", "accent", "primary");
-    }
+  &:hover {
+    background-color: color-link("FormButton", "accent", "primary");
+  }
 
-    &:disabled {
-        pointer-events: none;
+  &:disabled {
+    pointer-events: none;
 
-        color: color-link("FormButton", "text", "disabled");
-        background-color: color-link("FormButton", "background", "disabled");
-    }
+    color: color-link("FormButton", "text", "disabled");
+    background-color: color-link("FormButton", "background", "disabled");
+  }
 }

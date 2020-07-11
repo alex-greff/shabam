@@ -1,15 +1,15 @@
 import gql from "graphql-tag";
 
 export interface Data {
-    checkUsernameAvailability: boolean;
+  checkUsernameAvailability: boolean;
 }
 
 export interface Variables {
-    username: string;
+  username: string;
 }
 
 export const query = gql`
-    query CheckUsername($username: String!) {
-        checkUsernameAvailability(username: $username)
-    }
+  query CheckUsername($username: String!) {
+    checkUsernameAvailability(username: $username)
+  }
 `;

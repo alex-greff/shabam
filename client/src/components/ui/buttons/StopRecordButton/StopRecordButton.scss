@@ -1,21 +1,21 @@
 .StopRecordButton {
-    $transition: 0.2s;
+  $transition: 0.2s;
 
+  & .StopRecordButton__center {
+    background-color: color-link("StopRecordButton", "text", "primary");
+
+    transition: background-color $transition;
+  }
+
+  &:hover {
     & .StopRecordButton__center {
-        background-color: color-link("StopRecordButton", "text", "primary");
-
-        transition: background-color $transition;
+      background-color: color-link("StopRecordButton", "accent", "primary");
     }
+  }
 
-    &:hover {
-        & .StopRecordButton__center {
-            background-color: color-link("StopRecordButton", "accent", "primary");
-        }
+  &.disabled {
+    & .StopRecordButton__center {
+      background-color: color-link("StopRecordButton", "text", "disabled");
     }
-
-    &.disabled {
-        & .StopRecordButton__center {
-            background-color: color-link("StopRecordButton", "text", "disabled");
-        }
-    }
+  }
 }

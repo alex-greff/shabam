@@ -1,11 +1,11 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/*"],
-            "@WASM/*": ["src/wasm/build/*"]
-        },
-        "experimentalDecorators": true,
-        "isolatedModules": false
-    }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@WASM/*": ["src/wasm/build/*"]
+    },
+    "experimentalDecorators": true,
+    "isolatedModules": false
+  }
 }
