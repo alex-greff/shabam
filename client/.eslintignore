@@ -1,2 +1,3 @@
 # Ignore glue code built by emscripten
 src/wasm/build/**
+src/serviceWorker.ts
