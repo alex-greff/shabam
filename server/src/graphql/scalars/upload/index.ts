@@ -4,6 +4,6 @@ import resolvers from "./upload.resolvers";
 
 // Reference: https://graphql-modules.com/docs/recipes/file-uploads
 export default new GraphQLModule({
-    typeDefs,
-    resolvers
+  typeDefs,
+  resolvers,
 });

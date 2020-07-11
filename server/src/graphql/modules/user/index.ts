@@ -3,8 +3,7 @@ import typeDefs from "./user.typeDefs";
 import resolvers from "./user.resolvers";
 
 export default new GraphQLModule({
-    typeDefs,
-    resolvers,
-    context: ({ req, res }) => ({ req, res })
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => ({ req, res }),
 });
-

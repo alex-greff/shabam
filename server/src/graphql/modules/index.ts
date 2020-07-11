@@ -5,9 +5,6 @@ import CatalogueModule from "./catalogue";
 import UserModule from "./user";
 
 export default new GraphQLModule({
-    imports: [
-        CatalogueModule,
-        UserModule
-    ],
-    context: ({ req, res }) => ({ req, res })
+  imports: [CatalogueModule, UserModule],
+  context: ({ req, res }) => ({ req, res }),
 });

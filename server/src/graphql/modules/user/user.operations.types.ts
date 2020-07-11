@@ -1,30 +1,30 @@
 export interface UserCredentials {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 export interface LoginArgs {
-    credentials: UserCredentials;
+  credentials: UserCredentials;
 }
 
 export interface CheckUsernameAvailabilityArgs {
-    username: string;
+  username: string;
 }
 
 export interface SignupArgs {
-    credentials: UserCredentials;
+  credentials: UserCredentials;
 }
 
 export interface EditUserArgs {
-    username: string;
-    updatedCredentials: UserCredentials;
+  username: string;
+  updatedCredentials: UserCredentials;
 }
 
 export interface EditUserRoleArgs {
-    username: string;
-    updatedRole: string;
+  username: string;
+  updatedRole: string;
 }
 
 export interface RemoveUserArgs {
-    username: string;
+  username: string;
 }

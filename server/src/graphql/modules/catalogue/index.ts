@@ -6,11 +6,8 @@ import UploadScalar from "@/graphql/scalars/upload";
 import DateScalar from "@/graphql/scalars/date";
 
 export default new GraphQLModule({
-    imports: [
-        UploadScalar,
-        DateScalar
-    ],
-    typeDefs,
-    resolvers,
-    context: ({ req, res }) => ({ req, res })
+  imports: [UploadScalar, DateScalar],
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => ({ req, res }),
 });

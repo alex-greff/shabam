@@ -4,6 +4,6 @@ import resolvers from "./date.resolvers";
 
 // Reference: https://www.apollographql.com/docs/graphql-tools/scalars/
 export default new GraphQLModule({
-    typeDefs,
-    resolvers
+  typeDefs,
+  resolvers,
 });
