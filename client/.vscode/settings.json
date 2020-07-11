@@ -3,6 +3,7 @@
   "files.associations": {
     ".prettierrc": "json"
   },
+  "editor.tabSize": 2,
   "editor.rulers": [80],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
