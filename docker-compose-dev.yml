@@ -138,6 +138,7 @@ services:
         volumes:
             - /app/node_modules
             - ./records_worker:/app
+            - .:/workspace:cached # For vscode dev container
         environment:
             # Address 1 DB
             - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"

@@ -1,0 +1,13 @@
+{
+  "name": "Shabam Records Worker",
+  "dockerComposeFile": ["..\\..\\docker-compose-dev.yml"],
+  "service": "records-worker",
+  "workspaceFolder": "/app",
+  "shutdownAction": "none",
+  "extensions": [
+    "streetsidesoftware.code-spell-checker",
+    "coenraads.bracket-pair-colorizer-2",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ]
+}
