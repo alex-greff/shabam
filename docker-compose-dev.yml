@@ -48,6 +48,7 @@ services:
         volumes:
             - /app/node_modules
             - ./server:/app
+            - .:/workspace:cached # For vscode dev container
         environment:
             # Main DB
             - "PG_MAIN_HOST=db-main"
