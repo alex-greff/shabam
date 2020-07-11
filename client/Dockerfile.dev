@@ -37,11 +37,15 @@ WORKDIR /app
 
 COPY ./package*.json ./
 
-# Install npm dependencies
+# Workaround to get prepare scripts to run properly
+# Source: https://github.com/npm/npm/issues/18163
+RUN npm config set unsafe-perm true
+
+# Install npm dependencies, cleaning the cache beforehand
 RUN npm install
 
-# Install gulp cli, eslint and prettier
-RUN npm install -g gulp-cli eslint prettier
+# Install global packages
+RUN npm install -g gulp-cli eslint prettier 
 
 # Copy all the client files
 COPY . .
