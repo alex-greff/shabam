@@ -40,8 +40,8 @@ COPY ./package*.json ./
 # Install npm dependencies
 RUN npm install
 
-# Install gulp cli
-RUN npm install gulp-cli -g
+# Install gulp cli, eslint and prettier
+RUN npm install -g gulp-cli eslint prettier
 
 # Copy all the client files
 COPY . .
