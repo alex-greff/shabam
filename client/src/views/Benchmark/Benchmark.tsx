@@ -98,9 +98,11 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       "@/workers/fingerprint/WasmFingerprint.worker.ts",
       { name: "wasm-fingerprint-worker", type: "module" }
     );
+    
     const wasmFpWorkerApi = wrap<
       import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
     >(wasmFpWorker);
+
     await wasmFpWorkerApi.generateFingerprint(
       { data: new Uint8Array(0), frequencyBinCount: 0, numberOfWindows: 0 },
       {}
