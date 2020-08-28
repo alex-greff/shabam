@@ -192,7 +192,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
       );
 
       // Save the current window to the fingerprint
-      const startIdx = numWindows * currWindowIdx;
+      const startIdx = numPartitions * currWindowIdx;
       fingerprintData.set(currWindowData, startIdx);
     });
 

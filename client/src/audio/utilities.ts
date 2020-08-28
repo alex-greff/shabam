@@ -251,3 +251,30 @@ export async function computeSpectrogramData(
     data,
   };
 }
+
+/**
+ * Converts an audio blob into an audio buffer.
+ * 
+ * @param blob The audio blob.
+ */
+export function convertBlobToAudioBuffer(blob: Blob): Promise<AudioBuffer> {
+  return new Promise<AudioBuffer>((resolve, reject) => {
+    const fileReader = new FileReader();
+    const audioContext = new AudioContext();
+
+    fileReader.onloadend = async () => {
+      const arrayBuffer = fileReader.result as ArrayBuffer;
+
+      try {
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        resolve(audioBuffer);
+
+      } catch(err) {
+        reject();
+      }
+    };
+
+    // Load the blob
+    fileReader.readAsArrayBuffer(blob);
+  });
+}

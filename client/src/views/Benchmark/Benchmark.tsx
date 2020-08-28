@@ -4,6 +4,7 @@ import "./Benchmark.scss";
 import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
 import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
+import * as AudioUtilities from "@/audio/utilities";
 import { wrap } from "comlink";
 
 import PageView from "@/components/page/PageView/PageView";
@@ -19,7 +20,10 @@ import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWra
 
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
+import BenchmarkResults from "@/views/Benchmark/BenchmarkResults/BenchmarkResults";
+
 import { loadWasmModule, WasmModuleWrapper } from "@/loaders/WASMLoader";
+import { SpectrogramData, Fingerprint } from "@/audio/types";
 
 // TODO: remove
 // const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
@@ -35,7 +39,13 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const [audioRecorder, setAudioRecorder] = useState<AudioRecorder | null>(
     null
   );
+
   const [benchmarkIsRunning, setBenchmarkIsRunning] = useState<boolean>(false);
+  const [benchmarkComplete, setBenchmarkComplete] = useState<boolean>(false);
+  const [
+    benchmarkSpectrogramData,
+    setBenchmarkSpectrogramData,
+  ] = useState<SpectrogramData | null>(null);
 
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audioFile = e.target.files ? e.target.files[0] : null;
@@ -62,51 +72,100 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     setAudioBlobSource("recording");
   };
 
-  const runBenchmark = async () => {
-    console.log("TODO: run benchmarks");
+  const runIterativeFingerprint = async (
+    spectrogramData: SpectrogramData
+  ): Promise<Fingerprint | null> => {
+    // TODO: implement
+    return null;
+  };
 
-    // TODO: remove
-    // testWorker.postMessage("Hello there");
+  const runFunctionalFingerprint = async (
+    spectrogramData: SpectrogramData
+  ): Promise<Fingerprint | null> => {
+    const funcFpWorker = new Worker(
+      "@/workers/fingerprint/FunctionalFingerprint.worker.ts",
+      { name: "functional-fingerprint-worker", type: "module" }
+    );
 
-    // testWorker.onmessage()
+    const funcFpWorkerApi = wrap<
+      import("@/workers/fingerprint/FunctionalFingerprint.worker").FunctionalFingerprintWorker
+    >(funcFpWorker);
 
-    // loadWasmModule("main");
+    try {
+      const fingerprint = await funcFpWorkerApi.generateFingerprint(
+        spectrogramData,
+        {}
+      );
 
-    // const test = import("@WASM/main-wasm.js");
-    // const test2 = import("@WASM/main-wasm.wasm");
+      return fingerprint;
+    } catch (err) {
+      // TODO: handle error better?
+      console.error(
+        "Functional Fingerprint Worker: unable to generate fingerprint",
+        err
+      );
+    }
 
-    // loadWasmModule(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"), (err, module) => {
-    //     console.log("Error", err);
-    //     console.log("Module", module);
-    // });
+    return null;
+  };
 
-    // const test = new WasmModuleWrapper(import("@WASM/main-wasm.js"), import("@WASM/main-wasm.wasm"));
-
-    // try {
-    //     await test.initialize();
-
-    //     console.log("Module", test.module);
-    // } catch(err) {
-    //     console.error("Error", test.error);
-    // }
-
-    // const worker = new Worker("@/workers/test.worker.ts", { name: "test-worker", type: "module" });
-    // const workerApi = wrap<import("@/workers/test.worker").TestWorker>(worker);
-    // await workerApi.test();
-
+  const runWasmFingerprint = async (
+    spectrogramData: SpectrogramData
+  ): Promise<Fingerprint | null> => {
     const wasmFpWorker = new Worker(
       "@/workers/fingerprint/WasmFingerprint.worker.ts",
       { name: "wasm-fingerprint-worker", type: "module" }
     );
-    
+
     const wasmFpWorkerApi = wrap<
       import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
     >(wasmFpWorker);
 
-    await wasmFpWorkerApi.generateFingerprint(
-      { data: new Uint8Array(0), frequencyBinCount: 0, numberOfWindows: 0 },
-      {}
+    try {
+      const fingerprint = await wasmFpWorkerApi.generateFingerprint(
+        spectrogramData,
+        {}
+      );
+
+      return fingerprint;
+    } catch (err) {
+      // TODO: handle error better?
+      console.error("WASM Fingerprint Worker: unable to generate fingerprint");
+    }
+
+    return null;
+  };
+
+  const runBenchmark = async () => {
+    setBenchmarkIsRunning(true);
+    setBenchmarkComplete(false);
+
+    console.log("Audio Blob", audioBlob); // TODO: remove
+
+    if (audioBlob == null) {
+      console.error("Audio blob is null");
+    }
+
+    const audioBuffer = await AudioUtilities.convertBlobToAudioBuffer(
+      audioBlob!
     );
+
+    const spectrogramData = await AudioUtilities.computeSpectrogramData(
+      audioBuffer
+    );
+
+    console.log("Spectrogram data:", spectrogramData); // TODO: remove
+
+    const iterativeFp = await runIterativeFingerprint(spectrogramData);
+    const functionalFp = await runFunctionalFingerprint(spectrogramData);
+    // const wasmFp = await runWasmFingerprint(spectrogramData); // TODO: uncomment
+
+    console.log("functional fingerprint:", functionalFp); // TODO: remove
+
+    // Update state to indicate benchmark is complete
+    setBenchmarkSpectrogramData(spectrogramData);
+    setBenchmarkIsRunning(false);
+    setBenchmarkComplete(true);
   };
 
   const hasAudioBlob = !!audioBlob;
@@ -188,7 +247,10 @@ const Benchmark: FunctionComponent<Props> = (props) => {
             Run Benchmark
           </NormalButton>
         </ConfigurationContainer>
-        More stuff
+
+        {benchmarkComplete && !benchmarkIsRunning ? (
+          <BenchmarkResults spectrogramData={benchmarkSpectrogramData!} />
+        ) : null}
       </PageContent>
     </PageView>
   );
