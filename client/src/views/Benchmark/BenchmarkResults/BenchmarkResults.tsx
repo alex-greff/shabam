@@ -10,8 +10,6 @@ export interface Props extends BaseProps {
   spectrogramData: SpectrogramData;
 };
 
-// TODO: need to make chart rerender on root resize
-
 const BenchmarkResults: FunctionComponent<Props> = (props) => {
   return (
     <div 

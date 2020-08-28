@@ -3,41 +3,40 @@
 import * as d3 from "d3";
 import { SpectrogramData } from "@/audio/types";
 
+// Margin configurations
 const MARGIN = {
   top: 20,
   right: 15,
-  bottom: 60,
-  left: 70,
+  bottom: 60, // should be > X_AXIS_LABEL_GAP
+  left: 70, // should be > Y_AXIS_LABEL_GAP
 };
 
+// Axis labels
 const X_AXIS_LABEL = "Window";
 const Y_AXIS_LABEL = "Frequency Bin";
 
+// Gap between axis and the labels
+const X_AXIS_LABEL_GAP = 35;
+const Y_AXIS_LABEL_GAP = 35;
+
+// The number of pixels each cell bleeds over into the next
+const X_BLEED = 0;
+const Y_BLEED = 0.5;
+
 export function renderSpectrogramChart(
   containerElem: HTMLDivElement,
-  spectrogramData: SpectrogramData
+  spectrogramData: SpectrogramData,
+  colorScalePallet: string[],
+  outerWidth: number,
+  outerHeight: number
 ) {
-  console.log("Rendering spectrogram chart...", containerElem, spectrogramData);
-
   // Clear child nodes, for if we have a previous render
   containerElem.innerHTML = "";
 
   const container = d3.select(containerElem);
 
-  const outerWidth = containerElem.offsetWidth;
-  const outerHeight = containerElem.offsetHeight;
-
   const width = outerWidth - MARGIN.left - MARGIN.right;
   const height = outerHeight - MARGIN.top - MARGIN.bottom;
-
-  // Initialize SVG component container
-  const svgChart = container
-    .append("svg:svg")
-    .attr("width", outerWidth)
-    .attr("height", outerHeight)
-    .attr("class", "SpectrogramChart__svg-chart")
-    .append("g")
-    .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`);
 
   // Initialize canvas component container
   const canvasChart = container
@@ -48,6 +47,15 @@ export function renderSpectrogramChart(
     .style("margin-top", `${MARGIN.top}px`)
     .attr("class", "SpectrogramChart__canvas-chart");
 
+  // Initialize SVG component container
+  const svgChart = container
+    .append("svg:svg")
+    .attr("width", outerWidth)
+    .attr("height", outerHeight)
+    .attr("class", "SpectrogramChart__svg-chart")
+    .append("g")
+    .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`);
+
   const context = canvasChart.node()!.getContext("2d");
 
   // Initialize axis scales
@@ -56,21 +64,22 @@ export function renderSpectrogramChart(
     .domain([0, spectrogramData.numberOfWindows])
     .range([0, width]);
   const yScale = d3
-    .scaleLinear()
-    .domain([0, spectrogramData.frequencyBinCount])
-    .range([height, 0]);
+    .scaleLog()
+    .domain([1, spectrogramData.frequencyBinCount + 1])
+    .range([height, 0])
+    .base(2);
 
   // Initialize axises
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale);
 
   // Append the axises
-  const gxAxis = svgChart
+  svgChart
     .append("g")
     .attr("class", "SpectrogramChart__x-axis")
     .attr("transform", `translate(0, ${height})`)
     .call(xAxis);
-  const gyAxis = svgChart
+  svgChart
     .append("g")
     .attr("class", "SpectrogramChart__y-axis")
     .call(yAxis);
@@ -80,19 +89,37 @@ export function renderSpectrogramChart(
     .append("text")
     .attr("class", "SpectrogramChart__x-axis-label")
     .attr("x", `${width / 2}`)
-    .attr("y", `${height + 40}`)
+    .attr("y", `${height + X_AXIS_LABEL_GAP}`)
     .attr("text-anchor", "middle")
     .text(X_AXIS_LABEL);
   svgChart
     .append("text")
     .attr("class", "SpectrogramChart__y-axis-label")
     .attr("x", `-${height / 2}`)
-    .attr("dy", "-50")
+    .attr("dy", `-${Y_AXIS_LABEL_GAP}`)
     .attr("transform", "rotate(-90)")
     .attr("text-anchor", "middle")
     .text(Y_AXIS_LABEL);
 
-  renderCanvas(context!, spectrogramData, xScale, yScale);
+  renderCanvas(context!, spectrogramData, xScale, yScale, colorScalePallet);
+}
+
+/**
+ * Generates a color scale from the given pallet and maximum value.
+ */
+function generateColorScale(pallet: string[], maxVal: number) {
+  const domainArray = pallet.map((_, idx) => {
+    return maxVal * (idx+1) / pallet.length;
+  });
+  // First element in domain must be 0
+  domainArray.unshift(0);
+
+  const colorScale = d3
+    .scaleLinear<string>()
+    .range(pallet)
+    .domain(domainArray);
+  
+  return colorScale;
 }
 
 /**
@@ -102,17 +129,19 @@ function renderCanvas(
   context: CanvasRenderingContext2D,
   spectrogramData: SpectrogramData,
   xScale: d3.ScaleLinear<number, number>,
-  yScale: d3.ScaleLinear<number, number>
+  yScale: d3.ScaleLogarithmic<number, number>,
+  colorScalePallet: string[]
 ) {
   // Get the largest value in the spectrogram data
   const maxVal = d3.max(spectrogramData.data)!;
 
-  console.log("MaxVal", maxVal);
+  const canvas = context.canvas;
 
-  // Initialize color scale
-  const colorScale = d3.scaleLinear<string>()
-    .range(["rgba(0, 0, 0, 0)", "rgba(230, 0, 0, 1)", "rgba(255, 210, 0, 1)", "rgba(255, 255, 255, 1)"])
-    .domain([0, maxVal/4, maxVal/2, maxVal*3/4, maxVal]);
+  // Compute the tick size of the xAxis
+  const xAxisTickSize = canvas.width / spectrogramData.numberOfWindows;
+
+  // Generate color scale from pallet
+  const colorScale = generateColorScale(colorScalePallet, maxVal);
 
   // Draw each cell on the canvas
   for (let window = 0; window < spectrogramData.numberOfWindows; window++) {
@@ -121,14 +150,16 @@ function renderCanvas(
       const cellValue = spectrogramData.data[cellIdx];
 
       // Don't plot 0 values
-      if (cellValue === 0)
-        continue;
+      if (cellValue === 0) continue;
 
       const color = colorScale(cellValue);
       const x = xScale(window);
-      const y = yScale(bin);
+      const y = yScale(bin + 1);
 
-      drawCell(context, x, y, color);
+      const yPrev = yScale(bin);
+      const height = yPrev - y;
+
+      drawCell(context, x, y, xAxisTickSize, height, color);
     }
   }
 }
@@ -141,14 +172,15 @@ function drawCell(
   context: CanvasRenderingContext2D,
   x: number,
   y: number,
+  width: number,
+  height: number,
   color: string
 ) {
-  // TODO: change to rectangle
-  context.beginPath();
   context.fillStyle = color;
-  const px = x;
-  const py = y;
-
-  context.arc(px, py, 0.8, 0, 2 * Math.PI,true);
-  context.fill();
+  context.fillRect(
+    x - X_BLEED,
+    y - Y_BLEED,
+    width + 2 * X_BLEED,
+    height + 2 * Y_BLEED
+  );
 }
