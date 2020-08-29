@@ -2,15 +2,20 @@ import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types";
 import "./BenchmarkResults.scss";
 import classnames from "classnames";
+import { SpectrogramData } from "@/audio/types";
+import { FingerprintResults } from "../Benchmark";
 
 import SpectrogramChart from "@/components/charts/SpectrogramChart/SpectrogramChart";
-import { SpectrogramData } from "@/audio/types";
+import FingerprintChart from "@/components/charts/FingerprintChart/FingerprintChart";
 
 export interface Props extends BaseProps {
   spectrogramData: SpectrogramData;
+  fingerprintResults: FingerprintResults;
 };
 
 const BenchmarkResults: FunctionComponent<Props> = (props) => {
+  const { spectrogramData, fingerprintResults } = props;
+
   return (
     <div 
       className={classnames("BenchmarkResults", props.className)}
@@ -23,7 +28,15 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
 
       <SpectrogramChart 
         spectrogramData={props.spectrogramData}
+        title="Audio Spectrogram"
+        xAxisLabel="Window"
+        yAxisLabel="Frequency Bin"
       /> 
+
+      <FingerprintChart 
+        fingerprintData={fingerprintResults.functionalFingerprint}
+        title="Functionally Generated Fingerprint"
+      />
     </div>
   );
 };

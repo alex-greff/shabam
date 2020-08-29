@@ -2,61 +2,41 @@
 
 import * as d3 from "d3";
 import { SpectrogramData } from "@/audio/types";
-
-// Margin configurations
-const MARGIN = {
-  top: 20,
-  right: 15,
-  bottom: 60, // should be > X_AXIS_LABEL_GAP
-  left: 70, // should be > Y_AXIS_LABEL_GAP
-};
-
-// Axis labels
-const X_AXIS_LABEL = "Window";
-const Y_AXIS_LABEL = "Frequency Bin";
-
-// Gap between axis and the labels
-const X_AXIS_LABEL_GAP = 35;
-const Y_AXIS_LABEL_GAP = 35;
+import {
+  renderChart,
+  getHeight,
+  getWidth,
+} from "@/components/charts/CanvasChartBase.d3";
+import { computePartitionRanges } from "@/audio/utilities";
 
 // The number of pixels each cell bleeds over into the next
 const X_BLEED = 0;
 const Y_BLEED = 0.5;
 
+/**
+ * Renders a spectrogram chart into `containerElem`.
+ *
+ * @param containerElem The container to render into.
+ * @param spectrogramData The spectrogram data.
+ * @param colorScalePallet The color scale pallet.
+ * @param outerWidth The outer width of the container.
+ * @param outerHeight The outer height of the container
+ * @param xAxisLabel The x-axis label.
+ * @param yAxisLabel The y-axis label.
+ */
 export function renderSpectrogramChart(
   containerElem: HTMLDivElement,
   spectrogramData: SpectrogramData,
   colorScalePallet: string[],
   outerWidth: number,
-  outerHeight: number
+  outerHeight: number,
+  xAxisLabel?: string,
+  yAxisLabel?: string,
+  renderPartitionDividers = false,
+  partitionDividerColors?: [string, string]
 ) {
-  // Clear child nodes, for if we have a previous render
-  containerElem.innerHTML = "";
-
-  const container = d3.select(containerElem);
-
-  const width = outerWidth - MARGIN.left - MARGIN.right;
-  const height = outerHeight - MARGIN.top - MARGIN.bottom;
-
-  // Initialize canvas component container
-  const canvasChart = container
-    .append("canvas")
-    .attr("width", width)
-    .attr("height", height)
-    .style("margin-left", `${MARGIN.left}px`)
-    .style("margin-top", `${MARGIN.top}px`)
-    .attr("class", "SpectrogramChart__canvas-chart");
-
-  // Initialize SVG component container
-  const svgChart = container
-    .append("svg:svg")
-    .attr("width", outerWidth)
-    .attr("height", outerHeight)
-    .attr("class", "SpectrogramChart__svg-chart")
-    .append("g")
-    .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`);
-
-  const context = canvasChart.node()!.getContext("2d");
+  const width = getWidth(outerWidth);
+  const height = getHeight(outerHeight);
 
   // Initialize axis scales
   const xScale = d3
@@ -69,39 +49,34 @@ export function renderSpectrogramChart(
     .range([height, 0])
     .base(2);
 
-  // Initialize axises
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale);
+  const renderCanvasWrapped = (
+    context: CanvasRenderingContext2D,
+    spectrogramData: SpectrogramData,
+    xScale: d3.AxisScale<number>,
+    yScale: d3.AxisScale<number>
+  ) =>
+    renderCanvas(
+      context,
+      spectrogramData,
+      xScale,
+      yScale,
+      colorScalePallet,
+      renderPartitionDividers,
+      partitionDividerColors
+    );
 
-  // Append the axises
-  svgChart
-    .append("g")
-    .attr("class", "SpectrogramChart__x-axis")
-    .attr("transform", `translate(0, ${height})`)
-    .call(xAxis);
-  svgChart
-    .append("g")
-    .attr("class", "SpectrogramChart__y-axis")
-    .call(yAxis);
-
-  // Add axis labels
-  svgChart
-    .append("text")
-    .attr("class", "SpectrogramChart__x-axis-label")
-    .attr("x", `${width / 2}`)
-    .attr("y", `${height + X_AXIS_LABEL_GAP}`)
-    .attr("text-anchor", "middle")
-    .text(X_AXIS_LABEL);
-  svgChart
-    .append("text")
-    .attr("class", "SpectrogramChart__y-axis-label")
-    .attr("x", `-${height / 2}`)
-    .attr("dy", `-${Y_AXIS_LABEL_GAP}`)
-    .attr("transform", "rotate(-90)")
-    .attr("text-anchor", "middle")
-    .text(Y_AXIS_LABEL);
-
-  renderCanvas(context!, spectrogramData, xScale, yScale, colorScalePallet);
+  renderChart<SpectrogramData, number>(
+    "SpectrogramChart",
+    containerElem,
+    spectrogramData,
+    outerWidth,
+    outerHeight,
+    renderCanvasWrapped,
+    xScale,
+    yScale,
+    xAxisLabel,
+    yAxisLabel
+  );
 }
 
 /**
@@ -109,16 +84,13 @@ export function renderSpectrogramChart(
  */
 function generateColorScale(pallet: string[], maxVal: number) {
   const domainArray = pallet.map((_, idx) => {
-    return maxVal * (idx+1) / pallet.length;
+    return (maxVal * (idx + 1)) / pallet.length;
   });
   // First element in domain must be 0
   domainArray.unshift(0);
 
-  const colorScale = d3
-    .scaleLinear<string>()
-    .range(pallet)
-    .domain(domainArray);
-  
+  const colorScale = d3.scaleLinear<string>().range(pallet).domain(domainArray);
+
   return colorScale;
 }
 
@@ -128,9 +100,11 @@ function generateColorScale(pallet: string[], maxVal: number) {
 function renderCanvas(
   context: CanvasRenderingContext2D,
   spectrogramData: SpectrogramData,
-  xScale: d3.ScaleLinear<number, number>,
-  yScale: d3.ScaleLogarithmic<number, number>,
-  colorScalePallet: string[]
+  xScale: d3.AxisScale<number>,
+  yScale: d3.AxisScale<number>,
+  colorScalePallet: string[],
+  renderPartitionDividers: boolean,
+  partitionDividerColors?: [string, string]
 ) {
   // Get the largest value in the spectrogram data
   const maxVal = d3.max(spectrogramData.data)!;
@@ -143,6 +117,28 @@ function renderCanvas(
   // Generate color scale from pallet
   const colorScale = generateColorScale(colorScalePallet, maxVal);
 
+  // Render the partition dividers, if needed
+  if (renderPartitionDividers) {
+    if (!partitionDividerColors)
+      throw "Partition divider colors must be defined.";
+
+    const partitions = computePartitionRanges();
+
+    for (let i = 0; i < partitions.length; i++) {
+      const currPartitionRange = partitions[i];
+      const partitionStart = currPartitionRange[0];
+      const partitionEnd = currPartitionRange[1];
+
+      const startY = yScale(partitionStart + 1)!;
+      const endY = yScale(partitionEnd + 1)!;
+
+      // Alternate between the two colors
+      const color = partitionDividerColors[i % 2];
+
+      drawFillRegion(context, startY, endY, color);
+    }
+  }
+
   // Draw each cell on the canvas
   for (let window = 0; window < spectrogramData.numberOfWindows; window++) {
     for (let bin = 0; bin < spectrogramData.frequencyBinCount; bin++) {
@@ -153,10 +149,10 @@ function renderCanvas(
       if (cellValue === 0) continue;
 
       const color = colorScale(cellValue);
-      const x = xScale(window);
-      const y = yScale(bin + 1);
+      const x = xScale(window)!;
+      const y = yScale(bin + 1)!;
 
-      const yPrev = yScale(bin);
+      const yPrev = yScale(bin)!;
       const height = yPrev - y;
 
       drawCell(context, x, y, xAxisTickSize, height, color);
@@ -183,4 +179,21 @@ function drawCell(
     width + 2 * X_BLEED,
     height + 2 * Y_BLEED
   );
+}
+
+/**
+ * Draws a horizontal filled region onto the canvas context from 
+ * `yTop` to `yBottom`.
+ */
+function drawFillRegion(
+  context: CanvasRenderingContext2D,
+  yStart: number,
+  yEnd: number,
+  color: string
+) {
+  const canvas = context.canvas;
+  const width = canvas.width;
+
+  context.fillStyle = color;
+  context.fillRect(0, yEnd, width, yStart - yEnd);
 }

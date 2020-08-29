@@ -152,10 +152,14 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
           // console.log(`(${currWindowIdx}, ${currPartitionIdx}): sliderMean=${sliderMean} sliderStandardDeviation=${sliderStandardDeviation}`);
 
           // Iterate through each frequency band in the current cell
+          // const spectrogramSliceStartIdx =
+          //   numWindows * currWindowIdx + partitionStartIdx;
+          // const spectrogramSliceEndIdx =
+          //   numWindows * currWindowIdx + partitionEndIdx;
           const spectrogramSliceStartIdx =
-            numWindows * currWindowIdx + partitionStartIdx;
+            currWindowIdx * numPartitions + partitionStartIdx;
           const spectrogramSliceEndIdx =
-            numWindows * currWindowIdx + partitionEndIdx;
+            currWindowIdx * numPartitions + partitionEndIdx;
 
           const currCellFreqs = spectrogramData.data.slice(
             spectrogramSliceStartIdx,
@@ -192,7 +196,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
       );
 
       // Save the current window to the fingerprint
-      const startIdx = numPartitions * currWindowIdx;
+      const startIdx = currWindowIdx * numPartitions;
       fingerprintData.set(currWindowData, startIdx);
     });
 

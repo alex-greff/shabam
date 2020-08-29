@@ -32,6 +32,11 @@ export interface Props extends Omit<BaseProps, "id"> {}
 
 type AudioBlobSource = "recording" | "file" | null;
 
+// TODO: add the rest of the fingerprints
+export interface FingerprintResults {
+  functionalFingerprint: Fingerprint;
+}
+
 const Benchmark: FunctionComponent<Props> = (props) => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioBlobSource, setAudioBlobSource] = useState<AudioBlobSource>(null);
@@ -46,6 +51,10 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     benchmarkSpectrogramData,
     setBenchmarkSpectrogramData,
   ] = useState<SpectrogramData | null>(null);
+  const [
+    fingerprintResults,
+    setFingerprintResults,
+  ] = useState<FingerprintResults | null>(null);
 
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audioFile = e.target.files ? e.target.files[0] : null;
@@ -162,8 +171,13 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
     console.log("functional fingerprint:", functionalFp); // TODO: remove
 
+    // TODO: make sure all fingerprints run
+
     // Update state to indicate benchmark is complete
     setBenchmarkSpectrogramData(spectrogramData);
+    setFingerprintResults({
+      functionalFingerprint: functionalFp!,
+    });
     setBenchmarkIsRunning(false);
     setBenchmarkComplete(true);
   };
@@ -249,7 +263,10 @@ const Benchmark: FunctionComponent<Props> = (props) => {
         </ConfigurationContainer>
 
         {benchmarkComplete && !benchmarkIsRunning ? (
-          <BenchmarkResults spectrogramData={benchmarkSpectrogramData!} />
+          <BenchmarkResults
+            spectrogramData={benchmarkSpectrogramData!}
+            fingerprintResults={fingerprintResults!}
+          />
         ) : null}
       </PageContent>
     </PageView>
