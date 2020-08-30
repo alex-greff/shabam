@@ -5,6 +5,8 @@ import classnames from "classnames";
 import { renderSpectrogramChart } from "./SpectrogramChart.d3";
 import { SpectrogramData } from "@/audio/types";
 import { withSize, SizeMeProps } from "react-sizeme";
+import { DEFAULT_NAMESPACE } from "@/constants";
+import { useNamespace, useThemeLink } from "@/themer-react";
 
 export interface Props extends BaseProps, SizeMeProps {
   title?: string;
@@ -13,26 +15,6 @@ export interface Props extends BaseProps, SizeMeProps {
   spectrogramData: SpectrogramData;
 }
 
-// TODO: hook up to theme system
-// const colorScalePallet = [
-//   "rgba(0, 0, 0, 0)",
-//   "rgba(230, 0, 0, 0.8)",
-//   "rgba(255, 210, 0, 1)",
-//   "rgba(255, 255, 255, 1)",
-// ];
-
-const colorScalePallet = [
-  "rgba(0, 0, 0, 0)",
-  "rgba(8, 79, 200, 0.8)",
-  "rgba(0, 252, 239, 1)",
-  "rgba(255, 255, 255, 1)",
-];
-
-const partitionDividerColors: [string, string] = [
-  "rgba(80, 80, 80, 0.2)",
-  "rgba(100, 100, 100, 0.2)"
-];
-
 const DISPLAY_PARTITION_DIVIDERS = true;
 
 const SpectrogramChart: FunctionComponent<Props> = (props) => {
@@ -40,23 +22,85 @@ const SpectrogramChart: FunctionComponent<Props> = (props) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const themeData = useNamespace(DEFAULT_NAMESPACE)!;
+
+  // Color scale pallet colors theme link hooks
+  const csp_1 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "color_scale",
+    "color_1",
+    0
+  )!;
+  const csp_2 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "color_scale",
+    "color_2",
+    0.8
+  )!;
+  const csp_3 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "color_scale",
+    "color_3",
+    1
+  )!;
+  const csp_4 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "color_scale",
+    "color_4",
+    1
+  )!;
+
+  // Partition divider color theme link hooks
+  const pdc_1 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "partition_dividers",
+    "color_1",
+    0.2
+  )!;
+  const pdc_2 = useThemeLink(
+    themeData,
+    "SpectrogramChart",
+    "partition_dividers",
+    "color_2",
+    0.2
+  )!;
+
   // Render the spectrogram
   useEffect(() => {
-    if (size.width === 0 || size.height === 0)
-      return;
+    if (size.width === 0 || size.height === 0) return;
+
+    console.log("rendering spectrogram");
 
     renderSpectrogramChart(
       containerRef.current!,
       spectrogramData,
-      colorScalePallet,
+      [csp_1, csp_2, csp_3, csp_4],
       size.width || 0,
       size.height || 0,
       xAxisLabel,
       yAxisLabel,
       DISPLAY_PARTITION_DIVIDERS,
-      partitionDividerColors
+      [pdc_1, pdc_2]
     );
-  }, [containerRef, spectrogramData, size, xAxisLabel, yAxisLabel]);
+  }, [
+    containerRef,
+    spectrogramData,
+    size.width,
+    size.height,
+    xAxisLabel,
+    yAxisLabel,
+    csp_1,
+    csp_2,
+    csp_3,
+    csp_4,
+    pdc_1,
+    pdc_2,
+  ]);
 
   return (
     <div
@@ -64,8 +108,8 @@ const SpectrogramChart: FunctionComponent<Props> = (props) => {
       style={props.style}
       id={props.id}
     >
-      {(title) ? <div className="SpectrogramChart__title">{title}</div> : null}
-      
+      {title ? <div className="SpectrogramChart__title">{title}</div> : null}
+
       <div className="SpectrogramChart__container" ref={containerRef}></div>
     </div>
   );

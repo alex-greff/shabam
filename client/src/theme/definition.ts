@@ -50,7 +50,7 @@ export const schema: Schema = {
     },
     info: {
       $mixins: ["primary_modifier", "secondary_modifier", "disabled_modifier"],
-    },
+    }
   },
   // --- Component Scope Declarations ---
   // Views
@@ -81,6 +81,29 @@ export const schema: Schema = {
   CircularButton: { $inherits: "GLOBAL" },
   RecordButton: { $inherits: "GLOBAL" },
   StopButton: { $inherits: "GLOBAL" },
+  SpectrogramChart: { 
+    $inherits: "GLOBAL",
+    color_scale: {
+      $mixins: ["color_scale_modifiers"]
+    },
+    partition_dividers: {
+      color_1: {
+        $type: "color",
+        $required: true
+      },
+      color_2: {
+        $type: "color",
+        $required: true
+      }
+    }
+  },
+  FingerprintChart: { 
+    $inherits: "GLOBAL",
+    selection_color: {
+      $type: "color",
+      $required: true
+    }
+  },
 };
 
 export const mixins: MixinDefinitions = {
@@ -193,4 +216,22 @@ export const mixins: MixinDefinitions = {
       $required: true,
     },
   },
+  color_scale_modifiers: {
+    color_1: {
+      $type: "color",
+      $required: true,
+    },
+    color_2: {
+      $type: "color",
+      $required: true,
+    },
+    color_3: {
+      $type: "color",
+      $required: true,
+    },
+    color_4: {
+      $type: "color",
+      $required: true,
+    }
+  }
 };

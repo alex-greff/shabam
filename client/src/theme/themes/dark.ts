@@ -217,5 +217,20 @@ export default {
         disabled: Color(RED).desaturate(0.5).round().toString(),
       },
     },
+    SpectrogramChart: {
+      color_scale: {
+        color_1: "rgb(0, 0, 0)",
+        color_2: "rgb(8, 79, 200)",
+        color_3: "rgb(0, 252, 239)",
+        color_4: "rgb(255, 255, 255)"
+      },
+      partition_dividers: {
+        color_1: "rgb(80, 80, 80)",
+        color_2: "rgb(100, 100, 100)"
+      }
+    },
+    FingerprintChart: {
+      selection_color: "#08B4F4"
+    }
   },
 } as ThemeData;
