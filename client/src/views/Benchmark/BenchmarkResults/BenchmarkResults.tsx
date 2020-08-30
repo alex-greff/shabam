@@ -27,11 +27,16 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
       {/* TODO: complete */}
 
       <SpectrogramChart 
-        spectrogramData={props.spectrogramData}
+        spectrogramData={spectrogramData}
         title="Audio Spectrogram"
         xAxisLabel="Window"
         yAxisLabel="Frequency Bin"
       /> 
+
+      <FingerprintChart 
+        fingerprintData={fingerprintResults.iterativeFingerprint}
+        title="Iterative Generated Fingerprint"
+      />
 
       <FingerprintChart 
         fingerprintData={fingerprintResults.functionalFingerprint}

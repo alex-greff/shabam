@@ -58,10 +58,15 @@ function computeSliderStandardDeviation(
   // Iterate each slider partition
   const sliderStandardDeviation = Math.sqrt(
     sliderPartitionIdxs.reduce((acc, currSliderIdx) => {
+      // TODO: remove
+      // const spectrogramSliceStartIdx =
+      //   spectrogramData.numberOfWindows * currSliderIdx + partitionStartIdx;
+      // const spectrogramSliceEndIdx =
+      //   spectrogramData.numberOfWindows * currSliderIdx + partitionEndIdx;
       const spectrogramSliceStartIdx =
-        spectrogramData.numberOfWindows * currSliderIdx + partitionStartIdx;
+        currSliderIdx * spectrogramData.frequencyBinCount + partitionStartIdx;
       const spectrogramSliceEndIdx =
-        spectrogramData.numberOfWindows * currSliderIdx + partitionEndIdx;
+        currSliderIdx * spectrogramData.frequencyBinCount + partitionEndIdx;
 
       const currPartitionSlice = spectrogramData.data.slice(
         spectrogramSliceStartIdx,
@@ -152,10 +157,6 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
           // console.log(`(${currWindowIdx}, ${currPartitionIdx}): sliderMean=${sliderMean} sliderStandardDeviation=${sliderStandardDeviation}`);
 
           // Iterate through each frequency band in the current cell
-          // const spectrogramSliceStartIdx =
-          //   numWindows * currWindowIdx + partitionStartIdx;
-          // const spectrogramSliceEndIdx =
-          //   numWindows * currWindowIdx + partitionEndIdx;
           const spectrogramSliceStartIdx =
             currWindowIdx * numPartitions + partitionStartIdx;
           const spectrogramSliceEndIdx =

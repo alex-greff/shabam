@@ -50,11 +50,13 @@ export class MeanStorage {
   }
 
   /**
-   * Gets the mean value of the cell located at the given window-partition coordinate.
+   * Gets the mean value of the cell located at the given 
+   * window-partition coordinate.
    *
    * @param window The index of the window.
    * @param partition The index of the frequency bin partition.
-   * @param recompute Force recomputation of the mean value, even if it already exists.
+   * @param recompute Force recomputation of the mean value, even if it
+   *                  already exists.
    */
   getCellMean(window: number, partition: number, recompute = false) {
     this.checkCoordinates(window, partition);

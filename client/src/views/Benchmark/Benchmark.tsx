@@ -34,6 +34,7 @@ type AudioBlobSource = "recording" | "file" | null;
 
 // TODO: add the rest of the fingerprints
 export interface FingerprintResults {
+  iterativeFingerprint: Fingerprint;
   functionalFingerprint: Fingerprint;
 }
 
@@ -84,7 +85,30 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const runIterativeFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    // TODO: implement
+    const iterFpWorker = new Worker(
+      "@/workers/fingerprint/IterativeFingerprint.worker.ts",
+      { name: "functional-fingerprint-worker", type: "module" }
+    );
+
+    const iterFpWorkerApi = wrap<
+      import("@/workers/fingerprint/IterativeFingerprint.worker").FunctionalFingerprintWorker
+    >(iterFpWorker);
+
+    try {
+      const fingerprint = await iterFpWorkerApi.generateFingerprint(
+        spectrogramData,
+        {}
+      );
+
+      return fingerprint;
+    } catch (err) {
+      // TODO: handle error better?
+      console.error(
+        "Iterative Fingerprint Worker: unable to generate fingerprint",
+        err
+      );
+    }
+
     return null;
   };
 
@@ -176,6 +200,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     // Update state to indicate benchmark is complete
     setBenchmarkSpectrogramData(spectrogramData);
     setFingerprintResults({
+      iterativeFingerprint: iterativeFp!,
       functionalFingerprint: functionalFp!,
     });
     setBenchmarkIsRunning(false);
