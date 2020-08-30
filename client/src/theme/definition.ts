@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { Schema, MixinDefinitions } from "themer";
 
 export const schema: Schema = {

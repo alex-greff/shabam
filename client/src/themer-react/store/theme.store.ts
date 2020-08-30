@@ -1,6 +1,14 @@
 import { observable, computed, action } from "mobx";
-import Themer, { Theme as ThemeSchema } from "themer";
-import { schema as SCHEMA, mixins as MIXINS } from "@/theme/definition";
+import Themer, { Theme as ThemeSchema, Schema, MixinDefinitions } from "themer";
+import { PREFIX, SEPARATOR } from "../constants";
+
+const GENERATE_OPTIONS: Themer.Options = {
+  PREFIX,
+  SEPARATOR,
+  CONDENSE_KEYS: true,
+};
+
+const CUSTOM_TYPES: Themer.CustomTypes = {};
 
 // -------------------------
 // --- Type Declarations ---
@@ -29,7 +37,15 @@ interface Namespaces {
 // --- Store Class ---
 // -------------------
 
-class ThemeStore {
+export default class ThemeStore {
+  constructor(schema: Schema, mixins: MixinDefinitions) {
+    this.schema = schema;
+    this.mixins = mixins;
+  }
+
+  private schema: Schema;
+  private mixins: MixinDefinitions;
+
   @observable
   themes: Themes = {};
 
@@ -70,7 +86,7 @@ class ThemeStore {
   @computed
   get getTheme() {
     return (name: string) => {
-      return this.themes[name];
+      return this.themes[name] as Theme | undefined;
     };
   }
 
@@ -82,7 +98,7 @@ class ThemeStore {
   @computed
   get getNamespace() {
     return (namespaceID: string) => {
-      return this.namespaces[namespaceID];
+      return this.namespaces[namespaceID] as string | undefined;
     };
   }
 
@@ -95,16 +111,12 @@ class ThemeStore {
     }
 
     // Generate the theme
-    const generateOptions: Themer.Options = {
-      PREFIX: "--",
-      CONDENSE_KEYS: true,
-    };
     const generatedTheme = Themer.generate(
       themeValues,
-      SCHEMA,
-      MIXINS,
-      {},
-      generateOptions
+      this.schema,
+      this.mixins,
+      CUSTOM_TYPES,
+      GENERATE_OPTIONS
     );
 
     // Add the theme
@@ -126,10 +138,10 @@ class ThemeStore {
     // Generate the updated theme
     const updatedGeneratedTheme = Themer.generate(
       themeValues,
-      SCHEMA,
-      MIXINS,
-      {},
-      { PREFIX: "--" }
+      this.schema,
+      this.mixins,
+      CUSTOM_TYPES,
+      GENERATE_OPTIONS
     );
 
     // Update the theme's data
@@ -162,5 +174,3 @@ class ThemeStore {
     this.namespaces[namespaceID] = targetTheme;
   }
 }
-
-export const themeStore = new ThemeStore();

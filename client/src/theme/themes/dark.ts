@@ -1,4 +1,5 @@
 import Color from "color";
+import { ThemeData } from "@/themer-react";
 
 const BLACK = "#000000";
 const GREY_1 = "#1A1A1A";
@@ -217,4 +218,4 @@ export default {
       },
     },
   },
-};
+} as ThemeData;
