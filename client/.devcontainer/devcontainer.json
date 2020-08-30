@@ -10,6 +10,10 @@
     "coenraads.bracket-pair-colorizer-2",
     "dtsvet.vscode-wasm",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "naumovs.color-highlight",
+    "prisma.vscode-graphql",
+    "wayou.vscode-todo-highlight",
+    "dtsvet.vscode-wasm"
   ]
 }
