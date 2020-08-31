@@ -58,26 +58,37 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
     for (let curPartition = 0; curPartition < numPartitions; curPartition++) {
       // Determine slider window range
       const SLIDER_WIDTH = AudioConstants.FINGERPRINT_SLIDER_WIDTH;
-      const sliderStart = Math.max(0, curWindow - SLIDER_WIDTH);
-      const sliderEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
-      const sliderSize = sliderEnd - sliderStart;
+      const SLIDER_HEIGHT = AudioConstants.FINGERPRINT_SLIDER_HEIGHT;
+      const sliderXStart = Math.max(0, curWindow - SLIDER_WIDTH);
+      const sliderXEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
+      const sliderYStart = Math.max(0, curPartition - SLIDER_HEIGHT);
+      const sliderYEnd = Math.min(
+        numPartitions,
+        curPartition + SLIDER_HEIGHT + 1
+      );
+      const sliderSize =
+        (sliderXEnd - sliderXStart) * (sliderYEnd - sliderYStart);
 
       // Compute the mean value of the slider
       let sliderMean = 0;
-      for (let curSlider = sliderStart; curSlider < sliderEnd; curSlider++) {
-        const curSliderCellIdx = curSlider * numPartitions + curPartition;
-        const curCellValue = cellData[curSliderCellIdx];
-        sliderMean += curCellValue;
+      for (let sx = sliderXStart; sx < sliderXEnd; sx++) {
+        for (let sy = sliderYStart; sy < sliderYEnd; sy++) {
+          const curCellIdx = sx * numPartitions + sy;
+          const curCellValue = cellData[curCellIdx];
+          sliderMean += curCellValue;
+        }
       }
       sliderMean = sliderMean / sliderSize;
 
       // Compute the variance of the slider
       let sliderVariance = 0;
-      for (let curSlider = sliderStart; curSlider < sliderEnd; curSlider++) {
-        const curSliderCellIdx = curSlider * numPartitions + curPartition;
-        const curCellValue = cellData[curSliderCellIdx];
-        const cellDifference = curCellValue - sliderMean;
-        sliderVariance += Math.pow(cellDifference, 2);
+      for (let sx = sliderXStart; sx < sliderXEnd; sx++) {
+        for (let sy = sliderYStart; sy < sliderYEnd; sy++) {
+          const curCellIdx = sx * numPartitions + sy;
+          const curCellValue = cellData[curCellIdx];
+          const cellDifference = curCellValue - sliderMean;
+          sliderVariance += Math.pow(cellDifference, 2);
+        }
       }
       sliderVariance = sliderVariance / sliderSize;
 
@@ -90,8 +101,10 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
 
       const STANDARD_DEVIATION_MULTIPLIER =
         AudioConstants.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
-      const thresholdValue =
-        sliderMean + (sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER);
+      const thresholdValue = Math.max(
+        0,
+        sliderMean + sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER
+      );
 
       const passes = cellValue > thresholdValue;
 

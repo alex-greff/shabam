@@ -55,31 +55,47 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
 
   // Compute the fingerprint data
   fingerprintData = fingerprintData.map((_, cellIdx) => {
-    const curPartition = Math.floor(cellIdx / numPartitions);
-    const curWindow = (cellIdx - curPartition) / numPartitions;
+    const curWindow = Math.floor(cellIdx / numPartitions);
+    const curPartition = cellIdx - curWindow * numPartitions;
 
     // Determine slider window range
     const SLIDER_WIDTH = AudioConstants.FINGERPRINT_SLIDER_WIDTH;
-    const sliderStart = Math.max(0, curWindow - SLIDER_WIDTH);
-    const sliderEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
-    const sliderSize = sliderEnd - sliderStart;
+    const SLIDER_HEIGHT = AudioConstants.FINGERPRINT_SLIDER_HEIGHT;
+    const sliderXStart = Math.max(0, curWindow - SLIDER_WIDTH);
+    const sliderXEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
+    const sliderYStart = Math.max(0, curPartition - SLIDER_HEIGHT);
+    const sliderYEnd = Math.min(
+      numPartitions,
+      curPartition + SLIDER_HEIGHT + 1
+    );
+    const sliderSize =
+      (sliderXEnd - sliderXStart) * (sliderYEnd - sliderYStart);
+
+    const sliderXRange = range(sliderXStart, sliderXEnd);
+    const sliderYRange = range(sliderYStart, sliderYEnd);
 
     // Compute the mean value of the slider
-    const sliderRange = range(sliderStart, sliderEnd);
     const sliderMean =
-      sliderRange.reduce((acc, curSlider) => {
-        const curSliderCellIdx = curSlider * numPartitions + curPartition;
-        const curCellValue = cellData[curSliderCellIdx];
-        return acc + curCellValue;
+      sliderXRange.reduce((accX, sx) => {
+        const ySub = sliderYRange.reduce((accY, sy) => {
+          const curCellIdx = sx * numPartitions + sy;
+          const curCellValue = cellData[curCellIdx];
+          return accY + curCellValue;
+        }, 0);
+        return accX + ySub;
       }, 0) / sliderSize;
 
     // Compute the variance of the slider
-    const sliderVariance = sliderRange.reduce((acc, curSlider) => {
-      const curSliderCellIdx = curSlider * numPartitions + curPartition;
-      const curCellValue = cellData[curSliderCellIdx];
-      const cellDifference = curCellValue - sliderMean;
-      return acc + Math.pow(cellDifference, 2);
-    }, 0) / sliderSize;
+    const sliderVariance =
+      sliderXRange.reduce((accX, sx) => {
+        const ySub = sliderYRange.reduce((accY, sy) => {
+          const curCellIdx = sx * numPartitions + sy;
+          const curCellValue = cellData[curCellIdx];
+          const cellDifference = curCellValue - sliderMean;
+          return accY + Math.pow(cellDifference, 2);
+        }, 0);
+        return accX + ySub;
+      }, 0) / sliderSize;
 
     // Compute the standard deviation of the slider
     const sliderStandardDeviation = Math.round(Math.sqrt(sliderVariance));
@@ -89,8 +105,10 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
 
     const STANDARD_DEVIATION_MULTIPLIER =
       AudioConstants.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
-    const thresholdValue =
-      sliderMean + (sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER);
+    const thresholdValue = Math.max(
+      0,
+      sliderMean + sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER
+    );
 
     const passes = cellValue > thresholdValue;
 
