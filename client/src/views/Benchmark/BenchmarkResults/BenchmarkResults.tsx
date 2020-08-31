@@ -35,7 +35,7 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
 
       <FingerprintChart 
         fingerprintData={fingerprintResults.iterativeFingerprint}
-        title="Iterative Generated Fingerprint"
+        title="Iteratively Generated Fingerprint"
       />
 
       <FingerprintChart 

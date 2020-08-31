@@ -42,10 +42,6 @@ export function renderFingerprintChart(
     .scaleLinear()
     .domain([0, fingerprintData.numberOfWindows])
     .range([0, width]);
-  // const yScale = d3
-  //   .scaleLinear()
-  //   .domain([0, fingerprintData.numberOfPartitions + 0.5])
-  //   .range([height, 0]);
   const yScale = d3
     .scaleLog()
     .domain([1, fingerprintData.frequencyBinCount + 1])
@@ -96,8 +92,11 @@ function renderCanvas(
   // Compute the tick size of the axises
   const xAxisTickSize = canvas.width / fingerprintData.numberOfWindows;
 
-  const numWindows = fingerprintData.numberOfWindows;
-  const numPartitions = fingerprintData.numberOfPartitions;
+  const pointData = fingerprintData.data;
+  const numPoints = pointData.length / 2;
+
+  if (pointData.length % 2 !== 0)
+    throw "Fingerprint point data length must be a multiple of 2";
 
   // Render the partition dividers, if needed
   if (renderPartitionDividers) {
@@ -113,26 +112,22 @@ function renderCanvas(
   }
 
   // Draw each point on the canvas
-  for (let window = 0; window < numWindows; window++) {
-    for (let partition = 0; partition < numPartitions; partition++) {
-      const cellIdx = window * fingerprintData.numberOfPartitions + partition;
-      const cellValue = fingerprintData.data[cellIdx];
+  for (let i = 0; i < numPoints; i++) {
+    const pointBaseIdx = i * 2;
+    const window = pointData[pointBaseIdx];
+    const partition = pointData[pointBaseIdx + 1];
 
-      // Don't plot 0 values
-      if (cellValue === 0) continue;
+    const x = xScale(window)! + xAxisTickSize / 2; // Center the x position
 
-      const x = xScale(window)! + xAxisTickSize / 2; // Center the x position
+    // Center the y position
+    const partitionRange = fingerprintData.partitionRanges[partition];
+    const partitionStart = partitionRange[0];
+    const partitionEnd = partitionRange[1];
+    const partitionMid = (partitionEnd - partitionStart) / 2 + partitionStart;
 
-      // Center the y position
-      const partitionRange = fingerprintData.partitionRanges[partition];
-      const partitionStart = partitionRange[0];
-      const partitionEnd = partitionRange[1];
-      const partitionMid = (partitionEnd - partitionStart) / 2 + partitionStart;
+    const y = yScale(partitionMid)!;
 
-      const y = yScale(partitionMid)!;
-
-      drawCell(context, x, y, POINT_RADIUS, selectionColor);
-    }
+    drawCell(context, x, y, POINT_RADIUS, selectionColor);
   }
 }
 

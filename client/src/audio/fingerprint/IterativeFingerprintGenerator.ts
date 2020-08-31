@@ -29,7 +29,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   const numPartitions = partitionRanges.length;
 
   const cellData = new Uint8Array(numWindows * numPartitions);
-  const fingerprintData = new Uint8Array(numWindows * numPartitions);
+  const fingerprintPoints: [number, number][] = [];
 
   // Compute the cell data by finding the strongest frequency of each cell
   // in the spectrogram
@@ -107,11 +107,17 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
       );
 
       const passes = cellValue > thresholdValue;
-
-      // Update the fingerprint value
-      const fingerprintValue = passes ? 1 : 0;
-      fingerprintData[cellIdx] = fingerprintValue;
+      if (passes)
+        fingerprintPoints.push([curWindow, curPartition]);
     }
+  }
+
+  // Condense the fingerprint points
+  const fingerprintData = new Uint8Array(fingerprintPoints.length * 2);
+  for (let i = 0; i < fingerprintPoints.length; i++) {
+    const currPoint = fingerprintPoints[i];
+    fingerprintData[i*2] = currPoint[0];
+    fingerprintData[i*2+1] = currPoint[1];
   }
 
   return {
