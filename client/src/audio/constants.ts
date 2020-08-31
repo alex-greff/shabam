@@ -18,7 +18,7 @@ export const FINGERPRINT_PARTITION_CURVE = 50;
 
 // Number of windows on each side of the slider
 // TOTAL_SLIDER_WIDTH = 2 * FINGERPRINT_SLIDER_WIDTH + 1
-export const FINGERPRINT_SLIDER_WIDTH = 10;
+export const FINGERPRINT_SLIDER_WIDTH = 5;
 
 // Number of windows above and below the slider
 // TOTAL_SLIDER_HEIGHT = 2 * FINGERPRINT_SLIDER_HEIGHT + 1

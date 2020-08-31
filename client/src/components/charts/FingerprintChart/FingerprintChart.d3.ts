@@ -8,7 +8,6 @@ import {
   getWidth,
   drawPartitionDividers,
 } from "@/components/charts/CanvasChartBase.d3";
-import { computePartitionRanges, findPartitionRange } from "@/audio/utilities";
 
 const POINT_RADIUS = 1.5;
 

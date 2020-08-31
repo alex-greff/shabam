@@ -193,6 +193,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     const functionalFp = await runFunctionalFingerprint(spectrogramData);
     // const wasmFp = await runWasmFingerprint(spectrogramData); // TODO: uncomment
 
+    console.log("iterative fingerprint:", iterativeFp); // TODO: remove
     console.log("functional fingerprint:", functionalFp); // TODO: remove
 
     // TODO: make sure all fingerprints run
