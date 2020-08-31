@@ -6,6 +6,6 @@ const exports: FingerprintWorker = {
   generateFingerprint,
 };
 
-export type FunctionalFingerprintWorker = typeof exports;
+export type IterativeFingerprintWorker = typeof exports;
 
 expose(exports);

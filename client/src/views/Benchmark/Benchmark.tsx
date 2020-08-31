@@ -87,11 +87,11 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   ): Promise<Fingerprint | null> => {
     const iterFpWorker = new Worker(
       "@/workers/fingerprint/IterativeFingerprint.worker.ts",
-      { name: "functional-fingerprint-worker", type: "module" }
+      { name: "iterative-fingerprint-worker", type: "module" }
     );
 
     const iterFpWorkerApi = wrap<
-      import("@/workers/fingerprint/IterativeFingerprint.worker").FunctionalFingerprintWorker
+      import("@/workers/fingerprint/IterativeFingerprint.worker").IterativeFingerprintWorker
     >(iterFpWorker);
 
     try {
