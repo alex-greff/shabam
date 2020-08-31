@@ -113,7 +113,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   }
 
   // Condense the fingerprint points
-  const fingerprintData = new Uint8Array(fingerprintPoints.length * 2);
+  const fingerprintData = new Uint32Array(fingerprintPoints.length * 2);
   for (let i = 0; i < fingerprintPoints.length; i++) {
     const currPoint = fingerprintPoints[i];
     fingerprintData[i*2] = currPoint[0];
