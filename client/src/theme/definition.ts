@@ -102,6 +102,16 @@ export const schema: Schema = {
     selection_color: {
       $type: "color",
       $required: true
+    },
+    partition_dividers: {
+      color_1: {
+        $type: "color",
+        $required: true
+      },
+      color_2: {
+        $type: "color",
+        $required: true
+      }
     }
   },
 };

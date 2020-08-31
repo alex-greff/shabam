@@ -192,6 +192,27 @@ export function computePartitionRanges(
   return ret;
 }
 
+/**
+ * Finds and returns the partition range for the given index.
+ * @param index The index to search with.
+ * @param partitions The partitions.
+ */
+export function findPartitionRange(index: number, partitions: PartitionRanges) {
+  for (let i = 0; i < partitions.length; i++) {
+    const currPartitionRange = partitions[i];
+    const startIdx = currPartitionRange[0];
+    const endIdx = currPartitionRange[1];
+
+    // Found index
+    if (index >= startIdx && index < endIdx){
+      return currPartitionRange;
+    }
+  }
+
+  // Nothing was found
+  return null;
+}
+
 export interface ComputeSpectrogramDataOptions {
   /** The durations (seconds) of the window */
   windowDuration: number;

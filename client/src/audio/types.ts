@@ -14,6 +14,8 @@ export interface Fingerprint {
   numberOfWindows: number;
   /** The number of partitions in the fingerprint (y-axis) */
   numberOfPartitions: number;
+  /** The number of frequency bins that the fingerprint was generated from. */
+  frequencyBinCount: number;
   /** The fingerprint data */
   data: Uint8Array;
   /** The associated partition ranges of the fingerprint */

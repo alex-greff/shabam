@@ -16,6 +16,8 @@ export interface Props extends BaseProps, SizeMeProps {
 const X_AXIS_LABEL = "Window";
 const Y_AXIS_LABEL = "Frequency Band";
 
+const DISPLAY_PARTITION_DIVIDERS = true;
+
 const FingerprintChart: FunctionComponent<Props> = (props) => {
   const { title, fingerprintData, size } = props;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,6 +26,22 @@ const FingerprintChart: FunctionComponent<Props> = (props) => {
 
   // Selection color them link hook
   const sc = useThemeLink(themeData, "FingerprintChart", "selection_color")!;
+
+  // Partition divider color theme link hooks
+  const pdc_1 = useThemeLink(
+    themeData,
+    "FingerprintChart",
+    "partition_dividers",
+    "color_1",
+    0.2
+  )!;
+  const pdc_2 = useThemeLink(
+    themeData,
+    "FingerprintChart",
+    "partition_dividers",
+    "color_2",
+    0.2
+  )!;
 
   // Render the fingerprint chart
   useEffect(() => {
@@ -36,9 +54,19 @@ const FingerprintChart: FunctionComponent<Props> = (props) => {
       size.width || 0,
       size.height || 0,
       X_AXIS_LABEL,
-      Y_AXIS_LABEL
+      Y_AXIS_LABEL,
+      DISPLAY_PARTITION_DIVIDERS,
+      [pdc_1, pdc_2]
     );
-  }, [containerRef, fingerprintData, size, sc]);
+  }, [
+    containerRef,
+    fingerprintData,
+    size.width,
+    size.height,
+    sc,
+    pdc_1,
+    pdc_2,
+  ]);
 
   return (
     <div

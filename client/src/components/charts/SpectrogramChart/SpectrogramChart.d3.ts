@@ -6,6 +6,7 @@ import {
   renderChart,
   getHeight,
   getWidth,
+  drawPartitionDividers
 } from "@/components/charts/CanvasChartBase.d3";
 import { computePartitionRanges } from "@/audio/utilities";
 
@@ -123,20 +124,7 @@ function renderCanvas(
       throw "Partition divider colors must be defined.";
 
     const partitions = computePartitionRanges();
-
-    for (let i = 0; i < partitions.length; i++) {
-      const currPartitionRange = partitions[i];
-      const partitionStart = currPartitionRange[0];
-      const partitionEnd = currPartitionRange[1];
-
-      const startY = yScale(partitionStart + 1)!;
-      const endY = yScale(partitionEnd + 1)!;
-
-      // Alternate between the two colors
-      const color = partitionDividerColors[i % 2];
-
-      drawFillRegion(context, startY, endY, color);
-    }
+    drawPartitionDividers(context, yScale, partitions, partitionDividerColors);
   }
 
   // Draw each cell on the canvas
@@ -179,21 +167,4 @@ function drawCell(
     width + 2 * X_BLEED,
     height + 2 * Y_BLEED
   );
-}
-
-/**
- * Draws a horizontal filled region onto the canvas context from 
- * `yTop` to `yBottom`.
- */
-function drawFillRegion(
-  context: CanvasRenderingContext2D,
-  yStart: number,
-  yEnd: number,
-  color: string
-) {
-  const canvas = context.canvas;
-  const width = canvas.width;
-
-  context.fillStyle = color;
-  context.fillRect(0, yEnd, width, yStart - yEnd);
 }

@@ -230,7 +230,11 @@ export default {
       }
     },
     FingerprintChart: {
-      selection_color: "#08B4F4"
+      selection_color: "#08B4F4",
+      partition_dividers: {
+        color_1: "rgb(80, 80, 80)",
+        color_2: "rgb(100, 100, 100)"
+      }
     }
   },
 } as ThemeData;

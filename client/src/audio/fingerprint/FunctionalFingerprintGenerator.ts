@@ -119,6 +119,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   return {
     numberOfWindows: numWindows,
     numberOfPartitions: numPartitions,
+    frequencyBinCount: numFrequencies,
     data: fingerprintData,
     partitionRanges: partitionRanges,
   };

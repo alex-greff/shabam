@@ -1,3 +1,4 @@
+import { PartitionRanges } from "@/audio/types";
 // Base D3 code for rendering canvas charts
 import * as d3 from "d3";
 import { AxisDomain } from "d3";
@@ -23,7 +24,7 @@ export type CanvasRenderFunction<Data, Domain extends AxisDomain> = (
 
 /**
  * Renders the canvas chart into `containerElem` with the given data.
- * 
+ *
  * @param baseClass The base class use for the generated BEM classes.
  * @param containerElem The container element to render the chart in.
  * @param data The data to render.
@@ -46,7 +47,7 @@ export function renderChart<Data, Domain extends AxisDomain>(
   xAxisScale: d3.AxisScale<Domain>,
   yAxisScale: d3.AxisScale<Domain>,
   xAxisLabel?: string,
-  yAxisLabel?: string,
+  yAxisLabel?: string
 ) {
   // Clear child nodes, for if we have a previous render
   containerElem.innerHTML = "";
@@ -86,10 +87,7 @@ export function renderChart<Data, Domain extends AxisDomain>(
     .attr("class", `${baseClass}__x-axis`)
     .attr("transform", `translate(0, ${height})`)
     .call(xAxis);
-  svgChart
-    .append("g")
-    .attr("class", `${baseClass}__y-axis`)
-    .call(yAxis);
+  svgChart.append("g").attr("class", `${baseClass}__y-axis`).call(yAxis);
 
   // Add axis labels
   if (xAxisLabel) {
@@ -128,4 +126,42 @@ export function getHeight(outerHeight: number) {
  */
 export function getWidth(outerWidth: number) {
   return outerWidth - MARGIN.left - MARGIN.right;
+}
+
+export function drawPartitionDividers(
+  context: CanvasRenderingContext2D,
+  yScale: d3.AxisScale<number>,
+  partitions: PartitionRanges,
+  partitionDividerColors: [string, string]
+) {
+  for (let i = 0; i < partitions.length; i++) {
+    const currPartitionRange = partitions[i];
+    const partitionStart = currPartitionRange[0];
+    const partitionEnd = currPartitionRange[1];
+
+    const startY = yScale(partitionStart + 1)!;
+    const endY = yScale(partitionEnd + 1)!;
+
+    // Alternate between the two colors
+    const color = partitionDividerColors[i % 2];
+
+    drawFillRegion(context, startY, endY, color);
+  }
+}
+
+/**
+ * Draws a horizontal filled region onto the canvas context from
+ * `yTop` to `yBottom`.
+ */
+export function drawFillRegion(
+  context: CanvasRenderingContext2D,
+  yStart: number,
+  yEnd: number,
+  color: string
+) {
+  const canvas = context.canvas;
+  const width = canvas.width;
+
+  context.fillStyle = color;
+  context.fillRect(0, yEnd, width, yStart - yEnd);
 }

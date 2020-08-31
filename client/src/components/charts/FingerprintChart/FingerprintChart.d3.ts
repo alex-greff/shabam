@@ -6,13 +6,15 @@ import {
   renderChart,
   getHeight,
   getWidth,
+  drawPartitionDividers,
 } from "@/components/charts/CanvasChartBase.d3";
+import { computePartitionRanges, findPartitionRange } from "@/audio/utilities";
 
-const POINT_RADIUS = 3.5;
+const POINT_RADIUS = 1.5;
 
 /**
  * Renders a fingerprint chart into `containerElem`.
- * 
+ *
  * @param containerElem The container to render into.
  * @param fingerprintData The fingerprint data.
  * @param selectionColor The color of each selection point.
@@ -28,7 +30,9 @@ export function renderFingerprintChart(
   outerWidth: number,
   outerHeight: number,
   xAxisLabel?: string,
-  yAxisLabel?: string
+  yAxisLabel?: string,
+  renderPartitionDividers = false,
+  partitionDividerColors?: [string, string]
 ) {
   const width = getWidth(outerWidth);
   const height = getHeight(outerHeight);
@@ -38,17 +42,31 @@ export function renderFingerprintChart(
     .scaleLinear()
     .domain([0, fingerprintData.numberOfWindows])
     .range([0, width]);
+  // const yScale = d3
+  //   .scaleLinear()
+  //   .domain([0, fingerprintData.numberOfPartitions + 0.5])
+  //   .range([height, 0]);
   const yScale = d3
-    .scaleLinear()
-    .domain([0, fingerprintData.numberOfPartitions + 0.5])
-    .range([height, 0]);
+    .scaleLog()
+    .domain([1, fingerprintData.frequencyBinCount + 1])
+    .range([height, 0])
+    .base(2);
 
   const renderCanvasWrapped = (
     context: CanvasRenderingContext2D,
     fingerprintData: Fingerprint,
     xScale: d3.AxisScale<number>,
     yScale: d3.AxisScale<number>
-  ) => renderCanvas(context, fingerprintData, xScale, yScale, selectionColor);
+  ) =>
+    renderCanvas(
+      context,
+      fingerprintData,
+      xScale,
+      yScale,
+      selectionColor,
+      renderPartitionDividers,
+      partitionDividerColors
+    );
 
   renderChart<Fingerprint, number>(
     "FingerprintChart",
@@ -70,17 +88,29 @@ function renderCanvas(
   xScale: d3.AxisScale<number>,
   yScale: d3.AxisScale<number>,
   selectionColor: string,
+  renderPartitionDividers: boolean,
+  partitionDividerColors?: [string, string]
 ) {
   const canvas = context.canvas;
 
   // Compute the tick size of the axises
   const xAxisTickSize = canvas.width / fingerprintData.numberOfWindows;
-  const yAxisTickSize = canvas.height / fingerprintData.numberOfPartitions;
-
-  const radius = Math.min(xAxisTickSize, yAxisTickSize, POINT_RADIUS) / 2;
 
   const numWindows = fingerprintData.numberOfWindows;
   const numPartitions = fingerprintData.numberOfPartitions;
+
+  // Render the partition dividers, if needed
+  if (renderPartitionDividers) {
+    if (!partitionDividerColors)
+      throw "Partition divider colors must be defined.";
+
+    drawPartitionDividers(
+      context,
+      yScale,
+      fingerprintData.partitionRanges,
+      partitionDividerColors
+    );
+  }
 
   // Draw each point on the canvas
   for (let window = 0; window < numWindows; window++) {
@@ -92,9 +122,16 @@ function renderCanvas(
       if (cellValue === 0) continue;
 
       const x = xScale(window)! + xAxisTickSize / 2; // Center the x position
-      const y = yScale(partition + 1)!;
 
-      drawCell(context, x, y, radius, selectionColor);
+      // Center the y position
+      const partitionRange = fingerprintData.partitionRanges[partition];
+      const partitionStart = partitionRange[0];
+      const partitionEnd = partitionRange[1];
+      const partitionMid = (partitionEnd - partitionStart) / 2 + partitionStart;
+
+      const y = yScale(partitionMid)!;
+
+      drawCell(context, x, y, POINT_RADIUS, selectionColor);
     }
   }
 }

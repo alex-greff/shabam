@@ -74,8 +74,6 @@ const SpectrogramChart: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     if (size.width === 0 || size.height === 0) return;
 
-    console.log("rendering spectrogram"); // TODO: remove
-
     renderSpectrogramChart(
       containerRef.current!,
       spectrogramData,
