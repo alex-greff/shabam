@@ -21,16 +21,9 @@ export const FINGERPRINT_PARTITION_CURVE = 50;
 // export const FINGERPRINT_SLIDER_WIDTH = 10; // TODO: put back
 export const FINGERPRINT_SLIDER_WIDTH = 4; 
 
-// 0: everything passes, 1: no weight, (at least) >255: nothing passes (Wrong now, TODO: remove)
-// export const FINGERPRINT_THRESHOLD_MULTIPLIER = 0.6; // TODO: put back?
-export const FINGERPRINT_THRESHOLD_MULTIPLIER = 0.3; 
-
 // How much of the standard deviation is added to the fingerprint cell
 // acceptance threshold value. Recommended to have a value [0, 0.5]
 // 0: no weight (only mean is used)
 // 1: entire standard deviation is added
 // >1: more than the entire standard deviation is added
 export const FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER = 0.3;
-
-// [0, 1]
-export const FINGERPRINT_FREQ_PASS_PERCENT = 0.3; // TODO: unneeded remove

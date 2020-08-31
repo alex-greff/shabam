@@ -107,12 +107,4 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
     data: fingerprintData,
     partitionRanges: partitionRanges,
   };
-
-  // TODO: remove
-  // return {
-  //   numberOfWindows: 0,
-  //   numberOfPartitions: 0,
-  //   data: new Uint8Array(0),
-  //   partitionRanges: [],
-  // };
 };
