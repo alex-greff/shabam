@@ -22,9 +22,9 @@ COMMON_FLAGS = \
 
 OPT_LEVEL = -O2
 
-SOURCE_DIR = /app/src/wasm/src
-TEMP_DIR = /app/src/wasm/build_temp
-OUT_DIR = /app/src/wasm/build
+SRC = /app/src/wasm/src
+TEMP = /app/src/wasm/build_temp
+OUT = /app/src/wasm/build
 
 # --- Compile steps ---
 
@@ -33,23 +33,23 @@ OUT_DIR = /app/src/wasm/build
 
 # Fingerprint compile code
 
-fingerprint.js : fingerprint.bc
-	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/fingerprint.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
-	sed -i.old '1s;^;var document = {}\;;' $(OUT_DIR)/$@ 
+fingerprint.js : fingerprint.bc fp_initializers.bc fp_generator.bc
+	$(CC) $(OPT_LEVEL) \
+		$(TEMP)/fingerprint.bc \
+		$(TEMP)/fp_initializers.bc \
+		$(TEMP)/fp_generator.bc \
+		$(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT)/$@
+	sed -i.old '1s;^;var document = {}\;;' $(OUT)/$@ 
 
-fingerprint.bc : $(SOURCE_DIR)/fingerprint.cpp
-	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/fingerprint.cpp $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
+fingerprint.bc : $(SRC)/fingerprint.cpp
+	$(CC) $(OPT_LEVEL) $(SRC)/fingerprint.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
 
-# Temp compile code, TODO: remove
-main-wasm.js : main.bc
-	$(CC) $(OPT_LEVEL) $(TEMP_DIR)/main.bc $(COMMON_FLAGS) $(ROOT_FLAGS) -o $(OUT_DIR)/$@
-	sed -i.old '1s;^;var document = {}\;;' $(OUT_DIR)/$@ 
+fp_initializers.bc : $(SRC)/fp_initializers.cpp $(SRC)/fp_initializers.hpp
+	$(CC) $(OPT_LEVEL) $(SRC)/fp_initializers.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
 
-main.bc : $(SOURCE_DIR)/main.cpp fibonacci.bc
-	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/main.cpp $(TEMP_DIR)/fibonacci.bc $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
+fp_generator.bc : $(SRC)/fp_generator.cpp $(SRC)/fp_generator.hpp
+	$(CC) $(OPT_LEVEL) $(SRC)/fp_generator.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
 
-fibonacci.bc : $(SOURCE_DIR)/fibonacci.cpp $(SOURCE_DIR)/fibonacci.hpp
-	$(CC) $(OPT_LEVEL) $(SOURCE_DIR)/fibonacci.cpp $(COMMON_FLAGS) -o $(TEMP_DIR)/$@
 
 # --- Cleanup ---
 

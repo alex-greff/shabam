@@ -1,3 +1,4 @@
+// TODO: remove module
 // import * as Utilities from "@/utilities";
 // import { loadWasmModule } from "@/loaders/WASMLoader";
 import { expose } from "comlink";
