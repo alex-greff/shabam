@@ -6,6 +6,9 @@
 #include <malloc.h>
 #include <stddef.h>
 
+bool compute_partition_ranges(int *partition_ranges, int partition_amount,
+                              int FFT_size, double partition_curve) {}
+
 // TODO: how the generate_fingerprint function is going to work
 // 1. The spectrogram data/options will be copied into WASM memory first with
 // the
@@ -22,10 +25,15 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
   printf("WASM: spectrogram: num_windows=%d, freq_bin_count=%d\n",
          spectrogram->num_windows, spectrogram->freq_bin_count);
 
+  // Ensure that the global settings have been initialized
   if (FP_GLOBAL_SETTINGS_INITIALIZED == false)
     return NULL;
 
-  // TODO: implement
+  // Compute the partition ranges
+  int partition_ranges[options->partition_amount][2];
+  bool success = compute_partition_ranges(
+      (int *)&partition_ranges, options->partition_amount,
+      FP_GLOBAL_SETTINGS.FFT_SIZE, options->partition_curve);
 
   return NULL;
 }

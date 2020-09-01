@@ -45,10 +45,11 @@ struct fingerprint_options *create_fingerprint_options(int partition_amount,
 
 /* Initializes the global fingerprint options. */
 EMSCRIPTEN_KEEPALIVE
-void initialize_global_fingerprint_options(int partition_amount,
+void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
                                            double partition_curve,
                                            int slider_width, int slider_height,
                                            double std_dev_mult) {
+  FP_GLOBAL_SETTINGS.FFT_SIZE = FFT_size;
   FP_GLOBAL_SETTINGS.PARTITION_AMOUNT = partition_amount;
   FP_GLOBAL_SETTINGS.PARTITION_CURVE = partition_curve;
   FP_GLOBAL_SETTINGS.SLIDER_WIDTH = slider_width;

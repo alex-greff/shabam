@@ -16,14 +16,13 @@ struct fingerprint_options *create_fingerprint_options(int partition_amount,
                                                        int partition_curve);
 
 EMSCRIPTEN_KEEPALIVE
-void initialize_global_fingerprint_options(int partition_amount,
+void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
                                            double partition_curve,
                                            int slider_width, int slider_height,
                                            double std_dev_mult);
 
 EMSCRIPTEN_KEEPALIVE
 bool global_fingerprint_options_initialized(void);
-
 }
 
 #endif

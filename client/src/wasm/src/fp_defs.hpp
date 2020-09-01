@@ -6,6 +6,8 @@
 // Note: these types should ALWAYS match their equivalents in @/audio/types.ts
 
 struct FINGERPRINT_GLOBAL_SETTINGS {
+  /* The sample size of the FFT. */
+  int FFT_SIZE;
   /* Number of partitions in the fingerprints.
     Range: [1, infinity) */
   int PARTITION_AMOUNT;
