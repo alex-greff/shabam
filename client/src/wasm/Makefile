@@ -42,13 +42,13 @@ fingerprint.js : fingerprint.bc fp_initializers.bc fp_generator.bc
 	sed -i.old '1s;^;var document = {}\;;' $(OUT)/$@ 
 
 fingerprint.bc : $(SRC)/fingerprint.cpp
-	$(CC) $(OPT_LEVEL) $(SRC)/fingerprint.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
+	$(CC) $(OPT_LEVEL) $(SRC)/fingerprint.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
 
 fp_initializers.bc : $(SRC)/fp_initializers.cpp $(SRC)/fp_initializers.hpp
-	$(CC) $(OPT_LEVEL) $(SRC)/fp_initializers.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
+	$(CC) $(OPT_LEVEL) $(SRC)/fp_initializers.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
 
 fp_generator.bc : $(SRC)/fp_generator.cpp $(SRC)/fp_generator.hpp
-	$(CC) $(OPT_LEVEL) $(SRC)/fp_generator.cpp $(COMMON_FLAGS) -o $(TEMP)/$@
+	$(CC) $(OPT_LEVEL) $(SRC)/fp_generator.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
 
 
 # --- Cleanup ---
