@@ -6,8 +6,6 @@
 // Note: these types should ALWAYS match their equivalents in @/audio/types.ts
 
 struct FINGERPRINT_GLOBAL_SETTINGS {
-  /* The sample size of the FFT. */
-  int FFT_SIZE;
   /* Number of partitions in the fingerprints.
     Range: [1, infinity) */
   int PARTITION_AMOUNT;
@@ -33,9 +31,8 @@ struct FINGERPRINT_GLOBAL_SETTINGS {
 /* Options used when generating a fingerprint. */
 struct fingerprint_options {
   int partition_amount; /* The number of partitions used. */
-  int FFT_size;         /* The size of the FFT window. */
-  int partition_curve;  /* The curve that the partition ranges
-                           are calculated on. */
+  int *partition_ranges;    /* The partition range tuple array. */
+  int num_partition_ranges; /* The number of pair tuples in partition ranges. */
 };
 
 /* Spectrogram data representation.

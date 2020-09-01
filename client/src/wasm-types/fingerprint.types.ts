@@ -9,12 +9,11 @@ export default interface FingerprintModule extends BaseWasmModule {
 
   _create_fingerprint_options(
     partition_amount: number,
-    FFT_size: number,
-    partition_curve: number
+    partition_ranges_ptr: pointer,
+    num_partition_ranges: number
   ): pointer;
 
   _initialize_global_fingerprint_options(
-    FFT_size: number,
     partition_amount: number,
     partition_curve: number,
     slider_width: number,

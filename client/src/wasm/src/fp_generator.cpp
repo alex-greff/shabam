@@ -7,91 +7,17 @@
 #include <stddef.h>
 #include <tgmath.h>
 
-/* Helper function used by compute_partition_ranges to get the boundary indexes
-   of each partition range.
-*/
-int get_boundary_index(int partition_idx, int total_partitions, int total_bins,
-                       double partition_curve) {
-  // Equation: y = b/(c-1)(c^(x/a)-1)
-  //   where:
-  //     a = number of partitions
-  //     b = number of bins (FFT_size / 2)
-  //     c = tension on the curve
-  return floor(
-      (total_bins / (partition_curve - 1)) *
-      (pow(partition_curve, (double)partition_idx / total_partitions) - 1));
-}
-
-bool compute_partition_ranges(int *partition_ranges, int partition_amount,
-                              int FFT_size, double partition_curve) {
-  // Checks
-  if (FFT_size / 2 <= 0 || FFT_size % 2 != 0)
-    return false;
-  if (partition_amount <= 0) {
-    return false;
-  }
-
-  int total_bins = FFT_size / 2;
-
-  for (int i = 0; i < partition_amount; i++) {
-    int range_min_idx = i * 2;
-    int range_max_idx = i * 2 + 1;
-
-    // Compute boundary indicies
-    int min_val =
-        get_boundary_index(i, partition_amount, total_bins, partition_curve);
-    int max_val = get_boundary_index(i + 1, partition_amount, total_bins,
-                                     partition_curve);
-
-    // Update partition range tuple array
-    partition_ranges[range_min_idx] = min_val;
-    partition_ranges[range_max_idx] = max_val;
-  }
-
-  return true;
-}
-
-// TODO: how the generate_fingerprint function is going to work
-// 1. The spectrogram data/options will be copied into WASM memory first with
-// the
-//    pointers to the spectrogram data and options being passed in
-// 2. Computes the fingerprint
-// 2. Returns a pointer the struct fingerprint instance
-
 /* Generates the fingerprint with the given spectrogram data and options. */
 EMSCRIPTEN_KEEPALIVE
 struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
                                          struct fingerprint_options *options) {
-  // TODO: remove
-  // std::cout << "WASM: Hello World from generate_fingerprint" << std::endl;
-
-  // printf("WASM: spectrogram: num_windows=%d, freq_bin_count=%d\n",
-  //        spectrogram->num_windows, spectrogram->freq_bin_count);
-
-  // TODO: remove
-  printf("WASM: global settings initialized=%d\n", FP_GLOBAL_SETTINGS_INITIALIZED);
-
   // Ensure that the global settings have been initialized
   if (FP_GLOBAL_SETTINGS_INITIALIZED == false) {
-    printf("Here 0\n"); // TODO: remove
     return NULL;
   }
 
-  // Compute the partition ranges
   int num_partitions = options->partition_amount;
-  int *partition_ranges = (int *)malloc(num_partitions * 2 * sizeof(int));
-  if (partition_ranges == NULL) {
-    printf("Here 1\n"); // TODO: remove
-    return NULL;
-  }
-  bool success = compute_partition_ranges(
-      partition_ranges, options->partition_amount, FP_GLOBAL_SETTINGS.FFT_SIZE,
-      options->partition_curve);
-  if (success == false) {
-    free(partition_ranges);
-    printf("Here 2\n"); // TODO: remove
-    return NULL;
-  }
+  int *partition_ranges = options->partition_ranges;
 
   int num_windows = spectrogram->num_windows;
   int num_frequencies = spectrogram->freq_bin_count;
@@ -101,7 +27,6 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
       (uint8_t *)malloc(num_windows * num_frequencies * sizeof(uint8_t));
   if (cell_data == NULL) {
     free(partition_ranges);
-    printf("Here 3\n"); // TODO: remove
     return NULL;
   }
 
@@ -111,7 +36,6 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
   if (fingerprint_data == NULL) {
     free(partition_ranges);
     free(cell_data);
-    printf("Here 4\n"); // TODO: remove
     return NULL;
   }
 
@@ -205,7 +129,6 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
   if (fingerprint_points == NULL) {
     free(partition_ranges);
     free(fingerprint_data);
-    printf("Here 5\n"); // TODO: remove
     return NULL;
   }
 
@@ -233,7 +156,6 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
   if (fp == NULL) {
     free(partition_ranges);
     free(fingerprint_points);
-    printf("Here 6\n"); // TODO: remove
     return NULL;
   }
 

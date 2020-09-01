@@ -8,6 +8,7 @@ import {
 import { WasmModuleWrapper } from "@/loaders/WASMLoader";
 import FingerprintModule from "@/wasm-types/fingerprint.types";
 import * as AudioConstants from "@/audio/constants";
+import { computePartitionRanges } from "../utilities";
 
 const wasmModule = new WasmModuleWrapper<FingerprintModule>(
   import("@WASM/fingerprint.js"),
@@ -34,7 +35,6 @@ function prepareFingerprintModule(
   // Make sure the global options are initialized
   if (!fingerprintModule._global_fingerprint_options_initialized()) {
     fingerprintModule._initialize_global_fingerprint_options(
-      AudioConstants.FFT_SIZE,
       AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
       AudioConstants.FINGERPRINT_PARTITION_CURVE,
       AudioConstants.FINGERPRINT_SLIDER_WIDTH,
@@ -43,11 +43,29 @@ function prepareFingerprintModule(
     );
   }
 
+  // Compute partition ranges
+  const partitionRanges = computePartitionRanges(
+    options.partitionAmount,
+    options.FFTSize,
+    options.partitionCurve
+  );
+  const numPartitionRanges = partitionRanges.length;
+  const m_partitionRangesPtr = fingerprintModule._malloc(
+    numPartitionRanges * 2 * Int32Array.BYTES_PER_ELEMENT
+  );
+
+  // Move to WASM module's heap
+  for (let i = 0; i < numPartitionRanges; i++) {
+    const baseIdx = m_partitionRangesPtr / 4 + i * 2;
+    fingerprintModule.HEAP32[baseIdx] = partitionRanges[i][0];
+    fingerprintModule.HEAP32[baseIdx + 1] = partitionRanges[i][1];
+  }
+
   // Allocate and setup the options struct in the wasm module's address space
   const m_optionsPtr = fingerprintModule._create_fingerprint_options(
     options.partitionAmount,
-    options.FFTSize,
-    options.partitionAmount
+    m_partitionRangesPtr,
+    numPartitionRanges
   );
 
   // Allocate memory for the data array and copy it over
@@ -111,7 +129,7 @@ function convertFingerprintResults(
     numberOfPartitions: num_partitions,
     frequencyBinCount: num_freq_bins,
     data: data_pairs,
-    partitionRanges: partitionRanges
+    partitionRanges: partitionRanges,
   };
 }
 
@@ -124,7 +142,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   try {
     await wasmModule.loaderPromise;
 
-    console.log(wasmModule.module); // TODO: remove
+    // console.log(wasmModule.module); // TODO: remove
 
     if (wasmModule.module == null) throw "Failed to load module";
 
@@ -142,25 +160,11 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
       optionsFull
     );
 
-    // TODO: remove
-    console.log(
-      "Running fingerprint generation with...",
-      spectrogramData,
-      optionsPartial
-    );
-
     // Run fingerprint generation
     const m_fingerprintPtr = fingerprintModule._generate_fingerprint(
       argData.m_specDataPtr,
       argData.m_optionsPtr
     );
-
-    // TODO: remove
-    console.log(
-      "Fingerprint generation complete. Fingerprint pointer:",
-      m_fingerprintPtr
-    );
-    console.log("Arg data", argData); // TODO: remove
 
     fingerprint = convertFingerprintResults(
       fingerprintModule,
@@ -169,11 +173,12 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
 
     // Free up module resources
     // Note: _free_spectrogram_data handles freeing argData.m_dataPtr for us
+    // and _free_fingerprint_options handles freeing m_partitionRangesPtr
     fingerprintModule._free_fingerprint_options(argData.m_optionsPtr);
     fingerprintModule._free_spectrogram_data(argData.m_specDataPtr);
     fingerprintModule._free_fingerprint(m_fingerprintPtr);
   } catch (err) {
-    console.log("Failed to load fingerprint generator wasm module");
+    console.log("Failed to run fingerprint generator wasm module", err);
   }
 
   if (fingerprint == null) {
@@ -181,12 +186,4 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   }
 
   return fingerprint;
-
-  // TODO: remove
-  // return {
-  //   numberOfWindows: 0,
-  //   numberOfPartitions: 0,
-  //   data: new Uint8Array(0),
-  //   partitionRanges: [],
-  // };
 };

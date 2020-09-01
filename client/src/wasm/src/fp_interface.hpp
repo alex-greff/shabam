@@ -9,11 +9,11 @@ extern "C" {
 struct spectrogram_data *
 create_spectrogram_data(int num_windows, int freq_bin_count, uint8_t *data);
 
-struct fingerprint_options *create_fingerprint_options(int partition_amount,
-                                                       int FFT_size,
-                                                       int partition_curve);
+struct fingerprint_options *
+create_fingerprint_options(int partition_amount, int *partition_ranges,
+                           int num_partition_ranges);
 
-void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
+void initialize_global_fingerprint_options(int partition_amount,
                                            double partition_curve,
                                            int slider_width, int slider_height,
                                            double std_dev_mult);

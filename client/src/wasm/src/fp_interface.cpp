@@ -31,9 +31,9 @@ create_spectrogram_data(int num_windows, int freq_bin_count, uint8_t *data) {
    options. Returns a pointer to the struct or NULL of memory allocation
    fails. */
 EMSCRIPTEN_KEEPALIVE
-struct fingerprint_options *create_fingerprint_options(int partition_amount,
-                                                       int FFT_size,
-                                                       int partition_curve) {
+struct fingerprint_options *
+create_fingerprint_options(int partition_amount,
+                           int *partition_ranges, int num_partition_ranges) {
   struct fingerprint_options *fo =
       (struct fingerprint_options *)malloc(sizeof(struct fingerprint_options));
 
@@ -41,8 +41,8 @@ struct fingerprint_options *create_fingerprint_options(int partition_amount,
     return NULL;
 
   fo->partition_amount = partition_amount;
-  fo->FFT_size = FFT_size;
-  fo->partition_curve = partition_curve;
+  fo->partition_ranges = partition_ranges;
+  fo->num_partition_ranges = num_partition_ranges;
 
   return fo;
 }
@@ -53,11 +53,10 @@ struct fingerprint_options *create_fingerprint_options(int partition_amount,
 
 /* Initializes the global fingerprint options. */
 EMSCRIPTEN_KEEPALIVE
-void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
+void initialize_global_fingerprint_options(int partition_amount,
                                            double partition_curve,
                                            int slider_width, int slider_height,
                                            double std_dev_mult) {
-  FP_GLOBAL_SETTINGS.FFT_SIZE = FFT_size;
   FP_GLOBAL_SETTINGS.PARTITION_AMOUNT = partition_amount;
   FP_GLOBAL_SETTINGS.PARTITION_CURVE = partition_curve;
   FP_GLOBAL_SETTINGS.SLIDER_WIDTH = slider_width;
@@ -90,8 +89,12 @@ void free_spectrogram_data(struct spectrogram_data *sd) {
 /* Frees the given fingerprint options data struct. */
 EMSCRIPTEN_KEEPALIVE
 void free_fingerprint_options(struct fingerprint_options *options) {
-  if (options != NULL)
+  if (options != NULL) {
+    if (options->partition_ranges != NULL)
+      free(options->partition_ranges);
+
     free(options);
+  }
 }
 
 /* Frees the given fingerprint data. */
