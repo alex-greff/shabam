@@ -6,6 +6,7 @@ import * as NotificationManager from "@/managers/NotificationManager";
 import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
 import * as AudioUtilities from "@/audio/utilities";
 import { wrap } from "comlink";
+import { SpectrogramData, Fingerprint } from "@/audio/types";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -22,15 +23,39 @@ import UploadIcon from "@material-ui/icons/CloudUpload";
 
 import BenchmarkResults from "@/views/Benchmark/BenchmarkResults/BenchmarkResults";
 
-import { loadWasmModule, WasmModuleWrapper } from "@/loaders/WASMLoader";
-import { SpectrogramData, Fingerprint } from "@/audio/types";
-
-// TODO: remove
-// const testWorker = new Worker("@/workers/test.worker.ts", { type: "module" });
-
 export interface Props extends Omit<BaseProps, "id"> {}
 
 type AudioBlobSource = "recording" | "file" | null;
+
+// TODO: might want to move out the worker interface instantiation to a
+// different module
+
+// Iterative fingerprint worker
+const iterFpWorker = new Worker(
+  "@/workers/fingerprint/IterativeFingerprint.worker.ts",
+  { name: "iterative-fingerprint-worker", type: "module" }
+);
+const iterFpWorkerApi = wrap<
+  import("@/workers/fingerprint/IterativeFingerprint.worker").IterativeFingerprintWorker
+>(iterFpWorker);
+
+// Functional fingerprint worker
+const funcFpWorker = new Worker(
+  "@/workers/fingerprint/FunctionalFingerprint.worker.ts",
+  { name: "functional-fingerprint-worker", type: "module" }
+);
+const funcFpWorkerApi = wrap<
+  import("@/workers/fingerprint/FunctionalFingerprint.worker").FunctionalFingerprintWorker
+>(funcFpWorker);
+
+// WebAssembly fingerprint worker
+const wasmFpWorker = new Worker(
+  "@/workers/fingerprint/WasmFingerprint.worker.ts",
+  { name: "wasm-fingerprint-worker", type: "module" }
+);
+const wasmFpWorkerApi = wrap<
+  import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
+>(wasmFpWorker);
 
 // TODO: add the rest of the fingerprints
 export interface FingerprintResults {
@@ -85,15 +110,6 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const runIterativeFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    const iterFpWorker = new Worker(
-      "@/workers/fingerprint/IterativeFingerprint.worker.ts",
-      { name: "iterative-fingerprint-worker", type: "module" }
-    );
-
-    const iterFpWorkerApi = wrap<
-      import("@/workers/fingerprint/IterativeFingerprint.worker").IterativeFingerprintWorker
-    >(iterFpWorker);
-
     try {
       const fingerprint = await iterFpWorkerApi.generateFingerprint(
         spectrogramData,
@@ -115,15 +131,6 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const runFunctionalFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    const funcFpWorker = new Worker(
-      "@/workers/fingerprint/FunctionalFingerprint.worker.ts",
-      { name: "functional-fingerprint-worker", type: "module" }
-    );
-
-    const funcFpWorkerApi = wrap<
-      import("@/workers/fingerprint/FunctionalFingerprint.worker").FunctionalFingerprintWorker
-    >(funcFpWorker);
-
     try {
       const fingerprint = await funcFpWorkerApi.generateFingerprint(
         spectrogramData,
@@ -145,15 +152,6 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const runWasmFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    const wasmFpWorker = new Worker(
-      "@/workers/fingerprint/WasmFingerprint.worker.ts",
-      { name: "wasm-fingerprint-worker", type: "module" }
-    );
-
-    const wasmFpWorkerApi = wrap<
-      import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
-    >(wasmFpWorker);
-
     try {
       const fingerprint = await wasmFpWorkerApi.generateFingerprint(
         spectrogramData,
