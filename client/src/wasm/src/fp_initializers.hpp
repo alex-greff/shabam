@@ -4,9 +4,6 @@
 #include "fp_defs.hpp"
 #include <emscripten.h>
 
-static bool FP_GLOBAL_SETTINGS_INITIALIZED = false;
-static struct FINGERPRINT_GLOBAL_SETTINGS FP_GLOBAL_SETTINGS;
-
 extern "C" {
 
 EMSCRIPTEN_KEEPALIVE

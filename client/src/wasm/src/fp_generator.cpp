@@ -1,5 +1,6 @@
 #include "fp_generator.hpp"
 #include "fp_defs.hpp"
+#include "fp_global.h"
 #include <emscripten.h>
 #include <iostream>
 #include <malloc.h>
@@ -20,6 +21,9 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
 
   printf("WASM: spectrogram: num_windows=%d, freq_bin_count=%d\n",
          spectrogram->num_windows, spectrogram->freq_bin_count);
+
+  if (FP_GLOBAL_SETTINGS_INITIALIZED == false)
+    return NULL;
 
   // TODO: implement
 

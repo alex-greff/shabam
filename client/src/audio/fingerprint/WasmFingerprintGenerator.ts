@@ -32,7 +32,6 @@ function prepareFingerprintModule(
 ) {
   // Make sure the global options are initialized
   if (!fingerprintModule._global_fingerprint_options_initialized()) {
-    console.log("Initializing global fingerprint options");
     fingerprintModule._initialize_global_fingerprint_options(
       AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
       AudioConstants.FINGERPRINT_PARTITION_CURVE,

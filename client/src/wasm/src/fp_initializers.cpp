@@ -1,5 +1,6 @@
 #include "fp_initializers.hpp"
 #include "fp_defs.hpp"
+#include "fp_global.h"
 #include <emscripten.h>
 #include <malloc.h>
 #include <stddef.h>
