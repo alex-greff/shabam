@@ -98,7 +98,7 @@ function copyWindow(
 }
 
 /**
- * Returns a promise that resolves with an AudioBuffer instance downsampled 
+ * Returns a promise that resolves with an AudioBuffer instance downsampled
  * to the target sample rate.
  * Adapted from https://stackoverflow.com/questions/27598270/resample-audio-buffer-from-44100-to-16000
  *
@@ -126,9 +126,30 @@ export async function downsample(
 }
 
 /**
- * Computes the partition ranges for the given FFT size in respect to the 
+ * Helper function used by computePartitionRanges to get the boundary indexes
+ * of each partition range.
+ */
+function getBoundaryIndex(
+  partitionIdx: number,
+  totalPartitions: number,
+  totalBins: number,
+  partitionCurve: number
+) {
+  // Equation: y = b/(c-1)(c^(x/a)-1)
+  //   where:
+  //     a = number of partitions
+  //     b = number of bins (FFT_size / 2)
+  //     c = tension on the curve
+  return Math.floor(
+    (totalBins / (partitionCurve - 1)) *
+      (Math.pow(partitionCurve, partitionIdx / totalPartitions) - 1)
+  );
+}
+
+/**
+ * Computes the partition ranges for the given FFT size in respect to the
  * number of partitions needed.
- * Returns an array of tuples (2 element arrays) of the computed 
+ * Returns an array of tuples (2 element arrays) of the computed
  * partition ranges.
  *
  * @param partitionAmount The number of partitions to split into.
@@ -140,48 +161,26 @@ export function computePartitionRanges(
   FFTSize = AudioConstants.FFT_SIZE,
   partitionCurve = AudioConstants.FINGERPRINT_PARTITION_CURVE
 ): PartitionRanges {
-  function getBoundaryIndex(
-    partitionIdx: number,
-    totalPartitions: number,
-    totalBins: number
-  ) {
-    // --- Checks ---
-    if (totalBins <= 0)
-      throw new Error("Invalid number of bins, must have more than 0 bins");
-
-    if (partitionIdx < 0) throw new Error("Partition index must be positive");
-
-    if (totalPartitions <= 0)
-      throw new Error(
-        "Invalid number of partitions, must have more than 0 partitions"
-      );
-
-    // TODO: is this needed?
-    // Account for the divide by 0 situation
-    // if (totalPartitions === 1) {
-    //     return [[0, totalPartitions]];
-    // }
-
-    // Equation: y = b/(c-1)(c^(x/a)-1)
-    //   where:
-    //     a = number of partitions
-    //     b = number of bins (FFT size/2)
-    //     c = tension on the curve
-    return Math.floor(
-      (totalBins / (partitionCurve - 1)) *
-        (Math.pow(partitionCurve, partitionIdx / totalPartitions) - 1)
-    );
-  }
+  if (FFTSize / 2 <= 0)
+    throw "Invalid number of bins, must have more than 0 bins";
+  if (partitionAmount <= 0)
+    throw "Invalid number of partitions, must have more than 0 partitions";
 
   const ret: PartitionRanges = [];
 
   // Calculate the boundary ranges for each partition
   for (let partitionIdx = 0; partitionIdx < partitionAmount; partitionIdx++) {
-    const min = getBoundaryIndex(partitionIdx, partitionAmount, FFTSize / 2);
+    const min = getBoundaryIndex(
+      partitionIdx,
+      partitionAmount,
+      FFTSize / 2,
+      partitionCurve
+    );
     const max = getBoundaryIndex(
       partitionIdx + 1,
       partitionAmount,
-      FFTSize / 2
+      FFTSize / 2,
+      partitionCurve
     );
 
     ret.push([min, max]);
@@ -202,7 +201,7 @@ export function findPartitionRange(index: number, partitions: PartitionRanges) {
     const endIdx = currPartitionRange[1];
 
     // Found index
-    if (index >= startIdx && index < endIdx){
+    if (index >= startIdx && index < endIdx) {
       return currPartitionRange;
     }
   }
@@ -273,7 +272,7 @@ export async function computeSpectrogramData(
 
 /**
  * Converts an audio blob into an audio buffer.
- * 
+ *
  * @param blob The audio blob.
  */
 export function convertBlobToAudioBuffer(blob: Blob): Promise<AudioBuffer> {
@@ -287,8 +286,7 @@ export function convertBlobToAudioBuffer(blob: Blob): Promise<AudioBuffer> {
       try {
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         resolve(audioBuffer);
-
-      } catch(err) {
+      } catch (err) {
         reject();
       }
     };
