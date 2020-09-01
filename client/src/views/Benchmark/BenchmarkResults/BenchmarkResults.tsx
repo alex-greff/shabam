@@ -42,6 +42,11 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
         fingerprintData={fingerprintResults.functionalFingerprint}
         title="Functionally Generated Fingerprint"
       />
+
+      <FingerprintChart 
+        fingerprintData={fingerprintResults.wasmFingerprint}
+        title="WASM Generated Fingerprint"
+      />
     </div>
   );
 };

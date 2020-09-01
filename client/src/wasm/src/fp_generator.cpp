@@ -238,6 +238,7 @@ struct fingerprint *generate_fingerprint(struct spectrogram_data *spectrogram,
   }
 
   fp->num_windows = num_windows;
+  fp->num_freq_bins = num_frequencies;
   fp->num_partitions = num_partitions;
   fp->data = fingerprint_points;
   fp->num_data_pair = num_fingerprint_cells;

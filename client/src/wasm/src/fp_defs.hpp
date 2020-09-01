@@ -50,6 +50,7 @@ struct spectrogram_data {
 /* Fingerprint representation. */
 struct fingerprint {
   int num_windows;          /* Number of windows. */
+  int num_freq_bins;        /* Number of frequency bins. */
   int num_partitions;       /* Number of partitions. */
   uint32_t *data;           /* The [window, partition] tuple data array. */
   int num_data_pair;        /* The number of pair tuples in data. */

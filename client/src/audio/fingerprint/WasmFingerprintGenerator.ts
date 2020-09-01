@@ -3,6 +3,7 @@ import {
   FingerprintGeneratorOptions,
   SpectrogramData,
   Fingerprint,
+  PartitionRanges,
 } from "@/audio/types";
 import { WasmModuleWrapper } from "@/loaders/WASMLoader";
 import FingerprintModule from "@/wasm-types/fingerprint.types";
@@ -75,11 +76,43 @@ function convertFingerprintResults(
   fingerprintModule: FingerprintModule,
   m_fingerprintPtr: number
 ): Fingerprint | null {
-  if (m_fingerprintPtr === 0)
-    return null;
+  if (m_fingerprintPtr === 0) return null;
 
-  // TODO: implement
-  return null;
+  const num_windows = fingerprintModule.HEAP32[m_fingerprintPtr / 4];
+  const num_freq_bins = fingerprintModule.HEAP32[m_fingerprintPtr / 4 + 1];
+  const num_partitions = fingerprintModule.HEAP32[m_fingerprintPtr / 4 + 2];
+
+  const data_ptr = fingerprintModule.HEAPU32[m_fingerprintPtr / 4 + 3];
+  const num_data_pair = fingerprintModule.HEAP32[m_fingerprintPtr / 4 + 4];
+
+  // Make a copy of the data pair array
+  const data_pairs = fingerprintModule.HEAPU32.slice(
+    data_ptr / 4,
+    data_ptr / 4 + num_data_pair * 2
+  );
+
+  const partition_ranges_ptr =
+    fingerprintModule.HEAP32[m_fingerprintPtr / 4 + 5];
+  const num_partition_ranges =
+    fingerprintModule.HEAP32[m_fingerprintPtr / 4 + 6];
+
+  const partitionRanges: PartitionRanges = [];
+
+  // Construct partition ranges
+  for (let i = 0; i < num_partition_ranges; i++) {
+    const baseIdx = partition_ranges_ptr / 4 + i * 2;
+    const startRange = fingerprintModule.HEAP32[baseIdx];
+    const endRange = fingerprintModule.HEAP32[baseIdx + 1];
+    partitionRanges.push([startRange, endRange]);
+  }
+
+  return {
+    numberOfWindows: num_windows,
+    numberOfPartitions: num_partitions,
+    frequencyBinCount: num_freq_bins,
+    data: data_pairs,
+    partitionRanges: partitionRanges
+  };
 }
 
 export const generateFingerprint: FingerprintGeneratorFunction = async (
@@ -139,7 +172,6 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
     fingerprintModule._free_fingerprint_options(argData.m_optionsPtr);
     fingerprintModule._free_spectrogram_data(argData.m_specDataPtr);
     fingerprintModule._free_fingerprint(m_fingerprintPtr);
-
   } catch (err) {
     console.log("Failed to load fingerprint generator wasm module");
   }

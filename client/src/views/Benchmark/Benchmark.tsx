@@ -61,6 +61,7 @@ const wasmFpWorkerApi = wrap<
 export interface FingerprintResults {
   iterativeFingerprint: Fingerprint;
   functionalFingerprint: Fingerprint;
+  wasmFingerprint: Fingerprint;
 }
 
 const Benchmark: FunctionComponent<Props> = (props) => {
@@ -193,6 +194,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
     console.log("iterative fingerprint:", iterativeFp); // TODO: remove
     console.log("functional fingerprint:", functionalFp); // TODO: remove
+    console.log("WASM fingerprint:", wasmFp); // TODO: remove
 
     // TODO: make sure all fingerprints run
 
@@ -201,6 +203,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     setFingerprintResults({
       iterativeFingerprint: iterativeFp!,
       functionalFingerprint: functionalFp!,
+      wasmFingerprint: wasmFp!
     });
     setBenchmarkIsRunning(false);
     setBenchmarkComplete(true);
