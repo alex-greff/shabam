@@ -32,6 +32,7 @@ function prepareFingerprintModule(
 ) {
   // Make sure the global options are initialized
   if (!fingerprintModule._global_fingerprint_options_initialized()) {
+    console.log("Initializing WASM fingerprint options\n"); // TODO: remove
     fingerprintModule._initialize_global_fingerprint_options(
       AudioConstants.FFT_SIZE,
       AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
@@ -41,6 +42,8 @@ function prepareFingerprintModule(
       AudioConstants.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER
     );
   }
+
+  console.log("WASM fingerprint options:", fingerprintModule._global_fingerprint_options_initialized()); // TODO: remove
 
   // Allocate and setup the options struct in the wasm module's address space
   const m_optionsPtr = fingerprintModule._create_fingerprint_options(
