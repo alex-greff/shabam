@@ -173,12 +173,10 @@ export function computePartitionRanges(
     );
   }
 
-  const range = [...Array(partitionAmount).keys()];
-
   const ret: PartitionRanges = [];
 
   // Calculate the boundary ranges for each partition
-  for (let partitionIdx of range) {
+  for (let partitionIdx = 0; partitionIdx < partitionAmount; partitionIdx++) {
     const min = getBoundaryIndex(partitionIdx, partitionAmount, FFTSize / 2);
     const max = getBoundaryIndex(
       partitionIdx + 1,
