@@ -1,9 +1,13 @@
-#include "fp_initializers.hpp"
-#include "fp_defs.hpp"
+#include "fp_interface.hpp"
 #include "fingerprint.hpp"
+#include "fp_defs.hpp"
 #include <emscripten.h>
 #include <malloc.h>
 #include <stddef.h>
+
+// --------------------------
+// --- Creation Functions ---
+// --------------------------
 
 /* Allocates memory for a spectrogram configured with the given options. Returns
    a pointer to the struct or NULL if memory allocation fails. */
@@ -43,6 +47,10 @@ struct fingerprint_options *create_fingerprint_options(int partition_amount,
   return fo;
 }
 
+// --------------------------------
+// --- Initialization Functions ---
+// --------------------------------
+
 /* Initializes the global fingerprint options. */
 EMSCRIPTEN_KEEPALIVE
 void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
@@ -62,4 +70,40 @@ void initialize_global_fingerprint_options(int FFT_size, int partition_amount,
 EMSCRIPTEN_KEEPALIVE
 bool global_fingerprint_options_initialized(void) {
   return FP_GLOBAL_SETTINGS_INITIALIZED;
+}
+
+// -------------------------
+// --- Cleanup Functions ---
+// -------------------------
+
+/* Frees the given spectrogram data struct. */
+EMSCRIPTEN_KEEPALIVE
+void free_spectrogram_data(struct spectrogram_data *sd) {
+  if (sd != NULL) {
+    if (sd->data != NULL)
+      free(sd->data);
+
+    free(sd);
+  }
+}
+
+/* Frees the given fingerprint options data struct. */
+EMSCRIPTEN_KEEPALIVE
+void free_fingerprint_options(struct fingerprint_options *options) {
+  if (options != NULL)
+    free(options);
+}
+
+/* Frees the given fingerprint data. */
+EMSCRIPTEN_KEEPALIVE
+void free_fingerprint(struct fingerprint *fp) {
+  if (fp != NULL) {
+    if (fp->data != NULL)
+      free(fp->data);
+
+    if (fp->partition_ranges != NULL)
+      free(fp->partition_ranges);
+
+    free(fp);
+  }
 }

@@ -33,10 +33,10 @@ OUT = /app/src/wasm/build
 
 # Fingerprint compile code
 
-fingerprint.js : fingerprint.bc fp_initializers.bc fp_generator.bc 
+fingerprint.js : fingerprint.bc fp_interface.bc fp_generator.bc 
 	$(CC) $(OPT_LEVEL) \
 		$(TEMP)/fingerprint.bc \
-		$(TEMP)/fp_initializers.bc \
+		$(TEMP)/fp_interface.bc \
 		$(TEMP)/fp_generator.bc \
 		$(COMMON_FLAGS) $(ROOT_FLAGS) \
 		-o $(OUT)/$@
@@ -45,8 +45,8 @@ fingerprint.js : fingerprint.bc fp_initializers.bc fp_generator.bc
 fingerprint.bc : $(SRC)/fingerprint.cpp
 	$(CC) $(OPT_LEVEL) $(SRC)/fingerprint.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
 
-fp_initializers.bc : $(SRC)/fp_initializers.cpp $(SRC)/fp_initializers.hpp
-	$(CC) $(OPT_LEVEL) $(SRC)/fp_initializers.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
+fp_interface.bc : $(SRC)/fp_interface.cpp $(SRC)/fp_interface.hpp
+	$(CC) $(OPT_LEVEL) $(SRC)/fp_interface.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@
 
 fp_generator.bc : $(SRC)/fp_generator.cpp $(SRC)/fp_generator.hpp
 	$(CC) $(OPT_LEVEL) $(SRC)/fp_generator.cpp -c $(COMMON_FLAGS) -o $(TEMP)/$@

@@ -28,4 +28,8 @@ export default interface FingerprintModule extends BaseWasmModule {
     spectrogram_data_ptr: pointer,
     options_ptr: pointer
   ): pointer;
+
+  _free_spectrogram_data(spectrogram_data_ptr: pointer): void;
+  _free_fingerprint_options(options_ptr: pointer): void;
+  _free_fingerprint(fingerprint_ptr: pointer): void;
 }

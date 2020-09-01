@@ -32,7 +32,6 @@ function prepareFingerprintModule(
 ) {
   // Make sure the global options are initialized
   if (!fingerprintModule._global_fingerprint_options_initialized()) {
-    console.log("Initializing WASM fingerprint options\n"); // TODO: remove
     fingerprintModule._initialize_global_fingerprint_options(
       AudioConstants.FFT_SIZE,
       AudioConstants.FINGERPRINT_PARTITION_AMOUNT,
@@ -42,8 +41,6 @@ function prepareFingerprintModule(
       AudioConstants.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER
     );
   }
-
-  console.log("WASM fingerprint options:", fingerprintModule._global_fingerprint_options_initialized()); // TODO: remove
 
   // Allocate and setup the options struct in the wasm module's address space
   const m_optionsPtr = fingerprintModule._create_fingerprint_options(
@@ -138,16 +135,11 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
     );
 
     // Free up module resources
-    if (argData.m_optionsPtr !== 0)
-      fingerprintModule._free(argData.m_optionsPtr);
-    if (argData.m_dataPtr !== 0)
-      fingerprintModule._free(argData.m_dataPtr);
-    if (argData.m_specDataPtr !== 0)
-      fingerprintModule._free(argData.m_specDataPtr);
-    if (m_fingerprintPtr !== 0)
-      fingerprintModule._free(m_fingerprintPtr);
+    // Note: _free_spectrogram_data handles freeing argData.m_dataPtr for us
+    fingerprintModule._free_fingerprint_options(argData.m_optionsPtr);
+    fingerprintModule._free_spectrogram_data(argData.m_specDataPtr);
+    fingerprintModule._free_fingerprint(m_fingerprintPtr);
 
-    // wasmModule.module._temp(); // TODO: remove
   } catch (err) {
     console.log("Failed to load fingerprint generator wasm module");
   }
