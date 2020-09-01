@@ -188,13 +188,21 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
     console.log("Spectrogram data:", spectrogramData); // TODO: remove
 
+    const itrStart = performance.now();
     const iterativeFp = await runIterativeFingerprint(spectrogramData);
-    const functionalFp = await runFunctionalFingerprint(spectrogramData);
-    const wasmFp = await runWasmFingerprint(spectrogramData); // TODO: uncomment
+    const itrEnd = performance.now();
 
-    console.log("iterative fingerprint:", iterativeFp); // TODO: remove
-    console.log("functional fingerprint:", functionalFp); // TODO: remove
-    console.log("WASM fingerprint:", wasmFp); // TODO: remove
+    const funcStart = performance.now();
+    const functionalFp = await runFunctionalFingerprint(spectrogramData);
+    const funcEnd = performance.now();
+
+    const wasmStart = performance.now();
+    const wasmFp = await runWasmFingerprint(spectrogramData);
+    const wasmEnd = performance.now();
+
+    console.log("iterative fingerprint:", iterativeFp, itrEnd - itrStart); // TODO: remove
+    console.log("functional fingerprint:", functionalFp, funcEnd - funcStart); // TODO: remove
+    console.log("WASM fingerprint:", wasmFp, wasmEnd - wasmStart); // TODO: remove
 
     // TODO: make sure all fingerprints run
 
@@ -203,7 +211,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     setFingerprintResults({
       iterativeFingerprint: iterativeFp!,
       functionalFingerprint: functionalFp!,
-      wasmFingerprint: wasmFp!
+      wasmFingerprint: wasmFp!,
     });
     setBenchmarkIsRunning(false);
     setBenchmarkComplete(true);
