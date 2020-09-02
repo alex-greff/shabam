@@ -3,7 +3,7 @@ import { BaseProps } from "@/types";
 import "./BenchmarkResults.scss";
 import classnames from "classnames";
 import { SpectrogramData } from "@/audio/types";
-import { FingerprintResults } from "../Benchmark";
+import { FingerprintResults, BenchmarkResult } from "../Benchmark";
 
 import SpectrogramChart from "@/components/charts/SpectrogramChart/SpectrogramChart";
 import FingerprintChart from "@/components/charts/FingerprintChart/FingerprintChart";
@@ -11,6 +11,7 @@ import FingerprintChart from "@/components/charts/FingerprintChart/FingerprintCh
 export interface Props extends BaseProps {
   spectrogramData: SpectrogramData;
   fingerprintResults: FingerprintResults;
+  benchmarkResults: BenchmarkResult[];
 };
 
 const BenchmarkResults: FunctionComponent<Props> = (props) => {
@@ -22,7 +23,9 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
       style={props.style}
       id={props.id}
     >
-      Benchmark Results
+      <div className="BenchmarkResults__title">
+        Benchmark Results
+      </div>
       
       {/* TODO: complete */}
 

@@ -1,0 +1,75 @@
+.BenchmarkConfiguration {
+  $button-font-size: 1.8rem;
+  $title-font-size: 1.5rem;
+
+  & .BenchmarkConfiguration__title {
+    color: color-link("Benchmark", "text", "primary");
+  }
+
+  & .BenchmarkConfiguration__content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & .BenchmarkConfiguration__config-controls {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto;
+      grid-template-areas: "record divider upload";
+      justify-items: center;
+
+      max-width: 50rem;
+      width: 100vw;
+
+      margin-bottom: 2rem;
+
+      & .BenchmarkConfiguration__record-controls-container {
+        grid-area: record;
+
+        & .BenchmarkConfiguration__record-controls-title {
+          color: color-link("Benchmark", "text", "secondary");
+          font-style: italic;
+          font-size: $title-font-size;
+          text-align: center;
+          margin-bottom: 0.5rem;
+        }
+
+        & .BenchmarkConfiguration__record-controls {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+
+          & > *:not(:last-child) {
+            margin-right: 1.3rem;
+          }
+        }
+      }
+
+      & .BenchmarkConfiguration__divider {
+        grid-area: divider;
+      }
+
+      & .BenchmarkConfiguration__file-controls-container {
+        grid-area: upload;
+
+        & .BenchmarkConfiguration__file-controls-title {
+          color: color-link("Benchmark", "text", "secondary");
+          font-style: italic;
+          font-size: $title-font-size;
+          text-align: center;
+          margin-bottom: 0.5rem;
+        }
+
+        & .BenchmarkConfiguration__file-upload-button {
+          font-size: $button-font-size;
+        }
+      }
+    }
+  }
+
+  & .BenchmarkConfiguration__run-benchmark-button {
+    font-size: $button-font-size;
+  }
+}

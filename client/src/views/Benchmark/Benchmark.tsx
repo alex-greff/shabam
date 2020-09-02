@@ -18,14 +18,21 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import RecordButton from "@/components/ui/buttons/RecordButton/RecordButton";
 import StopRecordButton from "@/components/ui/buttons/StopRecordButton/StopRecordButton";
 import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
-
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
+import BenchmarkConfiguration from "@/views/Benchmark/BenchmarkConfiguration/BenchmarkConfiguration";
+import BenchmarkProgress from "@/views/Benchmark/BenchmarkProgress/BenchmarkProgress";
 import BenchmarkResults from "@/views/Benchmark/BenchmarkResults/BenchmarkResults";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
 type AudioBlobSource = "recording" | "file" | null;
+
+export interface BenchmarkResult {
+  iterative: number;
+  functional: number;
+  wasm: number;
+}
 
 // TODO: might want to move out the worker interface instantiation to a
 // different module
@@ -83,6 +90,12 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     setFingerprintResults,
   ] = useState<FingerprintResults | null>(null);
 
+  const [numIterations, setNumIterations] = useState<number>(5); // TODO: hook up to BenchmarkConfiguration
+  const [progress, setProgress] = useState<number>(0);
+  const [benchmarkResults, setBenchmarkResults] = useState<BenchmarkResult[]>(
+    []
+  );
+
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audioFile = e.target.files ? e.target.files[0] : null;
     setAudioBlob(audioFile);
@@ -118,13 +131,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       );
 
       return fingerprint;
-    } catch (err) {
-      // TODO: handle error better?
-      console.error(
-        "Iterative Fingerprint Worker: unable to generate fingerprint",
-        err
-      );
-    }
+    } catch (err) {}
 
     return null;
   };
@@ -139,13 +146,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       );
 
       return fingerprint;
-    } catch (err) {
-      // TODO: handle error better?
-      console.error(
-        "Functional Fingerprint Worker: unable to generate fingerprint",
-        err
-      );
-    }
+    } catch (err) {}
 
     return null;
   };
@@ -160,22 +161,25 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       );
 
       return fingerprint;
-    } catch (err) {
-      // TODO: handle error better?
-      console.error("WASM Fingerprint Worker: unable to generate fingerprint");
-    }
+    } catch (err) {}
 
     return null;
   };
 
   const runBenchmark = async () => {
+    // Reset data
     setBenchmarkIsRunning(true);
     setBenchmarkComplete(false);
+    setBenchmarkSpectrogramData(null);
+    setFingerprintResults(null);
+    setProgress(0);
 
     console.log("Audio Blob", audioBlob); // TODO: remove
 
     if (audioBlob == null) {
-      console.error("Audio blob is null");
+      NotificationManager.showErrorNotification("Unable to load audio.");
+      setBenchmarkIsRunning(false);
+      return;
     }
 
     const audioBuffer = await AudioUtilities.convertBlobToAudioBuffer(
@@ -188,31 +192,64 @@ const Benchmark: FunctionComponent<Props> = (props) => {
 
     console.log("Spectrogram data:", spectrogramData); // TODO: remove
 
-    const itrStart = performance.now();
-    const iterativeFp = await runIterativeFingerprint(spectrogramData);
-    const itrEnd = performance.now();
+    const benchmarkResults: BenchmarkResult[] = [];
 
-    const funcStart = performance.now();
-    const functionalFp = await runFunctionalFingerprint(spectrogramData);
-    const funcEnd = performance.now();
+    let jobsCompleted = 0;
 
-    const wasmStart = performance.now();
-    const wasmFp = await runWasmFingerprint(spectrogramData);
-    const wasmEnd = performance.now();
+    // Run each iteration
+    for (let i = 0; i < numIterations; i++) {
+      const iterStart = performance.now();
+      const iterFp = await runIterativeFingerprint(spectrogramData);
+      const iterEnd = performance.now();
+      const iterTime = iterEnd - iterStart;
 
-    console.log("iterative fingerprint:", iterativeFp, itrEnd - itrStart); // TODO: remove
-    console.log("functional fingerprint:", functionalFp, funcEnd - funcStart); // TODO: remove
-    console.log("WASM fingerprint:", wasmFp, wasmEnd - wasmStart); // TODO: remove
+      jobsCompleted++;
+      setProgress((jobsCompleted / numIterations) * 3);
 
-    // TODO: make sure all fingerprints run
+      const funcStart = performance.now();
+      const funcFp = await runFunctionalFingerprint(spectrogramData);
+      const funcEnd = performance.now();
+      const funcTime = funcEnd - funcStart;
+
+      jobsCompleted++;
+      setProgress((jobsCompleted / numIterations) * 3);
+
+      const wasmStart = performance.now();
+      const wasmFp = await runWasmFingerprint(spectrogramData);
+      const wasmEnd = performance.now();
+      const wasmTime = wasmEnd - wasmStart;
+
+      jobsCompleted++;
+      setProgress((jobsCompleted / numIterations) * 3);
+
+      // Only record the fingerprint data from the first iteration
+      if (i === 0) {
+        console.log("iterative fingerprint:", iterFp, iterTime); // TODO: remove
+        console.log("functional fingerprint:", funcFp, funcTime); // TODO: remove
+        console.log("WASM fingerprint:", wasmFp, wasmTime); // TODO: remove
+
+        setFingerprintResults({
+          iterativeFingerprint: iterFp!,
+          functionalFingerprint: funcFp!,
+          wasmFingerprint: wasmFp!,
+        });
+      }
+
+      // TODO: make sure all fingerprints ran
+
+      // Record the benchmark result
+      benchmarkResults.push({
+        iterative: iterTime,
+        functional: funcTime,
+        wasm: wasmTime,
+      });
+    }
+
+    console.log("Benchmark results", benchmarkResults); // TODO: remove
 
     // Update state to indicate benchmark is complete
+    setBenchmarkResults(benchmarkResults);
     setBenchmarkSpectrogramData(spectrogramData);
-    setFingerprintResults({
-      iterativeFingerprint: iterativeFp!,
-      functionalFingerprint: functionalFp!,
-      wasmFingerprint: wasmFp!,
-    });
     setBenchmarkIsRunning(false);
     setBenchmarkComplete(true);
   };
@@ -226,81 +263,30 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       style={props.style}
     >
       <PageContent className="Benchmark__content">
-        <ConfigurationContainer
+        <BenchmarkConfiguration 
           className="Benchmark__config-container"
-          contentClassName="Benchmark__config-content-container"
-          renderTitle={() => (
-            <div className="Benchmark__title">Fingerprinting Benchmark</div>
-          )}
-        >
-          <div className="Benchmark__config-controls">
-            <div className="Benchmark__record-controls-container">
-              <div className="Benchmark__record-controls-title">
-                Record Audio
-              </div>
+          isRecording={isRecording}
+          benchmarkIsRunning={benchmarkIsRunning}
+          hasAudioBlob={hasAudioBlob}
+          handleStartRecording={handleStartRecording}
+          handleStopRecording={handleStopRecording}
+          handleAudioFileChange={handleAudioFileChange}
+          runBenchmark={runBenchmark}
+        />
 
-              <div className="Benchmark__record-controls">
-                <RecordButton
-                  className="Benchmark__record-button"
-                  size="3.6rem"
-                  stroke={40}
-                  disabled={isRecording || benchmarkIsRunning}
-                  onClick={handleStartRecording}
-                />
-
-                <StopRecordButton
-                  className="Benchmark__stop-record-button"
-                  size="3.6rem"
-                  stroke={40}
-                  disabled={!isRecording || benchmarkIsRunning}
-                  onClick={handleStopRecording}
-                />
-              </div>
-            </div>
-
-            <DividerLine className="Benchmark__divider" orientation="vertical">
-              OR
-            </DividerLine>
-
-            <div className="Benchmark__file-controls-container">
-              <div className="Benchmark__file-controls-title">Upload File</div>
-
-              <FileUploadButtonWrapper
-                className="Benchmark__file-upload-button"
-                accept="audio/*"
-                onChange={handleAudioFileChange}
-                disabled={isRecording || benchmarkIsRunning}
-                renderContent={({ disabled }) => (
-                  <IconButton
-                    className="Benchmark__file-upload-button-content"
-                    appearance="solid"
-                    mode="info"
-                    renderIcon={() => <UploadIcon />}
-                    forceDiv
-                    disabled={disabled}
-                  >
-                    Audio File
-                  </IconButton>
-                )}
-              />
-            </div>
-          </div>
-
-          <NormalButton
-            className="Benchmark__run-benchmark-button"
-            appearance="solid"
-            mode="success"
-            disabled={!hasAudioBlob || benchmarkIsRunning}
-            onClick={runBenchmark}
-          >
-            Run Benchmark
-          </NormalButton>
-        </ConfigurationContainer>
+        {benchmarkIsRunning && !benchmarkComplete ? (
+          <BenchmarkProgress
+            className="Benchmark__progress"
+            progress={progress}
+          />
+        ) : null}
 
         {benchmarkComplete && !benchmarkIsRunning ? (
           <BenchmarkResults
+            className="Benchmark__results"
             spectrogramData={benchmarkSpectrogramData!}
             fingerprintResults={fingerprintResults!}
+            benchmarkResults={benchmarkResults}
           />
         ) : null}
       </PageContent>

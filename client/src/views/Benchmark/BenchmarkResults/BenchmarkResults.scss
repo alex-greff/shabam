@@ -1,3 +1,6 @@
 .BenchmarkResults {
-
+  & .BenchmarkResults__title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
 }

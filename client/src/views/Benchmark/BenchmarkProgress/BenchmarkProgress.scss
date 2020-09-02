@@ -1,0 +1,16 @@
+.BenchmarkProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & .BenchmarkProgress__title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: color-link("BenchmarkProgress", "text", "primary");
+  }
+
+  & .BenchmarkProgress__percent {
+    font-size: 1.8rem;
+    color: color-link("BenchmarkProgress", "text", "primary");
+  }
+}
