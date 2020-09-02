@@ -210,6 +210,15 @@ export default {
         secondary: DARK_8,
       },
     },
+    BenchmarkResultTable: {
+      text: {
+        secondary: BLUE_6
+      },
+      background: {
+        primary: "#4F4F4F",
+        secondary: "#404040"
+      },
+    },
     RecordButton: {
       accent: {
         primary: RED,

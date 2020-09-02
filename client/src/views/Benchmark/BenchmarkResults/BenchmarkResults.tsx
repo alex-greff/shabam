@@ -5,6 +5,7 @@ import classnames from "classnames";
 import { SpectrogramData } from "@/audio/types";
 import { FingerprintResults, BenchmarkResult } from "../Benchmark";
 
+import BenchmarkResultTable from "@/views/Benchmark/BenchmarkResults/BenchmarkResultTable/BenchmarkResultTable";
 import SpectrogramChart from "@/components/charts/SpectrogramChart/SpectrogramChart";
 import FingerprintChart from "@/components/charts/FingerprintChart/FingerprintChart";
 
@@ -15,7 +16,7 @@ export interface Props extends BaseProps {
 };
 
 const BenchmarkResults: FunctionComponent<Props> = (props) => {
-  const { spectrogramData, fingerprintResults } = props;
+  const { spectrogramData, fingerprintResults, benchmarkResults } = props;
 
   return (
     <div 
@@ -26,8 +27,11 @@ const BenchmarkResults: FunctionComponent<Props> = (props) => {
       <div className="BenchmarkResults__title">
         Benchmark Results
       </div>
-      
-      {/* TODO: complete */}
+
+      <BenchmarkResultTable 
+        className="BenchmarkResults__result-table"
+        benchmarkResults={benchmarkResults}
+      />
 
       <SpectrogramChart 
         spectrogramData={spectrogramData}

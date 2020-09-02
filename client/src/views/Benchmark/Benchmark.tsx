@@ -195,7 +195,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       const iterTime = iterEnd - iterStart;
 
       jobsCompleted++;
-      setProgress((jobsCompleted / numIterations) * 3);
+      setProgress(jobsCompleted / (numIterations * 3));
 
       const funcStart = performance.now();
       const funcFp = await runFunctionalFingerprint(spectrogramData);
@@ -203,7 +203,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       const funcTime = funcEnd - funcStart;
 
       jobsCompleted++;
-      setProgress((jobsCompleted / numIterations) * 3);
+      setProgress(jobsCompleted / (numIterations * 3));
 
       const wasmStart = performance.now();
       const wasmFp = await runWasmFingerprint(spectrogramData);
@@ -211,7 +211,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       const wasmTime = wasmEnd - wasmStart;
 
       jobsCompleted++;
-      setProgress((jobsCompleted / numIterations) * 3);
+      setProgress(jobsCompleted / (numIterations * 3));
 
       // Only record the fingerprint data from the first iteration
       if (i === 0) {

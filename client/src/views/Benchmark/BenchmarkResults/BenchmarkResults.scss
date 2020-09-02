@@ -1,4 +1,9 @@
 .BenchmarkResults {
+  & .BenchmarkResults__result-table {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+  }
+
   & .BenchmarkResults__title {
     font-size: 2rem;
     font-weight: bold;
