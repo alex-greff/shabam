@@ -10,15 +10,6 @@ import { SpectrogramData, Fingerprint } from "@/audio/types";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
-import ConfigurationContainer from "@/components/containers/ConfigurationContainer/ConfigurationContainer";
-import DividerLine from "@/components/ui/dividers/DividerLine/DividerLine";
-
-import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
-import IconButton from "@/components/ui/buttons/IconButton/IconButton";
-import RecordButton from "@/components/ui/buttons/RecordButton/RecordButton";
-import StopRecordButton from "@/components/ui/buttons/StopRecordButton/StopRecordButton";
-import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
-import UploadIcon from "@material-ui/icons/CloudUpload";
 
 import BenchmarkConfiguration from "@/views/Benchmark/BenchmarkConfiguration/BenchmarkConfiguration";
 import BenchmarkProgress from "@/views/Benchmark/BenchmarkProgress/BenchmarkProgress";
