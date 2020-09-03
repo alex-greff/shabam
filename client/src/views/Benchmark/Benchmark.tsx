@@ -5,7 +5,7 @@ import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
 import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
 import * as AudioUtilities from "@/audio/utilities";
-import { wrap } from "comlink";
+import * as Comlink from "comlink";
 import { SpectrogramData, Fingerprint } from "@/audio/types";
 
 import PageView from "@/components/page/PageView/PageView";
@@ -33,7 +33,7 @@ const iterFpWorker = new Worker(
   "@/workers/fingerprint/IterativeFingerprint.worker.ts",
   { name: "iterative-fingerprint-worker", type: "module" }
 );
-const iterFpWorkerApi = wrap<
+const iterFpWorkerApi = Comlink.wrap<
   import("@/workers/fingerprint/IterativeFingerprint.worker").IterativeFingerprintWorker
 >(iterFpWorker);
 
@@ -42,7 +42,7 @@ const funcFpWorker = new Worker(
   "@/workers/fingerprint/FunctionalFingerprint.worker.ts",
   { name: "functional-fingerprint-worker", type: "module" }
 );
-const funcFpWorkerApi = wrap<
+const funcFpWorkerApi = Comlink.wrap<
   import("@/workers/fingerprint/FunctionalFingerprint.worker").FunctionalFingerprintWorker
 >(funcFpWorker);
 
@@ -51,7 +51,7 @@ const wasmFpWorker = new Worker(
   "@/workers/fingerprint/WasmFingerprint.worker.ts",
   { name: "wasm-fingerprint-worker", type: "module" }
 );
-const wasmFpWorkerApi = wrap<
+const wasmFpWorkerApi = Comlink.wrap<
   import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
 >(wasmFpWorker);
 

@@ -15,37 +15,97 @@ const MARGIN = {
 const X_AXIS_LABEL_GAP = 35;
 const Y_AXIS_LABEL_GAP = 35;
 
-export type CanvasRenderFunction<Data, Domain extends AxisDomain> = (
-  context: CanvasRenderingContext2D,
+export type RenderChartFunction<
+  Data,
+  Domain extends AxisDomain,
+  Aux
+> = typeof renderChart;
+
+export type CanvasRenderFunction<Data, Aux> = (
+  canvas: HTMLCanvasElement | OffscreenCanvas,
   data: Data,
-  xScale: d3.AxisScale<Domain>,
-  yScale: d3.AxisScale<Domain>
-) => void;
+  canvasWidth: number,
+  canvasHeight: number,
+  auxData: Aux
+) => unknown;
+
+export type CanvasGetScaleFunction<Data, Domain extends AxisDomain> = (
+  data: Data,
+  canvasWidth: number,
+  canvasHeight: number
+) => { xScale: d3.AxisScale<Domain>; yScale: d3.AxisScale<Domain> };
+
+export interface CanvasOfflineRenderFunction<Data, Aux> {
+  offlineCanvasRenderFunc: CanvasRenderFunction<Data, Aux>;
+  fallbackCanvasRenderFunc: CanvasRenderFunction<Data, Aux>;
+}
 
 /**
- * Renders the canvas chart into `containerElem` with the given data.
+ * Renders the canvas chart into `containerElem` with the given data
+ * using a regular canvas context.
  *
  * @param baseClass The base class use for the generated BEM classes.
  * @param containerElem The container element to render the chart in.
  * @param data The data to render.
- * @param colorScalePallet The color scale pallet.
  * @param outerWidth The outer width of the container.
  * @param outerHeight The outer height of the container.
- * @param xAxisScale The x-axis scale to be used.
+ * @param auxData The auxillary data passed to the canvas render function.
  * @param canvasRenderFunc The function used to render the canvas.
- * @param yAxisScale The y-axis scale to be used.
+ * @param getScale Function used to obtain the scales used in the chart.
  * @param xAxisLabel The x-axis label (optional).
  * @param yAxisLabel The y-axis label (optional).
+ * @param renderOffscreen Render the canvas in an offscreen context.
  */
-export function renderChart<Data, Domain extends AxisDomain>(
+export function renderChart<Data, Domain extends AxisDomain, Aux>(
   baseClass: string,
   containerElem: HTMLElement,
   data: Data,
   outerWidth: number,
   outerHeight: number,
-  canvasRenderFunc: CanvasRenderFunction<Data, Domain>,
-  xAxisScale: d3.AxisScale<Domain>,
-  yAxisScale: d3.AxisScale<Domain>,
+  auxData: Aux,
+  canvasRenderFunc: CanvasRenderFunction<Data, Aux>,
+  getScale: CanvasGetScaleFunction<Data, Domain>,
+  xAxisLabel?: string,
+  yAxisLabel?: string
+): void;
+/**
+ * Renders the canvas chart into `containerElem` with the given data using
+ * an offline canvas context. If offscreen canvases are not supported then
+ * the fallback function will be used
+ *
+ * @param baseClass The base class use for the generated BEM classes.
+ * @param containerElem The container element to render the chart in.
+ * @param data The data to render.
+ * @param outerWidth The outer width of the container.
+ * @param outerHeight The outer height of the container.
+ * @param auxData The auxillary data passed to the canvas render function.
+ * @param offlineCanvasRenderFunc The function used to render the canvas.
+ * @param getScale Function used to obtain the scales used in the chart.
+ * @param xAxisLabel The x-axis label (optional).
+ * @param yAxisLabel The y-axis label (optional).
+ * @param renderOffscreen Render the canvas in an offscreen context.
+ */
+export function renderChart<Data, Domain extends AxisDomain, Aux>(
+  baseClass: string,
+  containerElem: HTMLElement,
+  data: Data,
+  outerWidth: number,
+  outerHeight: number,
+  auxData: Aux,
+  offlineCanvasRenderFunc: CanvasOfflineRenderFunction<Data, Aux>,
+  getScale: CanvasGetScaleFunction<Data, Domain>,
+  xAxisLabel?: string,
+  yAxisLabel?: string
+): void;
+export function renderChart<Data, Domain extends AxisDomain, Aux>(
+  baseClass: string,
+  containerElem: HTMLElement,
+  data: Data,
+  outerWidth: number,
+  outerHeight: number,
+  auxData: Aux,
+  renderData: any,
+  getScale: CanvasGetScaleFunction<Data, Domain>,
   xAxisLabel?: string,
   yAxisLabel?: string
 ) {
@@ -56,6 +116,8 @@ export function renderChart<Data, Domain extends AxisDomain>(
 
   const width = getWidth(outerWidth);
   const height = getHeight(outerHeight);
+
+  const { xScale, yScale } = getScale(data, width, height);
 
   // Initialize canvas component container
   const canvasChart = container
@@ -75,11 +137,9 @@ export function renderChart<Data, Domain extends AxisDomain>(
     .append("g")
     .attr("transform", `translate(${MARGIN.left}, ${MARGIN.top})`);
 
-  const context = canvasChart.node()!.getContext("2d");
-
   // Initialize axises
-  const xAxis = d3.axisBottom(xAxisScale);
-  const yAxis = d3.axisLeft(yAxisScale);
+  const xAxis = d3.axisBottom(xScale);
+  const yAxis = d3.axisLeft(yScale);
 
   // Append the axises
   svgChart
@@ -110,8 +170,38 @@ export function renderChart<Data, Domain extends AxisDomain>(
       .text(yAxisLabel);
   }
 
-  // Call the passed in canvas render function
-  canvasRenderFunc(context!, data, xAxisScale, yAxisScale);
+  const offscreenCompatible = "OffscreenCanvas" in window;
+  const canvas = canvasChart.node()!;
+
+  // Determine if we are in the overload that wants to render offscreen
+  const renderOffscreen = "offlineCanvasRenderFunc" in renderData;
+
+  let canvasRenderFunc: CanvasRenderFunction<Data, Aux> | null = null;
+
+  // Determine which render function to use
+  if (renderOffscreen) {
+    const {
+      offlineCanvasRenderFunc,
+      fallbackCanvasRenderFunc,
+    } = renderData as CanvasOfflineRenderFunction<Data, Aux>;
+
+    canvasRenderFunc = offscreenCompatible
+      ? offlineCanvasRenderFunc
+      : fallbackCanvasRenderFunc;
+  } else {
+    canvasRenderFunc = renderData as CanvasRenderFunction<Data, Aux>;
+  }
+
+  // Run canvas render function with offscreen context if specified
+  // and supported
+  if (renderOffscreen && offscreenCompatible) {
+    const offscreen = canvas.transferControlToOffscreen();
+    canvasRenderFunc!(offscreen, data, width, height, auxData);
+  }
+  // Otherwise just run it with a regular canvas context
+  else {
+    canvasRenderFunc!(canvas, data, width, height, auxData);
+  }
 }
 
 /**
@@ -129,7 +219,7 @@ export function getWidth(outerWidth: number) {
 }
 
 export function drawPartitionDividers(
-  context: CanvasRenderingContext2D,
+  context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   yScale: d3.AxisScale<number>,
   partitions: PartitionRanges,
   partitionDividerColors: [string, string]
@@ -154,7 +244,7 @@ export function drawPartitionDividers(
  * `yTop` to `yBottom`.
  */
 export function drawFillRegion(
-  context: CanvasRenderingContext2D,
+  context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
   yStart: number,
   yEnd: number,
   color: string

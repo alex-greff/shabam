@@ -1,5 +1,5 @@
 import { FingerprintWorker } from "./types";
-import { expose } from "comlink";
+import * as Comlink from "comlink";
 import { generateFingerprint } from "@/audio/fingerprint/IterativeFingerprintGenerator";
 
 const exports: FingerprintWorker = {
@@ -8,4 +8,4 @@ const exports: FingerprintWorker = {
 
 export type IterativeFingerprintWorker = typeof exports;
 
-expose(exports);
+Comlink.expose(exports);

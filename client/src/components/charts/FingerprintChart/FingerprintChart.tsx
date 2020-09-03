@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from "react";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import { BaseProps } from "@/types";
 import "./FingerprintChart.scss";
 import classnames from "classnames";

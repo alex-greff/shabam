@@ -1,15 +1,26 @@
 // Renders the D3 fingerprint chart
 
-import * as d3 from "d3";
 import { Fingerprint } from "@/audio/types";
 import {
+  CanvasRenderFunction,
   renderChart,
-  getHeight,
-  getWidth,
-  drawPartitionDividers,
 } from "@/components/charts/CanvasChartBase.d3";
+import { FingerprintChartAuxData } from "./types";
+import {
+  renderCanvas,
+  getAxisScales,
+} from "@/components/charts/FingerprintChart/FingerprintChart.renderer";
+import * as Comlink from "comlink";
 
-const POINT_RADIUS = 1.5;
+// Setup worker used for rendering fingerprint charts
+const worker = new Worker(
+  "@/workers/canvas/RenderFingerprintCanvas.worker.ts",
+  { name: "fingerprint-chart-worker", type: "module" }
+);
+
+const workerApi = Comlink.wrap<
+  import("@/workers/canvas/RenderFingerprintCanvas.worker").RenderFingerprintCanvasWorker
+>(worker);
 
 /**
  * Renders a fingerprint chart into `containerElem`.
@@ -33,116 +44,37 @@ export function renderFingerprintChart(
   renderPartitionDividers = false,
   partitionDividerColors?: [string, string]
 ) {
-  const width = getWidth(outerWidth);
-  const height = getHeight(outerHeight);
+  // Wrap workerApi.renderCanvas so that the canvas value is transferred
+  // before calling the worker
+  const offlineCanvasRenderFunc: CanvasRenderFunction<
+    Fingerprint,
+    FingerprintChartAuxData
+  > = (canvas, ...rest) => {
+    const canvasTransferred = Comlink.transfer(canvas, [
+      canvas as OffscreenCanvas,
+    ]);
+    workerApi.renderCanvas(canvasTransferred, ...rest);
+  };
 
-  // Initialize axis scales
-  const xScale = d3
-    .scaleLinear()
-    .domain([0, fingerprintData.numberOfWindows])
-    .range([0, width]);
-  const yScale = d3
-    .scaleLog()
-    .domain([1, fingerprintData.frequencyBinCount + 1])
-    .range([height, 0])
-    .base(2);
+  const auxData: FingerprintChartAuxData = {
+    selectionColor,
+    renderPartitionDividers,
+    partitionDividerColors,
+  };
 
-  const renderCanvasWrapped = (
-    context: CanvasRenderingContext2D,
-    fingerprintData: Fingerprint,
-    xScale: d3.AxisScale<number>,
-    yScale: d3.AxisScale<number>
-  ) =>
-    renderCanvas(
-      context,
-      fingerprintData,
-      xScale,
-      yScale,
-      selectionColor,
-      renderPartitionDividers,
-      partitionDividerColors
-    );
-
-  renderChart<Fingerprint, number>(
+  renderChart<Fingerprint, number, FingerprintChartAuxData>(
     "FingerprintChart",
     containerElem,
     fingerprintData,
     outerWidth,
     outerHeight,
-    renderCanvasWrapped,
-    xScale,
-    yScale,
+    auxData,
+    {
+      offlineCanvasRenderFunc: offlineCanvasRenderFunc,
+      fallbackCanvasRenderFunc: renderCanvas,
+    },
+    getAxisScales,
     xAxisLabel,
     yAxisLabel
   );
-}
-
-function renderCanvas(
-  context: CanvasRenderingContext2D,
-  fingerprintData: Fingerprint,
-  xScale: d3.AxisScale<number>,
-  yScale: d3.AxisScale<number>,
-  selectionColor: string,
-  renderPartitionDividers: boolean,
-  partitionDividerColors?: [string, string]
-) {
-  const canvas = context.canvas;
-
-  // Compute the tick size of the axises
-  const xAxisTickSize = canvas.width / fingerprintData.numberOfWindows;
-
-  const pointData = fingerprintData.data;
-  const numPoints = pointData.length / 2;
-
-  if (pointData.length % 2 !== 0)
-    throw "Fingerprint point data length must be a multiple of 2";
-
-  // Render the partition dividers, if needed
-  if (renderPartitionDividers) {
-    if (!partitionDividerColors)
-      throw "Partition divider colors must be defined.";
-
-    drawPartitionDividers(
-      context,
-      yScale,
-      fingerprintData.partitionRanges,
-      partitionDividerColors
-    );
-  }
-
-  // Draw each point on the canvas
-  for (let i = 0; i < numPoints; i++) {
-    const pointBaseIdx = i * 2;
-    const window = pointData[pointBaseIdx];
-    const partition = pointData[pointBaseIdx + 1];
-
-    const x = xScale(window)! + xAxisTickSize / 2; // Center the x position
-
-    // Center the y position
-    const partitionRange = fingerprintData.partitionRanges[partition];
-    const partitionStart = partitionRange[0];
-    const partitionEnd = partitionRange[1];
-    const partitionMid = (partitionEnd - partitionStart) / 2 + partitionStart;
-
-    const y = yScale(partitionMid)!;
-
-    drawCell(context, x, y, POINT_RADIUS, selectionColor);
-  }
-}
-
-/**
- * Draws one cell onto the canvas context at the given x and y coordinates
- * with the given color.
- */
-function drawCell(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radius: number,
-  color: string
-) {
-  context.fillStyle = color;
-  context.beginPath();
-  context.arc(x, y, radius, 0, 2 * Math.PI, true);
-  context.fill();
 }
