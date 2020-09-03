@@ -177,8 +177,10 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       audioBlob!
     );
 
+    const downsampledAudioBuffer = await AudioUtilities.downsample(audioBuffer);
+
     const spectrogramData = await AudioUtilities.computeSpectrogramData(
-      audioBuffer
+      downsampledAudioBuffer
     );
 
     console.log("Spectrogram data:", spectrogramData); // TODO: remove
