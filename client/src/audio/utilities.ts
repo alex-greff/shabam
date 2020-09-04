@@ -103,7 +103,7 @@ function copyWindow(
  * Adapted from https://stackoverflow.com/questions/27598270/resample-audio-buffer-from-44100-to-16000
  *
  * @param  source The source audio buffer.
- * @param targetSampleRate The targetted sample rate.
+ * @param targetSampleRate The targeted sample rate.
  */
 export async function downsample(
   source: AudioBuffer,
