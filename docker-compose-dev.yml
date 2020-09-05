@@ -17,6 +17,7 @@ services:
             - "client"
             - "fingerprint-worker"
             - "identification-worker"
+    # Databases
     db-metadata:
         image: postgres
         restart: always
@@ -28,6 +29,48 @@ services:
             - POSTGRES_PASSWORD=development
         hostname: db-metadata
         container_name: shabam_db-metadata
+        shm_size: "64MB"
+        networks:
+            - app-network
+    db-address-1:
+        image: postgres
+        restart: always
+        volumes: 
+            - db_address_1_data:/var/lib/postgresql/data
+        ports:
+            - 5433:5432
+        environment: 
+            - POSTGRES_PASSWORD=development
+        hostname: db-address-1
+        container_name: shabam_db-address-1
+        shm_size: "64MB"
+        networks:
+            - app-network
+    db-address-2:
+        image: postgres
+        restart: always
+        volumes: 
+            - db_address_2_data:/var/lib/postgresql/data
+        ports:
+            - 5434:5432
+        environment: 
+            - POSTGRES_PASSWORD=development
+        hostname: db-address-2
+        container_name: shabam_db-address-2
+        shm_size: "64MB"
+        networks:
+            - app-network
+    db-address-3:
+        image: postgres
+        restart: always
+        volumes: 
+            - db_address_3_data:/var/lib/postgresql/data
+        ports:
+            - 5435:5432
+        environment: 
+            - POSTGRES_PASSWORD=development
+        hostname: db-address-3
+        container_name: shabam_db-address-3
         shm_size: "64MB"
         networks:
             - app-network
@@ -56,30 +99,11 @@ services:
             - "PG_METADATA_USER=postgres"
             - "PG_METADATA_PORT=5432"
             - "PG_METADATA_PASSWORD=development"
-            # TODO: put back in
-            # # Address 1 DB
-            # - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
-            # - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
-            # - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
-            # - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
-            # - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
-            # # Address 2 DB
-            # - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
-            # - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
-            # - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
-            # - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
-            # - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
-            # # Address 3 DB
-            # - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
-            # - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
-            # - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
-            # - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
-            # - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
-            # Other
-            # - "ADDRESS_DB_COUNT=3"
+            # Redis 
             - "REDIS_SESSION_HOST=redis-session"
             - "REDIS_SESSION_PORT=6379"
             - "REDIS_SESSION_PASSWORD=development"
+            # Other
             - "SESSION_SECRET=my-big-secret"
         networks:
             - app-network
@@ -141,23 +165,23 @@ services:
             - .:/workspace:cached # For vscode dev container
         environment:
             # Address 1 DB
-            - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
-            - "PG_ADR1_DATABASE=${SHABAM_PG_ADR1_DATABASE}"
-            - "PG_ADR1_USER=${SHABAM_PG_ADR1_USER}"
-            - "PG_ADR1_PORT=${SHABAM_PG_ADR1_PORT}"
-            - "PG_ADR1_PASSWORD=${SHABAM_PG_ADR1_PASSWORD}"
+            - "PG_ADDRESS_1_HOST=db-address-1"
+            - "PG_ADDRESS_1_DATABASE=postgres"
+            - "PG_ADDRESS_1_USER=postgres"
+            - "PG_ADDRESS_1_PORT=5433"
+            - "PG_ADDRESS_1_PASSWORD=development"
             # Address 2 DB
-            - "PG_ADR2_HOST=${SHABAM_PG_ADR2_HOST}"
-            - "PG_ADR2_DATABASE=${SHABAM_PG_ADR2_DATABASE}"
-            - "PG_ADR2_USER=${SHABAM_PG_ADR2_USER}"
-            - "PG_ADR2_PORT=${SHABAM_PG_ADR2_PORT}"
-            - "PG_ADR2_PASSWORD=${SHABAM_PG_ADR2_PASSWORD}"
+            - "PG_ADDRESS_2_HOST=db-address-2"
+            - "PG_ADDRESS_2_DATABASE=postgres"
+            - "PG_ADDRESS_2_USER=postgres"
+            - "PG_ADDRESS_2_PORT=5434"
+            - "PG_ADDRESS_2_PASSWORD=development"
             # Address 3 DB
-            - "PG_ADR3_HOST=${SHABAM_PG_ADR3_HOST}"
-            - "PG_ADR3_DATABASE=${SHABAM_PG_ADR3_DATABASE}"
-            - "PG_ADR3_USER=${SHABAM_PG_ADR3_USER}"
-            - "PG_ADR3_PORT=${SHABAM_PG_ADR3_PORT}"
-            - "PG_ADR3_PASSWORD=${SHABAM_PG_ADR3_PASSWORD}"
+            - "PG_ADDRESS_3_HOST=db-address-3"
+            - "PG_ADDRESS_3_DATABASE=postgres"
+            - "PG_ADDRESS_3_USER=postgres"
+            - "PG_ADDRESS_3_PORT=5435"
+            - "PG_ADDRESS_3_PASSWORD=development"
             # Misc
             - "ADDRESS_DB_COUNT=3"
         networks:
@@ -176,6 +200,9 @@ services:
             - app-network
         depends_on: 
             - db-metadata
+            - db-address-1
+            - db-address-2
+            - db-address-3
     redis-commander:
         image: rediscommander/redis-commander:latest
         restart: always
@@ -193,4 +220,7 @@ networks:
     app-network:
 volumes: 
     db_metadata_data:
+    db_address_1_data:
+    db_address_2_data:
+    db_address_3_data:
     client_emscripten_cache:
