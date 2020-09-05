@@ -17,18 +17,18 @@ services:
             - "client"
             - "fingerprint-worker"
             - "identification-worker"
-    db-main:
+    db-metadata:
         image: postgres
         restart: always
         volumes: 
-            - db_main_data:/var/lib/postgresql/data
+            - db_metadata_data:/var/lib/postgresql/data
         ports:
             - 5432:5432
         environment: 
             - POSTGRES_PASSWORD=development
-        hostname: db-main
-        container_name: shabam_db-main
-        shm_size: "256MB"
+        hostname: db-metadata
+        container_name: shabam_db-metadata
+        shm_size: "64MB"
         networks:
             - app-network
     redis-session:
@@ -50,12 +50,12 @@ services:
             - ./server:/app
             - .:/workspace:cached # For vscode dev container
         environment:
-            # Main DB
-            - "PG_MAIN_HOST=db-main"
-            - "PG_MAIN_DATABASE=postgres"
-            - "PG_MAIN_USER=postgres"
-            - "PG_MAIN_PORT=5432"
-            - "PG_MAIN_PASSWORD=development"
+            # Metadata DB
+            - "PG_METADATA_HOST=db-metadata"
+            - "PG_METADATA_DATABASE=postgres"
+            - "PG_METADATA_USER=postgres"
+            - "PG_METADATA_PORT=5432"
+            - "PG_METADATA_PASSWORD=development"
             # TODO: put back in
             # # Address 1 DB
             # - "PG_ADR1_HOST=${SHABAM_PG_ADR1_HOST}"
@@ -86,7 +86,7 @@ services:
         hostname: api
         container_name: shabam_api
         depends_on: 
-            - "db-main"
+            - "db-metadata"
             - "fingerprint-worker"
             - "identification-worker"
             - "records-worker"
@@ -175,7 +175,7 @@ services:
         networks:
             - app-network
         depends_on: 
-            - db-main
+            - db-metadata
     redis-commander:
         image: rediscommander/redis-commander:latest
         restart: always
@@ -192,5 +192,5 @@ services:
 networks:
     app-network:
 volumes: 
-    db_main_data:
+    db_metadata_data:
     client_emscripten_cache:

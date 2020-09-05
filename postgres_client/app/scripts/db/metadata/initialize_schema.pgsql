@@ -1,4 +1,5 @@
 -- The types of transits
+DROP DOMAIN IF EXISTS Username CASCADE;
 CREATE DOMAIN Username AS VARCHAR(15)
     DEFAULT NULL
     CHECK (char_length(VALUE) >= 6 OR char_length(VALUE) <= 15);

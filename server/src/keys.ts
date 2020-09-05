@@ -1,11 +1,11 @@
 export default {
-  PG_MAIN_HOST: process.env.PG_MAIN_HOST!,
-  PG_MAIN_DATABASE: process.env.PG_MAIN_DATABASE!,
-  PG_MAIN_USER: process.env.PG_MAIN_USER!,
-  PG_MAIN_PORT: process.env.PG_MAIN_PORT
-    ? parseInt(process.env.PG_MAIN_PORT)
+  PG_METADATA_HOST: process.env.PG_METADATA_HOST!,
+  PG_METADATA_DATABASE: process.env.PG_METADATA_DATABASE!,
+  PG_METADATA_USER: process.env.PG_METADATA_USER!,
+  PG_METADATA_PORT: process.env.PG_METADATA_PORT
+    ? parseInt(process.env.PG_METADATA_PORT)
     : undefined,
-  PG_MAIN_PASSWORD: process.env.PG_MAIN_PASSWORD!,
+  PG_METADATA_PASSWORD: process.env.PG_METADATA_PASSWORD!,
   PRODUCTION: process.env.NODE_ENV === "production",
   // TODO: put back in later?
   // getAddressDbKeys: (addressNum: number) => {

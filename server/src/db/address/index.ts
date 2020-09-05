@@ -1,4 +1,4 @@
-import { Pool, QueryResult } from "pg";
+import { Pool, QueryResult } from "@/db/metadata/node_modules/pg";
 import KEYS from "../../keys";
 
 // const KEYS = require("../../keys");

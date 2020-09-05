@@ -1,5 +1,5 @@
 import { UserAccount } from "@/types/schema";
-import * as db from "@/db/main";
+import * as db from "@/db/metadata";
 
 export async function getUser(username: string): Promise<UserAccount | null> {
   const query = `

@@ -7,9 +7,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "bash ./scripts/build.sh",
 
-        "start:it--main": "bash ./scripts/start_it.sh 'db-main' postgres postgres development 5432",
-        "start:psql--main": "bash ./scripts/start_psql.sh 'db-main' postgres postgres development 5432",
-        "exec:init-schema--main": "bash ./scripts/exec_init_schema.sh '/app/scripts/db/main/initialize_schema.sh' 'db-main' postgres postgres development 5432"
+        "start:it--metadata": "bash ./scripts/start_it.sh 'db-metadata' postgres postgres development 5432",
+        "start:psql--metadata": "bash ./scripts/start_psql.sh 'db-metadata' postgres postgres development 5432",
+        "exec:init-schema--metadata": "bash ./scripts/exec_init_schema.sh '/app/scripts/db/metadata/initialize_schema.sh' 'db-metadata' postgres postgres development 5432"
     },
     "author": "Alexander Greff",
     "license": "ISC"

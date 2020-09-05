@@ -1,5 +1,5 @@
 import { Track } from "@/types/schema";
-import * as db from "@/db/main";
+import * as db from "@/db/metadata";
 import * as address_db from "@/db/address";
 
 async function _addArtistsToTrack(

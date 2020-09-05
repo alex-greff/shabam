@@ -1,7 +1,7 @@
 import KEYS from "@/keys";
 import clone from "lodash.clone";
 import toPath from "lodash.topath";
-import * as db from "@/db/main";
+import * as db from "@/db/metadata";
 import * as FingerprintUtilitiesImport from "./fingerprint";
 import * as PromiseUtilitiesImport from "./promise";
 

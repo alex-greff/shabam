@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cors, { CorsOptions } from "cors";
 import HTTPError from "@/error/HTTPError";
 import bodyParser from "body-parser";
-import { Pool, PoolConfig } from "pg";
+import { Pool, PoolConfig } from "@/db/metadata/node_modules/pg";
 import AppModule from "@/graphql/modules";
 import KEYS from "@/keys";
 import { ApolloServer } from "apollo-server-express";
@@ -14,6 +14,7 @@ import connectRedis from "connect-redis";
 
 const app = express();
 
+// TODO: remove this
 // Postgres client connection setup
 const pgClient = new Pool({
   user: KEYS.PG_MAIN_USER,

@@ -3,11 +3,11 @@ import { Pool, QueryResult } from "pg";
 
 // Setup pool instance
 const pool = new Pool({
-  user: KEYS.PG_MAIN_USER,
-  host: KEYS.PG_MAIN_HOST,
-  database: KEYS.PG_MAIN_DATABASE,
-  password: KEYS.PG_MAIN_PASSWORD,
-  port: KEYS.PG_MAIN_PORT,
+  user: KEYS.PG_METADATA_USER,
+  host: KEYS.PG_METADATA_HOST,
+  database: KEYS.PG_METADATA_DATABASE,
+  password: KEYS.PG_METADATA_PASSWORD,
+  port: KEYS.PG_METADATA_PORT,
   ssl: KEYS.PRODUCTION ? true : false,
 });
 pool.on("error", () => console.error("Lost PG main database connection"));
