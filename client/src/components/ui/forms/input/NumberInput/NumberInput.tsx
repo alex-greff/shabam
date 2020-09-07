@@ -29,12 +29,20 @@ const NumberInput: FunctionComponent<Props> = (props) => {
   const updateInputValue = (stepUp: boolean) => {
     const inputEl = inputRef.current;
     if (inputEl) {
+      const min =
+        inputEl.min !== "" ? parseInt(inputEl.min) : Number.NEGATIVE_INFINITY;
+      const max =
+        inputEl.max !== "" ? parseInt(inputEl.max) : Number.POSITIVE_INFINITY;
+
       const step = inputEl.step !== "" ? parseInt(inputEl.step) : 1;
       const direction = stepUp ? 1 : -1;
       const value = inputEl.value !== "" ? parseInt(inputEl.value) : 0;
 
+      // Clamp the next value by min and max
+      let nextValue = Math.max(min, Math.min(max, value + step * direction)); 
+
       const event = new Event("input", { bubbles: true });
-      inputEl.value = (value + step * direction).toString();
+      inputEl.value = nextValue.toString();
       inputEl.dispatchEvent(event);
     }
   };

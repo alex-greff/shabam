@@ -116,13 +116,14 @@ const BenchmarkConfiguration: FunctionComponent<Props> = (props) => {
         className="BenchmarkConfiguration__iteration-input"
         defaultValue={numIterations}
         onInput={onIterationInputChange}
+        min={1}
       />
 
       <NormalButton
         className="BenchmarkConfiguration__run-benchmark-button"
         appearance="solid"
         mode="success"
-        disabled={!hasAudioBlob || benchmarkIsRunning}
+        disabled={!hasAudioBlob || benchmarkIsRunning || numIterations <= 0}
         onClick={runBenchmark}
       >
         Run Benchmark
