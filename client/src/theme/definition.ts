@@ -80,6 +80,7 @@ export const schema: Schema = {
   AccentContainer: { $inherits: "GLOBAL" },
   FormButton: { $inherits: "GLOBAL" },
   FormInput: { $inherits: "GLOBAL" },
+  NumberInput: { $inherits: "GLOBAL" },
   SearchScene: { $inherits: "GLOBAL" },
   DividerLine: { $inherits: "GLOBAL" },
   CircularButton: { $inherits: "GLOBAL" },

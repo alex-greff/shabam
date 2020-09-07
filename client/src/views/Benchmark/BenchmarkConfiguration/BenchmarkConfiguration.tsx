@@ -12,6 +12,7 @@ import RecordButton from "@/components/ui/buttons/RecordButton/RecordButton";
 import StopRecordButton from "@/components/ui/buttons/StopRecordButton/StopRecordButton";
 import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
 import UploadIcon from "@material-ui/icons/CloudUpload";
+import NumberInput from "@/components/ui/forms/input/NumberInput/NumberInput";
 
 export interface Props extends BaseProps {
   isRecording: boolean;
@@ -21,6 +22,8 @@ export interface Props extends BaseProps {
   handleStopRecording: () => Promise<void>;
   handleAudioFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   runBenchmark: () => Promise<void>;
+  numIterations: number;
+  setNumIterations: (n: number) => unknown;
 }
 
 const BenchmarkConfiguration: FunctionComponent<Props> = (props) => {
@@ -32,7 +35,14 @@ const BenchmarkConfiguration: FunctionComponent<Props> = (props) => {
     handleStopRecording,
     handleAudioFileChange,
     runBenchmark,
+    numIterations,
+    setNumIterations,
   } = props;
+
+  const onIterationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value !== "" ? parseInt(e.target.value) : 0;
+    setNumIterations(value);
+  };
 
   return (
     <ConfigurationContainer
@@ -101,6 +111,12 @@ const BenchmarkConfiguration: FunctionComponent<Props> = (props) => {
           />
         </div>
       </div>
+
+      <NumberInput
+        className="BenchmarkConfiguration__iteration-input"
+        defaultValue={numIterations}
+        onInput={onIterationInputChange}
+      />
 
       <NormalButton
         className="BenchmarkConfiguration__run-benchmark-button"

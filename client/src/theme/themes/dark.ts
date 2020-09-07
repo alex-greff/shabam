@@ -13,6 +13,8 @@ const DARK_5 = "#646464";
 const DARK_6 = "#494747";
 const DARK_7 = "#6A6A6A";
 const DARK_8 = "#C0C0C0";
+const DARK_9 = "#737373";
+const DARK_10 = "#555555";
 
 const LIGHT_1 = "#FFFFFF";
 const LIGHT_2 = "#F6F6F6";
@@ -244,6 +246,18 @@ export default {
         color_1: "rgb(80, 80, 80)",
         color_2: "rgb(100, 100, 100)"
       }
+    },
+    NumberInput: {
+      background: {
+        primary: DARK_9,
+        disabled: Color(DARK_9).lighten(0.3).round().toString()
+      },
+      accent: {
+        primary: DARK_10,
+        secondary: BLUE_10,
+        tertiary: BLUE_3,
+        disabled: Color(DARK_10).lighten(0.5).round().toString()
+      }
     }
-  },
+  }
 } as ThemeData;

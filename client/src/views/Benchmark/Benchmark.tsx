@@ -25,6 +25,8 @@ export interface BenchmarkResult {
   wasm: number;
 }
 
+const DEFAULT_NUM_ITERATIONS = 5;
+
 // TODO: might want to move out the worker interface instantiation to a
 // different module
 
@@ -81,7 +83,9 @@ const Benchmark: FunctionComponent<Props> = (props) => {
     setFingerprintResults,
   ] = useState<FingerprintResults | null>(null);
 
-  const [numIterations, setNumIterations] = useState<number>(5); // TODO: hook up to BenchmarkConfiguration
+  const [numIterations, setNumIterations] = useState<number>(
+    DEFAULT_NUM_ITERATIONS
+  );
   const [progress, setProgress] = useState<number>(0);
   const [benchmarkResults, setBenchmarkResults] = useState<BenchmarkResult[]>(
     []
@@ -256,7 +260,7 @@ const Benchmark: FunctionComponent<Props> = (props) => {
       style={props.style}
     >
       <PageContent className="Benchmark__content">
-        <BenchmarkConfiguration 
+        <BenchmarkConfiguration
           className="Benchmark__config-container"
           isRecording={isRecording}
           benchmarkIsRunning={benchmarkIsRunning}
@@ -265,6 +269,8 @@ const Benchmark: FunctionComponent<Props> = (props) => {
           handleStopRecording={handleStopRecording}
           handleAudioFileChange={handleAudioFileChange}
           runBenchmark={runBenchmark}
+          numIterations={numIterations}
+          setNumIterations={setNumIterations}
         />
 
         {benchmarkIsRunning && !benchmarkComplete ? (

@@ -69,6 +69,11 @@
     }
   }
 
+  & .BenchmarkConfiguration__iteration-input {
+    margin-bottom: 1rem;
+    max-width: 20rem;
+  }
+
   & .BenchmarkConfiguration__run-benchmark-button {
     font-size: $button-font-size;
   }
