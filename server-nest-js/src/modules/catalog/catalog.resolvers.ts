@@ -7,15 +7,15 @@ import {
   Resolver,
   Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
 import {
   FingerprintInfoInput,
   TrackAddDataInput,
   TrackEditDataInput,
-} from './dto/catalog.input';
+} from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Track } from './models/catalog.model';
-import { PubSub } from 'apollo-server-express';
+import { Track } from './models/catalog.models';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
 
 const SUBSCRIPTIONS_CONFIG = {
@@ -25,6 +25,8 @@ const SUBSCRIPTIONS_CONFIG = {
 };
 
 const pubSub = new PubSub();
+
+// TODO: implement guards
 
 @Resolver((of) => Track)
 export class CatalogResolver {

@@ -3,18 +3,14 @@ import {
   FingerprintInfoInput,
   TrackAddDataInput,
   TrackEditDataInput,
-} from './dto/catalog.input';
+} from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Track } from './models/catalog.model';
+import { Track } from './models/catalog.models';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
 
 @Injectable()
 export class CatalogService {
-  /**
-   * TODO:
-   * Put some real business logic here
-   * Left for demonstration purposes
-   */
+  // TODO: implement
 
   async getTrack(id: string): Promise<Track> {
     return {} as any;
