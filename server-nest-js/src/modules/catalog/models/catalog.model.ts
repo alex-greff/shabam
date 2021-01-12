@@ -1,6 +1,6 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType({ description: "Metadata for a track." })
 export class TrackMetadata {
   @Field()
   title: string;
@@ -21,7 +21,7 @@ export class TrackMetadata {
   updatedDate: Date;
 }
 
-@ObjectType()
+@ObjectType({ description: "A track object." })
 export class Track {
   @Field(type => ID)
   id: string;

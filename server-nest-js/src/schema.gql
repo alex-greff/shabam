@@ -2,6 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Metadata for a track."""
 type TrackMetadata {
   title: String!
   artists: [String!]!
@@ -14,6 +15,7 @@ type TrackMetadata {
 """Date scalar type"""
 scalar Date
 
+"""A track object."""
 type Track {
   id: ID!
   addressDatabase: Int!
@@ -29,13 +31,19 @@ type Recipe {
 }
 
 type Query {
+  """Get a specific track in the catalog."""
   getTrack(id: ID!): Track!
+
+  """Get a paginated list of all tracks in the catalog."""
   getTracks(skip: Int = 0, take: Int = 25): [Track!]!
+
+  """Searches for a track based off the given audio fingerprint."""
   searchTrack(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!): Track!
   recipe(id: String!): Recipe!
   recipes(skip: Int = 0, take: Int = 25): [Recipe!]!
 }
 
+"""Supporting information for the raw fingerprint data."""
 input FingerprintInfoInput {
   windowAmount: Int!
   partitionAmount: Int!
@@ -45,14 +53,22 @@ input FingerprintInfoInput {
 scalar Upload
 
 type Mutation {
+  """Add a new track to the catalog."""
   addTrack(trackData: TrackAddDataInput!): Track!
+
+  """Edit an existing track in the catalog."""
   editTrack(trackData: TrackEditDataInput!, id: ID!): Track!
+
+  """Remove a track from the catalog."""
   removeTrack(id: ID!): Boolean!
+
+  """Recomputes a track's stored fingerprint."""
   recomputeTrackFingerprint(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!, id: ID!): Boolean!
   addRecipe(newRecipeData: NewRecipeInput!): Recipe!
   removeRecipe(id: String!): Boolean!
 }
 
+"""Input data for adding a new track."""
 input TrackAddDataInput {
   title: String!
   artists: [String!]!
@@ -60,6 +76,7 @@ input TrackAddDataInput {
   releaseDate: Date
 }
 
+"""Input data for editing a track."""
 input TrackEditDataInput {
   title: String
   artists: [String!]
@@ -74,8 +91,13 @@ input NewRecipeInput {
 }
 
 type Subscription {
+  """Notifies whenever a track is added. """
   trackAdded: Track!
+
+  """Notifies whenever a track is added. Can filter by track id."""
   trackEdited: Track!
+
+  """Notifies whenever a track is deleted. Can filter by track id."""
   trackRemoved: String!
   recipeAdded: Recipe!
 }

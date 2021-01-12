@@ -7,6 +7,7 @@ import {
   Resolver,
   Subscription,
 } from '@nestjs/graphql';
+import { CatalogService } from './catalog.service';
 import {
   FingerprintInfoInput,
   TrackAddDataInput,
@@ -14,7 +15,6 @@ import {
 } from './dto/catalog.input';
 import { GetTracksArgs } from './dto/catalog.args';
 import { Track } from './models/catalog.model';
-import { CatalogService } from './catalog.service';
 import { PubSub } from 'apollo-server-express';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
 
@@ -34,7 +34,9 @@ export class CatalogResolver {
   // --- Queries ---
   // ---------------
 
-  @Query((returns) => Track)
+  @Query((returns) => Track, {
+    description: 'Get a specific track in the catalog.',
+  })
   async getTrack(
     @Args({ type: () => ID, name: 'id' }) id: string,
   ): Promise<Track> {
@@ -43,12 +45,16 @@ export class CatalogResolver {
     return track;
   }
 
-  @Query((returns) => [Track])
+  @Query((returns) => [Track], {
+    description: 'Get a paginated list of all tracks in the catalog.',
+  })
   async getTracks(@Args() args: GetTracksArgs): Promise<Track[]> {
     return this.catalogService.getTracks(args);
   }
 
-  @Query((returns) => Track)
+  @Query((returns) => Track, {
+    description: 'Searches for a track based off the given audio fingerprint.',
+  })
   searchTrack(
     @Args('fingerprint') fingerprint: UploadScalar,
     @Args('fingerprintInfo') fingerprintInfo: FingerprintInfoInput,
@@ -60,7 +66,9 @@ export class CatalogResolver {
   // --- Mutations ---
   // -----------------
 
-  @Mutation((returns) => Track)
+  @Mutation((returns) => Track, {
+    description: 'Add a new track to the catalog.',
+  })
   async addTrack(
     @Args('trackData') trackData: TrackAddDataInput,
   ): Promise<Track> {
@@ -69,7 +77,9 @@ export class CatalogResolver {
     return track;
   }
 
-  @Mutation((returns) => Track)
+  @Mutation((returns) => Track, {
+    description: 'Edit an existing track in the catalog.',
+  })
   async editTrack(
     @Args({ type: () => ID, name: 'id' }) id: string,
     @Args('trackData') trackData: TrackEditDataInput,
@@ -80,7 +90,9 @@ export class CatalogResolver {
     return track;
   }
 
-  @Mutation((returns) => Boolean)
+  @Mutation((returns) => Boolean, {
+    description: 'Remove a track from the catalog.',
+  })
   async removeTrack(
     @Args({ type: () => ID, name: 'id' }) id: string,
   ): Promise<boolean> {
@@ -90,7 +102,9 @@ export class CatalogResolver {
     return removed;
   }
 
-  @Mutation((returns) => Boolean)
+  @Mutation((returns) => Boolean, {
+    description: "Recomputes a track's stored fingerprint.",
+  })
   async recomputeTrackFingerprint(
     @Args({ type: () => ID, name: 'id' }) id: string,
     @Args('fingerprint') fingerprint: UploadScalar,
@@ -103,12 +117,15 @@ export class CatalogResolver {
   // --- Subscriptions ---
   // ---------------------
 
-  @Subscription((returns) => Track)
+  @Subscription((returns) => Track, {
+    description: 'Notifies whenever a track is added. ',
+  })
   trackAdded() {
     return pubSub.asyncIterator(SUBSCRIPTIONS_CONFIG.TRACK_ADDED);
   }
 
   @Subscription((returns) => Track, {
+    description: 'Notifies whenever a track is added. Can filter by track id.',
     filter: (payload, variables) =>
       variables.id ? payload.editedTrack.id === variables.id : true,
   })
@@ -117,6 +134,8 @@ export class CatalogResolver {
   }
 
   @Subscription((returns) => String, {
+    description:
+      'Notifies whenever a track is deleted. Can filter by track id.',
     filter: (payload, variables) =>
       variables.id ? payload.trackId === variables.id : true,
   })
