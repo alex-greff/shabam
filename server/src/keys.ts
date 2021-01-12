@@ -1,4 +1,10 @@
+import * as Config from '@/config';
+
 export default {
+  PRODUCTION: process.env.NODE_ENV === 'production',
+  PORT: process.env.PORT
+    ? parseInt(process.env.PORT)
+    : undefined || Config.defaultPort,
   PG_METADATA_HOST: process.env.PG_METADATA_HOST!,
   PG_METADATA_DATABASE: process.env.PG_METADATA_DATABASE!,
   PG_METADATA_USER: process.env.PG_METADATA_USER!,
@@ -6,7 +12,6 @@ export default {
     ? parseInt(process.env.PG_METADATA_PORT)
     : undefined,
   PG_METADATA_PASSWORD: process.env.PG_METADATA_PASSWORD!,
-  PRODUCTION: process.env.NODE_ENV === "production",
   // TODO: put back in later?
   // getAddressDbKeys: (addressNum: number) => {
   //     const currPort = process.env[`PG_ADR${addressNum}_PORT`];

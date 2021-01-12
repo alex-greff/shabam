@@ -5,12 +5,11 @@
 FROM node:12-alpine 
 
 WORKDIR /app
-
-RUN npm install -g @nestjs/cli eslint prettier
-
 COPY ./package*.json ./
 
 RUN npm install
+
+RUN npm install -g eslint prettier
 
 COPY . .
 
