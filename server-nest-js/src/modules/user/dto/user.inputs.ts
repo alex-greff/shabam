@@ -1,9 +1,11 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsOptional, Min, Max } from 'class-validator';
 
 @InputType({ description: 'Credentials input for user login' })
 export class UserCredentialsInput {
   @Field({ description: 'The username of the user.' })
+  @Min(6)
+  @Max(15)
   username: string;
 
   @Field({ description: 'The password (in clear) of the user. ' })
@@ -14,6 +16,8 @@ export class UserCredentialsInput {
 export class UpdateUserCredentialsInput {
   @Field({ description: 'The username of the user.', nullable: true })
   @IsOptional()
+  @Min(6)
+  @Max(15)
   username: string;
 
   @Field({
