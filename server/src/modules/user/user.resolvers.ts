@@ -7,12 +7,16 @@ import {
 } from './dto/user.inputs';
 import {} from './dto/user.args';
 import {} from './models/user.models';
+import { AuthService } from '../auth/auth.service';
+import { GqlLocalAuthGuard } from '../auth/gql-local-auth.guard';
 
 // TODO: implement guards
 
 @Resolver('User')
 export class UserResolvers {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService
+  ) {}
 
   // ---------------
   // --- Queries ---
@@ -30,31 +34,6 @@ export class UserResolvers {
   // -----------------
   // --- Mutations ---
   // -----------------
-
-  @Mutation((returns) => Boolean, {
-    description: 'Login a user, creating a session.',
-  })
-  async login(
-    @Args('credentials') credentials: UserCredentialsInput,
-  ): Promise<boolean> {
-    return this.userService.login(credentials);
-  }
-
-  @Mutation((returns) => Boolean, {
-    description: 'Logout the current user, destroying the session.',
-  })
-  async logout(): Promise<boolean> {
-    return this.userService.logout();
-  }
-
-  @Mutation((returns) => Boolean, {
-    description: 'Signup and create a new user. ',
-  })
-  async signup(
-    @Args('credentials') credentials: UserCredentialsInput,
-  ): Promise<boolean> {
-    return this.userService.signup(credentials);
-  }
 
   @Mutation((returns) => Boolean, {
     description: "Edits a user's account details.",

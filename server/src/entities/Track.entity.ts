@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from "typeorm";
-import { UserAccount } from "./UserAccount.entity";
-import { Search } from "./Search.entity";
-import { Artist } from "./Artist.entity";
+import { UserAccountEntity } from "./UserAccount.entity";
+import { SearchEntity } from "./Search.entity";
+import { ArtistEntity } from "./Artist.entity";
 
-@Entity()
-export class Track {
+@Entity({ name: "track" })
+export class TrackEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number;
 
@@ -26,13 +26,13 @@ export class Track {
   @Column({ type: "timestamp" })
   updateDate: Date;
 
-  @ManyToOne(() => UserAccount, user => user.uploadedTracks)
-  uploaderUser: UserAccount;
+  @ManyToOne(() => UserAccountEntity, user => user.uploadedTracks, { eager: true })
+  uploaderUser: UserAccountEntity;
 
-  @ManyToOne(() => Search, search => search.track)
-  searches: Search[];
+  @ManyToOne(() => SearchEntity, search => search.track)
+  searches: Promise<SearchEntity[]>;
 
-  @ManyToMany(() => Artist)
+  @ManyToMany(() => ArtistEntity, { eager: true })
   @JoinTable()
-  artists: Artist[];
+  artists: ArtistEntity[];
 }

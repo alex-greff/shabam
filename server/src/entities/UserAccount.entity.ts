@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, Check, OneToMany } from "typeorm";
-import { Search } from "./Search.entity";
-import { Track } from "./Track.entity";
+import { SearchEntity } from "./Search.entity";
+import { TrackEntity } from "./Track.entity";
 
-@Entity()
+@Entity({ name: "user_account" })
 @Check("char_length(username) >= 6 AND char_length(username) <= 15")
-export class UserAccount {
+export class UserAccountEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number;
 
@@ -23,9 +23,9 @@ export class UserAccount {
   @Column({ type: "timestamp", nullable: true })
   lastLogin: Date | null;
 
-  @OneToMany(() => Search, search => search.user)
-  searches: Search[];
+  @OneToMany(() => SearchEntity, search => search.user)
+  searches: Promise<SearchEntity[]>;
 
-  @OneToMany(() => Track, track => track.uploaderUser)
-  uploadedTracks: Track[];
+  @OneToMany(() => TrackEntity, track => track.uploaderUser)
+  uploadedTracks: Promise<TrackEntity[]>;
 }

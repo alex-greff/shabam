@@ -4,7 +4,7 @@ export default {
   PRODUCTION: process.env.NODE_ENV === 'production',
   PORT: process.env.PORT
     ? parseInt(process.env.PORT)
-    : undefined || Config.defaultPort,
+    : undefined || Config.DEFAULT_PORT,
   PG_METADATA_HOST: process.env.PG_METADATA_HOST!,
   PG_METADATA_DATABASE: process.env.PG_METADATA_DATABASE!,
   PG_METADATA_USER: process.env.PG_METADATA_USER!,

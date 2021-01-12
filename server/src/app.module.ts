@@ -6,18 +6,20 @@ import KEYS from "@/keys";
 import { DateScalar } from "@/common/scalars/date.scalar";
 import { UploadScalar } from "@/common/scalars/upload.scalar";
 
+import { AuthModule } from "@/modules/auth/auth.module";
 import { UserModule } from "@/modules/user/user.module";
 import { CatalogModule } from "@/modules/catalog/catalog.module";
 import { RecipesModule } from '@/modules/recipes/recipes.module';
 
-import { UserAccount } from "@/entities/UserAccount.entity";
-import { Track } from "@/entities/Track.entity";
-import { Search } from "@/entities/Search.entity";
-import { Artist } from "@/entities/Artist.entity";
+import { UserAccountEntity } from "@/entities/UserAccount.entity";
+import { TrackEntity } from "@/entities/Track.entity";
+import { SearchEntity } from "@/entities/Search.entity";
+import { ArtistEntity } from "@/entities/Artist.entity";
 
 @Module({
   imports: [
-    // --- Modules ---
+    // --- Graphql Modules ---
+    AuthModule,
     UserModule,
     CatalogModule,
     RecipesModule, // TODO: remove
@@ -30,7 +32,8 @@ import { Artist } from "@/entities/Artist.entity";
       uploads: {
         maxFileSize: 10000000, // 10 MB
         maxFiles: 10,
-      }
+      },
+      context: ({ req, res }) => ({ req, res })
     }),
     // --- Metadata Database ---
     TypeOrmModule.forRoot({
@@ -41,7 +44,7 @@ import { Artist } from "@/entities/Artist.entity";
       password: KEYS.PG_METADATA_PASSWORD,
       database: KEYS.PG_METADATA_DATABASE,
       synchronize: !KEYS.PRODUCTION,
-      entities: [UserAccount, Track, Search, Artist]
+      entities: [UserAccountEntity, TrackEntity, SearchEntity, ArtistEntity]
     })
   ],
   providers: [

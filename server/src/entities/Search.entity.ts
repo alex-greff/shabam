@@ -1,18 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { UserAccount } from "./UserAccount.entity";
-import { Track } from "./Track.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { UserAccountEntity } from './UserAccount.entity';
+import { TrackEntity } from './Track.entity';
 
-@Entity()
-export class Search {
-  @PrimaryGeneratedColumn("uuid")
+@Entity({ name: "search" })
+export class SearchEntity {
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @ManyToOne(() => UserAccount, user => user.searches)
-  user: UserAccount;
+  @ManyToOne(() => UserAccountEntity, (user) => user.searches, { eager: true})
+  user: UserAccountEntity;
 
-  @ManyToOne(() => Track, track => track.searches, { nullable: true })
-  track: Track | null;
+  @ManyToOne(() => TrackEntity, (track) => track.searches, {
+    nullable: true,
+    eager: true,
+  })
+  track: TrackEntity | null;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   searchDate: Date;
 }

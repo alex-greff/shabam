@@ -57,7 +57,7 @@ scalar Upload
 
 type Mutation {
   """Login a user, creating a session."""
-  login(credentials: UserCredentialsInput!): Boolean!
+  login(password: String!, username: String!): Boolean!
 
   """Logout the current user, destroying the session."""
   logout: Boolean!
