@@ -34,9 +34,9 @@ CREATE TABLE track(
 -- search table
 DROP TABLE IF EXISTS search CASCADE;
 CREATE TABLE search(
+    search_id PRIMARY KEY,
     user_account_id INTEGER NOT NULL,
-    track_id INTEGER NOT NULL,
-    PRIMARY KEY (user_account_id, track_id),
+    track_id INTEGER,
     CONSTRAINT search_user_account_id_fkey FOREIGN KEY (user_account_id)
         REFERENCES user_account (user_account_id) MATCH SIMPLE
         ON UPDATE RESTRICT ON DELETE CASCADE,
