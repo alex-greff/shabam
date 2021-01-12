@@ -12,5 +12,6 @@ import KEYS from "@/keys";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.listen(KEYS.PORT);
+  console.log("🚀 Running on port", KEYS.PORT);
 }
 bootstrap();

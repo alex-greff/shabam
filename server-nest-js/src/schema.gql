@@ -1,0 +1,81 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type TrackMetadata {
+  title: String!
+  artists: [String!]!
+  coverImage: String
+  releaseDate: Date
+  createdDate: Date!
+  updatedDate: Date!
+}
+
+"""Date scalar type"""
+scalar Date
+
+type Track {
+  id: ID!
+  addressDatabase: Int!
+  metadata: TrackMetadata!
+}
+
+type Recipe {
+  id: ID!
+  title: String!
+  description: String
+  creationDate: Date!
+  ingredients: [String!]!
+}
+
+type Query {
+  getTrack(id: ID!): Track!
+  getTracks(skip: Int = 0, take: Int = 25): [Track!]!
+  searchTrack(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!): Track!
+  recipe(id: String!): Recipe!
+  recipes(skip: Int = 0, take: Int = 25): [Recipe!]!
+}
+
+input FingerprintInfoInput {
+  windowAmount: Int!
+  partitionAmount: Int!
+}
+
+"""File upload scalar type"""
+scalar Upload
+
+type Mutation {
+  addTrack(trackData: TrackAddDataInput!): Track!
+  editTrack(trackData: TrackEditDataInput!, id: ID!): Track!
+  removeTrack(id: ID!): Boolean!
+  recomputeTrackFingerprint(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!, id: ID!): Boolean!
+  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
+  removeRecipe(id: String!): Boolean!
+}
+
+input TrackAddDataInput {
+  title: String!
+  artists: [String!]!
+  coverImage: String
+  releaseDate: Date
+}
+
+input TrackEditDataInput {
+  title: String
+  artists: [String!]
+  coverImage: String
+  releaseDate: Date
+}
+
+input NewRecipeInput {
+  title: String!
+  description: String
+  ingredients: [String!]!
+}
+
+type Subscription {
+  trackAdded: Track!
+  trackEdited: Track!
+  trackRemoved: String!
+  recipeAdded: Recipe!
+}
