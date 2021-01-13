@@ -3,7 +3,7 @@ import { SearchEntity } from "./Search.entity";
 import { TrackEntity } from "./Track.entity";
 
 @Entity({ name: "user_account" })
-@Check("char_length(username) >= 6 AND char_length(username) <= 15")
+@Check("char_length(username) >= 5 AND char_length(username) <= 15")
 export class UserAccountEntity {
   @PrimaryGeneratedColumn("uuid")
   id: number;

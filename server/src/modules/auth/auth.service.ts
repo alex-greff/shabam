@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotImplementedException } from '@nestjs/common';
+import { JWTPayload } from '@/types';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from "bcrypt";
 import { UserService } from '@/modules/user/user.service';
-import { UserCredentialsInput } from '../user/dto/user.inputs';
+import { UserDataInput } from '../user/dto/user.inputs';
+import { AccessCredentials } from './models/auth.models';
+import { User } from '../user/models/user.models';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
+  ) {}
 
   async validateUser(username: string, password: string) {
     const user = await this.userService.findUser(username);
 
-    // TODO: compare passwords with bcrypt
-    if (user && user.password === password) {
+    if (user && bcrypt.compareSync(password, user.password)) {
       // Strip out password hash
       const { password, ...result } = user;
       return result;
@@ -18,15 +25,26 @@ export class AuthService {
     return null;
   }
 
-  async login(credentials: UserCredentialsInput): Promise<boolean> {
-    return true;
+  async login(username: string): Promise<AccessCredentials> {
+    await this.userService.updateLastLogin(username);
+
+    const payload: JWTPayload = {
+      username
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload)
+    };
+  }
+
+  async signup(userData: UserDataInput): Promise<AccessCredentials> {
+    await this.userService.createUser(userData);
+
+    return this.login(userData.username);
   }
 
   async logout(): Promise<boolean> {
-    return true;
-  }
-
-  async signup(credentials: UserCredentialsInput): Promise<boolean> {
-    return true;
+    // TODO: this is unused right now since JWT is used
+    throw new NotImplementedException();
   }
 }

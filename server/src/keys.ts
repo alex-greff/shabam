@@ -30,4 +30,5 @@ export default {
     : undefined,
   REDIS_SESSION_PASSWORD: process.env.REDIS_SESSION_PASSWORD!,
   SESSION_SECRET: process.env.SESSION_SECRET!,
+  JWT_SECRET: process.env.JWT_SECRET!
 };

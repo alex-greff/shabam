@@ -3,7 +3,6 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import {
   UpdateUserCredentialsInput,
-  UserCredentialsInput,
 } from './dto/user.inputs';
 import {} from './dto/user.args';
 import {} from './models/user.models';

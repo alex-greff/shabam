@@ -1,31 +1,32 @@
-import { ParseIntPipe, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { } from './dto/auth.inputs';
 import { } from './dto/auth.args';
-import { } from './models/auth.models';
+import { AccessCredentials } from './models/auth.models';
 import { GqlLocalAuthGuard } from './gql-local-auth.guard';
-import { UserCredentialsInput } from '../user/dto/user.inputs';
+import { UserDataInput } from '../user/dto/user.inputs';
+import { User } from '../user/models/user.models';
 
 @Resolver('Auth')
 export class AuthResolvers {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService
+  ) {}
 
   // -----------------
   // --- Mutations ---
   // -----------------
 
-  @Mutation((returns) => Boolean, {
+  @Mutation((returns) => AccessCredentials, {
     description: 'Login a user, creating a session.',
   })
   @UseGuards(GqlLocalAuthGuard)
   async login(
     @Args('username') username: string,
-    @Args('password') password: string
-  ): Promise<boolean> {
-    // TODO: setup session and whatnot since the guard passed
-    // return this.authService.login(credentials);
-    return true;
+    @Args('password') password: string,
+  ): Promise<AccessCredentials> {
+    return this.authService.login(username);
   }
 
   @Mutation((returns) => Boolean, {
@@ -35,13 +36,12 @@ export class AuthResolvers {
     return this.authService.logout();
   }
 
-  @Mutation((returns) => Boolean, {
+  @Mutation((returns) => AccessCredentials, {
     description: 'Signup and create a new user. ',
   })
   async signup(
-    @Args('credentials') credentials: UserCredentialsInput,
-  ): Promise<boolean> {
-    return this.authService.signup(credentials);
+    @Args('userData') userData: UserDataInput,
+  ): Promise<AccessCredentials> {
+    return this.authService.signup(userData);
   }
-
 }

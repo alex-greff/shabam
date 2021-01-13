@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Credentials object for users."""
+type AccessCredentials {
+  """JWT access token."""
+  access_token: String!
+}
+
 """Metadata for a track."""
 type TrackMetadata {
   title: String!
@@ -57,13 +63,13 @@ scalar Upload
 
 type Mutation {
   """Login a user, creating a session."""
-  login(password: String!, username: String!): Boolean!
+  login(password: String!, username: String!): AccessCredentials!
 
   """Logout the current user, destroying the session."""
   logout: Boolean!
 
   """Signup and create a new user. """
-  signup(credentials: UserCredentialsInput!): Boolean!
+  signup(userData: UserDataInput!): AccessCredentials!
 
   """Edits a user's account details."""
   editUser(updatedCredentials: UpdateUserCredentialsInput!, username: String!): Boolean!
@@ -90,7 +96,7 @@ type Mutation {
 }
 
 """Credentials input for user login"""
-input UserCredentialsInput {
+input UserDataInput {
   """The username of the user."""
   username: String!
 

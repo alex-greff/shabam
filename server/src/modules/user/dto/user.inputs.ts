@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional, Min, Max } from 'class-validator';
 
 @InputType({ description: 'Credentials input for user login' })
-export class UserCredentialsInput {
+export class UserDataInput {
   @Field({ description: 'The username of the user.' })
   @Min(6)
   @Max(15)
