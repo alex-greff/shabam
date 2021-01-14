@@ -7,7 +7,6 @@ import * as Utilities from "@/utilities";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { JWTPayload } from "@/types";
 import { UserService } from "@/modules/user/user.service";
-import { CustomRoleCheck } from "@/roles/roles.types";
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -51,7 +50,6 @@ export class PoliciesGuard implements CanActivate {
   private async execPolicyHandler(context: ExecutionContext, handler: PolicyHandler, ability: AppAbility) {
     // Passed in a class that implements IPolicyHandler
     if (Utilities.isClass(handler)) {
-      console.log("CLASS");
       // @ts-expect-error
       const handlerInstance = await this.moduleRef.create(handler);    
       return handlerInstance.handle(ability, context);
@@ -59,13 +57,11 @@ export class PoliciesGuard implements CanActivate {
 
     // Passed in a PolicyHandlerCallback 
     if (Utilities.isFunction(handler)) {
-      console.log("FUNCTION");
       // @ts-expect-error
       return handler(handler, context);
     }
 
     // Passed in an instance of IPolicyHandler
-    console.log("INSTANCE");
     // @ts-expect-error
     return handler.handle(ability, context);
   }

@@ -5,8 +5,6 @@ import KEYS from "@/keys";
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_EXPIRE_TIME } from '@/config';
 
-import { RolesGuard } from "@/modules/auth/guards/roles.guard";
-
 import { AuthService } from './auth.service';
 import { UserModule } from "@/modules/user/user.module";
 import { AuthResolvers } from './auth.resolvers';
@@ -33,12 +31,6 @@ import { LocalStrategy } from "./strategies/local.strategy";
     AuthResolvers, 
     JwtStrategy,
     LocalStrategy,
-    // TODO: remove
-    // Globally register roles guard
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard
-    // },
   ],
 })
 export class AuthModule {}
