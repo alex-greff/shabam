@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, Check, OneToMany } from "typeorm";
 import { SearchEntity } from "./Search.entity";
 import { TrackEntity } from "./Track.entity";
+import { UserRoles } from "@/modules/policies/policy.types";
 
 @Entity({ name: "user_account" })
 @Check("char_length(username) >= 5 AND char_length(username) <= 15")
@@ -14,8 +15,8 @@ export class UserAccountEntity {
   @Column({ type: "varchar", length: 60 })
   password: string;
 
-  @Column({ type: "varchar", length: 50 })
-  role: string;
+  @Column({ type: "integer" })
+  role: UserRoles;
 
   @Column({ type: "timestamp" })
   signupDate: Date;

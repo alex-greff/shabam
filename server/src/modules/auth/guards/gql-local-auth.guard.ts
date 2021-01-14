@@ -11,7 +11,7 @@ export class GqlLocalAuthGuard extends AuthGuard('local') {
     // https://stackoverflow.com/questions/55269777/nestjs-get-current-user-in-graphql-resolver-authenticated-with-jwt
     await super.canActivate(context);
     const ctx = GqlExecutionContext.create(context);
-    const request  = ctx.getContext();
+    const request = ctx.getContext();
     // Injects the username and password arguments into the body so that
     // passport-session finds them
     // Reference: https://github.com/3logy/nestjs-graphql-passport

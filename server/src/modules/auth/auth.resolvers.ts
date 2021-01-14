@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { } from './dto/auth.inputs';
 import { } from './dto/auth.args';
 import { AccessCredentials } from './models/auth.models';
-import { GqlLocalAuthGuard } from './gql-local-auth.guard';
+import { GqlLocalAuthGuard } from './guards/gql-local-auth.guard';
 import { UserDataInput } from '../user/dto/user.inputs';
 import { User } from '../user/models/user.models';
 

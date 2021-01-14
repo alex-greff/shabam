@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import { UserService } from '@/modules/user/user.service';
 import { UserDataInput } from '../user/dto/user.inputs';
 import { AccessCredentials } from './models/auth.models';
-import { User } from '../user/models/user.models';
 
 @Injectable()
 export class AuthService {
@@ -26,11 +25,14 @@ export class AuthService {
   }
 
   async login(username: string): Promise<AccessCredentials> {
-    await this.userService.updateLastLogin(username);
+    const user = await this.userService.findUser(username);
 
     const payload: JWTPayload = {
-      username
+      username,
+      role: user.role
     };
+
+    await this.userService.updateLastLogin(username);
 
     return {
       access_token: this.jwtService.sign(payload)

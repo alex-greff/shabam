@@ -2,11 +2,11 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
-import * as Config from '@/config';
 import { UpdateUserCredentialsInput, UserDataInput } from './dto/user.inputs';
 import {} from './dto/user.args';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { User } from './models/user.models';
+import { UserRoles } from '@/modules/policies/policy.types';
 
 // TODO: implement
 
@@ -51,7 +51,7 @@ export class UserService {
     const newUser = await this.userRepository.create({
       username: userData.username,
       password: bcrypt.hashSync(userData.password, 10),
-      role: Config.DEFAULT_ROLE,
+      role: UserRoles.Default,
       signupDate: new Date(),
     });
     await this.userRepository.save(newUser);
@@ -63,14 +63,17 @@ export class UserService {
     username: string,
     updatedCredentials: UpdateUserCredentialsInput,
   ): Promise<boolean> {
+    // TODO: remove
     return true;
   }
 
   async editUserRole(username: string, updatedRole: string): Promise<boolean> {
+    // TODO: implement
     return true;
   }
 
   async removeUser(username: string): Promise<boolean> {
+    // TODO: implement
     return true;
   }
 }

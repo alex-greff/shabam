@@ -1,14 +1,20 @@
-import { Module } from '@nestjs/common';
+import { APP_GUARD } from "@nestjs/core";
+import { Global, Module } from '@nestjs/common';
 import { PassportModule } from "@nestjs/passport";
-import { AuthService } from './auth.service';
-import { LocalStrategy } from "./local.strategy";
 import KEYS from "@/keys";
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_EXPIRE_TIME } from '@/config';
 
+import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+
+import { AuthService } from './auth.service';
 import { UserModule } from "@/modules/user/user.module";
 import { AuthResolvers } from './auth.resolvers';
 
+import { JwtStrategy } from "./strategies/jwt.strategy";
+import { LocalStrategy } from "./strategies/local.strategy";
+
+@Global()
 @Module({
   imports: [ 
     // FYI: To stop circular dependencies (in case I need it later)
@@ -25,7 +31,14 @@ import { AuthResolvers } from './auth.resolvers';
   providers: [
     AuthService, 
     AuthResolvers, 
-    LocalStrategy 
+    JwtStrategy,
+    LocalStrategy,
+    // TODO: remove
+    // Globally register roles guard
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard
+    // },
   ],
 })
 export class AuthModule {}

@@ -6,6 +6,7 @@ import KEYS from "@/keys";
 import { DateScalar } from "@/common/scalars/date.scalar";
 import { UploadScalar } from "@/common/scalars/upload.scalar";
 
+import { PoliciesModule } from "@/modules/policies/policies.module";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { UserModule } from "@/modules/user/user.module";
 import { CatalogModule } from "@/modules/catalog/catalog.module";
@@ -15,9 +16,11 @@ import { UserAccountEntity } from "@/entities/UserAccount.entity";
 import { TrackEntity } from "@/entities/Track.entity";
 import { SearchEntity } from "@/entities/Search.entity";
 import { ArtistEntity } from "@/entities/Artist.entity";
+import { PoliciesAbilityFactory } from './modules/policies/factories/policies-ability.factory';
 
 @Module({
   imports: [
+    PoliciesModule,
     // --- Graphql Modules ---
     AuthModule,
     UserModule,
@@ -51,6 +54,9 @@ import { ArtistEntity } from "@/entities/Artist.entity";
     // --- Scalars ---
     UploadScalar,
     DateScalar
+  ],
+  exports: [
+    PoliciesModule
   ]
 })
 export class AppModule {}
