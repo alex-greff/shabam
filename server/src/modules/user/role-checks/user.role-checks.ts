@@ -1,4 +1,4 @@
-import { CustomRoleCheckFunction, JWTPayload } from "@/types";
+import { CustomRoleCheckFunction, UserRequestData } from "@/types";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import * as Utilities from "@/utilities";
 import { CustomRoleCheck } from "@/roles/roles.types";

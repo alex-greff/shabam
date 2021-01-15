@@ -1,5 +1,5 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { JWTPayload } from '@/types';
+import { UserRequestData } from '@/types';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from "bcrypt";
 import { UserService } from '@/modules/user/user.service';
@@ -27,7 +27,7 @@ export class AuthService {
   async login(username: string): Promise<AccessCredentials> {
     const user = await this.userService.findUser(username);
 
-    const payload: JWTPayload = {
+    const payload: UserRequestData = {
       username,
       role: user.role
     };

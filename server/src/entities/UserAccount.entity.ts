@@ -7,7 +7,7 @@ import { UserRoles } from "@/modules/policies/policy.types";
 @Check("char_length(username) >= 5 AND char_length(username) <= 15")
 export class UserAccountEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ type: "varchar", length: 15, unique: true })
   username: string;

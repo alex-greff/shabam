@@ -8,13 +8,15 @@ import { GqlJwtAuthGuard } from '@/modules/auth/guards/gql-jwt-auth.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
 import { UserIsSelfPolicy } from './policies/user-is-self.policy';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
-import { AppAbility } from '../policies/policy.types';
+import { UserEditRolePolicy } from './policies/user-edit-role.policy';
 
 // TODO: implement guards
 
 @Resolver('User')
 export class UserResolvers {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
   // ---------------
   // --- Queries ---
@@ -36,7 +38,7 @@ export class UserResolvers {
   @Mutation((returns) => Boolean, {
     description: "Edits a user's account details.",
   })
-  @CheckPolicies(UserIsSelfPolicy, (ability: AppAbility) => true)
+  @CheckPolicies(UserIsSelfPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUser(
     @Args('username') username: string,
@@ -46,6 +48,8 @@ export class UserResolvers {
   }
 
   @Mutation((returns) => Boolean, { description: "Edits a user's role." })
+  @CheckPolicies(UserEditRolePolicy)
+  @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUserRole(
     @Args('username') username: string,
     @Args('updatedRole') updatedRole: string,
@@ -54,6 +58,8 @@ export class UserResolvers {
   }
 
   @Mutation((returns) => Boolean, { description: 'Deletes a user account.' })
+  @CheckPolicies(UserIsSelfPolicy)
+  @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async removeUser(@Args('username') username: string): Promise<boolean> {
     return this.userService.removeUser(username);
   }

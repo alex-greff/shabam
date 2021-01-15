@@ -6,7 +6,7 @@ import { ArtistEntity } from "./Artist.entity";
 @Entity({ name: "track" })
 export class TrackEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ type: "varchar", length: 50 })
   title: string;

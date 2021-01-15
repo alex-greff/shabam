@@ -1,10 +1,11 @@
+import { UserAccountEntity } from "@/entities/UserAccount.entity";
 import { Action, AppAbility, IPolicyHandler } from "@/modules/policies/policy.types";
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { UserService } from "../user.service";
 
 @Injectable()
-export class UserIsSelfPolicy implements IPolicyHandler {
+export class UserEditRolePolicy implements IPolicyHandler {
   constructor(private userService: UserService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
@@ -19,7 +20,7 @@ export class UserIsSelfPolicy implements IPolicyHandler {
     if (!targetUser) 
       return false;
 
-    const result = ability.can(Action.Update, targetUser);
+    const result = ability.can(Action.Update, UserAccountEntity, 'role');
 
     return result;
   }

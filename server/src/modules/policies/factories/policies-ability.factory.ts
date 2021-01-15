@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { Ability, AbilityBuilder, AbilityClass } from "@casl/ability";
 import { TrackEntity } from "@/entities/Track.entity";
 import { UserAccountEntity } from "@/entities/UserAccount.entity";
-import { Ability, AbilityBuilder, AbilityClass } from "@casl/ability";
-import { Action, AppAbility, Subjects, UserRoles } from "../policy.types";
-
+import { Action, UserRoles, Subjects, AppAbility } from "../policy.types";
 
 @Injectable()
 export class PoliciesAbilityFactory {
@@ -12,10 +11,14 @@ export class PoliciesAbilityFactory {
       Ability<[Action, Subjects]>
     >(Ability as AbilityClass<AppAbility>);
 
-    if (user.role >= UserRoles.Admin) {
-      // Has read-write access to everything
-      can(Action.Manage, "all"); 
-    } 
+    // Default user:
+
+    // Can only update own account, but not own role
+    can(Action.Update, UserAccountEntity, { id: user.id });
+    cannot(Action.Update, UserAccountEntity, [ "role" ]);
+
+    // Can only delete its own account
+    can(Action.Delete, UserAccountEntity, { id: user.id });
 
     if (user.role >= UserRoles.Distributor) {
       // Can create, update and delete own tracks
@@ -24,15 +27,15 @@ export class PoliciesAbilityFactory {
       can(Action.Delete, TrackEntity, { uploaderUser: { id: user.id } });
     }
 
-    // Default user:
+    if (user.role >= UserRoles.Admin) {
+      // Has read-write access to everything
+      can(Action.Manage, "all"); 
+    } 
 
-    // Can only update own account, but not own role
-    can(Action.Update, UserAccountEntity, { id: user.id });
-    cannot(Action.Update, UserAccountEntity, [ "role", "signupDate" ]);
-
-    // Can only delete its own account
-    can(Action.Delete, UserAccountEntity, { id: user.id });
-
-    return build();
+    return build({
+      // https://github.com/stalniy/casl/issues/430
+      // @ts-expect-error
+      detectSubjectType: type => type!.constructor
+    });
   }
 }

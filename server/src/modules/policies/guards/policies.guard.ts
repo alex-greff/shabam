@@ -5,7 +5,7 @@ import { PoliciesAbilityFactory } from "../factories/policies-ability.factory";
 import { AppAbility, PolicyHandler } from "../policy.types";
 import * as Utilities from "@/utilities";
 import { GqlExecutionContext } from "@nestjs/graphql";
-import { JWTPayload } from "@/types";
+import { UserRequestData } from "@/types";
 import { UserService } from "@/modules/user/user.service";
 
 @Injectable()
@@ -30,10 +30,11 @@ export class PoliciesGuard implements CanActivate {
 
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-
-    const userData: JWTPayload = req.user;
+    const userData: UserRequestData = req.user;
 
     const user = await this.userService.findUser(userData.username);
+    if (!user)
+      return false;
 
     const ability = this.policiesAbilityFactory.createForUser(user);
 

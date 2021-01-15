@@ -1,7 +1,7 @@
 import { ExecutionContext } from '@nestjs/common';
 import { UserRoles } from './modules/policies/policy.types';
 
-export interface JWTPayload {
+export interface UserRequestData {
   username: string;
   role: UserRoles;
 }

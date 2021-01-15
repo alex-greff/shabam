@@ -1,12 +1,12 @@
-import { TrackEntity } from "@/entities/Track.entity";
-import { UserAccountEntity } from "@/entities/UserAccount.entity";
-import { Ability } from "@casl/ability";
-import { ExecutionContext, Type } from "@nestjs/common";
+import { TrackEntity } from '@/entities/Track.entity';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
+import { Ability } from '@casl/ability';
+import { ExecutionContext, Type } from '@nestjs/common';
 
 export enum UserRoles {
   Admin = 2,
   Distributor = 1,
-  Default = 0
+  Default = 0,
 }
 
 export enum Action {
@@ -17,15 +17,28 @@ export enum Action {
   Delete = 'delete',
 }
 
-export type Subjects = typeof TrackEntity | typeof UserAccountEntity | TrackEntity | UserAccountEntity | 'all';
+export type Subjects =
+  | typeof TrackEntity
+  | typeof UserAccountEntity
+  | TrackEntity
+  | UserAccountEntity
+  | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
 export interface IPolicyHandler {
-  handle(ability: AppAbility, context: ExecutionContext): boolean | Promise<boolean>;
+  handle(
+    ability: AppAbility,
+    context: ExecutionContext,
+  ): boolean | Promise<boolean>;
 }
 
-type PolicyHandlerCallback = (ability: AppAbility, context: ExecutionContext) => boolean | Promise<boolean>;
+export type PolicyHandlerCallback = (
+  ability: AppAbility,
+  context: ExecutionContext,
+) => boolean | Promise<boolean>;
 
-// export type PolicyHandler = Type<IPolicyHandler>;
-export type PolicyHandler = IPolicyHandler | Type<IPolicyHandler> | PolicyHandlerCallback;
+export type PolicyHandler =
+  | IPolicyHandler
+  | Type<IPolicyHandler>
+  | PolicyHandlerCallback;
