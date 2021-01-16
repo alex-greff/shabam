@@ -9,9 +9,16 @@ import { UploadScalar } from '@/common/scalars/upload.scalar';
 import { TrackEntity } from '@/entities/Track.entity';
 import { Track, TrackSearchResult } from './models/catalog.models';
 import { SearchEntity } from '@/entities/Search.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CatalogService {
+  constructor(
+    @InjectRepository(TrackEntity)
+    private trackRepository: Repository<TrackEntity>
+  ) {}
+
   static transformFromTrackEntity(track: TrackEntity | null): Track {
     if (!track) return null;
 
