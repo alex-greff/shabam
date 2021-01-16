@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { UpdateUserCredentialsInput, UserDataInput } from './dto/user.inputs';
 import {} from './dto/user.args';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
-import { UserRoles } from '@/modules/policies/policy.types';
+import { UserRole } from '@/modules/policies/policy.types';
 
 @Injectable()
 export class UserService {
@@ -48,7 +48,7 @@ export class UserService {
     const newUser = await this.userRepository.create({
       username: userData.username,
       password: bcrypt.hashSync(userData.password, 10),
-      role: UserRoles.Default,
+      role: UserRole.Default,
       signupDate: new Date(),
     });
     await this.userRepository.save(newUser);
@@ -67,7 +67,7 @@ export class UserService {
     let numFieldsUpdated = 0;
     
     const newUsername = updatedCredentials.username as string | null;
-    if (newUsername) {
+    if (newUsername && newUsername !== user.username) {
       const available = await this.checkUsernameAvailability(newUsername);
       if (!available)
         throw new ConflictException();
@@ -79,9 +79,11 @@ export class UserService {
 
     const newPassword = updatedCredentials.password as string | null;
     if (newPassword) {
-      user.password = bcrypt.hashSync(newPassword, 10);
-
-      numFieldsUpdated++;
+      const passwordHash = bcrypt.hashSync(newPassword, 10);
+      if (newPassword !== user.password) {
+        user.password = passwordHash;
+        numFieldsUpdated++;
+      }
     }
 
     if (numFieldsUpdated < 1)
@@ -92,13 +94,29 @@ export class UserService {
     return true;
   }
 
-  async editUserRole(username: string, updatedRole: string): Promise<boolean> {
-    // TODO: implement
-    return true;
+  async editUserRole(username: string, updatedRole: UserRole): Promise<boolean> {
+    const user = await this.findUser(username);
+    if (!user)
+      throw new NotFoundException();
+    
+    if (user.role !== updatedRole) {
+      user.role = updatedRole;
+      await this.userRepository.save(user);
+      return true;
+    }
+
+    return false;
   }
 
   async removeUser(username: string): Promise<boolean> {
-    // TODO: implement
+    const user = await this.findUser(username);
+    if (!user)
+      throw new NotFoundException();
+    
+    // TODO: make sure all the user's tracks cascade delete too
+
+    await this.userRepository.remove(user);
+
     return true;
   }
 }

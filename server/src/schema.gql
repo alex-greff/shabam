@@ -81,7 +81,7 @@ type Mutation {
   editUser(updatedCredentials: UpdateUserCredentialsInput!, username: String!): Boolean!
 
   """Edits a user's role."""
-  editUserRole(updatedRole: String!, username: String!): Boolean!
+  editUserRole(updatedRole: UserRole!, username: String!): Boolean!
 
   """Deletes a user account."""
   removeUser(username: String!): Boolean!
@@ -117,6 +117,12 @@ input UpdateUserCredentialsInput {
 
   """The password (in clear) of the user."""
   password: String
+}
+
+enum UserRole {
+  Admin
+  Distributor
+  Default
 }
 
 """Input data for adding a new track."""

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { SearchEntity } from './Search.entity';
 import { TrackEntity } from './Track.entity';
-import { UserRoles } from '@/modules/policies/policy.types';
+import { UserRole } from '@/modules/policies/policy.types';
 
 @Entity({ name: 'user_account' })
 @Check('char_length(username) >= 5 AND char_length(username) <= 15')
@@ -22,7 +22,7 @@ export class UserAccountEntity {
   password: string;
 
   @Column({ type: 'integer' })
-  role: UserRoles;
+  role: UserRole;
 
   @Column({ type: "timestamp with time zone" })
   signupDate: Date;

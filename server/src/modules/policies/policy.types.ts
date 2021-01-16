@@ -3,7 +3,7 @@ import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { Ability } from '@casl/ability';
 import { ExecutionContext, Type } from '@nestjs/common';
 
-export enum UserRoles {
+export enum UserRole {
   Admin = 2,
   Distributor = 1,
   Default = 0,

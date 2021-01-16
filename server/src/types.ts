@@ -1,9 +1,9 @@
 import { ExecutionContext } from '@nestjs/common';
-import { UserRoles } from './modules/policies/policy.types';
+import { UserRole } from './modules/policies/policy.types';
 
 export interface UserRequestData {
   username: string;
-  role: UserRoles;
+  role: UserRole;
 }
 
 export interface PermissionConfig {

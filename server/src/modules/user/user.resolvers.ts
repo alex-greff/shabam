@@ -1,5 +1,11 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Query,
+  registerEnumType,
+  Resolver,
+} from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { UpdateUserCredentialsInput } from './dto/user.inputs';
 import {} from './dto/user.args';
@@ -9,12 +15,15 @@ import { CheckPolicies } from '../policies/dectorators/check-policies.decorator'
 import { UserIsSelfPolicy } from './policies/user-is-self.policy';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { UserEditRolePolicy } from './policies/user-edit-role.policy';
+import { UserRole } from '../policies/policy.types';
+
+registerEnumType(UserRole, {
+  name: 'UserRole',
+});
 
 @Resolver('User')
 export class UserResolvers {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   // ---------------
   // --- Queries ---
@@ -36,7 +45,7 @@ export class UserResolvers {
   @Mutation((returns) => Boolean, {
     description: "Edits a user's account details.",
   })
-  @UserIsSelfPolicy.configure({ targetUsernamePath: "username"})
+  @UserIsSelfPolicy.configure({ targetUsernamePath: 'username' })
   @CheckPolicies(UserIsSelfPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUser(
@@ -51,7 +60,8 @@ export class UserResolvers {
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUserRole(
     @Args('username') username: string,
-    @Args('updatedRole') updatedRole: string,
+    @Args({ name: 'updatedRole', type: () => UserRole })
+    updatedRole: number,
   ): Promise<boolean> {
     return this.userService.editUserRole(username, updatedRole);
   }
