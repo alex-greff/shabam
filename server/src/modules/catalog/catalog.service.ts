@@ -5,26 +5,48 @@ import {
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Track } from './models/catalog.models';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
+import { TrackEntity } from '@/entities/Track.entity';
+import { Track } from './models/catalog.models';
 
 @Injectable()
 export class CatalogService {
   // TODO: implement
 
-  async getTrack(id: string): Promise<Track> {
+  static transformFromTrackEntity(track: TrackEntity | null): Track {
+    if (!track)
+      return null;
+
+    return {
+      id: track.id,
+      addressDatabase: track.addressDatabase,
+      metadata: {
+        title: track.title,
+        coverImage: track.coverImage,
+        artists: track.artists.map(artist => artist.id),
+        createdDate: track.createdDate,
+        updatedDate: track.updateDate
+      }
+    }
+  }
+
+  static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
+    return tracks.map(track => this.transformFromTrackEntity(track));
+  }
+
+  async getTrack(id: string): Promise<TrackEntity> {
     return {} as any;
   }
 
-  async getTracks(args: GetTracksArgs): Promise<Track[]> {
-    return [] as Track[];
+  async getTracks(args: GetTracksArgs): Promise<TrackEntity[]> {
+    return [] as TrackEntity[];
   }
 
-  async addTrack(data: TrackAddDataInput): Promise<Track> {
+  async addTrack(data: TrackAddDataInput): Promise<TrackEntity> {
     return {} as any;
   }
 
-  async editTrack(id: string, data: TrackEditDataInput): Promise<Track> {
+  async editTrack(id: string, data: TrackEditDataInput): Promise<TrackEntity> {
     return {} as any;
   }
 
@@ -35,7 +57,7 @@ export class CatalogService {
   async searchTrack(
     fingerprint: UploadScalar,
     info: FingerprintInfoInput,
-  ): Promise<Track> {
+  ): Promise<TrackEntity> {
     return null;
   }
 

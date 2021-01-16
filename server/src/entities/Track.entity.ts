@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany } from "typeorm";
 import { UserAccountEntity } from "./UserAccount.entity";
 import { SearchEntity } from "./Search.entity";
 import { ArtistEntity } from "./Artist.entity";
+import { SearchResultEntity } from "./SearchResult.entity";
 
 @Entity({ name: "track" })
 export class TrackEntity {
@@ -29,8 +30,11 @@ export class TrackEntity {
   @ManyToOne(() => UserAccountEntity, user => user.uploadedTracks, { eager: true })
   uploaderUser: UserAccountEntity;
 
-  @ManyToOne(() => SearchEntity, search => search.track)
-  searches: Promise<SearchEntity[]>;
+  // @ManyToOne(() => SearchEntity, search => search.track)
+  // searches: Promise<SearchEntity[]>;
+
+  @OneToMany(() => SearchResultEntity, searchResult => searchResult.track)
+  searchResults: Promise<SearchResultEntity[]>
 
   @ManyToMany(() => ArtistEntity, { eager: true })
   @JoinTable()

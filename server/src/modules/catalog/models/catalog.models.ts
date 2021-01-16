@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType, Float } from '@nestjs/graphql';
 
 @ObjectType({ description: "Metadata for a track." })
 export class TrackMetadata {
@@ -31,4 +31,13 @@ export class Track {
 
   @Field(type => TrackMetadata)
   metadata: TrackMetadata;
+}
+
+@ObjectType({ description: "A search result object." })
+export class TrackSearchResult {
+  @Field(type => Track)
+  track: string;
+
+  @Field(type => Float)
+  similarity: number;
 }

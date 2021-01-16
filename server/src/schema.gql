@@ -28,6 +28,12 @@ type Track {
   metadata: TrackMetadata!
 }
 
+"""A search result object."""
+type TrackSearchResult {
+  track: Track!
+  similarity: Float!
+}
+
 type Recipe {
   id: ID!
   title: String!
@@ -47,7 +53,7 @@ type Query {
   getTracks(skip: Int = 0, take: Int = 25): [Track!]!
 
   """Searches for a track based off the given audio fingerprint."""
-  searchTrack(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!): Track!
+  searchTrack(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!): TrackSearchResult!
   recipe(id: String!): Recipe!
   recipes(skip: Int = 0, take: Int = 25): [Recipe!]!
 }

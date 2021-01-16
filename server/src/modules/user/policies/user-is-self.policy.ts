@@ -1,7 +1,7 @@
 import { Action, AppAbility } from '@/modules/policies/policy.types';
 import { ExecutionContext, Injectable, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ConfigurablePolicyHandler } from '@/modules/policies/PolicyHandler';
+import { ConfigurablePolicyHandler } from '@/modules/policies/ConfigurablePolicyHandler';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserService } from '../user.service';
 import * as Utilities from '@/utilities';
@@ -10,7 +10,7 @@ export interface UserIsSelfPolicyConfig {
   targetUsernamePath: string;
 }
 
-const CONFIG_KEY = 'USER_IS_SELF_CONFIG_KEY';
+const CONFIG_KEY = 'USER_IS_SELF_POLICY_CONFIG_KEY';
 
 const DEFAULT_CONFIG: UserIsSelfPolicyConfig = {
   targetUsernamePath: 'username',

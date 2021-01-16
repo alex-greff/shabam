@@ -10,8 +10,6 @@ import { UserIsSelfPolicy } from './policies/user-is-self.policy';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { UserEditRolePolicy } from './policies/user-edit-role.policy';
 
-// TODO: implement guards
-
 @Resolver('User')
 export class UserResolvers {
   constructor(

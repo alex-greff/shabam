@@ -22,7 +22,7 @@ export class PoliciesAbilityFactory {
 
     if (user.role >= UserRoles.Distributor) {
       // Can create, update and delete own tracks
-      can(Action.Create, TrackEntity, { uploaderUser: { id: user.id } });
+      can(Action.Create, TrackEntity);
       can(Action.Update, TrackEntity, { uploaderUser: { id: user.id } });
       can(Action.Delete, TrackEntity, { uploaderUser: { id: user.id } });
     }

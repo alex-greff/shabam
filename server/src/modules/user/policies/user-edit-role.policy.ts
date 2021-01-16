@@ -1,6 +1,6 @@
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { Action, AppAbility } from '@/modules/policies/policy.types';
-import { ConfigurablePolicyHandler } from '@/modules/policies/PolicyHandler';
+import { ConfigurablePolicyHandler } from '@/modules/policies/ConfigurablePolicyHandler';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -11,7 +11,7 @@ export interface UserEditRolePolicyConfig {
   targetUsernamePath: string;
 }
 
-const CONFIG_KEY = 'USER_EDIT_ROLE_CONFIG_KEY';
+const CONFIG_KEY = 'USER_EDIT_ROLE_POLICY_CONFIG_KEY';
 
 const DEFAULT_CONFIG: UserEditRolePolicyConfig = {
   targetUsernamePath: 'username',
