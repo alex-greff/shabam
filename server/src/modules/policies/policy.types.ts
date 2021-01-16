@@ -1,7 +1,7 @@
 import { TrackEntity } from '@/entities/Track.entity';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { Ability } from '@casl/ability';
-import { DynamicModule, ExecutionContext, Type } from '@nestjs/common';
+import { ExecutionContext, Type } from '@nestjs/common';
 
 export enum UserRoles {
   Admin = 2,
@@ -39,7 +39,6 @@ export type PolicyHandlerCallback = (
 ) => boolean | Promise<boolean>;
 
 export type PolicyHandler =
-  | DynamicModule
   | IPolicyHandler
   | Type<IPolicyHandler>
   | PolicyHandlerCallback;

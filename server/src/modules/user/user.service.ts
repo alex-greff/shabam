@@ -5,10 +5,7 @@ import bcrypt from 'bcrypt';
 import { UpdateUserCredentialsInput, UserDataInput } from './dto/user.inputs';
 import {} from './dto/user.args';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
-import { User } from './models/user.models';
 import { UserRoles } from '@/modules/policies/policy.types';
-
-// TODO: implement
 
 @Injectable()
 export class UserService {
@@ -63,6 +60,8 @@ export class UserService {
     username: string,
     updatedCredentials: UpdateUserCredentialsInput,
   ): Promise<boolean> {
+    
+
     // TODO: remove
     return true;
   }

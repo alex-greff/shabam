@@ -1,12 +1,22 @@
-import { ModuleRef, Reflector } from "@nestjs/core";
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { CHECK_POLICIES_KEY } from "@/config";
-import { PoliciesAbilityFactory } from "../factories/policies-ability.factory";
-import { AppAbility, PolicyHandler } from "../policy.types";
-import * as Utilities from "@/utilities";
-import { GqlExecutionContext } from "@nestjs/graphql";
-import { UserRequestData } from "@/types";
-import { UserService } from "@/modules/user/user.service";
+import { ModuleRef, Reflector } from '@nestjs/core';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Type,
+} from '@nestjs/common';
+import { CHECK_POLICIES_KEY } from '@/config';
+import { PoliciesAbilityFactory } from '../factories/policies-ability.factory';
+import {
+  AppAbility,
+  IPolicyHandler,
+  PolicyHandler,
+  PolicyHandlerCallback,
+} from '../policy.types';
+import * as Utilities from '@/utilities';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { UserRequestData } from '@/types';
+import { UserService } from '@/modules/user/user.service';
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -33,37 +43,39 @@ export class PoliciesGuard implements CanActivate {
     const userData: UserRequestData = req.user;
 
     const user = await this.userService.findUser(userData.username);
-    if (!user)
-      return false;
+    if (!user) return false;
 
     const ability = this.policiesAbilityFactory.createForUser(user);
 
     // Execute each policy handler and make sure all pass
     for (const handler of policyHandlers) {
       const result = await this.execPolicyHandler(context, handler, ability);
-      if (!result)
-        return false;
+      if (!result) return false;
     }
 
     return true;
   }
 
-  private async execPolicyHandler(context: ExecutionContext, handler: PolicyHandler, ability: AppAbility) {
+  private async execPolicyHandler(
+    context: ExecutionContext,
+    policyHandler: PolicyHandler,
+    ability: AppAbility,
+  ) {
     // Passed in a class that implements IPolicyHandler
-    if (Utilities.isClass(handler)) {
-      // @ts-expect-error
-      const handlerInstance = await this.moduleRef.create(handler);    
+    if (Utilities.isClass(policyHandler)) {
+      const handler = policyHandler as Type<IPolicyHandler>;
+      const handlerInstance = await this.moduleRef.create(handler);
       return handlerInstance.handle(ability, context);
     }
 
-    // Passed in a PolicyHandlerCallback 
-    if (Utilities.isFunction(handler)) {
-      // @ts-expect-error
-      return handler(handler, context);
+    // Passed in a PolicyHandlerCallback
+    if (Utilities.isFunction(policyHandler)) {
+      const handler = policyHandler as PolicyHandlerCallback;
+      return handler(ability, context);
     }
 
     // Passed in an instance of IPolicyHandler
-    // @ts-expect-error
+    const handler = policyHandler as IPolicyHandler;
     return handler.handle(ability, context);
   }
 }

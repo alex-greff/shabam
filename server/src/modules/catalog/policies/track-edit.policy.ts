@@ -3,10 +3,11 @@ import { Reflector } from "@nestjs/core";
 import { MutateTrackPolicyHandler, MutateTrackPolicyHandlerConfig } from "./MutateTrackPolicyHandler";
 import { TrackEntity } from "@/entities/Track.entity";
 import { CatalogService } from "../catalog.service";
-import { SetMetadata } from "@nestjs/common";
+import { Injectable, SetMetadata } from "@nestjs/common";
 
 const CONFIG_KEY = "EDIT_TRACK_POLICY_CONFIG_KEY";
 
+@Injectable()
 export class TrackEditPolicy extends MutateTrackPolicyHandler {
   constructor(
     readonly reflector: Reflector,
