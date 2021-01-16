@@ -33,10 +33,10 @@ export class Track {
   metadata: TrackMetadata;
 }
 
-@ObjectType({ description: "A search result object." })
+@ObjectType({ description: "A possible search result." })
 export class TrackSearchResult {
   @Field(type => Track)
-  track: string;
+  track: Track;
 
   @Field(type => Float)
   similarity: number;

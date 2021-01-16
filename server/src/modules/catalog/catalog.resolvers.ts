@@ -48,7 +48,6 @@ export class CatalogResolver {
   ): Promise<Track> {
     const track = await this.catalogService.getTrack(id);
     if (!track) throw new NotFoundException();
-    // return track;
     return CatalogService.transformFromTrackEntity(track);
   }
 
@@ -60,16 +59,18 @@ export class CatalogResolver {
     return CatalogService.transformFromTrackEntityMany(tracks);
   }
 
-  @Query((returns) => TrackSearchResult, {
+  @Query((returns) => [TrackSearchResult], {
     description: 'Searches for a track based off the given audio fingerprint.',
   })
   async searchTrack(
     @Args('fingerprint') fingerprint: UploadScalar,
     @Args('fingerprintInfo') fingerprintInfo: FingerprintInfoInput,
-  ): Promise<TrackSearchResult> {
-    // const track = await this.catalogService.searchTrack(fingerprint, fingerprintInfo);
-    // return CatalogService.transformFromTrackEntity(track);
-    return null;
+  ): Promise<TrackSearchResult[]> {
+    const search = await this.catalogService.searchTrack(
+      fingerprint,
+      fingerprintInfo,
+    );
+    return CatalogService.transformFromSearchEntity(search);
   }
 
   // -----------------

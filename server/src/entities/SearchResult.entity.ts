@@ -10,9 +10,9 @@ export class SearchResultEntity {
   @ManyToOne(() => SearchEntity, (search) => search.results)
   search: Promise<SearchEntity>;
 
-  @ManyToOne(() => TrackEntity, (track) => track.searchResults)
-  track: Promise<TrackEntity>;
+  @ManyToOne(() => TrackEntity, (track) => track.searchResults, { eager: true })
+  track: TrackEntity;
 
   @Column({ type: "float" })
-  similarity: string;
+  similarity: number;
 }
