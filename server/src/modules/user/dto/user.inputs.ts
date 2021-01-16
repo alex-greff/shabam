@@ -9,6 +9,7 @@ export class UserDataInput {
   username: string;
 
   @Field({ description: 'The password (in clear) of the user. ' })
+  @Min(6)
   password: string;
 }
 

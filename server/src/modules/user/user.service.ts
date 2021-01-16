@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   /** Finds a user entity with the given name. Returns null otherwise. */
-  async findUser(username: string): Promise<UserAccountEntity> {
+  async findUser(username: string): Promise<UserAccountEntity | null> {
     const user = await this.userRepository.findOne({ username });
     return user;
   }
@@ -60,9 +60,35 @@ export class UserService {
     username: string,
     updatedCredentials: UpdateUserCredentialsInput,
   ): Promise<boolean> {
-    
+    const user = await this.findUser(username);
+    if (!user)
+      throw new NotFoundException();
 
-    // TODO: remove
+    let numFieldsUpdated = 0;
+    
+    const newUsername = updatedCredentials.username as string | null;
+    if (newUsername) {
+      const available = await this.checkUsernameAvailability(newUsername);
+      if (!available)
+        throw new ConflictException();
+      
+      user.username = newUsername;
+
+      numFieldsUpdated++;
+    }
+
+    const newPassword = updatedCredentials.password as string | null;
+    if (newPassword) {
+      user.password = bcrypt.hashSync(newPassword, 10);
+
+      numFieldsUpdated++;
+    }
+
+    if (numFieldsUpdated < 1)
+      return false;
+
+    await this.userRepository.save(user);
+
     return true;
   }
 
