@@ -38,6 +38,7 @@ export class UserResolvers {
   @Mutation((returns) => Boolean, {
     description: "Edits a user's account details.",
   })
+  @UserIsSelfPolicy.configure({ targetUsernamePath: "username"})
   @CheckPolicies(UserIsSelfPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUser(
