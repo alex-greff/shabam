@@ -198,6 +198,8 @@ services:
             - "8080:8080"
         hostname: adminer
         container_name: shabam_adminer
+        logging:
+            driver: none
         networks:
             - app-network
         depends_on: 
@@ -212,6 +214,8 @@ services:
             - "8081:8081"
         hostname: redis-commander
         container_name: shabam_redis_commander
+        logging:
+            driver: none
         environment: 
             - REDIS_HOSTS=redis-session:redis-session:6379:0:development
         networks: 
