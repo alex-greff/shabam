@@ -6,11 +6,11 @@
   & .BenchmarkProgress__title {
     font-size: 2rem;
     font-weight: bold;
-    color: color-link("BenchmarkProgress", "text", "primary");
+    color: color-link("text-primary");
   }
 
   & .BenchmarkProgress__percent {
     font-size: 1.8rem;
-    color: color-link("BenchmarkProgress", "text", "primary");
+    color: color-link("text-primary");
   }
 }

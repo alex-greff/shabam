@@ -8,7 +8,7 @@
   transition: transform 0.2s ease-in-out;
 
   & .ExpandIcon__icon {
-    color: color-link("ExpandIcon", "text", "primary");
+    color: color-link-2("text-primary");
 
     transition: color 0.2s;
   }
@@ -21,7 +21,7 @@
     cursor: pointer;
 
     & .ExpandIcon__icon:hover {
-      color: color-link("ExpandIcon", "selected", "primary");
+      color: color-link("selected-primary");
     }
   }
 }

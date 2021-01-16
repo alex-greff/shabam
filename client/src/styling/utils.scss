@@ -1,0 +1,90 @@
+// A collection of utility functions
+
+// Source: https://stackoverflow.com/questions/32376461/how-to-split-a-string-into-two-lists-of-numbers-in-sass
+@function str-split($string, $separator) {
+  // empty array/list
+  $split-arr: ();
+  // first index of separator in string
+  $index: str-index($string, $separator);
+  // loop through string
+  @while $index != null {
+      // get the substring from the first character to the separator
+      $item: str-slice($string, 1, $index - 1);
+      // push item to array
+      $split-arr: append($split-arr, $item);
+      // remove item and separator from string
+      $string: str-slice($string, $index + 1);
+      // find new index of separator
+      $index: str-index($string, $separator);
+  }
+  // add the remaining string to list (the last item)
+  $split-arr: append($split-arr, $string);
+
+  @return $split-arr;
+}
+
+// Source: https://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+@function remove-nth($list, $index) {
+  $result: null;
+
+  @if type-of($index) != number {
+    @warn "$index: #{quote($index)} is not a number for `remove-nth`.";
+  } @else if $index == 0 {
+    @warn "List index 0 must be a non-zero integer for `remove-nth`.";
+  } @else if abs($index) > length($list) {
+    @warn "List index is #{$index} but list is only #{length($list)} item long for `remove-nth`.";
+  } @else {
+    $result: ();
+    $index: if($index < 0, length($list) + $index + 1, $index);
+
+    @for $i from 1 through length($list) {
+      @if $i != $index {
+        $result: append($result, nth($list, $i));
+      }
+    }
+  }
+
+  @return $result;
+}
+
+// Source: https://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+// Convert a list to a string
+@function to-string($list, $glue: '', $is-nested: false) {
+  $result: null;
+
+  @for $i from 1 through length($list) {
+    $e: nth($list, $i);
+
+    @if type-of($e) == list {
+      $result: $result#{to-string($e, $glue, true)};
+    } @else {
+      $result: if(
+        $i != length($list) or $is-nested,
+        $result#{$e}#{$glue},
+        $result#{$e}
+      );
+    }
+  }
+
+  @return $result;
+}
+
+// Converts a color into a rgb string that can be used in color-link
+// Ex: rgb-str(#F9FFB6) => "249, 255, 182"
+@function rgb-str($color) {
+  $rgb-call: rgba($color, 0);
+
+  // Remove the "rgba(" prefix part
+  $rgb-split: nth(str-split("#{$rgb-call}", "("), 2);
+  // Remove the ")" suffix part
+  $rgb-split: nth(str-split("#{$rgb-split}", ")"), 1);
+  // Split by ","
+  $rgb-split: str-split("#{$rgb-split}", ",");
+  // Remove the trailing alpha item
+  $rgb-split: remove-nth($rgb-split, -1);
+
+  // Join the elements together with ", "
+  $rgb-str: to-string($rgb-split, ", ");
+
+  @return $rgb-str;
+}

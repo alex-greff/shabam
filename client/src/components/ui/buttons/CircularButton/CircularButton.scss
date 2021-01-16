@@ -8,7 +8,7 @@
   cursor: pointer;
 
   & circle {
-    stroke: color-link("CircularButton", "text", "primary");
+    stroke: color-link-2("text-primary");
 
     transition: stroke $transition !important;
   }
@@ -21,7 +21,7 @@
 
   &:hover {
     & circle {
-      stroke: color-link("CircularButton", "selected", "primary");
+      stroke: color-link-2("selected-primary");
     }
   }
 
@@ -29,7 +29,7 @@
     pointer-events: none;
 
     & circle {
-      stroke: color-link("CircularButton", "text", "disabled");
+      stroke: color-link-2("text-disabled");
     }
   }
 }

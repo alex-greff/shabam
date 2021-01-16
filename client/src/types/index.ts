@@ -15,3 +15,5 @@ export type AppRouteComponentProps = RouteComponentProps<
   AppLocationState
 >;
 export type AppLinkProps = LinkProps<AppLocationState>;
+
+export type Theme = "theme-light" | "theme-dark";

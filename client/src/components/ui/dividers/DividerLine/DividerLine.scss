@@ -18,13 +18,13 @@
       width: 100%;
       height: 100%;
 
-      background-color: color-link("DividerLine", "background", "primary");
+      background-color: color-link-2("divider-line");
     }
   }
 
   & .DividerLine__content {
     font-size: 1.3rem;
-    color: color-link("DividerLine", "text", "secondary");
+    color: color-link-2("text-secondary");
     font-style: italic;
   }
 

@@ -1,0 +1,21 @@
+@function var-link($var-input, $opacity: 1) {
+  $prefix: "--";
+  $var-prefix: slice($var-input, 1, 2);
+  $var-full: $var-input;
+  // Prefix prepend needed
+  @if $var-prefix != $prefix {
+    $var-full: $prefix + $var-input;
+  }
+  @return var(unquote($var-full));
+}
+
+@function color-link-2($var-input, $opacity: 1) {
+  $prefix: "--";
+  $var-prefix: slice($var-input, 1, 2);
+  $var-full: $var-input;
+  // Prefix prepend needed
+  @if $var-prefix != $prefix {
+    $var-full: $prefix + $var-input;
+  }
+  @return rgba(var(unquote($var-full)), $opacity);
+}

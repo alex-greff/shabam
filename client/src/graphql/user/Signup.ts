@@ -1,7 +1,9 @@
 import gql from "graphql-tag";
 
 export interface Data {
-  signup: boolean;
+  signup: {
+    access_token: string;
+  };
 }
 
 export interface Variables {
@@ -11,6 +13,8 @@ export interface Variables {
 
 export const mutation = gql`
   mutation signup($username: String!, $password: String!) {
-    signup(credentials: { username: $username, password: $password })
+    signup(username: $username, password: $password) {
+      access_token
+    }
   }
 `;

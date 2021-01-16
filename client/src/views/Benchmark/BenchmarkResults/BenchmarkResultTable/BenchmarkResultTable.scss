@@ -24,7 +24,7 @@
     & .BenchmarkResultTable__header-cell {
       padding: 0.3rem 0 0.3rem 0;
       justify-self: center;
-      color: color-link("BenchmarkResultTable", "text", "primary");
+      color: color-link-2("benchmark-table-text-primary");
 
       grid-row: 1 / span 1;
 
@@ -35,13 +35,13 @@
       padding: 0.3rem 0 0.3rem 0;
       justify-self: center;
 
-      color: color-link("BenchmarkResultTable", "text", "primary");
+      color: color-link-2("benchmark-table-text-primary");
 
       z-index: 2;
     }
 
     & .BenchmarkResultTable__data-cell {
-      color: color-link("BenchmarkResultTable", "text", "secondary");
+      color: color-link-2("benchmark-table-text-secondary");
     }
 
     & .BenchmarkResultTable__average-cell {
@@ -69,11 +69,11 @@
 
     & .BenchmarkResultTable__row-bg {
       &.even {
-        background-color: color-link("BenchmarkResultTable", "background", "primary");
+        background-color: color-link-2("benchmark-table-row-even");
       }
 
       &.odd {
-        background-color: color-link("BenchmarkResultTable", "background", "secondary");
+        background-color: color-link-2("benchmark-table-row-odd");
       }
 
       z-index: 1;

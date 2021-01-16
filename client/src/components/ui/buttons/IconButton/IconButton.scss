@@ -23,7 +23,7 @@
       width: 2rem;
       height: 2rem;
 
-      color: color-link("IconButton", "accent", "primary");
+      color: color-link-2("icon-button-primary");
 
       transition: color $transition-time;
     }
@@ -32,7 +32,7 @@
   &:hover {
     & .IconButton__icon {
       & svg {
-        color: color-link("IconButton", "accent", "secondary");
+        color: color-link-2("icon-button-secondary");
       }
     }
   }
@@ -40,7 +40,7 @@
   &.disabled {
     & .IconButton__icon {
       & svg {
-        color: color-link("IconButton", "accent", "disabled");
+        color: color-link-2("icon-button-disabled");
       }
     }
   }

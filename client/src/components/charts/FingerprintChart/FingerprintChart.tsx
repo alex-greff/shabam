@@ -1,12 +1,11 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
 import { BaseProps } from "@/types";
 import "./FingerprintChart.scss";
 import classnames from "classnames";
 import { Fingerprint } from "@/audio/types";
 import { renderFingerprintChart } from "./FingerprintChart.d3";
 import { withSize, SizeMeProps } from "react-sizeme";
-import { DEFAULT_NAMESPACE } from "@/constants";
-import { useNamespace, useThemeLink } from "@/themer-react";
+import { useColorLink } from "@/hooks/useColorLink";
 
 export interface Props extends BaseProps, SizeMeProps {
   title?: string;
@@ -22,26 +21,12 @@ const FingerprintChart: FunctionComponent<Props> = (props) => {
   const { title, fingerprintData, size } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const themeData = useNamespace(DEFAULT_NAMESPACE)!;
-
-  // Selection color them link hook
-  const sc = useThemeLink(themeData, "FingerprintChart", "selection_color")!;
+  // Selection color theme link hook
+  const sc = useColorLink("fingerprint-chart-selection").toString();
 
   // Partition divider color theme link hooks
-  const pdc_1 = useThemeLink(
-    themeData,
-    "FingerprintChart",
-    "partition_dividers",
-    "color_1",
-    0.2
-  )!;
-  const pdc_2 = useThemeLink(
-    themeData,
-    "FingerprintChart",
-    "partition_dividers",
-    "color_2",
-    0.2
-  )!;
+  const pdc_1 = useColorLink("chart-partition-divider-1", 0.2).toString();
+  const pdc_2 = useColorLink("chart-partition-divider-2", 0.2).toString();
 
   // Render the fingerprint chart
   useEffect(() => {

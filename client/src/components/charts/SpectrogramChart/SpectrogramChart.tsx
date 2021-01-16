@@ -5,8 +5,7 @@ import classnames from "classnames";
 import { renderSpectrogramChart } from "./SpectrogramChart.d3";
 import { SpectrogramData } from "@/audio/types";
 import { withSize, SizeMeProps } from "react-sizeme";
-import { DEFAULT_NAMESPACE } from "@/constants";
-import { useNamespace, useThemeLink } from "@/themer-react";
+import { useColorLink } from "@/hooks/useColorLink";
 
 export interface Props extends BaseProps, SizeMeProps {
   title?: string;
@@ -22,53 +21,15 @@ const SpectrogramChart: FunctionComponent<Props> = (props) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const themeData = useNamespace(DEFAULT_NAMESPACE)!;
-
   // Color scale pallet colors theme link hooks
-  const csp_1 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "color_scale",
-    "color_1",
-    0
-  )!;
-  const csp_2 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "color_scale",
-    "color_2",
-    0.8
-  )!;
-  const csp_3 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "color_scale",
-    "color_3",
-    1
-  )!;
-  const csp_4 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "color_scale",
-    "color_4",
-    1
-  )!;
+  const csp_1 = useColorLink("spectrogram-chart-color-scale-1", 0).toString();
+  const csp_2 = useColorLink("spectrogram-chart-color-scale-2", 0.8).toString();
+  const csp_3 = useColorLink("spectrogram-chart-color-scale-3", 1).toString();
+  const csp_4 = useColorLink("spectrogram-chart-color-scale-4", 1).toString();
 
   // Partition divider color theme link hooks
-  const pdc_1 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "partition_dividers",
-    "color_1",
-    0.2
-  )!;
-  const pdc_2 = useThemeLink(
-    themeData,
-    "SpectrogramChart",
-    "partition_dividers",
-    "color_2",
-    0.2
-  )!;
+  const pdc_1 = useColorLink("chart-partition-divider-1", 0.2).toString();
+  const pdc_2 = useColorLink("chart-partition-divider-2", 0.2).toString();
 
   // Render the spectrogram
   useEffect(() => {

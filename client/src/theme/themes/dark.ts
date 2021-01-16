@@ -3,7 +3,7 @@ import { ThemeData } from "@/themer-react";
 
 const BLACK = "#000000";
 const GREY_1 = "#1A1A1A";
-const GREY_2 = "#3C3C3C";
+const GREY_2 = "#1A1A1A";
 
 const DARK_1 = "#141414";
 const DARK_2 = "#313131";

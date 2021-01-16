@@ -7,7 +7,7 @@
     position: absolute;
     display: block;
     width: 100%;
-    background-color: color-link("HamburgerMenu", "text", "primary");
+    background-color: color-link-2("text-primary");
     border-radius: 2px;
     transition: 0.3s ease-in-out;
   }
@@ -71,7 +71,7 @@
     pointer-events: none;
 
     & .HamburgerMenu__bar {
-      background-color: color-link("HamburgerMenu", "text", "secondary");
+      background-color: color-link-2("text-secondary");
     }
   }
 }

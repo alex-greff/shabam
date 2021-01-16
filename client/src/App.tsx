@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useRef } from "react";
+import React, { FunctionComponent, useState, useEffect, useRef, useContext } from "react";
 import KEYS from "@/keys";
 import "./App.scss";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -26,6 +26,7 @@ import themes from "@/theme/themes";
 import namespaces from "@/theme/namespaces";
 import { schema, mixins } from "@/theme/definition";
 import { ThemeApplier, initialize as initializeThemer } from "@/themer-react";
+import { ThemeProvider } from "@/contexts/theme.context";
 
 import NavBar from "@/components/nav/NavBar/NavBar";
 
@@ -109,39 +110,41 @@ const App: FunctionComponent = () => {
     <Router>
       <RouteTransitionProvider>
         <ThemeApplier namespace={DEFAULT_NAMESPACE}>
-          <div id="App">
-            <ToastContainer
-              className="Notification__container"
-              newestOnTop={true}
-            />
+          <ThemeProvider>
+            <div id="App">
+              <ToastContainer
+                className="Notification__container"
+                newestOnTop={true}
+              />
 
-            {/* <ThreeJSBackground /> */}
-            <SearchScene />
+              {/* <ThreeJSBackground /> */}
+              <SearchScene />
 
-            <OverlayScrollbarsComponent
-              className="App__overlay-container"
-              ref={osRef}
-              options={{
-                scrollbars: {
-                  autoHide: "leave",
-                },
-                callbacks: {
-                  onScroll: (args) => onScroll(args),
-                },
-              }}
-            >
-              <ApolloProvider client={apolloClient}>
-                <NavBar
-                  scrollAmount={state.scrollAmount}
-                  onSize={(size) => handleNavbarResize(size)}
-                  width={state.navbarWidth}
-                />
-                <NavBarHeightContext.Provider value={state.navbarHeight}>
-                  <RouteView className="App__route-view" />
-                </NavBarHeightContext.Provider>
-              </ApolloProvider>
-            </OverlayScrollbarsComponent>
-          </div>
+              <OverlayScrollbarsComponent
+                className="App__overlay-container"
+                ref={osRef}
+                options={{
+                  scrollbars: {
+                    autoHide: "leave",
+                  },
+                  callbacks: {
+                    onScroll: (args) => onScroll(args),
+                  },
+                }}
+              >
+                <ApolloProvider client={apolloClient}>
+                  <NavBar
+                    scrollAmount={state.scrollAmount}
+                    onSize={(size) => handleNavbarResize(size)}
+                    width={state.navbarWidth}
+                  />
+                  <NavBarHeightContext.Provider value={state.navbarHeight}>
+                    <RouteView className="App__route-view" />
+                  </NavBarHeightContext.Provider>
+                </ApolloProvider>
+              </OverlayScrollbarsComponent>
+            </div>
+          </ThemeProvider>
         </ThemeApplier>
       </RouteTransitionProvider>
     </Router>

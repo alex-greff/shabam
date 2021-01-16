@@ -74,11 +74,11 @@ $mobile-size: 130vw;
 
         border-radius: 50%;
 
-        background: color-link("SearchScene", "gradient", "start");
+        background: color-link-2("search-scene-gradient-start");
         background: linear-gradient(
           135deg,
-          color-link("SearchScene", "gradient", "start") 0%,
-          color-link("SearchScene", "gradient", "end")
+          color-link-2("search-scene-gradient-start") 0%,
+          color-link-2("search-scene-gradient-end")
         );
 
         opacity: 0;
@@ -118,24 +118,24 @@ $mobile-size: 130vw;
 
         & .SearchScene__arc {
           & circle {
-            stroke: color-link("SearchScene", "accent", "primary");
+            stroke: color-link-2("search-scene-arc-1");
           }
 
           &.primary {
             & circle {
-              stroke: color-link("SearchScene", "accent", "primary");
+              stroke: color-link-2("search-scene-arc-1");
             }
           }
 
           &.secondary {
             & circle {
-              stroke: color-link("SearchScene", "accent", "secondary");
+              stroke: color-link-2("search-scene-arc-2");
             }
           }
 
           &.tertiary {
             & circle {
-              stroke: color-link("SearchScene", "accent", "tertiary");
+              stroke: color-link-2("search-scene-arc-3");
             }
           }
         }

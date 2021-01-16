@@ -109,7 +109,7 @@ export const renderCanvas: CanvasRenderFunction<
       const yPrev = yScale(bin)!;
       const height = yPrev - y;
 
-      drawCell(context, x, y, xAxisTickSize, height, color);
+      drawCell(context, x, y, xAxisTickSize, height, color!);
     }
   }
 };

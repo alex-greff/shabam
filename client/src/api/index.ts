@@ -47,14 +47,16 @@ export const signin = async (username: string, password: string) => {
     },
   });
 
-  const signedIn = result.data!.login;
+  const hasErrors = result.errors;
+  if (hasErrors) 
+    return false;
 
-  if (signedIn) {
-    // Update the mobx store
-    accountStore.setLoggedIn(username);
-  }
+  const token = result.data!.login!.access_token!;
 
-  return signedIn;
+  // Update the mobx store
+  accountStore.setLoggedIn(username, token);
+
+  return true;
 };
 
 export const signup = async (username: string, password: string) => {
@@ -66,20 +68,33 @@ export const signup = async (username: string, password: string) => {
     },
   });
 
-  return result.data!.signup;
+  const hasErrors = result.errors;
+  if (hasErrors) 
+    return false;
+
+  const token = result.data!.signup!.access_token!;
+
+  // Update the mobx store
+  accountStore.setLoggedIn(username, token);
+
+  return true;
 };
 
 export const signout = async () => {
-  const result = await apolloClient.mutate<SignoutData>({
-    mutation: SignoutMutation,
-  });
+  // TODO: this isn't implemented
+  // const result = await apolloClient.mutate<SignoutData>({
+  //   mutation: SignoutMutation,
+  // });
 
-  const signedOut = result.data!.logout;
+  // const signedOut = result.data!.logout;
 
-  if (accountStore.loggedIn) {
-    // Update the mobx store
-    accountStore.setLoggedOut();
-  }
+  // if (accountStore.loggedIn) {
+  //   // Update the mobx store
+  //   accountStore.setLoggedOut();
+  // }
 
-  return signedOut;
+  // return signedOut;
+
+  accountStore.setLoggedOut();
+  return true;
 };

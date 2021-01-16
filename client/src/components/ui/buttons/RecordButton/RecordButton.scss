@@ -4,20 +4,20 @@
   & .RecordButton__center {
     border-radius: 50%;
 
-    background-color: color-link("RecordButton", "accent", "primary");
+    background-color: color-link-2("record-button-primary");
 
     transition: background-color $transition;
   }
 
   &:hover {
     & .RecordButton__center {
-      background-color: color-link("RecordButton", "accent", "secondary");
+      background-color: color-link-2("record-button-secondary");
     }
   }
 
   &.disabled {
     & .RecordButton__center {
-      background-color: color-link("RecordButton", "accent", "disabled");
+      background-color: color-link-2("record-button-disabled");
     }
   }
 }

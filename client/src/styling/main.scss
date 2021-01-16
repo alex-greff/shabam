@@ -1,3 +1,5 @@
+@import "./themes.scss";
+
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Passion+One:wght@700&display=swap");
 
@@ -29,11 +31,15 @@ body {
 
   font-size: 1.5rem;
 
-  color: color-link("GLOBAL", "text", "primary");
-  background-color: color-link("GLOBAL", "background", "primary");
+  color: color-link-2("text-primary");
+  background-color: color-link("bg-primary");
 }
 
 #root {
   height: 100%;
   width: 100%;
+}
+
+.theme-change * {
+  transition: all 0.2s !important;
 }

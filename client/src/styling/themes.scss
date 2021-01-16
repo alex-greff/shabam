@@ -1,0 +1,115 @@
+@import "./utils.scss";
+
+// These css variables will always be applied
+.global-theme {
+  // Theme toggle icon colors
+  --bg-toggle-light: #{rgb-str(#BCBCBC)};
+  --bg-toggle-dark: #{rgb-str(#65BFDC)};
+  --icon-bg-toggle-light: #{rgb-str(#F9FFB6)};
+  --icon-bg-toggle-dark: #{rgb-str(#424243)};
+  --icon-color-toggle-light: #{rgb-str(#151515)};
+  --icon-color-toggle-dark: #{rgb-str(#FFFFFF)};
+}
+
+.theme-light {
+  --bg-primary: #{rgb-str(#FFFFFF)};
+}
+
+.theme-dark {
+  --bg-primary: #{rgb-str(#141414)};
+  --bg-secondary: #{rgb-str(#313131)};
+  --bg-tertiary: #{rgb-str(#444444)};
+  --bg-disabled: #{rgb-str(#707070)}; // TODO: tweak this color
+
+  --text-primary: #{rgb-str(#FFFFFF)};
+  --text-secondary: #{rgb-str(#F6F6F6)};
+  --text-tertiary: #{rgb-str(#dadada)};
+  --text-disabled: #{rgb-str(#C3C3C3)}; // TODO: tweak this color
+
+  --text-inverse-primary: #{rgb-str(#000000)};
+  --text-inverse-secondary: #{rgb-str(#1A1A1A)};
+  --text-inverse-disabled: #{rgb-str(#1A1A1A)};
+
+  --accent-primary: #{rgb-str(#C3E2FF)};
+  --accent-secondary: #{rgb-str(#3176A8)};
+  --accent-tertiary: #{rgb-str(#557F9D)};
+  --accent-disabled: #{rgb-str(#CCD7E2)};
+
+  --selected-primary: #{rgb-str(#B3F6FF)};
+  --selected-secondary: #{rgb-str(#6AE8F9)};
+
+  --divider-line: #{rgb-str(#64829E)};
+
+  --spectrogram-chart-color-scale-1: #{rgb-str(#000000)};
+  --spectrogram-chart-color-scale-2: #{rgb-str(#084fc8)};
+  --spectrogram-chart-color-scale-3: #{rgb-str(#00fcef)};
+  --spectrogram-chart-color-scale-4: #{rgb-str(#ffffff)};
+
+  --fingerprint-chart-selection: #{rgb-str(#08B4F4)};
+
+  --chart-partition-divider-1: #{rgb-str(#505050)};
+  --chart-partition-divider-2: #{rgb-str(#646464)};
+
+  --search-scene-arc-1: #{rgb-str(#4240C9)};
+  --search-scene-arc-2: #{rgb-str(#4A6ABE)};
+  --search-scene-arc-3: #{rgb-str(#6B69D7)};
+  --search-scene-gradient-start: #{rgb-str(#1C6498)};
+  --search-scene-gradient-end: #{rgb-str(#4BC1D1)};
+
+  $icon-button-color: #B3F6FF;
+  --icon-button-primary: #{rgb-str($icon-button-color)};
+  --icon-button-secondary: #{rgb-str(desaturate($icon-button-color, 30%))};
+  --icon-button-disabled: #{rgb-str(#CCD7E2)};
+
+  $record-button-color: #FF0000;
+  --record-button-primary: #{rgb-str($record-button-color)};
+  --record-button-secondary: #{rgb-str(darken($record-button-color, 20%))};
+  --record-button-disabled: #{rgb-str(desaturate($record-button-color, 50%))};
+
+  --form-button-bg-primary: #{rgb-str(#3176A8)};
+  --form-button-bg-secondary: #{rgb-str(#6A6A6A)};
+  --form-button-bg-disabled: #{rgb-str(#494747)};
+  --form-button-accent: #{rgb-str(#557F9D)};
+
+  --form-input-placeholder: #{rgb-str(#BFBFBF)};
+  --form-input-bg: #{rgb-str(#494747)};
+  --form-input-accent-primary: #{rgb-str(#C3E2FF)};
+  --form-input-accent-secondary: #{rgb-str(#557F9D)};
+  --form-input-accent-tertiary: #{rgb-str(#4D5965)};
+  --form-input-accent-disabled: #{rgb-str(#CCD7E2)};
+  --form-input-error-primary: #{rgb-str(#F08787)};
+  --form-input-error-secondary: #{rgb-str(#523B3B)};
+
+  $number-input-bg-color: #737373;
+  --number-input-bg-primary: #{rgb-str($number-input-bg-color)};
+  --number-input-bg-disabled: #{rgb-str(lighten($number-input-bg-color, 30%))};
+  --number-input-accent-primary: #{rgb-str(#555555)};
+  --number-input-accent-secondary: #{rgb-str(#4D5965)};
+  --number-input-accent-tertiary: #{rgb-str(#557F9D)};
+  --number-input-accent-disabled: #{rgb-str(lighten(#555555, 50%))};
+
+  --benchmark-table-text-primary: #{rgb-str(#FFFFFF)};
+  --benchmark-table-text-secondary: #{rgb-str(#B3F6FF)};
+  --benchmark-table-row-even: #{rgb-str(#4F4F4F)};
+  --benchmark-table-row-odd: #{rgb-str(#404040)};
+
+  $info-color: #479AB4;
+  --info-primary: #{rgb-str($info-color)};
+  --info-secondary: #{rgb-str(darken($info-color, 5%))};
+  --info-disabled: #{rgb-str(desaturate($info-color, 50%))};
+
+  $error-color: #CD5757;
+  --error-primary: #{rgb-str($error-color)};
+  --error-secondary: #{rgb-str(darken($error-color, 10%))};
+  --error-disabled: #{rgb-str(desaturate($error-color, 50%))};
+
+  $warning-color: #C0AB60;
+  --warning-primary: #{rgb-str($warning-color)};
+  --warning-secondary: #{rgb-str(darken($warning-color, 10%))};
+  --warning-disabled: #{rgb-str(desaturate($warning-color, 50%))};
+
+  $success-color: #31A861;
+  --success-primary: #{rgb-str($success-color)};
+  --success-secondary: #{rgb-str(darken($success-color, 10%))};
+  --success-disabled: #{rgb-str(desaturate($success-color, 50%))};
+}

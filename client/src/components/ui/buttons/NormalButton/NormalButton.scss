@@ -10,52 +10,58 @@
   // --- Text Color Modifiers ---
 
   &.text-color-primary {
-    color: color-link("NormalButton", "text", "primary");
+    color: color-link-2("text-primary");
   }
 
   &.text-color-secondary {
-    color: color-link("NormalButton", "text", "secondary");
+    color: color-link-2("text-secondary");
   }
 
   // --- Appearance Modifiers ---
 
   &.appearance-outlined {
-    box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "primary");
+    box-shadow: 0 0 0 1px color-link-2("accent-tertiary");
 
     // --- Mode modifiers ---
     &.mode-error {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "error", "primary");
+      box-shadow: 0 0 0 1px color-link-2("error-primary");
 
       &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "error", "secondary");
+        box-shadow: 0 0 0 1px color-link-2("error-secondary");
       }
 
       &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "error", "disabled");
+        box-shadow: 0 0 0 1px color-link-2("error-disabled");
       }
     }
 
     &.mode-success {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "success", "primary");
+      box-shadow: 0 0 0 1px color-link-2("success-primary");
 
       &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "success", "secondary");
+        box-shadow: 0 0 0 1px color-link-2("success-secondary");
       }
 
       &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "success", "disabled");
+        box-shadow: 0 0 0 1px color-link-2("success-disabled");
       }
     }
 
     &.mode-warning {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "primary");
+      box-shadow: 0 0 0 1px color-link-2("warning-primary");
 
       &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "secondary");
+        box-shadow: 0 0 0 1px color-link-2("warning-secondary");
       }
 
       &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "disabled");
+        box-shadow: 0 0 0 1px color-link-2("warning-disabled");
+      }
+    }
+
+    &.mode-error, &.mode-warning, &.mode-success {
+      &:hover {
+        color: color-link-2("text-tertiary");
       }
     }
 
@@ -66,66 +72,66 @@
 
   &.appearance-solid {
     padding: 0.2rem 1.5rem;
-    background-color: color-link("NormalButton", "info", "primary");
+    background-color: color-link-2("info-primary");
 
     box-shadow: 0 2px 2px 0px rgba(0, 0, 0, 0.25);
 
     // --- Mode modifiers ---
     &.mode-error {
-      background-color: color-link("NormalButton", "error", "primary");
+      background-color: color-link-2("error-primary");
 
       &:hover {
-        background-color: color-link("NormalButton", "error", "secondary");
+        background-color: color-link-2("error-secondary");
       }
 
       &.disabled {
-        background-color: color-link("NormalButton", "error", "disabled");
+        background-color: color-link-2("error-disabled");
       }
     }
 
     &.mode-success {
-      background-color: color-link("NormalButton", "success", "primary");
+      background-color: color-link-2("success-primary");
 
       &:hover {
-        background-color: color-link("NormalButton", "success", "secondary");
+        background-color: color-link-2("success-secondary");
       }
 
       &.disabled {
-        background-color: color-link("NormalButton", "success", "disabled");
+        background-color: color-link-2("success-disabled");
       }
     }
 
     &.mode-warning {
-      background-color: color-link("NormalButton", "warning", "primary");
+      background-color: color-link-2("warning-primary");
 
       &:hover {
-        background-color: color-link("NormalButton", "warning", "secondary");
+        background-color: color-link-2("warning-secondary");
       }
 
       &.disabled {
-        background-color: color-link("NormalButton", "warning", "disabled");
+        background-color: color-link-2("warning-disabled");
       }
     }
 
     &:hover {
-      color: color-link("NormalButton", "accent", "secondary");
-      background-color: color-link("NormalButton", "info", "secondary");
+      color: color-link-2("text-tertiary");
+      background-color: color-link-2("info-secondary");
     }
 
     &.disabled {
-      background-color: color-link("NormalButton", "info", "disabled");
+      background-color: color-link-2("info-disabled");
     }
   }
 
   &:hover {
-    color: color-link("NormalButton", "selected", "primary");
+    color: color-link-2("selected-primary");
   }
 
   &.disabled {
-    color: color-link("NormalButton", "text", "disabled");
+    color: color-link("text-disabled");
 
-    &.outlined {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "disabled");
+    &.appearance-outlined {
+      box-shadow: 0 0 0 1px color-link("bg-disabled");
     }
   }
 }

@@ -56,11 +56,7 @@
   }
 
   & .ConfigurationContainer__content {
-    background-color: color-link(
-      "ConfigurationContainer",
-      "background",
-      "secondary"
-    );
+    background-color: color-link-2("bg-secondary");
 
     padding: 1.5rem;
   }

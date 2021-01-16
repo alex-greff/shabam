@@ -4,11 +4,11 @@
   font-weight: 600;
   font-size: 1.7rem;
 
-  color: color-link("NavItem", "text", "secondary");
+  color: color-link-2("text-secondary");
 
   transition: color $transition-time;
 
   &:hover {
-    color: color-link("NavItem", "selected", "primary");
+    color: color-link-2("selected-primary");
   }
 }

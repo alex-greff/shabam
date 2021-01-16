@@ -2,20 +2,20 @@
   $transition: 0.2s;
 
   & .StopRecordButton__center {
-    background-color: color-link("StopRecordButton", "text", "primary");
+    background-color: color-link-2("text-primary");
 
     transition: background-color $transition;
   }
 
   &:hover {
     & .StopRecordButton__center {
-      background-color: color-link("StopRecordButton", "accent", "primary");
+      background-color: color-link-2("selected-primary");
     }
   }
 
   &.disabled {
     & .StopRecordButton__center {
-      background-color: color-link("StopRecordButton", "text", "disabled");
+      background-color: color-link-2("text-disabled");
     }
   }
 }

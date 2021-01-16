@@ -27,8 +27,8 @@
     font-size: 1.7rem;
 
     text-align: center;
-    color: color-link("NumberInput", "color", "primary");
-    background-color: color-link("NumberInput", "background", "primary");
+    color: color-link-2("text-primary");
+    background-color: color-link-2("number-input-bg-primary");
 
     padding: 0.5rem;
 
@@ -46,7 +46,7 @@
     flex-grow: 1;
     flex-shrink: 1;
 
-    background-color: color-link("NumberInput", "accent", "primary");
+    background-color: color-link-2("number-input-accent-primary");
 
     display: flex;
     flex-direction: column;
@@ -66,11 +66,11 @@
     }
 
     &:hover {
-      background-color: color-link("NumberInput", "accent", "secondary");
+      background-color: color-link-2("number-input-accent-secondary");
     }
 
     &:active {
-      background-color: color-link("NumberInput", "accent", "tertiary");
+      background-color: color-link-2("number-input-accent-tertiary");
     }
   }
 
@@ -80,13 +80,13 @@
 
   &.disabled {
     & .NumberInput__input {
-      background-color: color-link("NumberInput", "background", "disabled");
+      background-color: color-link-2("number-input-bg-disabled");
     }
 
     & .NumberInput__control {
       pointer-events: none;
 
-      background-color: color-link("NumberInput", "accent", "disabled");
+      background-color: color-link-2("number-input-accent-disabled");
     }
   }
 }

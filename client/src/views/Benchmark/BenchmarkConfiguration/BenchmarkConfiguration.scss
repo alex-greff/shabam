@@ -3,7 +3,7 @@
   $title-font-size: 1.5rem;
 
   & .BenchmarkConfiguration__title {
-    color: color-link("Benchmark", "text", "primary");
+    color: color-link-2("text-primary");
   }
 
   & .BenchmarkConfiguration__content-container {
@@ -28,7 +28,7 @@
         grid-area: record;
 
         & .BenchmarkConfiguration__record-controls-title {
-          color: color-link("Benchmark", "text", "secondary");
+          color: color-link-2("text-tertiary");
           font-style: italic;
           font-size: $title-font-size;
           text-align: center;
@@ -55,7 +55,7 @@
         grid-area: upload;
 
         & .BenchmarkConfiguration__file-controls-title {
-          color: color-link("Benchmark", "text", "secondary");
+          color: color-link-2("text-tertiary");
           font-style: italic;
           font-size: $title-font-size;
           text-align: center;
