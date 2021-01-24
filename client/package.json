@@ -7,6 +7,7 @@
     "start:react-dev": "export EXTEND_ESLINT=true; react-app-rewired start",
     "build:react": "export EXTEND_ESLINT=true; react-app-rewired build",
     "build:wasm": "bash -l /app/src/wasm/build.sh",
+    "codegen": "graphql-codegen",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
@@ -31,13 +32,12 @@
     ]
   },
   "dependencies": {
-    "@apollo/react-hooks": "^3.1.5",
+    "@apollo/client": "^3.1.5",
     "@material-ui/core": "^4.9.12",
     "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "apollo-boost": "^0.4.7",
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "color": "^3.1.2",
@@ -71,6 +71,10 @@
     "typescript": "^4.0.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.20.0",
+    "@graphql-codegen/typescript": "^1.20.0",
+    "@graphql-codegen/typescript-operations": "^1.17.13",
+    "@graphql-codegen/typescript-react-apollo": "^2.2.1",
     "@types/classnames": "^2.2.10",
     "@types/color": "^3.0.1",
     "@types/cookie": "^0.3.3",

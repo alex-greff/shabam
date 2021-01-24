@@ -13,7 +13,7 @@ export class GqlLocalAuthGuard extends AuthGuard('local') {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext();
     // Injects the username and password arguments into the body so that
-    // passport-session finds them
+    // passport-local finds them
     // Reference: https://github.com/3logy/nestjs-graphql-passport
     request.body = ctx.getArgs();
     return true;

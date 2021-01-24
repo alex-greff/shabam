@@ -16,7 +16,10 @@ export abstract class ConfigurablePolicyHandler<C> implements IPolicyHandler {
   ) {}
 
   protected getConfig(context: ExecutionContext) {
-    let config = this.reflector.get<C>(this.configKey, context.getHandler());
+    let config = this.reflector.get<Partial<C>>(
+      this.configKey,
+      context.getHandler(),
+    );
     config = config ? { ...this.defaultConfig, ...config } : this.defaultConfig;
 
     return config;

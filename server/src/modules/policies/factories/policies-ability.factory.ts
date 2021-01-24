@@ -34,8 +34,7 @@ export class PoliciesAbilityFactory {
 
     return build({
       // https://github.com/stalniy/casl/issues/430
-      // @ts-expect-error
-      detectSubjectType: type => type!.constructor
+      detectSubjectType: type => type!.constructor as any
     });
   }
 }

@@ -5,7 +5,7 @@
   "workspaceFolder": "/app",
   "shutdownAction": "none",
   "extensions": [
-    "prisma.vscode-graphql",
+    "graphql.vscode-graphql",
     "streetsidesoftware.code-spell-checker",
     "coenraads.bracket-pair-colorizer-2",
     "dbaeumer.vscode-eslint",

@@ -12,7 +12,7 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "naumovs.color-highlight",
-    "prisma.vscode-graphql",
+    "graphql.vscode-graphql",
     "wayou.vscode-todo-highlight",
     "dtsvet.vscode-wasm"
   ]

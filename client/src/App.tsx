@@ -13,8 +13,7 @@ import { ToastContainer } from "react-toastify";
 import { RouteTransitionProvider, useTransition } from "react-route-transition";
 import { options as routeTransitionOptions } from "@/transitions/route-transitions";
 
-import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 
 import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 
@@ -40,6 +39,7 @@ const { CSSPlugin, AttrPlugin } = require("gsap/all");
 // Create the GraphQL client that we will use to connect to the backend
 export const apolloClient = new ApolloClient({
   uri: KEYS.GRAPHQL_API_ENDPOINT,
+  cache: new InMemoryCache()
 });
 
 // Initialize themer

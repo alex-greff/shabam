@@ -16,7 +16,7 @@ export class UserIsSelfPolicy extends MutateUserPolicyHandler {
     super(reflector, userService, CONFIG_KEY);
   }
 
-  static configure(config: MutateUserPolicyHandlerConfig) {
+  static configure(config: Partial<MutateUserPolicyHandlerConfig>) {
     return SetMetadata(CONFIG_KEY, config);
   }
 
