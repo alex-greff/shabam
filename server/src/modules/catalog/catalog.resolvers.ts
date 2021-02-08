@@ -15,7 +15,6 @@ import {
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
 import { Track } from './models/catalog.models';
-import { UploadScalar } from '@/common/scalars/upload.scalar';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';

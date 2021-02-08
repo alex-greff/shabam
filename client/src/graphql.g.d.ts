@@ -58,8 +58,6 @@ export type Query = {
   getTrack: Track;
   /** Get a paginated list of all tracks in the catalog. */
   getTracks: Array<Track>;
-  /** Search for a track. */
-  search: SearchResult;
 };
 
 
@@ -77,19 +75,6 @@ export type QueryGetTracksArgs = {
   skip?: Maybe<Scalars['Int']>;
   take?: Maybe<Scalars['Int']>;
 };
-
-
-export type QuerySearchArgs = {
-  fingerprint: FingerprintInput;
-};
-
-/** Input data for searching.  */
-export type FingerprintInput = {
-  numberOfWindows: Scalars['Int'];
-  frequencyBinCount: Scalars['Int'];
-  fingerprintData: Scalars['Upload'];
-};
-
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -113,6 +98,8 @@ export type Mutation = {
   removeTrack: Scalars['Boolean'];
   /** Recomputes a track's stored fingerprint. */
   recomputeTrackFingerprint: Scalars['Boolean'];
+  /** Search for a track. */
+  search: SearchResult;
 };
 
 
@@ -165,6 +152,11 @@ export type MutationRecomputeTrackFingerprintArgs = {
   id: Scalars['ID'];
 };
 
+
+export type MutationSearchArgs = {
+  fingerprint: FingerprintInput;
+};
+
 /** Credentials input for user login */
 export type UserDataInput = {
   /** The username of the user. */
@@ -203,6 +195,14 @@ export type TrackEditDataInput = {
   releaseDate?: Maybe<Scalars['Date']>;
 };
 
+/** Input data for searching.  */
+export type FingerprintInput = {
+  numberOfWindows: Scalars['Int'];
+  frequencyBinCount: Scalars['Int'];
+  fingerprintData: Scalars['Upload'];
+};
+
+
 export type Subscription = {
   __typename?: 'Subscription';
   /** Notifies whenever a track is added.  */
@@ -212,6 +212,19 @@ export type Subscription = {
   /** Notifies whenever a track is deleted. Can filter by track id. */
   trackRemoved: Scalars['String'];
 };
+
+export type SearchMutationVariables = Exact<{
+  fingerprint: FingerprintInput;
+}>;
+
+
+export type SearchMutation = (
+  { __typename?: 'Mutation' }
+  & { search: (
+    { __typename?: 'SearchResult' }
+    & Pick<SearchResult, 'something'>
+  ) }
+);
 
 export type SigninMutationVariables = Exact<{
   username: Scalars['String'];
@@ -250,6 +263,38 @@ export type SignupMutation = (
 );
 
 
+export const SearchDocument = gql`
+    mutation search($fingerprint: FingerprintInput!) {
+  search(fingerprint: $fingerprint) {
+    something
+  }
+}
+    `;
+export type SearchMutationFn = Apollo.MutationFunction<SearchMutation, SearchMutationVariables>;
+
+/**
+ * __useSearchMutation__
+ *
+ * To run a mutation, you first call `useSearchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSearchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [searchMutation, { data, loading, error }] = useSearchMutation({
+ *   variables: {
+ *      fingerprint: // value for 'fingerprint'
+ *   },
+ * });
+ */
+export function useSearchMutation(baseOptions?: Apollo.MutationHookOptions<SearchMutation, SearchMutationVariables>) {
+        return Apollo.useMutation<SearchMutation, SearchMutationVariables>(SearchDocument, baseOptions);
+      }
+export type SearchMutationHookResult = ReturnType<typeof useSearchMutation>;
+export type SearchMutationResult = Apollo.MutationResult<SearchMutation>;
+export type SearchMutationOptions = Apollo.BaseMutationOptions<SearchMutation, SearchMutationVariables>;
 export const SigninDocument = gql`
     mutation signin($username: String!, $password: String!) {
   login(username: $username, password: $password) {

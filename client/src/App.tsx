@@ -14,6 +14,7 @@ import { RouteTransitionProvider, useTransition } from "react-route-transition";
 import { options as routeTransitionOptions } from "@/transitions/route-transitions";
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { createUploadLink } from "apollo-upload-client";
 
 import { NavBarHeightContext } from "@/contexts/NavBarHeightContext";
 
@@ -39,7 +40,8 @@ const { CSSPlugin, AttrPlugin } = require("gsap/all");
 // Create the GraphQL client that we will use to connect to the backend
 export const apolloClient = new ApolloClient({
   uri: KEYS.GRAPHQL_API_ENDPOINT,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  link: createUploadLink({ uri: KEYS.GRAPHQL_API_ENDPOINT })
 });
 
 // Initialize themer

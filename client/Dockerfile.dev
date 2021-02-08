@@ -35,17 +35,17 @@ RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
 # Install the client    
 WORKDIR /app
 
-COPY ./package*.json ./
-
 # Workaround to get prepare scripts to run properly
 # Source: https://github.com/npm/npm/issues/18163
 RUN npm config set unsafe-perm true
 
-# Install npm dependencies, cleaning the cache beforehand
-RUN npm install
-
 # Install global packages
 RUN npm install -g gulp-cli eslint prettier 
+
+COPY ./package*.json ./
+
+# Install npm dependencies, cleaning the cache beforehand
+RUN npm install
 
 # Copy all the client files
 COPY . .

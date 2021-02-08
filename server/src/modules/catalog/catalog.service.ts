@@ -4,7 +4,6 @@ import {
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { UploadScalar } from '@/common/scalars/upload.scalar';
 import { TrackEntity } from '@/entities/Track.entity';
 import { Track } from './models/catalog.models';
 import { SearchEntity } from '@/entities/Search.entity';

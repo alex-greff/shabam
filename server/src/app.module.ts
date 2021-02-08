@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import KEYS from '@/keys';
 
 import { DateScalar } from '@/common/scalars/date.scalar';
-import { UploadScalar } from '@/common/scalars/upload.scalar';
 
 import { PoliciesModule } from '@/modules/policies/policies.module';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -61,7 +60,6 @@ import { SearchResultEntity } from './entities/SearchResult.entity';
   ],
   providers: [
     // --- Scalars ---
-    UploadScalar,
     DateScalar,
   ],
   exports: [PoliciesModule],

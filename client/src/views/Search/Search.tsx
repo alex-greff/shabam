@@ -6,11 +6,16 @@ import * as NotificationManager from "@/managers/NotificationManager";
 import * as AudioUtilities from "@/audio/utilities";
 
 import PageView from "@/components/page/PageView/PageView";
+import { useSearchMutation } from "@/graphql.g.d";
+import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator";
 
+const fingerprintGenerator = new WasmFingerprintGenerator();
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const Search: FunctionComponent<Props> = (props) => {
+  const [runSearchMutation, { data }] = useSearchMutation();
+
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   // const temp = () =>
@@ -40,7 +45,23 @@ const Search: FunctionComponent<Props> = (props) => {
       downsampledAudioBuffer
     );
 
-    // console.log(fingerprintData);
+    const fingerprint = await fingerprintGenerator.generateFingerprint(spectrogramData);
+
+    if (fingerprint === null) {
+      NotificationManager.showErrorNotification("Failed to generate fingerprint.");
+      return;
+    }
+
+    // const fingerprintDataBlob = new Blob([fingerprint.data], { type: 'text/plain' });
+    const fingerprintDataBlob = new Blob([fingerprint.data], { type: 'application/octet-stream' });
+
+    console.log(fingerprintDataBlob);
+
+    const searchResult = await runSearchMutation({ variables: { fingerprint: { 
+      numberOfWindows: fingerprint.numberOfWindows,
+      frequencyBinCount: fingerprint.frequencyBinCount,
+      fingerprintData: fingerprintDataBlob
+    }}});
   };
 
   return (

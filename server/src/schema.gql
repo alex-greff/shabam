@@ -42,23 +42,7 @@ type Query {
 
   """Get a paginated list of all tracks in the catalog."""
   getTracks(skip: Int = 0, take: Int = 25): [Track!]!
-
-  """Search for a track."""
-  search(
-    """Fingerprint data."""
-    fingerprint: FingerprintInput!
-  ): SearchResult!
 }
-
-"""Input data for searching. """
-input FingerprintInput {
-  numberOfWindows: Int!
-  frequencyBinCount: Int!
-  fingerprintData: Upload!
-}
-
-"""File upload scalar type"""
-scalar Upload
 
 type Mutation {
   """Login a user, creating a session."""
@@ -94,6 +78,12 @@ type Mutation {
     fingerprint: FingerprintInput!
     id: ID!
   ): Boolean!
+
+  """Search for a track."""
+  search(
+    """Fingerprint data."""
+    fingerprint: FingerprintInput!
+  ): SearchResult!
 }
 
 """Credentials input for user login"""
@@ -135,6 +125,16 @@ input TrackEditDataInput {
   coverImage: String
   releaseDate: Date
 }
+
+"""Input data for searching. """
+input FingerprintInput {
+  numberOfWindows: Int!
+  frequencyBinCount: Int!
+  fingerprintData: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type Subscription {
   """Notifies whenever a track is added. """
