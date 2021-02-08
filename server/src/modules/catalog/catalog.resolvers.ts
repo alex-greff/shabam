@@ -10,12 +10,11 @@ import {
 import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
 import {
-  FingerprintInfoInput,
   TrackAddDataInput,
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Track, TrackSearchResult } from './models/catalog.models';
+import { Track } from './models/catalog.models';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
@@ -23,6 +22,7 @@ import { CheckPolicies } from '../policies/dectorators/check-policies.decorator'
 import { TrackEditPolicy } from './policies/track-edit.policy';
 import { TrackUploadPolicy } from './policies/track-upload.policy';
 import { TrackRemovePolicy } from './policies/track-remove.policy';
+import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 
 const SUBSCRIPTIONS_CONFIG = {
   TRACK_ADDED: 'trackAdded',
@@ -59,19 +59,20 @@ export class CatalogResolver {
     return CatalogService.transformFromTrackEntityMany(tracks);
   }
 
-  @Query((returns) => [TrackSearchResult], {
-    description: 'Searches for a track based off the given audio fingerprint.',
-  })
-  async searchTrack(
-    @Args('fingerprint') fingerprint: UploadScalar,
-    @Args('fingerprintInfo') fingerprintInfo: FingerprintInfoInput,
-  ): Promise<TrackSearchResult[]> {
-    const search = await this.catalogService.searchTrack(
-      fingerprint,
-      fingerprintInfo,
-    );
-    return CatalogService.transformFromSearchEntity(search);
-  }
+  // TODO: remove
+  // @Query((returns) => [TrackSearchResult], {
+  //   description: 'Searches for a track based off the given audio fingerprint.',
+  // })
+  // async searchTrack(
+  //   @Args('fingerprint') fingerprint: UploadScalar,
+  //   @Args('fingerprintInfo') fingerprintInfo: FingerprintInfoInput,
+  // ): Promise<TrackSearchResult[]> {
+  //   const search = await this.catalogService.searchTrack(
+  //     fingerprint,
+  //     fingerprintInfo,
+  //   );
+  //   return CatalogService.transformFromSearchEntity(search);
+  // }
 
   // -----------------
   // --- Mutations ---
@@ -126,10 +127,12 @@ export class CatalogResolver {
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async recomputeTrackFingerprint(
     @Args({ type: () => ID, name: 'id' }) id: string,
-    @Args('fingerprint') fingerprint: UploadScalar,
-    @Args('fingerprintInfo') fingerprintInfo: FingerprintInfoInput,
+    @Args("fingerprint", { description: "Fingerprint data." }) fingerprint: FingerprintInput
+
   ): Promise<boolean> {
-    return this.recomputeTrackFingerprint(id, fingerprint, fingerprintInfo);
+    // TODO: implement
+    return false;
+    // return this.recomputeTrackFingerprint(id, fingerprint, fingerprintInfo);
   }
 
   // ---------------------

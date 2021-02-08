@@ -11,6 +11,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { CatalogModule } from '@/modules/catalog/catalog.module';
 import { RecipesModule } from '@/modules/recipes/recipes.module';
+import { SearchModule } from '@/modules/search/search.module';
 
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { TrackEntity } from '@/entities/Track.entity';
@@ -26,7 +27,8 @@ import { SearchResultEntity } from './entities/SearchResult.entity';
     AuthModule,
     UserModule,
     CatalogModule,
-    RecipesModule, // TODO: remove
+    SearchModule,
+    // RecipesModule, // TODO: remove
     // --- GraphQL ---
     GraphQLModule.forRoot({
       debug: !KEYS.PRODUCTION,

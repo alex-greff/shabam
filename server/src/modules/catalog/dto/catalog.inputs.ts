@@ -37,13 +37,14 @@ export class TrackEditDataInput {
   releaseDate: Date;
 }
 
-@InputType({
-  description: 'Supporting information for the raw fingerprint data.',
-})
-export class FingerprintInfoInput {
-  @Field((type) => Int)
-  windowAmount: number;
+// TODO: remove
+// @InputType({
+//   description: 'Supporting information for the raw fingerprint data.',
+// })
+// export class FingerprintInfoInput {
+//   @Field((type) => Int)
+//   windowAmount: number;
 
-  @Field((type) => Int)
-  partitionAmount: number;
-}
+//   @Field((type) => Int)
+//   partitionAmount: number;
+// }

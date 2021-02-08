@@ -28,18 +28,9 @@ type Track {
   metadata: TrackMetadata!
 }
 
-"""A possible search result."""
-type TrackSearchResult {
-  track: Track!
-  similarity: Float!
-}
-
-type Recipe {
-  id: ID!
-  title: String!
-  description: String
-  creationDate: Date!
-  ingredients: [String!]!
+"""Search result for an audio search. """
+type SearchResult {
+  something: String!
 }
 
 type Query {
@@ -52,16 +43,18 @@ type Query {
   """Get a paginated list of all tracks in the catalog."""
   getTracks(skip: Int = 0, take: Int = 25): [Track!]!
 
-  """Searches for a track based off the given audio fingerprint."""
-  searchTrack(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!): [TrackSearchResult!]!
-  recipe(id: String!): Recipe!
-  recipes(skip: Int = 0, take: Int = 25): [Recipe!]!
+  """Search for a track."""
+  search(
+    """Fingerprint data."""
+    fingerprint: FingerprintInput!
+  ): SearchResult!
 }
 
-"""Supporting information for the raw fingerprint data."""
-input FingerprintInfoInput {
-  windowAmount: Int!
-  partitionAmount: Int!
+"""Input data for searching. """
+input FingerprintInput {
+  numberOfWindows: Int!
+  frequencyBinCount: Int!
+  fingerprintData: Upload!
 }
 
 """File upload scalar type"""
@@ -96,9 +89,11 @@ type Mutation {
   removeTrack(id: ID!): Boolean!
 
   """Recomputes a track's stored fingerprint."""
-  recomputeTrackFingerprint(fingerprintInfo: FingerprintInfoInput!, fingerprint: Upload!, id: ID!): Boolean!
-  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
-  removeRecipe(id: String!): Boolean!
+  recomputeTrackFingerprint(
+    """Fingerprint data."""
+    fingerprint: FingerprintInput!
+    id: ID!
+  ): Boolean!
 }
 
 """Credentials input for user login"""
@@ -141,12 +136,6 @@ input TrackEditDataInput {
   releaseDate: Date
 }
 
-input NewRecipeInput {
-  title: String!
-  description: String
-  ingredients: [String!]!
-}
-
 type Subscription {
   """Notifies whenever a track is added. """
   trackAdded: Track!
@@ -156,5 +145,4 @@ type Subscription {
 
   """Notifies whenever a track is deleted. Can filter by track id."""
   trackRemoved: String!
-  recipeAdded: Recipe!
 }

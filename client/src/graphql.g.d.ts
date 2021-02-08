@@ -44,20 +44,10 @@ export type Track = {
   metadata: TrackMetadata;
 };
 
-/** A possible search result. */
-export type TrackSearchResult = {
-  __typename?: 'TrackSearchResult';
-  track: Track;
-  similarity: Scalars['Float'];
-};
-
-export type Recipe = {
-  __typename?: 'Recipe';
-  id: Scalars['ID'];
-  title: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  creationDate: Scalars['Date'];
-  ingredients: Array<Scalars['String']>;
+/** Search result for an audio search.  */
+export type SearchResult = {
+  __typename?: 'SearchResult';
+  something: Scalars['String'];
 };
 
 export type Query = {
@@ -68,10 +58,8 @@ export type Query = {
   getTrack: Track;
   /** Get a paginated list of all tracks in the catalog. */
   getTracks: Array<Track>;
-  /** Searches for a track based off the given audio fingerprint. */
-  searchTrack: Array<TrackSearchResult>;
-  recipe: Recipe;
-  recipes: Array<Recipe>;
+  /** Search for a track. */
+  search: SearchResult;
 };
 
 
@@ -91,26 +79,15 @@ export type QueryGetTracksArgs = {
 };
 
 
-export type QuerySearchTrackArgs = {
-  fingerprintInfo: FingerprintInfoInput;
-  fingerprint: Scalars['Upload'];
+export type QuerySearchArgs = {
+  fingerprint: FingerprintInput;
 };
 
-
-export type QueryRecipeArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryRecipesArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
-};
-
-/** Supporting information for the raw fingerprint data. */
-export type FingerprintInfoInput = {
-  windowAmount: Scalars['Int'];
-  partitionAmount: Scalars['Int'];
+/** Input data for searching.  */
+export type FingerprintInput = {
+  numberOfWindows: Scalars['Int'];
+  frequencyBinCount: Scalars['Int'];
+  fingerprintData: Scalars['Upload'];
 };
 
 
@@ -136,8 +113,6 @@ export type Mutation = {
   removeTrack: Scalars['Boolean'];
   /** Recomputes a track's stored fingerprint. */
   recomputeTrackFingerprint: Scalars['Boolean'];
-  addRecipe: Recipe;
-  removeRecipe: Scalars['Boolean'];
 };
 
 
@@ -186,19 +161,8 @@ export type MutationRemoveTrackArgs = {
 
 
 export type MutationRecomputeTrackFingerprintArgs = {
-  fingerprintInfo: FingerprintInfoInput;
-  fingerprint: Scalars['Upload'];
+  fingerprint: FingerprintInput;
   id: Scalars['ID'];
-};
-
-
-export type MutationAddRecipeArgs = {
-  newRecipeData: NewRecipeInput;
-};
-
-
-export type MutationRemoveRecipeArgs = {
-  id: Scalars['String'];
 };
 
 /** Credentials input for user login */
@@ -239,12 +203,6 @@ export type TrackEditDataInput = {
   releaseDate?: Maybe<Scalars['Date']>;
 };
 
-export type NewRecipeInput = {
-  title: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  ingredients: Array<Scalars['String']>;
-};
-
 export type Subscription = {
   __typename?: 'Subscription';
   /** Notifies whenever a track is added.  */
@@ -253,7 +211,6 @@ export type Subscription = {
   trackEdited: Track;
   /** Notifies whenever a track is deleted. Can filter by track id. */
   trackRemoved: Scalars['String'];
-  recipeAdded: Recipe;
 };
 
 export type SigninMutationVariables = Exact<{

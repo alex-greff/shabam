@@ -33,11 +33,12 @@ export class Track {
   metadata: TrackMetadata;
 }
 
-@ObjectType({ description: "A possible search result." })
-export class TrackSearchResult {
-  @Field(type => Track)
-  track: Track;
+// TODO: remove
+// @ObjectType({ description: "A possible search result." })
+// export class TrackSearchResult {
+//   @Field(type => Track)
+//   track: Track;
 
-  @Field(type => Float)
-  similarity: number;
-}
+//   @Field(type => Float)
+//   similarity: number;
+// }

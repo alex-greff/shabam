@@ -1,9 +1,10 @@
-import { Theme } from "@/types";
+import { ThemeName } from "@/types";
 
 interface ThemeOption {
-  id: Theme;
+  id: ThemeName;
   name: string;
 }
+
 
 export const themes: ThemeOption[] = [
   {

@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  FingerprintInfoInput,
   TrackAddDataInput,
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
 import { UploadScalar } from '@/common/scalars/upload.scalar';
 import { TrackEntity } from '@/entities/Track.entity';
-import { Track, TrackSearchResult } from './models/catalog.models';
+import { Track } from './models/catalog.models';
 import { SearchEntity } from '@/entities/Search.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,12 +34,13 @@ export class CatalogService {
     };
   }
 
-  static transformFromSearchEntity(search: SearchEntity): TrackSearchResult[] {
-    return search.results.map((result) => ({
-      track: this.transformFromTrackEntity(result.track),
-      similarity: result.similarity,
-    }));
-  }
+  // TODO: remove
+  // static transformFromSearchEntity(search: SearchEntity): TrackSearchResult[] {
+  //   return search.results.map((result) => ({
+  //     track: this.transformFromTrackEntity(result.track),
+  //     similarity: result.similarity,
+  //   }));
+  // }
 
   static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
     return tracks.map((track) => this.transformFromTrackEntity(track));
@@ -71,20 +71,21 @@ export class CatalogService {
     return true;
   }
 
-  async searchTrack(
-    fingerprint: UploadScalar,
-    info: FingerprintInfoInput,
-  ): Promise<SearchEntity> {
-    // TODO: implement
-    return null;
-  }
+  // TODO: remove
+  // async searchTrack(
+  //   fingerprint: UploadScalar,
+  //   info: FingerprintInfoInput,
+  // ): Promise<SearchEntity> {
+  //   // TODO: implement
+  //   return null;
+  // }
 
-  async recomputeTrackFingerprint(
-    id: string,
-    fingerprint: UploadScalar,
-    info: FingerprintInfoInput,
-  ): Promise<boolean> {
-    // TODO: implement
-    return false;
-  }
+  // async recomputeTrackFingerprint(
+  //   id: string,
+  //   fingerprint: UploadScalar,
+  //   info: FingerprintInfoInput,
+  // ): Promise<boolean> {
+  //   // TODO: implement
+  //   return false;
+  // }
 }

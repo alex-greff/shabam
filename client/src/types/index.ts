@@ -1,6 +1,8 @@
 import { RouteComponentProps, LinkProps } from "react-router-dom";
 import { StaticContext } from "react-router";
 
+export type ThemeName = "theme-light" | "theme-dark";
+
 export interface BaseProps {
   className?: string;
   style?: React.CSSProperties;

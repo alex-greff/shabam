@@ -1,20 +1,47 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types";
 import "./Search.scss";
 import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
+import * as AudioUtilities from "@/audio/utilities";
 
 import PageView from "@/components/page/PageView/PageView";
+
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const Search: FunctionComponent<Props> = (props) => {
-  const temp = () =>
-    NotificationManager.showNotification(
-      "success",
-      "hi wad awd a dawdwadadawd",
-      500000
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+
+  // const temp = () =>
+  //   NotificationManager.showNotification(
+  //     "success",
+  //     "hi wad awd a dawdwadadawd",
+  //     500000
+  //   );
+
+  const audioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const audioFile = e.target.files ? e.target.files[0] : null;
+    setAudioBlob(audioFile);
+  };
+
+  const searchFingerprint = async () => {
+    if (audioBlob == null) {
+      NotificationManager.showErrorNotification("No audio file.");
+    }
+
+    const audioBuffer = await AudioUtilities.convertBlobToAudioBuffer(
+      audioBlob!
     );
+
+    const downsampledAudioBuffer = await AudioUtilities.downsample(audioBuffer);
+
+    const spectrogramData = await AudioUtilities.computeSpectrogramData(
+      downsampledAudioBuffer
+    );
+
+    // console.log(fingerprintData);
+  };
 
   return (
     <PageView
@@ -23,8 +50,17 @@ const Search: FunctionComponent<Props> = (props) => {
       style={props.style}
     >
       Search View
+      {/* <br />
+      <button onClick={temp}>Click Me</button> */}
       <br />
-      <button onClick={temp}>Click Me</button>
+      <input 
+        type="file" 
+        name="audio" 
+        accept="audio/wav, audio/mp3"
+        onChange={audioFileChange}
+      />
+      <br />
+      <button disabled={!audioBlob} onClick={searchFingerprint}>Search</button>
     </PageView>
   );
 };

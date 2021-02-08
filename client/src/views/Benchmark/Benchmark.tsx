@@ -14,6 +14,9 @@ import PageContent from "@/components/page/PageContent/PageContent";
 import BenchmarkConfiguration from "@/views/Benchmark/BenchmarkConfiguration/BenchmarkConfiguration";
 import BenchmarkProgress from "@/views/Benchmark/BenchmarkProgress/BenchmarkProgress";
 import BenchmarkResults from "@/views/Benchmark/BenchmarkResults/BenchmarkResults";
+import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator";
+import { IterativeFingerprintGenerator } from "@/fingerprint/IterativeFingerprintGenerator";
+import { FunctionalFingerprintGenerator } from "@/fingerprint/FunctionalFingerprintGenerator";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
@@ -27,35 +30,10 @@ export interface BenchmarkResult {
 
 const DEFAULT_NUM_ITERATIONS = 5;
 
-// TODO: might want to move out the worker interface instantiation to a
-// different module
-
-// Iterative fingerprint worker
-const iterFpWorker = new Worker(
-  "@/workers/fingerprint/IterativeFingerprint.worker.ts",
-  { name: "iterative-fingerprint-worker", type: "module" }
-);
-const iterFpWorkerApi = Comlink.wrap<
-  import("@/workers/fingerprint/IterativeFingerprint.worker").IterativeFingerprintWorker
->(iterFpWorker);
-
-// Functional fingerprint worker
-const funcFpWorker = new Worker(
-  "@/workers/fingerprint/FunctionalFingerprint.worker.ts",
-  { name: "functional-fingerprint-worker", type: "module" }
-);
-const funcFpWorkerApi = Comlink.wrap<
-  import("@/workers/fingerprint/FunctionalFingerprint.worker").FunctionalFingerprintWorker
->(funcFpWorker);
-
-// WebAssembly fingerprint worker
-const wasmFpWorker = new Worker(
-  "@/workers/fingerprint/WasmFingerprint.worker.ts",
-  { name: "wasm-fingerprint-worker", type: "module" }
-);
-const wasmFpWorkerApi = Comlink.wrap<
-  import("@/workers/fingerprint/WasmFingerprint.worker").WasmFingerprintWorker
->(wasmFpWorker);
+// Instantiate the different fingerprint generators
+const iterFpGenerator = new IterativeFingerprintGenerator();
+const funcFpGenerator = new FunctionalFingerprintGenerator();
+const wasmFpGenerator = new WasmFingerprintGenerator();
 
 // TODO: add the rest of the fingerprints
 export interface FingerprintResults {
@@ -119,46 +97,19 @@ const Benchmark: FunctionComponent<Props> = (props) => {
   const runIterativeFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    try {
-      const fingerprint = await iterFpWorkerApi.generateFingerprint(
-        spectrogramData,
-        {}
-      );
-
-      return fingerprint;
-    } catch (err) {}
-
-    return null;
+    return await iterFpGenerator.generateFingerprint(spectrogramData);
   };
 
   const runFunctionalFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    try {
-      const fingerprint = await funcFpWorkerApi.generateFingerprint(
-        spectrogramData,
-        {}
-      );
-
-      return fingerprint;
-    } catch (err) {}
-
-    return null;
+    return await funcFpGenerator.generateFingerprint(spectrogramData);
   };
 
   const runWasmFingerprint = async (
     spectrogramData: SpectrogramData
   ): Promise<Fingerprint | null> => {
-    try {
-      const fingerprint = await wasmFpWorkerApi.generateFingerprint(
-        spectrogramData,
-        {}
-      );
-
-      return fingerprint;
-    } catch (err) {}
-
-    return null;
+    return await wasmFpGenerator.generateFingerprint(spectrogramData);
   };
 
   const runBenchmark = async () => {
