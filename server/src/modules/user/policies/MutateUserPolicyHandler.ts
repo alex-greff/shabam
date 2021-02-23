@@ -27,10 +27,15 @@ export abstract class MutateUserPolicyHandler extends ConfigurablePolicyHandler<
 
   protected abstract handleUserAccount(
     ability: AppAbility,
+    currentUser: UserAccountEntity,
     targetUser: UserAccountEntity,
   ): boolean | Promise<boolean>;
 
-  async handle(ability: AppAbility, context: ExecutionContext) {
+  async handle(
+    ability: AppAbility,
+    currentUser: UserAccountEntity,
+    context: ExecutionContext,
+  ) {
     const config = this.getConfig(context);
 
     const ctx = GqlExecutionContext.create(context);
@@ -44,6 +49,6 @@ export abstract class MutateUserPolicyHandler extends ConfigurablePolicyHandler<
     const targetUser = await this.userService.findUser(targetUsername);
     if (!targetUser) return false;
 
-    return this.handleUserAccount(ability, targetUser);
+    return this.handleUserAccount(ability, currentUser, targetUser);
   }
 }

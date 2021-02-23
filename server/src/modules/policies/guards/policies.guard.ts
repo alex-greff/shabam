@@ -17,6 +17,7 @@ import * as Utilities from '@/utilities';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRequestData } from '@/types';
 import { UserService } from '@/modules/user/user.service';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -49,7 +50,7 @@ export class PoliciesGuard implements CanActivate {
 
     // Execute each policy handler and make sure all pass
     for (const handler of policyHandlers) {
-      const result = await this.execPolicyHandler(context, handler, ability);
+      const result = await this.execPolicyHandler(context, handler, ability, user);
       if (!result) return false;
     }
 
@@ -60,22 +61,23 @@ export class PoliciesGuard implements CanActivate {
     context: ExecutionContext,
     policyHandler: PolicyHandler,
     ability: AppAbility,
+    user: UserAccountEntity
   ) {
     // Passed in a class that implements IPolicyHandler
     if (Utilities.isClass(policyHandler)) {
       const handler = policyHandler as Type<IPolicyHandler>;
       const handlerInstance = await this.moduleRef.create(handler);
-      return handlerInstance.handle(ability, context);
+      return handlerInstance.handle(ability, user, context);
     }
 
     // Passed in a PolicyHandlerCallback
     if (Utilities.isFunction(policyHandler)) {
       const handler = policyHandler as PolicyHandlerCallback;
-      return handler(ability, context);
+      return handler(ability, user, context);
     }
 
     // Passed in an instance of IPolicyHandler
     const handler = policyHandler as IPolicyHandler;
-    return handler.handle(ability, context);
+    return handler.handle(ability, user, context);
   }
 }

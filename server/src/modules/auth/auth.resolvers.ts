@@ -21,12 +21,15 @@ export class AuthResolvers {
   @Mutation((returns) => AccessCredentials, {
     description: 'Login a user, creating a session.',
   })
+  @GqlLocalAuthGuard.configure({ 
+    usernamePath: "userData.username",
+    passwordPath: "userData.password"
+  })
   @UseGuards(GqlLocalAuthGuard)
   async login(
-    @Args('username') username: string,
-    @Args('password') password: string,
+    @Args('userData') userData: UserDataInput,
   ): Promise<AccessCredentials> {
-    return this.authService.login(username);
+    return this.authService.login(userData.username);
   }
 
   @Mutation((returns) => Boolean, {

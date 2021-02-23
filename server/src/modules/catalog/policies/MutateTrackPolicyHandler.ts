@@ -6,6 +6,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import * as Utilities from '@/utilities';
 import { TrackEntity } from '@/entities/Track.entity';
 import { CatalogService } from '../catalog.service';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
 
 export interface MutateTrackPolicyHandlerConfig {
   targetTrackPath: string;
@@ -27,10 +28,11 @@ export abstract class MutateTrackPolicyHandler extends ConfigurablePolicyHandler
 
   protected abstract handleTrack(
     ability: AppAbility,
+    currentUser: UserAccountEntity,
     targetTrack: TrackEntity,
   ): boolean | Promise<boolean>;
 
-  async handle(ability: AppAbility, context: ExecutionContext) {
+  async handle(ability: AppAbility, user: UserAccountEntity,  context: ExecutionContext) {
     const config = this.getConfig(context);
 
     const ctx = GqlExecutionContext.create(context);
@@ -44,6 +46,6 @@ export abstract class MutateTrackPolicyHandler extends ConfigurablePolicyHandler
     const targetTrack = await this.catalogService.getTrack(targetTrackId);
     if (!targetTrack) return false;
 
-    return this.handleTrack(ability, targetTrack);
+    return this.handleTrack(ability, user, targetTrack);
   }
 }

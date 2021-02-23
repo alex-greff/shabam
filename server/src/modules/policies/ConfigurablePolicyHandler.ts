@@ -1,3 +1,4 @@
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AppAbility, IPolicyHandler } from './policy.types';
@@ -27,6 +28,7 @@ export abstract class ConfigurablePolicyHandler<C> implements IPolicyHandler {
 
   abstract handle(
     ability: AppAbility,
+    user: UserAccountEntity,
     context: ExecutionContext,
   ): boolean | Promise<boolean>;
 }

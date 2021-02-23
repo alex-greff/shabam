@@ -46,7 +46,7 @@ type Query {
 
 type Mutation {
   """Login a user, creating a session."""
-  login(password: String!, username: String!): AccessCredentials!
+  login(userData: UserDataInput!): AccessCredentials!
 
   """Logout the current user, destroying the session."""
   logout: Boolean!

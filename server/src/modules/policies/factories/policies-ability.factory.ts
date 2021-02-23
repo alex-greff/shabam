@@ -1,40 +1,52 @@
-import { Injectable } from "@nestjs/common";
-import { Ability, AbilityBuilder, AbilityClass } from "@casl/ability";
-import { TrackEntity } from "@/entities/Track.entity";
-import { UserAccountEntity } from "@/entities/UserAccount.entity";
-import { Action, UserRole, Subjects, AppAbility } from "../policy.types";
+import { Injectable } from '@nestjs/common';
+import { TrackEntity } from '@/entities/Track.entity';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
+import { Action, UserRole, Subjects, AppAbility } from '../policy.types';
+import { Ability } from 'abilitee';
 
 @Injectable()
 export class PoliciesAbilityFactory {
   createForUser(user: UserAccountEntity) {
-    const { can, cannot, build } = new AbilityBuilder<
-      Ability<[Action, Subjects]>
-    >(Ability as AbilityClass<AppAbility>);
+    const ability: AppAbility = new Ability<Subjects, Action>();
 
     // Default user:
 
-    // Can only update own account, but not own role
-    can(Action.Update, UserAccountEntity, { id: user.id });
-    cannot(Action.Update, UserAccountEntity, [ "role" ]);
+    // Can can update and delete own account
+    ability.allow(
+      UserAccountEntity,
+      [Action.Update, Action.Delete],
+      UserAccountEntity,
+      { id: user.id },
+    );
+    // Cannot update role
+    ability.allow(
+      UserAccountEntity,
+      Action.Update,
+      UserAccountEntity,
+      (performer, target) => performer.role === target.role,
+    );
 
-    // Can only delete its own account
-    can(Action.Delete, UserAccountEntity, { id: user.id });
-
+    // Distributer specific abilities:
     if (user.role >= UserRole.Distributor) {
-      // Can create, update and delete own tracks
-      can(Action.Create, TrackEntity);
-      can(Action.Update, TrackEntity, { uploaderUser: { id: user.id } });
-      can(Action.Delete, TrackEntity, { uploaderUser: { id: user.id } });
+      // Can create tracks
+      ability.allow(UserAccountEntity, Action.Create, TrackEntity);
+
+      // Can update and delete own tracks
+      ability.allow(
+        UserAccountEntity,
+        [Action.Update, Action.Delete],
+        TrackEntity,
+        (user, track) => track.uploaderUser.id === user.id,
+      );
     }
 
-    if (user.role >= UserRole.Admin) {
-      // Has read-write access to everything
-      can(Action.Manage, "all"); 
-    } 
 
-    return build({
-      // https://github.com/stalniy/casl/issues/430
-      detectSubjectType: type => type!.constructor as any
-    });
+    // Admin specific abilities:
+    if (user.role >= UserRole.Admin) {
+      // Has read-=write access to everything
+      ability.allow(UserAccountEntity, "$manage", "$all");
+    }
+
+    return ability;
   }
 }
