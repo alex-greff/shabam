@@ -11,7 +11,7 @@ import { UserAccountEntity } from '@/entities/UserAccount.entity';
 const CONFIG_KEY = 'USER_UPDATE_POLICY_CONFIG_KEY';
 
 @Injectable()
-export class UserUpdatePolicy extends MutateUserPolicyHandler {
+export class UserRemovePolicy extends MutateUserPolicyHandler {
   constructor(readonly reflector: Reflector, userService: UserService) {
     super(reflector, userService, CONFIG_KEY);
   }
@@ -25,6 +25,6 @@ export class UserUpdatePolicy extends MutateUserPolicyHandler {
     currentUser: UserAccountEntity,
     targetUser: UserAccountEntity,
   ) {
-    return ability.can(currentUser, Action.Update, targetUser);
+    return ability.can(currentUser, Action.Delete, targetUser);
   }
 }

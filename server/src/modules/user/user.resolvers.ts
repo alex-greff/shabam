@@ -12,9 +12,10 @@ import {} from './dto/user.args';
 import {} from './models/user.models';
 import { GqlJwtAuthGuard } from '@/modules/auth/guards/gql-jwt-auth.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
-import { UserUpdatePolicy } from './policies/user-update-policy';
+import { UserEditPolicy } from './policies/user-edit-policy';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { UserRole } from '../policies/policy.types';
+import { UserRemovePolicy } from './policies/user-remove-policy';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -44,8 +45,8 @@ export class UserResolvers {
   @Mutation((returns) => Boolean, {
     description: "Edits a user's account details.",
   })
-  @UserUpdatePolicy.configure({ targetUsernamePath: 'username' })
-  @CheckPolicies(UserUpdatePolicy)
+  @UserEditPolicy.configure({ targetUsernamePath: 'username' })
+  @CheckPolicies(UserEditPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUser(
     @Args('username') username: string,
@@ -55,7 +56,7 @@ export class UserResolvers {
   }
 
   @Mutation((returns) => Boolean, { description: "Edits a user's role." })
-  @CheckPolicies(UserUpdatePolicy)
+  @CheckPolicies(UserEditPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUserRole(
     @Args('username') username: string,
@@ -66,7 +67,7 @@ export class UserResolvers {
   }
 
   @Mutation((returns) => Boolean, { description: 'Deletes a user account.' })
-  @CheckPolicies(UserUpdatePolicy)
+  @CheckPolicies(UserRemovePolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async removeUser(@Args('username') username: string): Promise<boolean> {
     return this.userService.removeUser(username);
