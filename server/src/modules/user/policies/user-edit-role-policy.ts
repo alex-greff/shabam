@@ -8,10 +8,10 @@ import {
 } from './MutateUserPolicyHandler';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
 
-const CONFIG_KEY = 'USER_EDIT_POLICY_CONFIG_KEY';
+const CONFIG_KEY = 'USER_EDIT_ROLE_POLICY_CONFIG_KEY';
 
 @Injectable()
-export class UserEditPolicy extends MutateUserPolicyHandler {
+export class UserEditRolePolicy extends MutateUserPolicyHandler {
   constructor(readonly reflector: Reflector, userService: UserService) {
     super(reflector, userService, CONFIG_KEY);
   }
@@ -25,6 +25,6 @@ export class UserEditPolicy extends MutateUserPolicyHandler {
     currentUser: UserAccountEntity,
     targetUser: UserAccountEntity,
   ) {
-    return ability.can(currentUser, Action.Update, targetUser);
+    return ability.can(currentUser, Action.Update, targetUser, "role");
   }
 }

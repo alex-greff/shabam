@@ -21,8 +21,9 @@ export type Subjects =
   | UserAccountEntity
 ;
 
-// export type AppAbility = Ability<[Action, Subjects]>;
-export type AppAbility = Ability<Subjects, Action>;
+export type Scopes = "role";
+
+export type AppAbility = Ability<Subjects, Action, Scopes>;
 
 export interface IPolicyHandler {
   handle(

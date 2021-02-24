@@ -16,6 +16,7 @@ import { UserEditPolicy } from './policies/user-edit-policy';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { UserRole } from '../policies/policy.types';
 import { UserRemovePolicy } from './policies/user-remove-policy';
+import { UserEditRolePolicy } from './policies/user-edit-role-policy';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -56,7 +57,7 @@ export class UserResolvers {
   }
 
   @Mutation((returns) => Boolean, { description: "Edits a user's role." })
-  @CheckPolicies(UserEditPolicy)
+  @CheckPolicies(UserEditRolePolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editUserRole(
     @Args('username') username: string,

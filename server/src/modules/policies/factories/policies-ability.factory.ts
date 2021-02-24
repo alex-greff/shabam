@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { TrackEntity } from '@/entities/Track.entity';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
-import { Action, UserRole, Subjects, AppAbility } from '../policy.types';
+import { Action, UserRole, Subjects, AppAbility, Scopes } from '../policy.types';
 import { Ability } from 'abilitee';
 
 @Injectable()
 export class PoliciesAbilityFactory {
   createForUser(user: UserAccountEntity) {
-    const ability: AppAbility = new Ability<Subjects, Action>();
+    const ability: AppAbility = new Ability<Subjects, Action, Scopes>();
 
     // Default user:
 
@@ -18,12 +18,13 @@ export class PoliciesAbilityFactory {
       UserAccountEntity,
       { id: user.id },
     );
-    // Cannot update role
-    ability.allow(
+
+    // Cannot update own role
+    ability.disallow(
       UserAccountEntity,
       Action.Update,
       UserAccountEntity,
-      (performer, target) => performer.role === target.role,
+      "role"
     );
 
     // Distributer specific abilities:
