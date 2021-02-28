@@ -4,7 +4,6 @@ import "./AccountControls.scss";
 import classnames from "classnames";
 import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
-import * as API from "@/api";
 import { CSSTransition } from "react-transition-group";
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
@@ -13,6 +12,7 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
 import AccountIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
+import { useSignoutMutation } from "@/graphql.g.d";
 
 interface Props extends BaseProps {
   onNavItemClick?: (
@@ -27,6 +27,8 @@ const AccountControls: FunctionComponent<Props> = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
+
+  const [runSignout] = useSignoutMutation();
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
@@ -54,7 +56,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
   };
 
   const handleLogoutClick = async () => {
-    await API.signout();
+    await runSignout();
   };
 
   const loggedIn = accountStore.loggedIn;

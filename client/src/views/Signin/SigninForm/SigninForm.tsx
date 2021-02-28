@@ -7,13 +7,14 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { BackNavigation } from "@/utilities";
 import { useTransitionHistory } from "react-route-transition";
 
-import * as API from "@/api";
+import { accountStore } from "@/store/account/account.store";
 
 import FormButton from "@/components/ui/forms/button/FormButton/FormButton";
 import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 
 import PersonIcon from "@material-ui/icons/Person";
 import LockIcon from "@material-ui/icons/Lock";
+import { useSigninMutation } from "@/graphql.g.d";
 
 export interface Props extends BaseProps {}
 
@@ -26,21 +27,35 @@ const SigninForm: FunctionComponent<Props> = (props) => {
   const history = useTransitionHistory();
   const [submitting, setSubmitting] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
-  const { register, setValue, handleSubmit, errors, setError, reset } = useForm<
-    FormData
-  >({ mode: "onChange" });
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    errors,
+    setError,
+    reset,
+  } = useForm<FormData>({ mode: "onChange" });
+  const [runSigninMutation] = useSigninMutation();
 
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
 
-    try {
-      const signedIn = await API.signin(data.username, data.password);
-      if (!signedIn) throw new Error("Not signed in");
-    } catch (err) {
+    const { username, password } = data;
+
+    const signedIn = await runSigninMutation({
+      variables: { username, password },
+    });
+
+    if (signedIn.errors) {
       setGlobalError("Invalid username or password");
       setSubmitting(false);
       return;
     }
+
+    const token = signedIn.data!.login.access_token;
+
+    // Update the mobx store
+    accountStore.setLoggedIn(username, token);
 
     setSubmitting(false);
 

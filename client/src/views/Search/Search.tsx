@@ -62,6 +62,8 @@ const Search: FunctionComponent<Props> = (props) => {
       frequencyBinCount: fingerprint.frequencyBinCount,
       fingerprintData: fingerprintDataBlob
     }}});
+
+    console.log("Search result", searchResult.data?.search);
   };
 
   return (

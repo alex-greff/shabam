@@ -13,7 +13,7 @@ export type Scalars = {
   Float: number;
   /** Date scalar type */
   Date: any;
-  /** File upload scalar type */
+  /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
@@ -104,8 +104,7 @@ export type Mutation = {
 
 
 export type MutationLoginArgs = {
-  password: Scalars['String'];
-  username: Scalars['String'];
+  userData: UserDataInput;
 };
 
 
@@ -213,6 +212,16 @@ export type Subscription = {
   trackRemoved: Scalars['String'];
 };
 
+export type CheckUsernameAvailabilityQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type CheckUsernameAvailabilityQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'checkUsernameAvailability'>
+);
+
 export type SearchMutationVariables = Exact<{
   fingerprint: FingerprintInput;
 }>;
@@ -263,6 +272,37 @@ export type SignupMutation = (
 );
 
 
+export const CheckUsernameAvailabilityDocument = gql`
+    query CheckUsernameAvailability($username: String!) {
+  checkUsernameAvailability(username: $username)
+}
+    `;
+
+/**
+ * __useCheckUsernameAvailabilityQuery__
+ *
+ * To run a query within a React component, call `useCheckUsernameAvailabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckUsernameAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckUsernameAvailabilityQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useCheckUsernameAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>) {
+        return Apollo.useQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, baseOptions);
+      }
+export function useCheckUsernameAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>) {
+          return Apollo.useLazyQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, baseOptions);
+        }
+export type CheckUsernameAvailabilityQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityQuery>;
+export type CheckUsernameAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityLazyQuery>;
+export type CheckUsernameAvailabilityQueryResult = Apollo.QueryResult<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>;
 export const SearchDocument = gql`
     mutation search($fingerprint: FingerprintInput!) {
   search(fingerprint: $fingerprint) {
@@ -297,7 +337,7 @@ export type SearchMutationResult = Apollo.MutationResult<SearchMutation>;
 export type SearchMutationOptions = Apollo.BaseMutationOptions<SearchMutation, SearchMutationVariables>;
 export const SigninDocument = gql`
     mutation signin($username: String!, $password: String!) {
-  login(username: $username, password: $password) {
+  login(userData: {username: $username, password: $password}) {
     access_token
   }
 }
