@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   async logout(): Promise<boolean> {
-    // TODO: this is unused right now since JWT is used
-    throw new NotImplementedException();
+    // Note: this is unused right now since JWT is used, so we just return true
+    return true;
   }
 }
