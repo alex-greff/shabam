@@ -5,7 +5,6 @@ import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
 import AudioRecorderFactory, { AudioRecorder } from "@/audio/recorder";
 import * as AudioUtilities from "@/audio/utilities";
-import * as Comlink from "comlink";
 import { SpectrogramData, Fingerprint } from "@/audio/types";
 
 import PageView from "@/components/page/PageView/PageView";

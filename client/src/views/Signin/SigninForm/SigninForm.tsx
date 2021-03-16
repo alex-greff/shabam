@@ -14,7 +14,7 @@ import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 
 import PersonIcon from "@material-ui/icons/Person";
 import LockIcon from "@material-ui/icons/Lock";
-import { useSigninMutation } from "@/graphql.g.d";
+import { useSigninMutation } from "@/graphql-apollo.g.d";
 
 export interface Props extends BaseProps {}
 
@@ -35,7 +35,9 @@ const SigninForm: FunctionComponent<Props> = (props) => {
     setError,
     reset,
   } = useForm<FormData>({ mode: "onChange" });
-  const [runSigninMutation] = useSigninMutation();
+  
+  // errorPolicy = "all" gives the errors on the result object
+  const [runSigninMutation] = useSigninMutation({ errorPolicy: "all" });
 
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);

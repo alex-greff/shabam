@@ -4,6 +4,10 @@ import "./Account.scss";
 import classnames from "classnames";
 
 import PageView from "@/components/page/PageView/PageView";
+import PageContent from "@/components/page/PageContent/PageContent";
+import HeaderedContainer from "@/components/containers/HeaderedContainer/HeaderedContainer";
+
+import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
@@ -14,7 +18,32 @@ const Account: FunctionComponent<Props> = (props) => {
       className={classnames(props.className)}
       style={props.style}
     >
-      Account View
+      <PageContent className="Account__content">
+        <HeaderedContainer 
+          className="Account__container"
+          renderHeader={() => (
+            <>
+              Account View
+            </>
+          )}
+        >
+          <div className="Account__navigation">
+            <NormalButton
+              className="Account__btn-search-history"
+              appearance="solid"
+            >
+              Search History
+            </NormalButton>
+
+            <NormalButton
+              className="Account__btn-account-catalog"
+              appearance="solid"
+            >
+              Account Catalog
+            </NormalButton>
+          </div>
+        </HeaderedContainer>
+      </PageContent>
     </PageView>
   );
 };

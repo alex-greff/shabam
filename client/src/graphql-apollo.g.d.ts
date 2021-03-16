@@ -4,6 +4,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -295,10 +296,12 @@ export const CheckUsernameAvailabilityDocument = gql`
  * });
  */
 export function useCheckUsernameAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>) {
-        return Apollo.useQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, options);
       }
 export function useCheckUsernameAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>) {
-          return Apollo.useLazyQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>(CheckUsernameAvailabilityDocument, options);
         }
 export type CheckUsernameAvailabilityQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityQuery>;
 export type CheckUsernameAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityLazyQuery>;
@@ -330,7 +333,8 @@ export type SearchMutationFn = Apollo.MutationFunction<SearchMutation, SearchMut
  * });
  */
 export function useSearchMutation(baseOptions?: Apollo.MutationHookOptions<SearchMutation, SearchMutationVariables>) {
-        return Apollo.useMutation<SearchMutation, SearchMutationVariables>(SearchDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SearchMutation, SearchMutationVariables>(SearchDocument, options);
       }
 export type SearchMutationHookResult = ReturnType<typeof useSearchMutation>;
 export type SearchMutationResult = Apollo.MutationResult<SearchMutation>;
@@ -363,7 +367,8 @@ export type SigninMutationFn = Apollo.MutationFunction<SigninMutation, SigninMut
  * });
  */
 export function useSigninMutation(baseOptions?: Apollo.MutationHookOptions<SigninMutation, SigninMutationVariables>) {
-        return Apollo.useMutation<SigninMutation, SigninMutationVariables>(SigninDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SigninMutation, SigninMutationVariables>(SigninDocument, options);
       }
 export type SigninMutationHookResult = ReturnType<typeof useSigninMutation>;
 export type SigninMutationResult = Apollo.MutationResult<SigninMutation>;
@@ -392,7 +397,8 @@ export type SignoutMutationFn = Apollo.MutationFunction<SignoutMutation, Signout
  * });
  */
 export function useSignoutMutation(baseOptions?: Apollo.MutationHookOptions<SignoutMutation, SignoutMutationVariables>) {
-        return Apollo.useMutation<SignoutMutation, SignoutMutationVariables>(SignoutDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignoutMutation, SignoutMutationVariables>(SignoutDocument, options);
       }
 export type SignoutMutationHookResult = ReturnType<typeof useSignoutMutation>;
 export type SignoutMutationResult = Apollo.MutationResult<SignoutMutation>;
@@ -425,7 +431,8 @@ export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMut
  * });
  */
 export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<SignupMutation, SignupMutationVariables>) {
-        return Apollo.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument, options);
       }
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;

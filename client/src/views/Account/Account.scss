@@ -1,2 +1,14 @@
 #Account {
+  & .Account__content {
+    & .Account__container {
+      & .Account__navigation {
+        display: flex;
+        flex-direction: row;
+
+        & > *:not(:last-child) {
+          margin-right: 0.7rem;
+        }
+      }
+    }
+  }
 }

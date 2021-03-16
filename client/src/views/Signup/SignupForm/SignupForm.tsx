@@ -3,7 +3,6 @@ import { BaseProps } from "@/types";
 import "./SignupForm.scss";
 import classnames from "classnames";
 import { useForm } from "react-hook-form";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 import { BackNavigation } from "@/utilities";
 import { useTransitionHistory } from "react-route-transition";
 import { accountStore } from "@/store/account/account.store";
@@ -14,11 +13,9 @@ import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 import PersonIcon from "@material-ui/icons/Person";
 import LockIcon from "@material-ui/icons/Lock";
 import {
-  useSignupMutation,
-  useCheckUsernameAvailabilityLazyQuery,
-  useCheckUsernameAvailabilityQuery,
-} from "@/graphql.g.d";
-import { useLazyQueryWithReturn } from "@/hooks/useLazyQueryWithReturn";
+  useSignupMutation
+} from "@/graphql-apollo.g.d";
+import { useGraphqlRequestSdk } from "@/hooks/useGraphqlRequestSdk";
 
 export interface Props extends BaseProps {}
 
@@ -39,16 +36,14 @@ const SignupForm: FunctionComponent<Props> = (props) => {
     errors,
     setError,
     reset,
-    watch,
-  } = useForm<FormData>({
-    mode: "onChange",
-  });
+    watch
+  } = useForm<FormData>({ mode: "onChange" });
   const currPassword = watch("password", "");
-  const [runSignupMutation] = useSignupMutation();
 
-  const [runCheckUsername] = useLazyQueryWithReturn(
-    useCheckUsernameAvailabilityLazyQuery
-  );
+  const graphqlSdk = useGraphqlRequestSdk();
+
+  // errorPolicy = "all" gives the errors on the result object
+  const [runSignupMutation] = useSignupMutation({ errorPolicy: "all" });
 
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
@@ -82,8 +77,8 @@ const SignupForm: FunctionComponent<Props> = (props) => {
   });
 
   const validateUsername = async (username: string) => {
-    const { data } = await runCheckUsername({ variables: { username } });
-    const isAvailable = data?.checkUsernameAvailability;
+    const data = await graphqlSdk.CheckUsernameAvailability({ username });
+    const isAvailable = data.checkUsernameAvailability;
 
     return isAvailable || "Username not available";
   };
@@ -109,7 +104,7 @@ const SignupForm: FunctionComponent<Props> = (props) => {
         className="SignupForm__username-input"
         ref={register({
           required: "Username is required",
-          validate: validateUsername,
+          validate: validateUsername
         })}
         error={errors.username}
         name="username"
@@ -138,7 +133,7 @@ const SignupForm: FunctionComponent<Props> = (props) => {
       <FormInput
         className="SignupForm__password-input"
         ref={register({
-          validate: validateConfirmPassword,
+          validate: validateConfirmPassword
         })}
         error={errors.confirmPassword}
         type="password"

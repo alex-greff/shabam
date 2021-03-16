@@ -1,0 +1,13 @@
+.HeaderedContainer {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  & .HeaderedContainer__header {
+    &.include-title-styles {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+  }
+}

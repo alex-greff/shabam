@@ -6,7 +6,7 @@ import * as NotificationManager from "@/managers/NotificationManager";
 import * as AudioUtilities from "@/audio/utilities";
 
 import PageView from "@/components/page/PageView/PageView";
-import { useSearchMutation } from "@/graphql.g.d";
+import { useSearchMutation } from "@/graphql-apollo.g.d";
 import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator";
 
 const fingerprintGenerator = new WasmFingerprintGenerator();

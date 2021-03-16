@@ -12,7 +12,7 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
 import AccountIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import { useSignoutMutation } from "@/graphql.g.d";
+import { useSignoutMutation } from "@/graphql-apollo.g.d";
 
 interface Props extends BaseProps {
   onNavItemClick?: (
@@ -57,6 +57,7 @@ const AccountControls: FunctionComponent<Props> = (props) => {
 
   const handleLogoutClick = async () => {
     await runSignout();
+    accountStore.setLoggedOut();
   };
 
   const loggedIn = accountStore.loggedIn;

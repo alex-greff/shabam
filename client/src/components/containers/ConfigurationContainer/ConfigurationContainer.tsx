@@ -5,9 +5,10 @@ import classnames from "classnames";
 import { CSSTransition } from "react-transition-group";
 
 import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
+import HeaderedContainer from "@/components/containers/HeaderedContainer/HeaderedContainer";
 
 export interface Props extends BaseProps {
-  renderTitle?: () => React.ReactNode;
+  renderTitle?: () => JSX.Element;
   collapsible?: boolean;
   titleClassName?: string;
   iconClassName?: string;
@@ -34,37 +35,41 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
   }, [collapsible]);
 
   return (
-    <div
+    <HeaderedContainer
       className={classnames("ConfigurationContainer", props.className)}
       style={props.style}
       id={props.id}
+
+      headerClassName="ConfigurationContainer__header"
+      renderHeader={() => (
+        <>
+          <div
+            className={classnames(
+              "ConfigurationContainer__title",
+              props.titleClassName
+            )}
+          >
+            {renderTitle ? renderTitle() : null}
+          </div>
+          <div
+            className={classnames(
+              "ConfigurationContainer__collapse-icon-container",
+              props.iconClassName
+            )}
+          >
+            {!collapsible ? null : (
+              <ExpandIcon
+                className="ConfigurationContainer__collapse-icon"
+                clickable={true}
+                size="2.5rem"
+                expanded={!open}
+                onClick={handleExpandClick}
+              />
+            )}
+          </div>
+        </>
+      )}
     >
-      <div className="ConfigurationContainer__header">
-        <div
-          className={classnames(
-            "ConfigurationContainer__title",
-            props.titleClassName
-          )}
-        >
-          {renderTitle ? renderTitle() : null}
-        </div>
-        <div
-          className={classnames(
-            "ConfigurationContainer__collapse-icon-container",
-            props.iconClassName
-          )}
-        >
-          {!collapsible ? null : (
-            <ExpandIcon
-              className="ConfigurationContainer__collapse-icon"
-              clickable={true}
-              size="2.5rem"
-              expanded={!open}
-              onClick={handleExpandClick}
-            />
-          )}
-        </div>
-      </div>
       <CSSTransition
         in={open}
         classNames="config-transition"
@@ -81,7 +86,55 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
           {props.children}
         </div>
       </CSSTransition>
-    </div>
+    </HeaderedContainer>
+    // <div
+    //   className={classnames("ConfigurationContainer", props.className)}
+    //   style={props.style}
+    //   id={props.id}
+    // >
+    //   <div className="ConfigurationContainer__header">
+    //     <div
+    //       className={classnames(
+    //         "ConfigurationContainer__title",
+    //         props.titleClassName
+    //       )}
+    //     >
+    //       {renderTitle ? renderTitle() : null}
+    //     </div>
+    //     <div
+    //       className={classnames(
+    //         "ConfigurationContainer__collapse-icon-container",
+    //         props.iconClassName
+    //       )}
+    //     >
+    //       {!collapsible ? null : (
+    //         <ExpandIcon
+    //           className="ConfigurationContainer__collapse-icon"
+    //           clickable={true}
+    //           size="2.5rem"
+    //           expanded={!open}
+    //           onClick={handleExpandClick}
+    //         />
+    //       )}
+    //     </div>
+    //   </div>
+    //   <CSSTransition
+    //     in={open}
+    //     classNames="config-transition"
+    //     timeout={0.3 * 1000}
+    //     mountOnEnter={true}
+    //     unmountOnExit={true}
+    //   >
+    //     <div
+    //       className={classnames(
+    //         "ConfigurationContainer__content",
+    //         props.contentClassName
+    //       )}
+    //     >
+    //       {props.children}
+    //     </div>
+    //   </CSSTransition>
+    // </div>
   );
 };
 
