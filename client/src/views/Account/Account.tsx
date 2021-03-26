@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types";
 import "./Account.scss";
 import classnames from "classnames";
+import { useAccountLocation } from "@/hooks/useAccountLocation";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -12,6 +13,8 @@ import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const Account: FunctionComponent<Props> = (props) => {
+  const accountId = useAccountLocation();
+
   return (
     <PageView
       id="Account"
@@ -31,6 +34,7 @@ const Account: FunctionComponent<Props> = (props) => {
             <NormalButton
               className="Account__btn-search-history"
               appearance="solid"
+              path={`/account/${accountId}/search-history`}
             >
               Search History
             </NormalButton>
@@ -38,6 +42,7 @@ const Account: FunctionComponent<Props> = (props) => {
             <NormalButton
               className="Account__btn-account-catalog"
               appearance="solid"
+              path={`/account/${accountId}/catalog`}
             >
               Account Catalog
             </NormalButton>
