@@ -6,6 +6,7 @@ import { CSSTransition } from "react-transition-group";
 
 import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
 import HeaderedContainer from "@/components/containers/HeaderedContainer/HeaderedContainer";
+import BackgroundContainer from "@/components/containers/BackgroundContainer/BackgroundContainer";
 
 export interface Props extends BaseProps {
   renderTitle?: () => JSX.Element;
@@ -77,64 +78,16 @@ const ConfigurationContainer: FunctionComponent<Props> = (props) => {
         mountOnEnter={true}
         unmountOnExit={true}
       >
-        <div
+        <BackgroundContainer 
           className={classnames(
             "ConfigurationContainer__content",
             props.contentClassName
           )}
         >
           {props.children}
-        </div>
+        </BackgroundContainer>
       </CSSTransition>
     </HeaderedContainer>
-    // <div
-    //   className={classnames("ConfigurationContainer", props.className)}
-    //   style={props.style}
-    //   id={props.id}
-    // >
-    //   <div className="ConfigurationContainer__header">
-    //     <div
-    //       className={classnames(
-    //         "ConfigurationContainer__title",
-    //         props.titleClassName
-    //       )}
-    //     >
-    //       {renderTitle ? renderTitle() : null}
-    //     </div>
-    //     <div
-    //       className={classnames(
-    //         "ConfigurationContainer__collapse-icon-container",
-    //         props.iconClassName
-    //       )}
-    //     >
-    //       {!collapsible ? null : (
-    //         <ExpandIcon
-    //           className="ConfigurationContainer__collapse-icon"
-    //           clickable={true}
-    //           size="2.5rem"
-    //           expanded={!open}
-    //           onClick={handleExpandClick}
-    //         />
-    //       )}
-    //     </div>
-    //   </div>
-    //   <CSSTransition
-    //     in={open}
-    //     classNames="config-transition"
-    //     timeout={0.3 * 1000}
-    //     mountOnEnter={true}
-    //     unmountOnExit={true}
-    //   >
-    //     <div
-    //       className={classnames(
-    //         "ConfigurationContainer__content",
-    //         props.contentClassName
-    //       )}
-    //     >
-    //       {props.children}
-    //     </div>
-    //   </CSSTransition>
-    // </div>
   );
 };
 

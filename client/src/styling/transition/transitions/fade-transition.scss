@@ -1,4 +1,4 @@
-@mixin register-fade-transition($prefix, $duration: 1000ms) {
+@mixin register-fade-transition($prefix, $duration: 1000ms, $direction: "both") {
   @keyframes #{$prefix}FadeIn {
     from {
       opacity: 0;

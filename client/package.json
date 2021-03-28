@@ -59,6 +59,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^5.6.1",
+    "react-modal-hook": "^3.0.0",
     "react-route-transition": "github:alex-greff/react-route-transition#cd170b1383749a40b5c091de8b494cc0e369ba64",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",

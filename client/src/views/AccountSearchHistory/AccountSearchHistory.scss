@@ -1,2 +1,14 @@
 #AccountSearchHistory {
+  & .AccountSearchHistory__content {
+    & .AccountSearchHistory__container {
+      & .AccountSearchHistory__navigation {
+        display: flex;
+        flex-direction: row;
+
+        & > *:not(:last-child) {
+          margin-right: 0.7rem;
+        }
+      }
+    }
+  }
 }

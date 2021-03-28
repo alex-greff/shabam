@@ -18,7 +18,11 @@ const HeaderedContainer: FunctionComponent<Props> = (props) => {
       style={props.style}
       id={props.id}
     >
-      <div className={classnames("HeaderedContainer__header", headerClassName, { "include-title-styles": includeTitleStyles })}>
+      <div
+        className={classnames("HeaderedContainer__header", headerClassName, {
+          "include-title-styles": includeTitleStyles,
+        })}
+      >
         {/* Render header */}
         {renderHeader ? renderHeader() : null}
       </div>
@@ -29,7 +33,7 @@ const HeaderedContainer: FunctionComponent<Props> = (props) => {
 };
 
 HeaderedContainer.defaultProps = {
-  includeTitleStyles: true
+  includeTitleStyles: true,
 } as Partial<Props>;
 
 export default HeaderedContainer;

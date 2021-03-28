@@ -1,4 +1,4 @@
-@mixin register-top-slide-transition($prefix, $duration: 1000ms) {
+@mixin register-top-slide-transition($prefix, $duration: 1000ms, $direction: "both") {
   @keyframes #{$prefix}TopSlideIn {
     from {
       opacity: 0;

@@ -140,6 +140,14 @@ export default {
         primary: BLUE_8,
       },
     },
+    DiagonalDividerLine: {
+      text: {
+        secondary: DARK_8,
+      },
+      background: {
+        primary: BLUE_8,
+      },
+    },
     NormalButton: {
       accent: {
         primary: BLUE_9,

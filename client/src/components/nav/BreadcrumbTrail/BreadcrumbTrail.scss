@@ -1,0 +1,13 @@
+.BreadcrumbTrail {
+  display: flex;
+  flex-direction: row;
+
+  & .BreadcrumbTrail__item {
+    font-size: 2.5rem;
+    font-weight: normal;
+
+    &.active {
+      font-weight: bold;
+    }
+  }
+}

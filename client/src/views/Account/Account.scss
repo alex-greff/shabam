@@ -9,6 +9,20 @@
           margin-right: 0.7rem;
         }
       }
+
+      & > *:not(:last-child):not(:nth-child(1)) {
+        margin-bottom: 1rem;
+      }
+
+      & .Account__info-container {
+        
+      }
+
+      & .Account__suffix-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+      }
     }
   }
 }

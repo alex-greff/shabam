@@ -83,6 +83,7 @@ export const schema: Schema = {
   NumberInput: { $inherits: "GLOBAL" },
   SearchScene: { $inherits: "GLOBAL" },
   DividerLine: { $inherits: "GLOBAL" },
+  DiagonalDividerLine: { $inherits: "GLOBAL" },
   CircularButton: { $inherits: "GLOBAL" },
   RecordButton: { $inherits: "GLOBAL" },
   StopButton: { $inherits: "GLOBAL" },

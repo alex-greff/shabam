@@ -5,6 +5,7 @@ import classnames from "classnames";
 import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
 import { CSSTransition } from "react-transition-group";
+import { useSignoutMutation } from "@/graphql-apollo.g.d";
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
@@ -12,7 +13,6 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon/ExpandIcon";
 import AccountIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import { useSignoutMutation } from "@/graphql-apollo.g.d";
 
 interface Props extends BaseProps {
   onNavItemClick?: (

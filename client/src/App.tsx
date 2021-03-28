@@ -9,6 +9,8 @@ import "mobx-react/batchingForReactDom";
 import "@/styling/override-styles/ReactToastify.scss";
 import "@/styling/override-styles/Notification.scss";
 import { ToastContainer } from "react-toastify";
+import { ModalProvider } from "react-modal-hook";
+import { TransitionGroup } from "react-transition-group";
 
 import { RouteTransitionProvider, useTransition } from "react-route-transition";
 import { options as routeTransitionOptions } from "@/transitions/route-transitions";
@@ -133,14 +135,16 @@ const App: FunctionComponent = () => {
               }}
             >
               <ApolloProvider client={apolloClient}>
-                <NavBar
-                  scrollAmount={state.scrollAmount}
-                  onSize={(size) => handleNavbarResize(size)}
-                  width={state.navbarWidth}
-                />
-                <NavBarHeightContext.Provider value={state.navbarHeight}>
-                  <RouteView className="App__route-view" />
-                </NavBarHeightContext.Provider>
+                <ModalProvider rootComponent={TransitionGroup}>
+                  <NavBar
+                    scrollAmount={state.scrollAmount}
+                    onSize={(size) => handleNavbarResize(size)}
+                    width={state.navbarWidth}
+                  />
+                  <NavBarHeightContext.Provider value={state.navbarHeight}>
+                    <RouteView className="App__route-view" />
+                  </NavBarHeightContext.Provider>
+                </ModalProvider>
               </ApolloProvider>
             </OverlayScrollbarsComponent>
           </div>
