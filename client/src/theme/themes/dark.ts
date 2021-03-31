@@ -174,6 +174,16 @@ export default {
         secondary: Color(BLUE_12).darken(0.1).round().toString(),
         disabled: Color(BLUE_12).desaturate(0.5).round().toString(),
       },
+      blue: {
+        primary: BLUE_2,
+        secondary: Color(BLUE_2).darken(0.1).round().toString(),
+        disabled: Color(BLUE_2).desaturate(0.5).round().toString(),
+      },
+      grey: {
+        primary: DARK_7,
+        secondary: Color(DARK_7).darken(0.1).round().toString(),
+        disabled: Color(DARK_7).desaturate(0.5).lighten(0.2).round().toString(),
+      },
     },
     IconButton: {
       accent: {

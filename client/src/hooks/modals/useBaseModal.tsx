@@ -3,14 +3,12 @@ import BaseModal, {
   Props as BaseModalProps,
 } from "@/components/modals/BaseModal/BaseModal";
 import { useModal } from "react-modal-hook";
+import { HideModal, ShowModal } from "./types";
 
 export type Options = Omit<
   BaseModalProps,
   "open" | "onExited" | "onRequestClose"
 >;
-
-export type ShowModal = () => void;
-export type HideModal = () => void;
 
 export function useBaseModal(
   component: () => JSX.Element,

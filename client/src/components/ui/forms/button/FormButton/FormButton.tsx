@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react";
-import { BaseProps } from "@/types";
 import "./FormButton.scss";
 import classnames from "classnames";
 

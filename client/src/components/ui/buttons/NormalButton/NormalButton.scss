@@ -1,4 +1,34 @@
+@mixin outlined-mode-modifier($mode) {
+  &.mode-#{$mode} {
+    box-shadow: 0 0 0 1px color-link("NormalButton", $mode, "primary");
+
+    &:hover {
+      box-shadow: 0 0 0 1px color-link("NormalButton", $mode, "secondary");
+    }
+
+    &.disabled {
+      box-shadow: 0 0 0 1px color-link("NormalButton", $mode, "disabled");
+    }
+  }
+}
+
+@mixin solid-mode-modifier($mode) {
+  &.mode-#{$mode} {
+    background-color: color-link("NormalButton", $mode, "primary");
+
+    &:hover {
+      background-color: color-link("NormalButton", $mode, "secondary");
+    }
+
+    &.disabled {
+      background-color: color-link("NormalButton", $mode, "disabled");
+    }
+  }
+}
+
 .NormalButton.NormalButton {
+  width: auto;
+
   $transition-time: 0.2s;
 
   font-weight: 400;
@@ -23,41 +53,11 @@
     box-shadow: 0 0 0 1px color-link("NormalButton", "accent", "primary");
 
     // --- Mode modifiers ---
-    &.mode-error {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "error", "primary");
-
-      &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "error", "secondary");
-      }
-
-      &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "error", "disabled");
-      }
-    }
-
-    &.mode-success {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "success", "primary");
-
-      &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "success", "secondary");
-      }
-
-      &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "success", "disabled");
-      }
-    }
-
-    &.mode-warning {
-      box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "primary");
-
-      &:hover {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "secondary");
-      }
-
-      &.disabled {
-        box-shadow: 0 0 0 1px color-link("NormalButton", "warning", "disabled");
-      }
-    }
+    @include outlined-mode-modifier("error");
+    @include outlined-mode-modifier("success");
+    @include outlined-mode-modifier("warning");
+    @include outlined-mode-modifier("blue");
+    @include outlined-mode-modifier("grey");
 
     padding: 0.1rem 0.7rem;
 
@@ -66,55 +66,16 @@
 
   &.appearance-solid {
     padding: 0.2rem 1.5rem;
-    background-color: color-link("NormalButton", "info", "primary");
 
     box-shadow: 0 2px 2px 0px rgba(0, 0, 0, 0.25);
 
     // --- Mode modifiers ---
-    &.mode-error {
-      background-color: color-link("NormalButton", "error", "primary");
-
-      &:hover {
-        background-color: color-link("NormalButton", "error", "secondary");
-      }
-
-      &.disabled {
-        background-color: color-link("NormalButton", "error", "disabled");
-      }
-    }
-
-    &.mode-success {
-      background-color: color-link("NormalButton", "success", "primary");
-
-      &:hover {
-        background-color: color-link("NormalButton", "success", "secondary");
-      }
-
-      &.disabled {
-        background-color: color-link("NormalButton", "success", "disabled");
-      }
-    }
-
-    &.mode-warning {
-      background-color: color-link("NormalButton", "warning", "primary");
-
-      &:hover {
-        background-color: color-link("NormalButton", "warning", "secondary");
-      }
-
-      &.disabled {
-        background-color: color-link("NormalButton", "warning", "disabled");
-      }
-    }
-
-    &:hover {
-      color: color-link("NormalButton", "accent", "secondary");
-      background-color: color-link("NormalButton", "info", "secondary");
-    }
-
-    &.disabled {
-      background-color: color-link("NormalButton", "info", "disabled");
-    }
+    @include solid-mode-modifier("info");
+    @include solid-mode-modifier("error");
+    @include solid-mode-modifier("success");
+    @include solid-mode-modifier("warning");
+    @include solid-mode-modifier("blue");
+    @include solid-mode-modifier("grey");
   }
 
   &:hover {

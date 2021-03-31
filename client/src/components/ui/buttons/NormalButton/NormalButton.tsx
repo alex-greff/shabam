@@ -9,7 +9,7 @@ import ButtonBase, {
 
 type Appearance = "outlined" | "solid" | "none";
 type TextColor = "primary" | "secondary";
-type Mode = "info" | "error" | "success" | "warning";
+type Mode = "info" | "error" | "success" | "warning" | "blue" | "grey";
 
 export interface Props extends BaseProps, ButtonBaseProps {
   outlined?: boolean;

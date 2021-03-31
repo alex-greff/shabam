@@ -75,7 +75,15 @@ export const schema: Schema = {
   NavItem: { $inherits: "GLOBAL" },
   HomeNavItem: { $inherits: "GLOBAL" },
   ButtonBase: { $inherits: "GLOBAL" },
-  NormalButton: { $inherits: "GLOBAL" },
+  NormalButton: { 
+    $inherits: "GLOBAL",
+    blue: {
+      $mixins: ["primary_modifier", "secondary_modifier", "disabled_modifier"],
+    },
+    grey: {
+      $mixins: ["primary_modifier", "secondary_modifier", "disabled_modifier"],
+    }
+  },
   IconButton: { $inherits: "GLOBAL" },
   AccentContainer: { $inherits: "GLOBAL" },
   FormButton: { $inherits: "GLOBAL" },
