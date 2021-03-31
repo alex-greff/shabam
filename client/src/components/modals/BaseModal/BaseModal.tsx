@@ -9,13 +9,19 @@ export interface Props extends BaseProps {
   onExited: () => unknown;
   onRequestClose: () => unknown;
   requestCloseOnOuterClick?: boolean;
+  maxWidth?: string;
 }
 
 const BaseModal: FunctionComponent<Props> = (props) => {
-  const { open, onExited, onRequestClose, requestCloseOnOuterClick } = props;
+  const {
+    open,
+    onExited,
+    onRequestClose,
+    requestCloseOnOuterClick,
+    maxWidth,
+  } = props;
 
   const onBackgroundClick = () => {
-    console.log("HERE");
     if (requestCloseOnOuterClick) {
       onRequestClose();
     }
@@ -34,9 +40,13 @@ const BaseModal: FunctionComponent<Props> = (props) => {
         onExited={onExited}
       >
         <div className="BaseModal__container">
-          <div className="BaseModal__content">{props.children}</div>
+          <div className="BaseModal__content-container">
+            <div className="BaseModal__content" style={{ maxWidth: maxWidth }}>
+              {props.children}
+            </div>
+          </div>
           <div
-            className="BaseModal__background"
+            className="BaseModal__overlay-background"
             onClick={onBackgroundClick}
           ></div>
         </div>
@@ -47,6 +57,7 @@ const BaseModal: FunctionComponent<Props> = (props) => {
 
 BaseModal.defaultProps = {
   requestCloseOnOuterClick: true,
+  maxWidth: "50rem",
 } as Partial<Props>;
 
 export default BaseModal;

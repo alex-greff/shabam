@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types";
 import "./AccountCatalog.scss";
 import classnames from "classnames";
@@ -17,26 +17,44 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 
 import BaseModal from "@/components/modals/BaseModal/BaseModal";
+import { useBaseModal } from "@/hooks/modals/useBaseModal";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const AccountCatalog: FunctionComponent<Props> = (props) => {
   const accountId = useAccountLocation();
 
-  const [showCreateModal, hideCreateModal] = useModal(
-    ({ in: open, onExited }) => {
-      return (
-        <BaseModal
-          open={open}
-          onExited={onExited}
-          onRequestClose={hideCreateModal}
-        >
-          Modal
-          <button onClick={hideCreateModal}>Close</button>
-        </BaseModal>
-      );
-    }
-  );
+  // TODO: remove
+  // const [showCreateModal, hideCreateModal] = ueModal(
+  //   ({ in: open, onExited }) => {
+  //     return (
+  //       <BaseModal
+  //         open={open}
+  //         onExited={onExited}
+  //         onRequestClose={hideCreateModal}
+  //       >
+  //         <div
+  //           // style={{ maxWidth: "30rem", width: "100vw" }}
+  //         >
+  //           Modal
+  //           <button onClick={hideCreateModal}>Close</button>
+  //         </div>
+  //       </BaseModal>
+  //     );
+  //   }
+  // );
+
+  // TODO: remove
+  const [temp, setTemp] = useState(0);
+  const [showCreateModal, hideCreateModal] = useBaseModal(() => {
+    return (
+      <div>
+        Modal &nbsp; {temp} &nbsp;
+        <button onClick={() => setTemp(temp + 1)}>Temp++</button>
+        <button onClick={hideCreateModal}>Close</button>
+      </div>
+    );
+  }, [temp, setTemp]);
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [
     {

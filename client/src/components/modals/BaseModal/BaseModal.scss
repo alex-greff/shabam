@@ -13,13 +13,37 @@
 
     pointer-events: none;
 
-    & .BaseModal__content {
-      pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-      z-index: 0;
+    & .BaseModal__content-container {
+      padding: 1rem;
+
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      & .BaseModal__content {
+        width: 100%;
+
+        pointer-events: all;
+  
+        padding: 1.3rem;
+  
+        background-color: color-link("BaseModal", "background", "secondary");
+
+        box-shadow: 4px 4px 6px 0px rgba(0,0,0,0.25);
+  
+        z-index: 0;
+      }
     }
   
-    & .BaseModal__background {
+    & .BaseModal__overlay-background {
       position: absolute;
       top: 0;
       left: 0;
