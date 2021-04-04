@@ -1,6 +1,6 @@
 import React from "react";
 import { useModal } from "react-modal-hook";
-import { HideModal, ShowModal } from "./types";
+import { HideModal, ShowModal } from "@/hooks/modals/types";
 
 import ConfirmationModal, {
   Props as ConfirmationModalProps,

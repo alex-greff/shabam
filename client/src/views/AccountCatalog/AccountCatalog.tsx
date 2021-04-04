@@ -20,6 +20,7 @@ import BaseModal from "@/components/modals/BaseModal/BaseModal";
 import { useBaseModal } from "@/hooks/modals/useBaseModal";
 import { useAssertionModal } from "@/hooks/modals/useAssertionModal";
 import { useConfirmationModal } from "@/hooks/modals/useConfirmationModal";
+import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
@@ -70,17 +71,24 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
   //   );
   // }, [temp, setTemp]);
 
-  // TODO: remove
-  const [temp, setTemp] = useState(0);
-  const [showCreateModal, hideCreateModal] = useConfirmationModal(() => {
-    return (
-      <div>
-        Modal &nbsp; {temp} &nbsp;
-        <button onClick={() => setTemp(temp + 1)}>Temp++</button>
-        <button onClick={hideCreateModal}>Close</button>
-      </div>
-    );
-  }, [temp, setTemp]);
+  // // TODO: remove
+  // const [temp, setTemp] = useState(0);
+  // const [showCreateModal, hideCreateModal] = useConfirmationModal(() => {
+  //   return (
+  //     <div>
+  //       Modal &nbsp; {temp} &nbsp;
+  //       <button onClick={() => setTemp(temp + 1)}>Temp++</button>
+  //       <button onClick={hideCreateModal}>Close</button>
+  //     </div>
+  //   );
+  // }, [temp, setTemp]);
+
+  const [showCreateModal] = useCatalogConfigureModal({
+    onAccept: (data) => {
+      console.log("Catalog Data", data);
+      return true;
+    }
+  });
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [
     {
