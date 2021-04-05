@@ -21,6 +21,7 @@ import { useBaseModal } from "@/hooks/modals/useBaseModal";
 import { useAssertionModal } from "@/hooks/modals/useAssertionModal";
 import { useConfirmationModal } from "@/hooks/modals/useConfirmationModal";
 import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
+import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
@@ -83,11 +84,14 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
   //   );
   // }, [temp, setTemp]);
 
+  const onCreateCatalogItem = (data: CatalogItemData) => {
+    console.log("Catalog Data", data);
+    return true;
+  }
+
   const [showCreateModal] = useCatalogConfigureModal({
-    onAccept: (data) => {
-      console.log("Catalog Data", data);
-      return true;
-    }
+    title: "Create Catalog Item",
+    onAccept: onCreateCatalogItem
   });
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [

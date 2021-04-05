@@ -128,6 +128,8 @@ export const schema: Schema = {
       }
     }
   },
+  // Modal components
+  CatalogConfigureModal: { $inherits: "GLOBAL" },
 };
 
 export const mixins: MixinDefinitions = {

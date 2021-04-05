@@ -10,6 +10,7 @@ export interface Props extends BaseProps {
   onRequestClose: () => unknown;
   requestCloseOnOuterClick?: boolean;
   maxWidth?: string;
+  disabled?: boolean;
 }
 
 const BaseModal: FunctionComponent<Props> = (props) => {
@@ -19,10 +20,11 @@ const BaseModal: FunctionComponent<Props> = (props) => {
     onRequestClose,
     requestCloseOnOuterClick,
     maxWidth,
+    disabled
   } = props;
 
   const onBackgroundClick = () => {
-    if (requestCloseOnOuterClick) {
+    if (requestCloseOnOuterClick && !disabled) {
       onRequestClose();
     }
   };
@@ -58,6 +60,7 @@ const BaseModal: FunctionComponent<Props> = (props) => {
 BaseModal.defaultProps = {
   requestCloseOnOuterClick: true,
   maxWidth: "50rem",
+  disabled: false,
 } as Partial<Props>;
 
 export default BaseModal;

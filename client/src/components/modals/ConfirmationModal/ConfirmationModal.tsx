@@ -8,7 +8,7 @@ import FooteredModal, {
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 
 export interface Props
-  extends Omit<FooteredModalProps, "renderFooter" | "onRequestClose"> {
+  extends Omit<FooteredModalProps, "renderFooter" | "onRequestClose" | "disabled"> {
   acceptButtonText?: string;
   renderAcceptButtonIcon?: () => JSX.Element;
   disableAcceptButton?: boolean;
@@ -67,6 +67,7 @@ const ConfirmationModal: FunctionComponent<Props> = (props) => {
       className={classnames("ConfirmationModal", props.className)}
       renderFooter={renderFooter}
       onRequestClose={onCancelClose}
+      disabled={disableCancelButton}
     >
       {props.children}
     </FooteredModal>

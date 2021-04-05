@@ -13,7 +13,7 @@ export interface Options
     "onAcceptClose" | "onCancelClose"
   > {
   onAccept?: (data: CatalogItemData) => boolean;
-  onCancel?: (data: CatalogItemData) => boolean;
+  onCancel?: () => boolean;
 }
 
 export function useCatalogConfigureModal(
@@ -24,8 +24,8 @@ export function useCatalogConfigureModal(
       if (!options?.onAccept || options.onAccept(data)) hideModal();
     };
 
-    const onCancelCloseHandler = (data: CatalogItemData) => {
-      if (!options?.onCancel || options.onCancel(data)) hideModal();
+    const onCancelCloseHandler = () => {
+      if (!options?.onCancel || options.onCancel()) hideModal();
     };
 
     return (
