@@ -79,6 +79,12 @@
       transition: background-color 0.2s;
     }
 
+    & .FormInput__custom-container {
+      grid-area: custom;
+
+      z-index: 3;
+    }
+
     & .FormInput__icon-container {
       grid-area: icon;
 
@@ -87,8 +93,12 @@
       align-items: center;
 
       padding-left: 0.3rem;
-      color: color-link("FormInput", "accent", "primary");
+
       z-index: 1;
+    }
+
+    & .FormInput__icon-container, & .FormInput__custom-container {
+      color: color-link("FormInput", "accent", "primary");
 
       transition: color $transition-time, background-color 0.2s;
     }
@@ -147,12 +157,12 @@
 
   &.layout-style-classic {
     & .FormInput__container {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
       grid-template-rows: auto auto auto;
       grid-template-areas:
-        "title title"
-        "input icon"
-        "error error";
+        "title title title"
+        "input custom icon"
+        "error error error";
 
       $radius-amount: 0.2rem;
       $padding-horiz-amount: 0.7rem;
@@ -166,7 +176,8 @@
           $padding-vert-amount;
       }
 
-      & .FormInput__icon-container {
+      & .FormInput__icon-container,
+      & .FormInput__custom-container {
         background-color: color-link("FormInput", "background", "primary");
 
         border-radius: 0 $radius-amount $radius-amount 0;
@@ -210,11 +221,11 @@
 
   &.layout-style-minimal {
     & .FormInput__container {
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr auto auto;
       grid-template-rows: auto auto;
       grid-template-areas:
-        "title input icon"
-        "error error error";
+        "title input custom icon"
+        "error error error error";
 
       $radius-amount: 0rem;
       $padding-horiz-amount: 0.5rem;
@@ -245,7 +256,10 @@
           background-color: color-link("FormInput", "background", "primary");
         }
 
-        & + * + * + .FormInput__icon-container {
+        // Note: the FormInput__icon-container is in case a custom render exists
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container, 
+        & + * + * + * + .FormInput__icon-container { 
           background-color: color-link("FormInput", "background", "primary");
         }
       }
@@ -258,11 +272,11 @@
 
   &.layout-style-minimal-condensed {
     & .FormInput__container {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
       grid-template-rows: auto auto;
       grid-template-areas:
-        "input icon"
-        "error error";
+        "input custom icon"
+        "error error error";
 
       $radius-amount: 0rem;
       $padding-horiz-amount: 0.5rem;
@@ -301,7 +315,9 @@
       & .FormInput__input:active {
         background-color: color-link("FormInput", "background", "primary");
 
-        & + * + * + .FormInput__icon-container {
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container,
+        & + * + * + * + .FormInput__icon-container {
           background-color: color-link("FormInput", "background", "primary");
         }
       }

@@ -89,6 +89,7 @@ export const schema: Schema = {
   FormButton: { $inherits: "GLOBAL" },
   FormInput: { $inherits: "GLOBAL" },
   NumberInput: { $inherits: "GLOBAL" },
+  SelectDropdown: { $inherits: "GLOBAL" },
   SearchScene: { $inherits: "GLOBAL" },
   DividerLine: { $inherits: "GLOBAL" },
   DiagonalDividerLine: { $inherits: "GLOBAL" },

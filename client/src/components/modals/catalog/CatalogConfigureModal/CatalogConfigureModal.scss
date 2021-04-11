@@ -15,6 +15,9 @@
 
     & .CatalogConfigureModal__main-container {
       grid-area: main;
+
+      display: flex;
+      flex-direction: column;
     }
 
     & .CatalogConfigureModal__cover-art-container {

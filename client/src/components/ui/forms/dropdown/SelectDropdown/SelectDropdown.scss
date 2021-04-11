@@ -1,0 +1,82 @@
+.SelectDropdown {
+  & .SelectDropdown__control {
+    // Resets
+    border-radius: 0;
+    border: none;
+    min-height: auto;
+    
+    background-color: color-link("SelectDropdown", "background", "primary");
+
+    border-radius: 2px;
+
+    font-size: 1.5rem;
+
+    transition: background-color 0.2s;
+
+    & .SelectDropdown__value-container {
+      // Resets
+      padding: 0 0.5rem;
+
+      & .SelectDropdown__placeholder {
+        color: color-link("SelectDropdown", "text", "secondary");
+      }
+
+      & .SelectDropdown__input, & .SelectDropdown__single-value {
+        color: color-link("SelectDropdown", "text", "primary");
+      }
+    }
+
+    & .SelectDropdown__indicators {
+      & .SelectDropdown__indicator {
+        // Resets
+        padding: 0;
+
+        color: color-link("SelectDropdown", "text", "secondary");
+      }
+    }
+
+    // --- Modifiers ---
+    &.SelectDropdown__control--is-focused {
+      // Resets
+      box-shadow: none;
+      
+    }
+
+    &.SelectDropdown__control--menu-is-open {
+      background-color: color-link("SelectDropdown", "background", "secondary");
+    }
+  }
+
+  & .SelectDropdown__menu {
+    // Resets
+    border-radius: 0;
+    margin: 0;
+
+    border-radius: 0 0 2px 2px;
+
+    background-color: color-link("SelectDropdown", "background", "primary");
+
+    & .SelectDropdown__menu-list {
+
+      & .SelectDropdown__option {
+        // Resets
+        padding: 0.3rem 0.5rem;
+
+        color: color-link("SelectDropdown", "text", "primary");
+
+        background-color: color-link("SelectDropdown", "background", "primary");
+
+        transition: background-color 0.2s;
+
+        // --- Modifiers ---
+        &.SelectDropdown__option--is-focused {
+          background-color: color-link("SelectDropdown", "background", "secondary");
+        }
+
+        &.SelectDropdown__option--is-selected {
+          background-color: color-link("SelectDropdown", "selected", "primary");
+        }
+      }
+    }
+  }
+}

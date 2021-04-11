@@ -8,6 +8,7 @@ import ConfirmationModal, {
   Props as ConfirmationModalProps,
 } from "@/components/modals/ConfirmationModal/ConfirmationModal";
 import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
+import ArtistInput from "@/components/ui/forms/input/ArtistInput/ArtistInput";
 
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
@@ -32,6 +33,8 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     errors,
   } = useForm<CatalogItemData>({
     defaultValues: {
@@ -84,6 +87,13 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
             name="title"
             layoutStyle="minimal"
             renderTitle={() => "Title"}
+            disabled={submitting}
+          />
+
+          <ArtistInput 
+            name="artists"
+            layoutStyle="minimal"
+            renderTitle={() => "Artists"}
             disabled={submitting}
           />
         </div>

@@ -276,6 +276,15 @@ export default {
         tertiary: BLUE_3,
         disabled: Color(DARK_10).lighten(0.5).round().toString()
       }
+    },
+    SelectDropdown: {
+      background: {
+        primary: DARK_7,
+        secondary: Color(DARK_7).darken(0.1).round().toString()
+      },
+      selected: {
+        primary: BLUE_8
+      }
     }
   }
 } as ThemeData;

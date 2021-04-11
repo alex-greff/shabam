@@ -9,6 +9,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   renderTitle?: () => React.ReactNode;
   type?: "text" | "password";
   renderIcon?: () => React.ReactNode;
+  renderCustom?: () => React.ReactNode;
   error?: FieldError;
 }
 
@@ -17,6 +18,7 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
     layoutStyle,
     renderIcon,
     renderTitle,
+    renderCustom,
     placeholder,
     error,
     ...rest
@@ -55,6 +57,12 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
           <label className="FormInput__title" htmlFor={id}>
             {renderTitle()}
           </label>
+        )}
+
+        {!renderCustom ? null :(
+          <div className="FormInput__custom-container">
+            {renderCustom()}
+          </div>
         )}
 
         <span className="FormInput__accent-line"></span>
