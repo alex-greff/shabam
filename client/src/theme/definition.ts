@@ -89,6 +89,7 @@ export const schema: Schema = {
   FormButton: { $inherits: "GLOBAL" },
   FormInput: { $inherits: "GLOBAL" },
   NumberInput: { $inherits: "GLOBAL" },
+  ArtistInput: { $inherits: "GLOBAL" },
   SelectDropdown: { $inherits: "GLOBAL" },
   SearchScene: { $inherits: "GLOBAL" },
   DividerLine: { $inherits: "GLOBAL" },
@@ -96,6 +97,8 @@ export const schema: Schema = {
   CircularButton: { $inherits: "GLOBAL" },
   RecordButton: { $inherits: "GLOBAL" },
   StopButton: { $inherits: "GLOBAL" },
+  Chip: { $inherits: "GLOBAL" },
+  ArtistChip: { $inherits: "GLOBAL" },
   SpectrogramChart: { 
     $inherits: "GLOBAL",
     color_scale: {

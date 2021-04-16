@@ -3,10 +3,7 @@ import "./SelectDropdown.scss";
 import classnames from "classnames";
 import Select, { Props as ReactSelectProps } from "react-select";
 
-// This component just overrides the styles for the Select component
-// from React-Select
-
-export interface Props extends Omit<ReactSelectProps, "classNamePrefix"> {}
+export interface Props extends ReactSelectProps {}
 
 const SelectDropdown: FunctionComponent<Props> = (props) => {
   return (

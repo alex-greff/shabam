@@ -4,6 +4,7 @@
     border-radius: 0;
     border: none;
     min-height: auto;
+
     
     background-color: color-link("SelectDropdown", "background", "primary");
 
@@ -39,11 +40,30 @@
     &.SelectDropdown__control--is-focused {
       // Resets
       box-shadow: none;
-      
     }
 
     &.SelectDropdown__control--menu-is-open {
       background-color: color-link("SelectDropdown", "background", "secondary");
+    }
+
+    &.SelectDropdown__control--is-disabled {
+      background-color: color-link("SelectDropdown", "background", "disabled");
+
+      & .SelectDropdown__value-container {  
+        & .SelectDropdown__placeholder {
+          color: color-link("SelectDropdown", "text", "disabled");
+        }
+  
+        & .SelectDropdown__input, & .SelectDropdown__single-value {
+          color: color-link("SelectDropdown", "text", "disabled");
+        }
+      }
+  
+      & .SelectDropdown__indicators {
+        & .SelectDropdown__indicator {
+          color: color-link("SelectDropdown", "text", "disabled");
+        }
+      }
     }
   }
 

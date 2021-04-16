@@ -31,11 +31,11 @@ const SigninForm: FunctionComponent<Props> = (props) => {
     register,
     setValue,
     handleSubmit,
-    errors,
+    formState: { errors },
     setError,
     reset,
   } = useForm<FormData>({ mode: "onChange" });
-  
+
   // errorPolicy = "all" gives the errors on the result object
   const [runSigninMutation] = useSigninMutation({ errorPolicy: "all" });
 
@@ -83,7 +83,7 @@ const SigninForm: FunctionComponent<Props> = (props) => {
 
       <FormInput
         className="SigninForm__username-input"
-        ref={register({
+        {...register("username", {
           required: "Username is required",
         })}
         error={errors.username}
@@ -97,7 +97,7 @@ const SigninForm: FunctionComponent<Props> = (props) => {
 
       <FormInput
         className="SigninForm__password-input"
-        ref={register({
+        {...register("password", {
           required: "Password is required",
         })}
         error={errors.password}

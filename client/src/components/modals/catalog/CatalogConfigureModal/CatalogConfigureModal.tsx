@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import "./CatalogConfigureModal.scss";
 import classnames from "classnames";
 import { CatalogItem } from "@/types/catalog";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm, FormProvider } from "react-hook-form";
 
 import ConfirmationModal, {
   Props as ConfirmationModalProps,
@@ -30,13 +30,7 @@ const INITIAL_DATA: CatalogItemData = {
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   const { initialData, onAcceptClose, onCancelClose, title, ...rest } = props;
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    getValues,
-    errors,
-  } = useForm<CatalogItemData>({
+  const { register, handleSubmit, formState: { errors }, control, setError, clearErrors } = useForm<CatalogItemData>({
     defaultValues: {
       ...INITIAL_DATA,
       ...initialData,
@@ -48,6 +42,8 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   // This gets triggered by onAcceptCloseHandler
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
+
+    console.log("Data", data); // TODO: remove
 
     // TODO: handle fingerprint gen and then submission
 
@@ -79,9 +75,7 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
         <div className="CatalogConfigureModal__main-container">
           <FormInput
             className="CatalogConfigureModal__title-input"
-            ref={register({
-              required: "Title is required",
-            })}
+            {...register("title", { required: "Title is required" })}
             error={errors.title}
             type="text"
             name="title"
@@ -90,11 +84,18 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
             disabled={submitting}
           />
 
-          <ArtistInput 
+          <ArtistInput
+            className="CatalogConfigureModal__artist-input"
             name="artists"
+            error={errors.artists}
             layoutStyle="minimal"
             renderTitle={() => "Artists"}
             disabled={submitting}
+
+            control={control}
+            // setError={setError}
+            // clearErrors={clearErrors}
+            // {...register("artists")}
           />
         </div>
 

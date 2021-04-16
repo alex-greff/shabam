@@ -1,3 +1,4 @@
+import { CatalogArtist } from "@/types/catalog";
 import * as BackNavigationImport from "./backNavigation";
 
 export const BackNavigation = BackNavigationImport.default;
@@ -33,4 +34,24 @@ let lastId = -1;
 export const generateId = (prefix = "id-") => {
   lastId++;
   return `${prefix}${lastId}`;
+};
+
+export const sortArtistsByType = (artists: CatalogArtist[]) => {
+  return artists.sort((a, b) => {
+    if (a.type === "primary") {
+      if (b.type === "featured" || b.type === "remix")
+        return 1;
+      return 0;
+    } else if (a.type === "featured") {
+      if (b.type === "primary")
+        return -1;
+      else if (b.type === "remix") 
+        return 1;
+      return 0;
+    } else { // a.type === "remix"
+      if (b.type === "primary" || b.type === "featured")
+        return -1;
+      return 0;
+    }
+  });
 };

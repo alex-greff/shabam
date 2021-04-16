@@ -12,9 +12,7 @@ import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 
 import PersonIcon from "@material-ui/icons/Person";
 import LockIcon from "@material-ui/icons/Lock";
-import {
-  useSignupMutation
-} from "@/graphql-apollo.g.d";
+import { useSignupMutation } from "@/graphql-apollo.g.d";
 import { useGraphqlRequestSdk } from "@/hooks/useGraphqlRequestSdk";
 
 export interface Props extends BaseProps {}
@@ -33,10 +31,10 @@ const SignupForm: FunctionComponent<Props> = (props) => {
     register,
     setValue,
     handleSubmit,
-    errors,
+    formState: { errors },
     setError,
     reset,
-    watch
+    watch,
   } = useForm<FormData>({ mode: "onChange" });
   const currPassword = watch("password", "");
 
@@ -102,9 +100,9 @@ const SignupForm: FunctionComponent<Props> = (props) => {
 
       <FormInput
         className="SignupForm__username-input"
-        ref={register({
+        {...register("username", {
           required: "Username is required",
-          validate: validateUsername
+          validate: validateUsername,
         })}
         error={errors.username}
         name="username"
@@ -118,7 +116,7 @@ const SignupForm: FunctionComponent<Props> = (props) => {
 
       <FormInput
         className="SignupForm__password-input"
-        ref={register({
+        {...register("password", {
           required: "Password is required",
         })}
         error={errors.password}
@@ -132,8 +130,8 @@ const SignupForm: FunctionComponent<Props> = (props) => {
 
       <FormInput
         className="SignupForm__password-input"
-        ref={register({
-          validate: validateConfirmPassword
+        {...register("confirmPassword", {
+          validate: validateConfirmPassword,
         })}
         error={errors.confirmPassword}
         type="password"

@@ -1,5 +1,26 @@
 .ArtistInput {
-  & .ArtistInput__dropdown {
-    min-width: 10rem;
+  & .ArtistInput__input {
+    & .ArtistInput__custom-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+  
+      & .ArtistInput__dropdown {
+        min-width: 10rem;
+        margin: 3px 0;
+      }
+  
+      & .ArtistInput__add-artist {
+  
+      }
+    }
+  }
+
+  & .ArtistInput__chips-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 }

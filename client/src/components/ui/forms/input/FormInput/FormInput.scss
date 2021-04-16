@@ -15,6 +15,11 @@
     & .FormInput__title {
       grid-area: title;
 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
       color: color-link("FormInput", "accent", "primary");
       opacity: 1;
 
@@ -80,9 +85,19 @@
     }
 
     & .FormInput__custom-container {
+      position: relative;
+
       grid-area: custom;
 
-      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      z-index: auto;
+
+      & > * {
+        z-index: 3;
+      }
     }
 
     & .FormInput__icon-container {
@@ -122,7 +137,8 @@
         pointer-events: none;
       }
 
-      & + * + .FormInput__accent-line {
+      & + * + .FormInput__accent-line,
+      & + * + * + .FormInput__accent-line {
         background-color: color-link("FormInput", "text", "disabled");
       }
     }
@@ -130,7 +146,7 @@
 
   & .FormInput__error-message-placeholder {
     position: relative;
-    height: 1.2rem;
+    height: 1.4rem;
   }
 
   & .FormInput__error-message {

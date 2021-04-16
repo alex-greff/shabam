@@ -33,6 +33,7 @@ const BLUE_9 = "#4A5E72";
 const BLUE_10 = "#4D5965";
 const BLUE_11 = "#CCD7E2";
 const BLUE_12 = "#479AB4";
+const BLUE_13 = "#7890A6";
 
 const FORM_ERROR_1 = "#F08787";
 const FORM_ERROR_2 = "#523B3B";
@@ -280,10 +281,18 @@ export default {
     SelectDropdown: {
       background: {
         primary: DARK_7,
-        secondary: Color(DARK_7).darken(0.1).round().toString()
+        secondary: Color(DARK_7).darken(0.1).round().toString(),
+        disabled: Color(DARK_7).lighten(0.4).round().toString()
       },
       selected: {
         primary: BLUE_8
+      }
+    },
+    Chip: {
+      background: {
+        primary: BLUE_13,
+        secondary: Color(BLUE_13).darken(0.1).round().toString(),
+        disabled: Color(BLUE_13).lighten(0.1).round().toString(),
       }
     }
   }
