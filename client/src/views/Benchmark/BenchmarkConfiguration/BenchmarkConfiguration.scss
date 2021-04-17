@@ -2,6 +2,14 @@
   $button-font-size: 1.8rem;
   $title-font-size: 1.5rem;
 
+  @mixin title-test-styles() {
+    color: color-link("Benchmark", "text", "secondary");
+    font-style: italic;
+    font-size: $title-font-size;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
   & .BenchmarkConfiguration__title {
     color: color-link("Benchmark", "text", "primary");
   }
@@ -22,17 +30,13 @@
       max-width: 50rem;
       width: 100vw;
 
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
 
       & .BenchmarkConfiguration__record-controls-container {
         grid-area: record;
 
         & .BenchmarkConfiguration__record-controls-title {
-          color: color-link("Benchmark", "text", "secondary");
-          font-style: italic;
-          font-size: $title-font-size;
-          text-align: center;
-          margin-bottom: 0.5rem;
+          @include title-test-styles();
         }
 
         & .BenchmarkConfiguration__record-controls {
@@ -55,11 +59,7 @@
         grid-area: upload;
 
         & .BenchmarkConfiguration__file-controls-title {
-          color: color-link("Benchmark", "text", "secondary");
-          font-style: italic;
-          font-size: $title-font-size;
-          text-align: center;
-          margin-bottom: 0.5rem;
+          @include title-test-styles();
         }
 
         & .BenchmarkConfiguration__file-upload-button {
@@ -69,9 +69,15 @@
     }
   }
 
-  & .BenchmarkConfiguration__iteration-input {
-    margin-bottom: 1rem;
-    max-width: 20rem;
+  & .BenchmarkConfiguration__iteration-input-container {
+    & .BenchmarkConfiguration__iteration-input-title {
+      @include title-test-styles();
+    }
+
+    & .BenchmarkConfiguration__iteration-input {
+      margin-bottom: 1rem;
+      max-width: 20rem;
+    }
   }
 
   & .BenchmarkConfiguration__run-benchmark-button {

@@ -112,12 +112,18 @@ const BenchmarkConfiguration: FunctionComponent<Props> = (props) => {
         </div>
       </div>
 
-      <NumberInput
-        className="BenchmarkConfiguration__iteration-input"
-        defaultValue={numIterations}
-        onInput={onIterationInputChange}
-        min={1}
-      />
+      <div className="BenchmarkConfiguration__iteration-input-container">
+        <div className="BenchmarkConfiguration__iteration-input-title">
+          Iterations
+        </div>
+
+        <NumberInput
+          className="BenchmarkConfiguration__iteration-input"
+          defaultValue={numIterations}
+          onInput={onIterationInputChange}
+          min={1}
+        />
+      </div>
 
       <NormalButton
         className="BenchmarkConfiguration__run-benchmark-button"
