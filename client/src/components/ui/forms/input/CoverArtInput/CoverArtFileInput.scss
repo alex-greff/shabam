@@ -1,22 +1,58 @@
 .CoverArtFileInput {
-  color: color-link("CoverArtFileInput", "text", "primary");
+  display: flex;
+  flex-direction: column;
 
-  & .CoverArtFileInput__title {
-    color: color-link("CoverArtFileInput", "accent", "primary");
-    font-size: 1.5rem;
-  }
+  & .CoverArtFileInput__content {
+    padding: 0.5rem;
+    
+    background-color: color-link("CoverArtFileInput", "form_error", "secondary", 0);
+    color: color-link("CoverArtFileInput", "text", "primary");
 
-  & .CoverArtFileInput__preview {
-    margin-bottom: 0.5rem;
-  }
+    transition: background-color 0.3s, color 0.3s;
 
-  & .CoverArtFileInput__upload-button-wrapper {
-    & .CoverArtFileInput__upload-button {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-
+    & .CoverArtFileInput__title {
+      color: color-link("CoverArtFileInput", "accent", "primary");
       font-size: 1.5rem;
+
+      transition: color 0.3s;
+    }
+
+    & .CoverArtFileInput__preview {
+      margin-bottom: 0.5rem;
+    }
+
+    & .CoverArtFileInput__upload-button-wrapper {
+      & .CoverArtFileInput__upload-button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  & .CoverArtFileInput__error-message {
+    align-self: flex-end;
+  }
+
+  // -----------------
+  // --- Modifiers ---
+  // -----------------
+
+  &.has-error {
+    & .CoverArtFileInput__content {
+      background-color: color-link("CoverArtFileInput", "form_error", "secondary", 1);
+    }
+  }
+
+  &.disabled {
+    & .CoverArtFileInput__content {
+      color: color-link("CoverArtFileInput", "text", "disabled");
+  
+      & .CoverArtFileInput__title {
+        color: color-link("CoverArtFileInput", "accent", "disabled");
+      }
     }
   }
 }

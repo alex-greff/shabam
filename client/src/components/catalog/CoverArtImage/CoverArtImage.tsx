@@ -8,10 +8,11 @@ import ImageIcon from "@material-ui/icons/Image";
 export interface Props extends BaseProps {
   src?: Blob;
   alt?: string;
+  disabled?: boolean;
 }
 
 const CoverArtImage: FunctionComponent<Props> = (props) => {
-  const { className, style, id, src, alt, ...rest } = props;
+  const { className, style, id, src, alt, disabled } = props;
 
   const [srcFile, setSrcFile] = useState<string | ArrayBuffer | null>(null);
 
@@ -28,12 +29,12 @@ const CoverArtImage: FunctionComponent<Props> = (props) => {
 
   return (
     <div
-      className={classnames("CoverArtImage", props.className)}
-      style={props.style}
-      id={props.id}
+      className={classnames("CoverArtImage", className, { disabled: disabled })}
+      style={style}
+      id={id}
     >
       {srcFile ? (
-        <img {...rest} className="CoverArtImage__image" alt={alt} src={srcFile as any} />
+        <img className="CoverArtImage__image" alt={alt} src={srcFile as any} />
       ) : (
         <div className="CoverArtImage__no-image">
           <ImageIcon className="CoverArtImage__no-image-icon" />
@@ -43,6 +44,8 @@ const CoverArtImage: FunctionComponent<Props> = (props) => {
   );
 };
 
-CoverArtImage.defaultProps = {} as Partial<Props>;
+CoverArtImage.defaultProps = {
+  disabled: false,
+} as Partial<Props>;
 
 export default CoverArtImage;

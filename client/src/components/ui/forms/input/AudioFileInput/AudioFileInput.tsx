@@ -2,12 +2,11 @@ import React, { VoidFunctionComponent, useMemo } from "react";
 import { BaseProps } from "@/types";
 import "./AudioFileInput.scss";
 import classnames from "classnames";
+import { FieldError } from "react-hook-form";
 
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
-import { FieldError } from "react-hook-form";
-
 import ErrorMessageLabel from "@/components/ui/forms/labels/ErrorMessageLabel/ErrorMessageLabel";
 
 export interface Props extends BaseProps {

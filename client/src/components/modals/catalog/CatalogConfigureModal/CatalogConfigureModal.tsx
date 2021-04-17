@@ -155,13 +155,16 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
           <Controller
             name="coverArtFile"
             control={control}
-            render={({ field: { onChange, onBlur } }) => {
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <CoverArtFileInput
                   className="CatalogConfigureModal__cover-art-file-input"
+                  disabled={submitting}
                   onChange={(coverArtFile) => {
                     onChange(coverArtFile);
                   }}
+                  value={value}
+                  error={error}
                 />
               );
             }}
