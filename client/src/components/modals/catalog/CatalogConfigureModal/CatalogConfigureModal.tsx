@@ -12,10 +12,13 @@ import ConfirmationModal, {
 } from "@/components/modals/ConfirmationModal/ConfirmationModal";
 import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 import ArtistInput from "@/components/ui/forms/input/ArtistInput/ArtistInput";
+import AudioFileInput from "@/components/ui/forms/input/AudioFileInput/AudioFileInput";
 
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
-export interface CatalogItemData extends CatalogItem {}
+export interface CatalogItemData extends CatalogItem {
+  audioFile: Blob | null;
+}
 
 export interface Props
   extends Omit<ConfirmationModalProps, "onAcceptClose" | "onCancelClose"> {
@@ -28,6 +31,7 @@ export interface Props
 const INITIAL_DATA: CatalogItemData = {
   title: "",
   artists: [],
+  audioFile: null
 };
 
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
@@ -107,6 +111,23 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
                   disabled={submitting}
                   onChange={onChange}
                   onBlur={onBlur}
+                />
+              );
+            }}
+          />
+
+          {/* Control audio file input */}
+          {/* TODO: figure out how to add validation to ensure there is an audio file */}
+          <Controller 
+            name="audioFile"
+            control={control}
+            render={({ field: { onChange, onBlur } }) => {
+              return (
+                <AudioFileInput 
+                  className="CatalogConfigureModal__audio-file-input"
+                  onChange={(audioFile) => {
+                    onChange(audioFile);
+                  }}
                 />
               );
             }}

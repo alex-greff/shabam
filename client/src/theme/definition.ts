@@ -90,6 +90,7 @@ export const schema: Schema = {
   FormInput: { $inherits: "GLOBAL" },
   NumberInput: { $inherits: "GLOBAL" },
   ArtistInput: { $inherits: "GLOBAL" },
+  AudioFileInput: { $inherits: "GLOBAL" },
   SelectDropdown: { $inherits: "GLOBAL" },
   SearchScene: { $inherits: "GLOBAL" },
   DividerLine: { $inherits: "GLOBAL" },

@@ -1,0 +1,33 @@
+.AudioFileInput {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 1.5rem;
+
+  & .AudioFileInput__display {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    & .AudioFileInput__title {
+      color: color-link("FormInput", "accent", "primary");
+
+      margin-right: 0.7rem;
+    } 
+
+    & .AudioFileInput__file-name {
+
+    }
+  }
+
+  & .AudioFileInput__upload-button-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    & .AudioFileInput__upload-button {
+      font-size: 1.5rem;
+    }
+  }
+}
