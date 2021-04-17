@@ -144,18 +144,7 @@
     }
   }
 
-  & .FormInput__error-message-placeholder {
-    position: relative;
-    height: 1.4rem;
-  }
-
   & .FormInput__error-message {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
     grid-area: error;
 
     font-size: 1.2rem;
@@ -163,6 +152,10 @@
     font-weight: 400;
 
     color: color-link("FormInput", "form_error", "primary");
+
+    &.hidden {
+      opacity: 0;
+    }
   }
 
   // Styles for specific layouts
@@ -360,7 +353,9 @@
         transition: background-color 5000s ease-in-out 0s;
         caret-color: color-link("FormInput", "text", "primary");
 
-        & + * + * + .FormInput__icon-container {
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container,
+        & + * + * + * + .FormInput__icon-container {
           border: none;
           -webkit-text-fill-color: color-link("FormInput", "text", "primary");
           box-shadow: 0 0 0px 1000px
@@ -377,7 +372,9 @@
       &:-webkit-autofill:focus {
         -webkit-text-fill-color: color-link("FormInput", "text", "disabled");
 
-        & + * + * + .FormInput__icon-container {
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container,
+        & + * + * + * + .FormInput__icon-container {
           -webkit-text-fill-color: color-link("FormInput", "text", "disabled");
         }
       }
@@ -388,7 +385,7 @@
         background-color: color-link("FormInput", "form_error", "secondary");
       }
 
-      & .FormInput__icon-container {
+      & .FormInput__icon-container, & .FormInput__custom-container {
         background-color: color-link("FormInput", "form_error", "secondary");
       }
     }
@@ -401,7 +398,9 @@
           background-color: color-link("FormInput", "form_error", "secondary");
         }
 
-        & + * + * + .FormInput__icon-container {
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container,
+        & + * + * + * + .FormInput__icon-container {
           background-color: color-link("FormInput", "form_error", "secondary");
         }
       }
@@ -411,7 +410,9 @@
       & .FormInput__container .FormInput__input.FormInput__input {
         background-color: color-link("FormInput", "form_error", "secondary");
 
-        & + * + * + .FormInput__icon-container {
+        & + * + .FormInput__custom-container,
+        & + * + * + .FormInput__icon-container,
+        & + * + * + * + .FormInput__icon-container {
           background-color: color-link("FormInput", "form_error", "secondary");
         }
       }

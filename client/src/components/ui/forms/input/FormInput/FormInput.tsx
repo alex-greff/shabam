@@ -59,10 +59,8 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
           </label>
         )}
 
-        {!renderCustom ? null :(
-          <div className="FormInput__custom-container">
-            {renderCustom()}
-          </div>
+        {!renderCustom ? null : (
+          <div className="FormInput__custom-container">{renderCustom()}</div>
         )}
 
         <span className="FormInput__accent-line"></span>
@@ -74,13 +72,14 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
         )}
       </div>
 
-      <div className="FormInput__error-message-placeholder">
-        {hasError && !hasErrorMessage ? null : (
-          <label className="FormInput__error-message" htmlFor={id}>
-            {error?.message}
-          </label>
-        )}
-      </div>
+      <label
+        className={classnames("FormInput__error-message", {
+          hidden: !hasErrorMessage,
+        })}
+        htmlFor={id}
+      >
+        {error ? error.message : "hidden placeholder"}
+      </label>
     </div>
   );
 });

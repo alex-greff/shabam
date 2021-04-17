@@ -1,11 +1,8 @@
 import React, { FunctionComponent, useState } from "react";
 import "./CatalogConfigureModal.scss";
 import classnames from "classnames";
-import { CatalogItem } from "@/types/catalog";
-import {
-  useForm,
-  Controller,
-} from "react-hook-form";
+import { CatalogArtist, CatalogItem } from "@/types/catalog";
+import { useForm, Controller } from "react-hook-form";
 
 import ConfirmationModal, {
   Props as ConfirmationModalProps,
@@ -34,7 +31,7 @@ const INITIAL_DATA: CatalogItemData = {
   title: "",
   artists: [],
   audioFile: null,
-  coverArtFile: null
+  coverArtFile: null,
 };
 
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
@@ -76,6 +73,12 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
     if (onCancelClose) onCancelClose();
   };
 
+  // Validates that at least one primary artist exists
+  const artistValidate = (artists: CatalogArtist[]) => {
+    const primaries = artists.filter((artist) => artist.type === "primary");
+    return primaries.length > 0 || "Primary artist needed";
+  };
+
   return (
     <ConfirmationModal
       {...rest}
@@ -105,7 +108,11 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
           <Controller
             name="artists"
             control={control}
-            render={({ field: { onChange, onBlur } }) => {
+            rules={{ validate: artistValidate }}
+            render={({
+              field: { onChange, onBlur, value, name },
+              fieldState: { error },
+            }) => {
               return (
                 <ArtistInput
                   className="CatalogConfigureModal__artist-input"
@@ -114,6 +121,9 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
                   disabled={submitting}
                   onChange={onChange}
                   onBlur={onBlur}
+                  value={value}
+                  name={name}
+                  error={error}
                 />
               );
             }}
@@ -121,12 +131,12 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
 
           {/* Control audio file input */}
           {/* TODO: figure out how to add validation to ensure there is an audio file */}
-          <Controller 
+          <Controller
             name="audioFile"
             control={control}
             render={({ field: { onChange, onBlur } }) => {
               return (
-                <AudioFileInput 
+                <AudioFileInput
                   className="CatalogConfigureModal__audio-file-input"
                   onChange={(audioFile) => {
                     onChange(audioFile);
@@ -138,12 +148,12 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
         </div>
 
         <div className="CatalogConfigureModal__cover-art-container">
-          <Controller 
+          <Controller
             name="coverArtFile"
             control={control}
             render={({ field: { onChange, onBlur } }) => {
               return (
-                <CoverArtFileInput 
+                <CoverArtFileInput
                   className="CatalogConfigureModal__cover-art-file-input"
                   onChange={(coverArtFile) => {
                     onChange(coverArtFile);

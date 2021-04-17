@@ -12,6 +12,7 @@ import ArtistChip from "@/components/ui/chips/ArtistChip/ArtistChip";
 
 import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
+import { FieldError } from "react-hook-form";
 
 interface OptionType {
   value: CatalogArtistType;
@@ -37,28 +38,30 @@ type ReactSelectData = {
 export interface Props
   extends Omit<
     FormInputProps,
-    "type" | "error" | "name" | "ref" | "onChange" | "onBlur"
+    "type" | "error" | "ref" | "onChange" | "onBlur" | "value"
   > {
   initialData?: CatalogArtist[];
+
   onChange?: (data: CatalogArtist[]) => unknown;
-  onBlur?: (data: CatalogArtist[]) => unknown;
+  onBlur?: () => unknown;
+  value?: CatalogArtist[];
+  error?: FieldError;
 }
 
 const ArtistInput: FunctionComponent<Props> = (props) => {
-  const { initialData, onChange, onBlur, ...rest } = props;
+  const { initialData, onChange, onBlur, value, error, ...rest } = props;
   const { disabled } = rest;
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [currType, setCurrType] = useState<CatalogArtistType>("primary");
-  const [data, setData] = useState<CatalogArtist[]>(initialData ?? []);
   const [currInput, setCurrInput] = useState<string>("");
 
   const addableInput = !!currInput;
 
-  const sortedData = useMemo(() => {
-    return Utilities.sortArtistsByType(data).reverse();
-  }, [data]);
+  const sortedValue = useMemo(() => {
+    return Utilities.sortArtistsByType(value!).reverse();
+  }, [value]);
 
   const handleArtistAdd = () => {
     const artist = inputRef.current?.value!;
@@ -67,22 +70,22 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
       return;
     }
 
-    const newData = [...data];
-    newData.push({ artist: artist, type: currType });
-    setData(newData);
+    const newValue = [...value!];
+    newValue.push({ artist: artist, type: currType });
 
     // Trigger change
-    if (onChange) onChange(newData);
+    if (onChange) onChange(newValue);
 
     inputRef.current!.value = "";
     setCurrInput("");
   };
 
   const handleArtistRemove = (item: CatalogArtist) => {
-    const newData = data.filter((currData) => currData.artist !== item.artist);
-    setData(newData);
+    const newValue = value!.filter(
+      (currValue) => currValue.artist !== item.artist
+    );
 
-    if (onChange) onChange(newData);
+    if (onChange) onChange(newValue);
   };
 
   const handleDropdownChange = (e: ReactSelectData) => {
@@ -124,13 +127,15 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
           setCurrInput(e.target.value);
         }}
         onBlur={() => {
-          if (onBlur) onBlur(data);
+          if (onBlur) onBlur();
         }}
+        error={error}
       />
       {/* Display artist chips */}
       <div className="ArtistInput__chips-list">
-        {sortedData.map((item) => (
+        {sortedValue.map((item, idx) => (
           <ArtistChip
+            key={idx}
             removable
             className="ArtistInput__chip"
             name={item.artist}
@@ -146,6 +151,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
 
 ArtistInput.defaultProps = {
   initialData: [],
+  value: [],
 } as Partial<Props>;
 
 export default ArtistInput;
