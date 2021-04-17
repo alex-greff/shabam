@@ -1,4 +1,4 @@
-import React, { VoidFunctionComponent, useState } from "react";
+import React, { VoidFunctionComponent, useMemo } from "react";
 import { BaseProps } from "@/types";
 import "./AudioFileInput.scss";
 import classnames from "classnames";
@@ -6,65 +6,80 @@ import classnames from "classnames";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
 import MusicNoteIcon from "@material-ui/icons/MusicNote";
+import { FieldError } from "react-hook-form";
+
+import ErrorMessageLabel from "@/components/ui/forms/labels/ErrorMessageLabel/ErrorMessageLabel";
 
 export interface Props extends BaseProps {
-  onChange?: (audioFile: Blob | null) => unknown;
+  onChange?: (audioFile: File | null) => unknown;
+  value?: File;
+  error?: FieldError;
+
   accept?: string;
   disabled?: boolean;
 }
 
 const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
-  const { onChange, accept, disabled } = props;
+  const { onChange, accept, disabled, value, error } = props;
 
-  const [filename, setFilename] = useState<string | null>(null);
+  const filename = useMemo(() => {
+    return (value) ? value.name : null;
+  }, [value]);
 
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audioFile = e.target.files ? e.target.files[0] : null;
 
     if (audioFile) {
-      setFilename(audioFile.name);
       if (onChange) onChange(audioFile);
     }
   };
 
   const hasFile = !!filename;
+  const hasError = !!error;
 
   return (
     <div
-      className={classnames("AudioFileInput", props.className)}
+      className={classnames("AudioFileInput", props.className, { "has-error": hasError })}
       style={props.style}
       id={props.id}
     >
-      <div className="AudioFileInput__display">
-        <div className="AudioFileInput__title">Audio File</div>
-        <div
-          className={classnames("AudioFileInput__file-name", {
-            "has-audio-file": hasFile,
-          })}
-        >
-          {hasFile ? filename : "(None)"}
+      <div className="AudioFileInput__content">
+        <div className="AudioFileInput__display">
+          <div className="AudioFileInput__title">Audio File</div>
+          <div
+            className={classnames("AudioFileInput__file-name", {
+              "has-audio-file": hasFile,
+            })}
+          >
+            {hasFile ? filename : "(None)"}
+          </div>
         </div>
+
+        <FileUploadButtonWrapper
+          className="AudioFileInput__upload-button-wrapper"
+          accept={accept}
+          disabled={disabled}
+          onChange={handleAudioFileChange}
+          renderContent={({ disabled }) => {
+            return (
+              <IconButton
+                className="AudioFileInput__upload-button"
+                appearance="solid"
+                mode="info"
+                disabled={disabled}
+                forceDiv
+                renderIcon={() => <MusicNoteIcon />}
+              >
+                Upload
+              </IconButton>
+            );
+          }}
+        />
       </div>
 
-      <FileUploadButtonWrapper
-        className="AudioFileInput__upload-button-wrapper"
-        accept={accept}
-        disabled={disabled}
-        onChange={handleAudioFileChange}
-        renderContent={({ disabled }) => {
-          return (
-            <IconButton
-              className="AudioFileInput__upload-button"
-              appearance="solid"
-              mode="info"
-              disabled={disabled}
-              forceDiv
-              renderIcon={() => <MusicNoteIcon />}
-            >
-              Upload
-            </IconButton>
-          );
-        }}
+      <ErrorMessageLabel 
+        className="AudioFileInput__error-message"
+        error={error}
       />
     </div>
   );

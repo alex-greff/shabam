@@ -1,39 +1,64 @@
 .AudioFileInput {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 
-  font-size: 1.5rem;
-
-  & .AudioFileInput__display {
+  & .AudioFileInput__content {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
 
-    & .AudioFileInput__title {
-      color: color-link("AudioFileInput", "accent", "primary");
+    font-size: 1.5rem;
 
-      margin-right: 0.7rem;
-    } 
+    background-color: color-link("AudioFileInput", "form_error", "secondary", 0);
 
-    & .AudioFileInput__file-name {
-      color: color-link("AudioFileInput", "text", "primary");
+    padding: 0.5rem;
 
-      transition: color 0.3s;
+    transition: background-color 0.3s;
 
-      &:not(.has-audio-file) {
-        color: color-link("AudioFileInput", "text", "secondary");
+    & .AudioFileInput__display {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      & .AudioFileInput__title {
+        color: color-link("AudioFileInput", "accent", "primary");
+
+        margin-right: 0.7rem;
+      } 
+
+      & .AudioFileInput__file-name {
+        color: color-link("AudioFileInput", "text", "primary");
+
+        transition: color 0.3s;
+
+        &:not(.has-audio-file) {
+          color: color-link("AudioFileInput", "text", "secondary");
+        }
+      }
+    }
+
+    & .AudioFileInput__upload-button-wrapper {
+      display: flex;
+      flex-direction: row;
+
+      & .AudioFileInput__upload-button {
+        font-size: 1.5rem;
       }
     }
   }
 
-  & .AudioFileInput__upload-button-wrapper {
-    display: flex;
-    flex-direction: row;
+  & .AudioFileInput__error-message {
+    align-self: flex-end;
+  }
 
-    & .AudioFileInput__upload-button {
-      font-size: 1.5rem;
+  // -----------------
+  // --- Modifiers ---
+  // -----------------
+
+  &.has-error {
+    & .AudioFileInput__content {
+      background-color: color-link("AudioFileInput", "form_error", "secondary", 1);
     }
   }
 }

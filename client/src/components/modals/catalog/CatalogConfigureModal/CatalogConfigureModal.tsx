@@ -15,8 +15,8 @@ import CoverArtFileInput from "@/components/ui/forms/input/CoverArtInput/CoverAr
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 export interface CatalogItemData extends CatalogItem {
-  audioFile: Blob | null;
-  coverArtFile: Blob | null;
+  audioFile?: File;
+  coverArtFile?: File;
 }
 
 export interface Props
@@ -30,8 +30,8 @@ export interface Props
 const INITIAL_DATA: CatalogItemData = {
   title: "",
   artists: [],
-  audioFile: null,
-  coverArtFile: null,
+  audioFile: undefined,
+  coverArtFile: undefined,
 };
 
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
@@ -134,13 +134,16 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
           <Controller
             name="audioFile"
             control={control}
-            render={({ field: { onChange, onBlur } }) => {
+            rules={{ required: "Audio file required" }}
+            render={({ field: { onChange, value }, fieldState: { error }}) => {
               return (
                 <AudioFileInput
                   className="CatalogConfigureModal__audio-file-input"
                   onChange={(audioFile) => {
                     onChange(audioFile);
                   }}
+                  value={value}
+                  error={error}
                 />
               );
             }}
