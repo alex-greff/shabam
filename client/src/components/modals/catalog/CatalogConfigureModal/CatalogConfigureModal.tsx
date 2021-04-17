@@ -13,11 +13,13 @@ import ConfirmationModal, {
 import FormInput from "@/components/ui/forms/input/FormInput/FormInput";
 import ArtistInput from "@/components/ui/forms/input/ArtistInput/ArtistInput";
 import AudioFileInput from "@/components/ui/forms/input/AudioFileInput/AudioFileInput";
+import CoverArtFileInput from "@/components/ui/forms/input/CoverArtInput/CoverArtFileInput";
 
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 export interface CatalogItemData extends CatalogItem {
   audioFile: Blob | null;
+  coverArtFile: Blob | null;
 }
 
 export interface Props
@@ -31,7 +33,8 @@ export interface Props
 const INITIAL_DATA: CatalogItemData = {
   title: "",
   artists: [],
-  audioFile: null
+  audioFile: null,
+  coverArtFile: null
 };
 
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
@@ -134,10 +137,21 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
           />
         </div>
 
-        {/* TODO: complete the rest of the form */}
-
         <div className="CatalogConfigureModal__cover-art-container">
-          TODO: Cover Art input
+          <Controller 
+            name="coverArtFile"
+            control={control}
+            render={({ field: { onChange, onBlur } }) => {
+              return (
+                <CoverArtFileInput 
+                  className="CatalogConfigureModal__cover-art-file-input"
+                  onChange={(coverArtFile) => {
+                    onChange(coverArtFile);
+                  }}
+                />
+              );
+            }}
+          />
         </div>
       </form>
     </ConfirmationModal>

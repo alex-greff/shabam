@@ -216,6 +216,18 @@ export default {
         tertiary: BLUE_10,
       },
     },
+    CoverArtFileInput: {
+      text: {
+        secondary: LIGHT_4,
+      },
+      background: {
+        primary: DARK_6,
+      },
+      accent: {
+        secondary: BLUE_3,
+        tertiary: BLUE_10,
+      },
+    },
     FormButton: {
       background: {
         primary: BLUE_2,
@@ -232,6 +244,14 @@ export default {
         secondary: SEARCH_SCENE_ACCENT_2,
         tertiary: SEARCH_SCENE_ACCENT_3,
       },
+    },
+    CoverArtImage: {
+      text: {
+        secondary: LIGHT_2
+      },
+      background: {
+        primary: DARK_6
+      }
     },
     Home: {
       background: {

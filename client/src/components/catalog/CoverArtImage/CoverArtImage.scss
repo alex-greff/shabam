@@ -1,0 +1,33 @@
+.CoverArtImage {
+  // Reference: https://stackoverflow.com/questions/15167545/how-to-crop-a-rectangular-image-into-a-square-with-css
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
+
+  & .CoverArtImage__image, & .CoverArtImage__no-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  & .CoverArtImage__no-image {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    background-color: color-link("CoverArtImage", "background", "primary");
+
+    & .CoverArtImage__no-image-icon {
+      color: color-link("CoverArtImage", "text", "secondary");
+
+      width: 40%;
+      height: 10rem;
+    }
+  }
+}

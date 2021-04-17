@@ -24,4 +24,14 @@
       grid-area: cover-art;
     }
   }
+
+  @include respond(phone) {
+    & .CatalogConfigureModal__form {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto;
+      grid-template-areas: 
+        "main"
+        "cover-art";
+    }
+  }
 }

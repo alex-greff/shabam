@@ -5,7 +5,7 @@ import classnames from "classnames";
 
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import FileUploadButtonWrapper from "@/components/ui/buttons/FileUploadButtonWrapper/FileUploadButtonWrapper";
-import UploadIcon from "@material-ui/icons/CloudUpload";
+import MusicNoteIcon from "@material-ui/icons/MusicNote";
 
 export interface Props extends BaseProps {
   onChange?: (audioFile: Blob | null) => unknown;
@@ -59,7 +59,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
               mode="info"
               disabled={disabled}
               forceDiv
-              renderIcon={() => <UploadIcon />}
+              renderIcon={() => <MusicNoteIcon />}
             >
               Upload
             </IconButton>
