@@ -23,7 +23,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
   const { onChange, accept, disabled, value, error } = props;
 
   const filename = useMemo(() => {
-    return (value) ? value.name : null;
+    return value ? value.name : null;
   }, [value]);
 
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,10 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
 
   return (
     <div
-      className={classnames("AudioFileInput", props.className, { "has-error": hasError })}
+      className={classnames("AudioFileInput", props.className, {
+        "has-error": hasError,
+        "disabled": disabled
+      })}
       style={props.style}
       id={props.id}
     >
@@ -77,7 +80,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
         />
       </div>
 
-      <ErrorMessageLabel 
+      <ErrorMessageLabel
         className="AudioFileInput__error-message"
         error={error}
       />

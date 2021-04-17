@@ -139,6 +139,7 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
               return (
                 <AudioFileInput
                   className="CatalogConfigureModal__audio-file-input"
+                  disabled={submitting}
                   onChange={(audioFile) => {
                     onChange(audioFile);
                   }}

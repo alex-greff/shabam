@@ -25,6 +25,8 @@
         color: color-link("AudioFileInput", "accent", "primary");
 
         margin-right: 0.7rem;
+
+        transition: color 0.3s;
       } 
 
       & .AudioFileInput__file-name {
@@ -59,6 +61,24 @@
   &.has-error {
     & .AudioFileInput__content {
       background-color: color-link("AudioFileInput", "form_error", "secondary", 1);
+    }
+  }
+
+  &.disabled {
+    & .AudioFileInput__content {
+      & .AudioFileInput__display {
+        & .AudioFileInput__title {
+          color: color-link("AudioFileInput", "accent", "disabled");
+        } 
+  
+        & .AudioFileInput__file-name {
+          color: color-link("AudioFileInput", "text", "disabled");
+  
+          &:not(.has-audio-file) {
+            color: color-link("AudioFileInput", "text", "disabled");
+          }
+        }
+      }
     }
   }
 }
