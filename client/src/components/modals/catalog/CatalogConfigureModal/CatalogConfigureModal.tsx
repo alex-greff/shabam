@@ -130,12 +130,11 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
           />
 
           {/* Control audio file input */}
-          {/* TODO: figure out how to add validation to ensure there is an audio file */}
           <Controller
             name="audioFile"
             control={control}
             rules={{ required: "Audio file required" }}
-            render={({ field: { onChange, value }, fieldState: { error }}) => {
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <AudioFileInput
                   className="CatalogConfigureModal__audio-file-input"

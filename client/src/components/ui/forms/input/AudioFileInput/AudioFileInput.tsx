@@ -40,7 +40,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
     <div
       className={classnames("AudioFileInput", props.className, {
         "has-error": hasError,
-        "disabled": disabled
+        disabled: disabled,
       })}
       style={props.style}
       id={props.id}
