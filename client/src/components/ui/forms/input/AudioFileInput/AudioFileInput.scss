@@ -21,16 +21,26 @@
       flex-direction: row;
       align-items: center;
 
+      min-width: 0;
+
       & .AudioFileInput__title {
         color: color-link("AudioFileInput", "accent", "primary");
 
         margin-right: 0.7rem;
+        flex-shrink: 0;
 
         transition: color 0.3s;
       } 
 
       & .AudioFileInput__file-name {
         color: color-link("AudioFileInput", "text", "primary");
+
+        flex-shrink: 1;
+        min-width: 0;
+
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
 
         transition: color 0.3s;
 

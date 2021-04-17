@@ -18,6 +18,8 @@
 
       display: flex;
       flex-direction: column;
+
+      overflow: hidden;
     }
 
     & .CatalogConfigureModal__cover-art-container {

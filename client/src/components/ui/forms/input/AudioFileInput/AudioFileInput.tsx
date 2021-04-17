@@ -70,7 +70,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
                 mode="info"
                 disabled={disabled}
                 forceDiv
-                renderIcon={() => <MusicNoteIcon />}
+              renderIcon={() => <MusicNoteIcon />}
               >
                 Upload
               </IconButton>

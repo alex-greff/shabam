@@ -91,7 +91,8 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
 
   const [showCreateModal] = useCatalogConfigureModal({
     title: "Create Catalog Item",
-    onAccept: onCreateCatalogItem
+    onAccept: onCreateCatalogItem,
+    requestCloseOnOuterClick: false
   });
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [
