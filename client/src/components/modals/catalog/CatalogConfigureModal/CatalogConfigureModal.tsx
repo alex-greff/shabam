@@ -2,7 +2,10 @@ import React, { FunctionComponent, useState } from "react";
 import "./CatalogConfigureModal.scss";
 import classnames from "classnames";
 import { CatalogItem } from "@/types/catalog";
-import { FieldValues, useForm, FormProvider } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+} from "react-hook-form";
 
 import ConfirmationModal, {
   Props as ConfirmationModalProps,
@@ -30,7 +33,14 @@ const INITIAL_DATA: CatalogItemData = {
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   const { initialData, onAcceptClose, onCancelClose, title, ...rest } = props;
 
-  const { register, handleSubmit, formState: { errors }, control, setError, clearErrors } = useForm<CatalogItemData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    setError,
+    clearErrors,
+  } = useForm<CatalogItemData>({
     defaultValues: {
       ...INITIAL_DATA,
       ...initialData,
@@ -84,18 +94,22 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
             disabled={submitting}
           />
 
-          <ArtistInput
-            className="CatalogConfigureModal__artist-input"
+          {/* Control the artists input */}
+          <Controller
             name="artists"
-            error={errors.artists}
-            layoutStyle="minimal"
-            renderTitle={() => "Artists"}
-            disabled={submitting}
-
             control={control}
-            // setError={setError}
-            // clearErrors={clearErrors}
-            // {...register("artists")}
+            render={({ field: { onChange, onBlur } }) => {
+              return (
+                <ArtistInput
+                  className="CatalogConfigureModal__artist-input"
+                  layoutStyle="minimal"
+                  renderTitle={() => "Artists"}
+                  disabled={submitting}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              );
+            }}
           />
         </div>
 

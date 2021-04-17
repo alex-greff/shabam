@@ -4,19 +4,20 @@
     border-radius: 0;
     border: none;
     min-height: auto;
-
     
     background-color: color-link("SelectDropdown", "background", "primary");
 
     border-radius: 2px;
 
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 
     transition: background-color 0.2s;
 
     & .SelectDropdown__value-container {
       // Resets
       padding: 0 0.5rem;
+
+      cursor: pointer;
 
       & .SelectDropdown__placeholder {
         color: color-link("SelectDropdown", "text", "secondary");
@@ -28,6 +29,8 @@
     }
 
     & .SelectDropdown__indicators {
+      cursor: pointer;
+
       & .SelectDropdown__indicator {
         // Resets
         padding: 0;
@@ -74,6 +77,8 @@
 
     border-radius: 0 0 2px 2px;
 
+    font-size: 1.4rem;
+
     background-color: color-link("SelectDropdown", "background", "primary");
 
     & .SelectDropdown__menu-list {
@@ -87,6 +92,8 @@
         background-color: color-link("SelectDropdown", "background", "primary");
 
         transition: background-color 0.2s;
+
+        cursor: pointer;
 
         // --- Modifiers ---
         &.SelectDropdown__option--is-focused {
