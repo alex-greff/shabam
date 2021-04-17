@@ -12,13 +12,19 @@
     align-items: center;
 
     & .AudioFileInput__title {
-      color: color-link("FormInput", "accent", "primary");
+      color: color-link("AudioFileInput", "accent", "primary");
 
       margin-right: 0.7rem;
     } 
 
     & .AudioFileInput__file-name {
+      color: color-link("AudioFileInput", "text", "primary");
 
+      transition: color 0.3s;
+
+      &:not(.has-audio-file) {
+        color: color-link("AudioFileInput", "text", "secondary");
+      }
     }
   }
 
