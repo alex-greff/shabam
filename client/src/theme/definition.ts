@@ -74,6 +74,8 @@ export const schema: Schema = {
   NavItemBase: { $inherits: "GLOBAL" },
   NavItem: { $inherits: "GLOBAL" },
   HomeNavItem: { $inherits: "GLOBAL" },
+  AccentContainer: { $inherits: "GLOBAL" },
+  // Buttons
   ButtonBase: { $inherits: "GLOBAL" },
   NormalButton: { 
     $inherits: "GLOBAL",
@@ -85,7 +87,6 @@ export const schema: Schema = {
     }
   },
   IconButton: { $inherits: "GLOBAL" },
-  AccentContainer: { $inherits: "GLOBAL" },
   FormButton: { $inherits: "GLOBAL" },
   CircularButton: { $inherits: "GLOBAL" },
   RecordButton: { $inherits: "GLOBAL" },
@@ -96,6 +97,8 @@ export const schema: Schema = {
   ArtistInput: { $inherits: "GLOBAL" },
   AudioFileInput: { $inherits: "GLOBAL" },
   CoverArtFileInput: { $inherits: "GLOBAL" },
+  // Labels
+  ErrorMessageLabel: { $inherits: "GLOBAL" },
   // Other
   CoverArtImage: { $inherits: "GLOBAL" },
   SelectDropdown: { $inherits: "GLOBAL" },

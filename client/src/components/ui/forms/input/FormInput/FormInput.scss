@@ -146,16 +146,6 @@
 
   & .FormInput__error-message {
     grid-area: error;
-
-    font-size: 1.2rem;
-    text-align: right;
-    font-weight: 400;
-
-    color: color-link("FormInput", "form_error", "primary");
-
-    &.hidden {
-      opacity: 0;
-    }
   }
 
   // Styles for specific layouts

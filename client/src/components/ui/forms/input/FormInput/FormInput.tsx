@@ -4,6 +4,8 @@ import classnames from "classnames";
 import * as Utilities from "@/utilities";
 import { FieldError } from "react-hook-form";
 
+import ErrorMessageLabel from "@/components/ui/forms/labels/ErrorMessageLabel/ErrorMessageLabel";
+
 export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   layoutStyle?: "minimal-condensed" | "minimal" | "classic";
   renderTitle?: () => React.ReactNode;
@@ -30,7 +32,6 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
     isMinimalCondensed && !placeholder ? " " : placeholder;
 
   const hasError = !!error;
-  const hasErrorMessage = !!error?.message;
 
   return (
     <div
@@ -72,14 +73,11 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
         )}
       </div>
 
-      <label
-        className={classnames("FormInput__error-message", {
-          hidden: !hasErrorMessage,
-        })}
+      <ErrorMessageLabel 
+        className="FormInput__error-message"
         htmlFor={id}
-      >
-        {error ? error.message : "hidden placeholder"}
-      </label>
+        error={error}
+      />
     </div>
   );
 });
