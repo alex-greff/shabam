@@ -13,6 +13,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   renderIcon?: () => React.ReactNode;
   renderCustom?: () => React.ReactNode;
   error?: FieldError;
+  placeholderError?: boolean;
 }
 
 const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -23,6 +24,7 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
     renderCustom,
     placeholder,
     error,
+    placeholderError,
     ...rest
   } = props;
   const [id] = useState(Utilities.generateId());
@@ -73,11 +75,13 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
         )}
       </div>
 
-      <ErrorMessageLabel 
-        className="FormInput__error-message"
-        htmlFor={id}
-        error={error}
-      />
+      {(!hasError && !placeholderError) ? null : (
+        <ErrorMessageLabel 
+          className="FormInput__error-message"
+          htmlFor={id}
+          error={error}
+        />
+      )}
     </div>
   );
 });
@@ -85,6 +89,7 @@ const FormInput = React.forwardRef<HTMLInputElement, Props>((props, ref) => {
 FormInput.defaultProps = {
   layoutStyle: "minimal-condensed",
   type: "text",
+  placeholderError: true
 } as Partial<Props>;
 
 export default FormInput;

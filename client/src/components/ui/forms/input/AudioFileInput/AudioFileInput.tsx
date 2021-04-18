@@ -16,10 +16,11 @@ export interface Props extends BaseProps {
 
   accept?: string;
   disabled?: boolean;
+  placeholderError?: boolean;
 }
 
 const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
-  const { onChange, accept, disabled, value, error } = props;
+  const { onChange, accept, disabled, value, error, placeholderError } = props;
 
   const filename = useMemo(() => {
     return value ? value.name : null;
@@ -79,10 +80,12 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
         />
       </div>
 
-      <ErrorMessageLabel
-        className="AudioFileInput__error-message"
-        error={error}
-      />
+      {(!hasError && !placeholderError) ? null : (
+        <ErrorMessageLabel
+          className="AudioFileInput__error-message"
+          error={error}
+        />
+      )}
     </div>
   );
 };
@@ -90,6 +93,7 @@ const AudioFileInput: VoidFunctionComponent<Props> = (props) => {
 AudioFileInput.defaultProps = {
   accept: "audio/*",
   disabled: false,
+  placeholderError: true
 } as Partial<Props>;
 
 export default AudioFileInput;

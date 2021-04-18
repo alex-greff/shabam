@@ -17,10 +17,11 @@ export interface Props extends BaseProps {
 
   accept?: string;
   disabled?: boolean;
+  placeholderError?: boolean;
 }
 
 const CoverArtFileInput: FunctionComponent<Props> = (props) => {
-  const { onChange, accept, disabled, value, error } = props;
+  const { onChange, accept, disabled, value, error, placeholderError } = props;
 
   const handleCoverArtFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const coverArtFile = e.target.files ? e.target.files[0] : null;
@@ -70,16 +71,19 @@ const CoverArtFileInput: FunctionComponent<Props> = (props) => {
         />
       </div>
 
-      <ErrorMessageLabel
+      {(!hasError && !placeholderError) ? null : (
+        <ErrorMessageLabel
         className="CoverArtFileInput__error-message"
-        error={error}
-      />
+          error={error}
+        />
+      )}
     </div>
   );
 };
 
 CoverArtFileInput.defaultProps = {
   accept: "image/*",
+  placeholderError: true
 } as Partial<Props>;
 
 export default CoverArtFileInput;
