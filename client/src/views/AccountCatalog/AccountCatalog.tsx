@@ -43,7 +43,9 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
       const audioBuffer = await AudioUtilities.convertBlobToAudioBuffer(
         data.audioFile
       );
-      const downsampledAudioBuffer = await AudioUtilities.downsample(audioBuffer);
+      const downsampledAudioBuffer = await AudioUtilities.downsample(
+        audioBuffer
+      );
       const spectrogramData = await AudioUtilities.computeSpectrogramData(
         downsampledAudioBuffer
       );
@@ -85,7 +87,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
         NotificationManager.showErrorNotification("Error creating track.");
         return false;
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
       NotificationManager.showErrorNotification("An unexpected error ocurred.");
       return false;
@@ -113,7 +115,6 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
   ];
 
   const handleCatalogCreate = () => {
-    console.log("TODO: open create catalog dialog");
     showCreateModal();
   };
 

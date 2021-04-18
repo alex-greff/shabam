@@ -34,6 +34,8 @@ const INITIAL_DATA: CatalogItemData = {
   coverArtFile: undefined,
 };
 
+// TODO: add a process status prop and a loader UI
+
 const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   const { initialData, onAcceptClose, onCancelClose, title, ...rest } = props;
 
