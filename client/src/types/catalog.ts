@@ -1,7 +1,7 @@
 export type CatalogArtistType = "primary" | "featured" | "remix";
 
 export interface CatalogArtist {
-  artist: string;
+  name: string;
   type: CatalogArtistType;
 }
 

@@ -1,9 +1,13 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { BaseProps } from "@/types";
 import "./AccountCatalog.scss";
 import classnames from "classnames";
 import { useAccountLocation } from "@/hooks/useAccountLocation";
-import { useModal } from "react-modal-hook";
+import * as Utilities from "@/utilities";
+import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator";
+import * as AudioUtilities from "@/audio/utilities";
+import * as NotificationManager from "@/managers/NotificationManager";
+import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -11,88 +15,89 @@ import BreadcrumbTrail, {
   BreadcrumbTrailItem,
 } from "@/components/nav/BreadcrumbTrail/BreadcrumbTrail";
 import ConfigurationContainer from "@/components/containers/ConfigurationContainer/ConfigurationContainer";
-
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
-
 import AddIcon from "@material-ui/icons/Add";
 
-import BaseModal from "@/components/modals/BaseModal/BaseModal";
-import { useBaseModal } from "@/hooks/modals/useBaseModal";
-import { useAssertionModal } from "@/hooks/modals/useAssertionModal";
-import { useConfirmationModal } from "@/hooks/modals/useConfirmationModal";
 import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
 import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
+import { useAddTrackMutation } from "@/graphql-apollo.g.d";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
+const wasmFpGenerator = new WasmFingerprintGenerator();
+
 const AccountCatalog: FunctionComponent<Props> = (props) => {
   const accountId = useAccountLocation();
+  const [addTrack] = useAddTrackMutation();
 
-  // TODO: remove
-  // const [showCreateModal, hideCreateModal] = ueModal(
-  //   ({ in: open, onExited }) => {
-  //     return (
-  //       <BaseModal
-  //         open={open}
-  //         onExited={onExited}
-  //         onRequestClose={hideCreateModal}
-  //       >
-  //         <div
-  //           // style={{ maxWidth: "30rem", width: "100vw" }}
-  //         >
-  //           Modal
-  //           <button onClick={hideCreateModal}>Close</button>
-  //         </div>
-  //       </BaseModal>
-  //     );
-  //   }
-  // );
+  const onCreateCatalogItem = async (data: CatalogItemData) => {
+    console.log("Catalog Data", data); // TODO: remove
 
-  // // TODO: remove
-  // const [temp, setTemp] = useState(0);
-  // const [showCreateModal, hideCreateModal] = useBaseModal(() => {
-  //   return (
-  //     <div>
-  //       Modal &nbsp; {temp} &nbsp;
-  //       <button onClick={() => setTemp(temp + 1)}>Temp++</button>
-  //       <button onClick={hideCreateModal}>Close</button>
-  //     </div>
-  //   );
-  // }, [temp, setTemp]);
+    if (!data.audioFile) {
+      NotificationManager.showErrorNotification("No audio file given.");
+      return false;
+    }
 
-  // // TODO: remove
-  // const [temp, setTemp] = useState(0);
-  // const [showCreateModal, hideCreateModal] = useAssertionModal(() => {
-  //   return (
-  //     <div>
-  //       Modal &nbsp; {temp} &nbsp;
-  //       <button onClick={() => setTemp(temp + 1)}>Temp++</button>
-  //       <button onClick={hideCreateModal}>Close</button>
-  //     </div>
-  //   );
-  // }, [temp, setTemp]);
+    try {
+      // Create the spectrogram data
+      const audioBuffer = await AudioUtilities.convertBlobToAudioBuffer(
+        data.audioFile
+      );
+      const downsampledAudioBuffer = await AudioUtilities.downsample(audioBuffer);
+      const spectrogramData = await AudioUtilities.computeSpectrogramData(
+        downsampledAudioBuffer
+      );
 
-  // // TODO: remove
-  // const [temp, setTemp] = useState(0);
-  // const [showCreateModal, hideCreateModal] = useConfirmationModal(() => {
-  //   return (
-  //     <div>
-  //       Modal &nbsp; {temp} &nbsp;
-  //       <button onClick={() => setTemp(temp + 1)}>Temp++</button>
-  //       <button onClick={hideCreateModal}>Close</button>
-  //     </div>
-  //   );
-  // }, [temp, setTemp]);
+      console.log("Computing fingerprint..."); // TODO: remove
 
-  const onCreateCatalogItem = (data: CatalogItemData) => {
-    console.log("Catalog Data", data);
+      // Compute the fingerprint
+      const fingerprint = await wasmFpGenerator.generateFingerprint(
+        spectrogramData
+      );
+
+      if (!fingerprint) {
+        NotificationManager.showErrorNotification(
+          "Unable to generate fingerprint."
+        );
+        return false;
+      }
+
+      console.log("Finished computing fingerprint!"); // TODO: remove
+      console.log("Creating track..."); // TODO: remove
+
+      // Attempt to create the track
+      const result = await addTrack({
+        variables: {
+          trackData: {
+            title: data.title,
+            artists: data.artists.map((artist) =>
+              GraphqlTransformers.toArtistInput(artist)
+            ),
+            fingerprint: GraphqlTransformers.toFingerprintInput(fingerprint),
+            coverArt: data.coverArtFile,
+          },
+        },
+      });
+
+      console.log("Track created!"); // TODO: remove
+
+      if (result.errors) {
+        NotificationManager.showErrorNotification("Error creating track.");
+        return false;
+      }
+    } catch(err) {
+      console.error(err);
+      NotificationManager.showErrorNotification("An unexpected error ocurred.");
+      return false;
+    }
+
     return true;
-  }
+  };
 
   const [showCreateModal] = useCatalogConfigureModal({
     title: "Create Catalog Item",
     onAccept: onCreateCatalogItem,
-    requestCloseOnOuterClick: false
+    requestCloseOnOuterClick: false,
   });
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [

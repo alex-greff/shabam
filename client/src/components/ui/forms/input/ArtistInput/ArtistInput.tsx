@@ -71,7 +71,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
     }
 
     const newValue = [...value!];
-    newValue.push({ artist: artist, type: currType });
+    newValue.push({ name: artist, type: currType });
 
     // Trigger change
     if (onChange) onChange(newValue);
@@ -82,7 +82,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
 
   const handleArtistRemove = (item: CatalogArtist) => {
     const newValue = value!.filter(
-      (currValue) => currValue.artist !== item.artist
+      (currValue) => currValue.name !== item.name
     );
 
     if (onChange) onChange(newValue);
@@ -138,7 +138,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
             key={idx}
             removable
             className="ArtistInput__chip"
-            name={item.artist}
+            name={item.name}
             type={item.type}
             disabled={disabled}
             onRemove={() => handleArtistRemove(item)}

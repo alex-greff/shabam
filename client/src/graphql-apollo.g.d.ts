@@ -18,18 +18,24 @@ export type Scalars = {
   Upload: any;
 };
 
-/** Credentials object for users. */
-export type AccessCredentials = {
-  __typename?: 'AccessCredentials';
-  /** JWT access token. */
-  access_token: Scalars['String'];
+/** An artist. */
+export type Artist = {
+  __typename?: 'Artist';
+  name: Scalars['String'];
+  type: ArtistType;
 };
+
+export enum ArtistType {
+  Primary = 'PRIMARY',
+  Featured = 'FEATURED',
+  Remix = 'REMIX'
+}
 
 /** Metadata for a track. */
 export type TrackMetadata = {
   __typename?: 'TrackMetadata';
   title: Scalars['String'];
-  artists: Array<Scalars['String']>;
+  artists: Array<Artist>;
   coverImage?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Date']>;
   createdDate: Scalars['Date'];
@@ -43,6 +49,13 @@ export type Track = {
   id: Scalars['ID'];
   addressDatabase: Scalars['Int'];
   metadata: TrackMetadata;
+};
+
+/** Credentials object for users. */
+export type AccessCredentials = {
+  __typename?: 'AccessCredentials';
+  /** JWT access token. */
+  access_token: Scalars['String'];
 };
 
 /** Search result for an audio search.  */
@@ -182,17 +195,16 @@ export enum UserRole {
 /** Input data for adding a new track. */
 export type TrackAddDataInput = {
   title: Scalars['String'];
-  artists: Array<Scalars['String']>;
-  coverImage?: Maybe<Scalars['String']>;
+  artists: Array<ArtistInput>;
   releaseDate?: Maybe<Scalars['Date']>;
+  fingerprint: FingerprintInput;
+  coverArt?: Maybe<Scalars['Upload']>;
 };
 
-/** Input data for editing a track. */
-export type TrackEditDataInput = {
-  title?: Maybe<Scalars['String']>;
-  artists?: Maybe<Array<Scalars['String']>>;
-  coverImage?: Maybe<Scalars['String']>;
-  releaseDate?: Maybe<Scalars['Date']>;
+/** An artist input. */
+export type ArtistInput = {
+  name: Scalars['String'];
+  type: ArtistType;
 };
 
 /** Input data for searching.  */
@@ -203,6 +215,14 @@ export type FingerprintInput = {
 };
 
 
+/** Input data for editing a track. */
+export type TrackEditDataInput = {
+  title?: Maybe<Scalars['String']>;
+  artists?: Maybe<Array<Scalars['String']>>;
+  coverImage?: Maybe<Scalars['String']>;
+  releaseDate?: Maybe<Scalars['Date']>;
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   /** Notifies whenever a track is added.  */
@@ -212,6 +232,27 @@ export type Subscription = {
   /** Notifies whenever a track is deleted. Can filter by track id. */
   trackRemoved: Scalars['String'];
 };
+
+export type AddTrackMutationVariables = Exact<{
+  trackData: TrackAddDataInput;
+}>;
+
+
+export type AddTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { addTrack: (
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'addressDatabase'>
+    & { metadata: (
+      { __typename?: 'TrackMetadata' }
+      & Pick<TrackMetadata, 'title' | 'coverImage' | 'releaseDate' | 'createdDate' | 'updatedDate'>
+      & { artists: Array<(
+        { __typename?: 'Artist' }
+        & Pick<Artist, 'name' | 'type'>
+      )> }
+    ) }
+  ) }
+);
 
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
   username: Scalars['String'];
@@ -273,6 +314,51 @@ export type SignupMutation = (
 );
 
 
+export const AddTrackDocument = gql`
+    mutation AddTrack($trackData: TrackAddDataInput!) {
+  addTrack(trackData: $trackData) {
+    id
+    addressDatabase
+    metadata {
+      title
+      artists {
+        name
+        type
+      }
+      coverImage
+      releaseDate
+      createdDate
+      updatedDate
+    }
+  }
+}
+    `;
+export type AddTrackMutationFn = Apollo.MutationFunction<AddTrackMutation, AddTrackMutationVariables>;
+
+/**
+ * __useAddTrackMutation__
+ *
+ * To run a mutation, you first call `useAddTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTrackMutation, { data, loading, error }] = useAddTrackMutation({
+ *   variables: {
+ *      trackData: // value for 'trackData'
+ *   },
+ * });
+ */
+export function useAddTrackMutation(baseOptions?: Apollo.MutationHookOptions<AddTrackMutation, AddTrackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTrackMutation, AddTrackMutationVariables>(AddTrackDocument, options);
+      }
+export type AddTrackMutationHookResult = ReturnType<typeof useAddTrackMutation>;
+export type AddTrackMutationResult = Apollo.MutationResult<AddTrackMutation>;
+export type AddTrackMutationOptions = Apollo.BaseMutationOptions<AddTrackMutation, AddTrackMutationVariables>;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)

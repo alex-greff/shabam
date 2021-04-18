@@ -1,6 +1,6 @@
 import React from "react";
 import { useModal } from "react-modal-hook";
-import { HideModal, ShowModal } from "@/hooks/modals/types";
+import { ShowModal } from "@/hooks/modals/types";
 
 import CatalogConfigurationModal, {
   Props as CatalogConfigurationModalProps,
@@ -12,20 +12,28 @@ export interface Options
     CatalogConfigurationModalProps,
     "onAcceptClose" | "onCancelClose"
   > {
-  onAccept?: (data: CatalogItemData) => boolean;
-  onCancel?: () => boolean;
+  onAccept?: (data: CatalogItemData) => boolean | Promise<boolean>;
+  onCancel?: () => boolean | Promise<boolean>;
 }
 
 export function useCatalogConfigureModal(
   options?: Partial<Options>
 ): [ShowModal] {
   const [showModal, hideModal] = useModal(({ in: open, onExited }) => {
-    const onAcceptCloseHandler = (data: CatalogItemData) => {
-      if (!options?.onAccept || options.onAccept(data)) hideModal();
+    const onAcceptCloseHandler = async (data: CatalogItemData) => {
+      if (!options?.onAccept || await options.onAccept(data)) {
+        hideModal();
+        return true;
+      }
+      return false;
     };
 
-    const onCancelCloseHandler = () => {
-      if (!options?.onCancel || options.onCancel()) hideModal();
+    const onCancelCloseHandler = async () => {
+      if (!options?.onCancel || await options.onCancel()) {
+        hideModal();
+        return true;
+      }
+      return false;
     };
 
     return (

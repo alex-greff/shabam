@@ -287,7 +287,7 @@ export function convertBlobToAudioBuffer(blob: Blob): Promise<AudioBuffer> {
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         resolve(audioBuffer);
       } catch (err) {
-        reject();
+        reject(err);
       }
     };
 

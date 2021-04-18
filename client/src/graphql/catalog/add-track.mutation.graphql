@@ -1,0 +1,17 @@
+mutation AddTrack($trackData: TrackAddDataInput!) {
+  addTrack(trackData: $trackData) {
+    id
+    addressDatabase
+    metadata {
+      title
+      artists {
+        name
+        type
+      }
+      coverImage
+      releaseDate
+      createdDate
+      updatedDate
+    }
+  }
+}

@@ -22,8 +22,8 @@ export interface CatalogItemData extends CatalogItem {
 export interface Props
   extends Omit<ConfirmationModalProps, "onAcceptClose" | "onCancelClose"> {
   initialData?: Partial<CatalogItemData>;
-  onAcceptClose?: (data: CatalogItemData) => unknown;
-  onCancelClose?: () => unknown;
+  onAcceptClose?: (data: CatalogItemData) => boolean | Promise<boolean>;
+  onCancelClose?: () => boolean | Promise<boolean>;
   title?: string;
 }
 
@@ -42,8 +42,6 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
     handleSubmit,
     formState: { errors },
     control,
-    setError,
-    clearErrors,
   } = useForm<CatalogItemData>({
     defaultValues: {
       ...INITIAL_DATA,
@@ -57,12 +55,11 @@ const CatalogConfigureModal: FunctionComponent<Props> = (props) => {
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
 
-    console.log("Data", data); // TODO: remove
-
-    // TODO: handle fingerprint gen and then submission
-
-    // TODO: uncomment
-    // if (onAcceptClose) onAcceptClose(data);
+    if (onAcceptClose) {
+      const closed = await onAcceptClose(data);
+      if (!closed) 
+        setSubmitting(false);
+    }
   });
 
   const onAcceptCloseHandler = () => {

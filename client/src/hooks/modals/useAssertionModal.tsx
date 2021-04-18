@@ -8,7 +8,7 @@ import AssertionModal, {
 
 export interface Options
   extends Omit<AssertionModalProps, "open" | "onExited" | "onAssertionClose"> {
-  onAssertion?: () => boolean; // Allow the assertion to close
+  onAssertion?: () => boolean | Promise<boolean>;
 }
 
 export function useAssertionModal(
@@ -17,12 +17,14 @@ export function useAssertionModal(
   options?: Options
 ): [ShowModal, HideModal] {
   const [showModal, hideModal] = useModal(({ in: open, onExited }) => {
-    const onAssertionCloseHandler = () => {
+    const onAssertionCloseHandler = async () => {
       // No assertion close handler given, assume it returns true otherwise
       // run the assertion close handler and close iff it returns true
-      if (!options?.onAssertion || options.onAssertion()) {
+      if (!options?.onAssertion || await options.onAssertion()) {
         hideModal();
+        return true;
       }
+      return false;
     };
 
     return (

@@ -11,8 +11,8 @@ export interface Options
     ConfirmationModalProps,
     "open" | "onExited" | "onAcceptClose" | "onCancelClose"
   > {
-  onAccept?: () => boolean; // Allow the confirmation to close
-  onCancel?: () => boolean; // Allow the confirmation to close
+  onAccept?: () => boolean | Promise<boolean>;
+  onCancel?: () => boolean | Promise<boolean>;
 }
 
 export function useConfirmationModal(
@@ -21,20 +21,24 @@ export function useConfirmationModal(
   options?: Options
 ): [ShowModal, HideModal] {
   const [showModal, hideModal] = useModal(({ in: open, onExited }) => {
-    const onAcceptCloseHandler = () => {
+    const onAcceptCloseHandler = async () => {
       // No accept close handler given, assume it returns true otherwise
       // run the assertion close handler and close iff it returns true
-      if (!options?.onAccept || options.onAccept()) {
+      if (!options?.onAccept || await options.onAccept()) {
         hideModal();
+        return true;
       }
+      return false;
     };
 
-    const onCancelCloseHandler = () => {
+    const onCancelCloseHandler = async () => {
       // No cancel close handler given, assume it returns true otherwise
       // run the assertion close handler and close iff it returns true
-      if (!options?.onCancel || options.onCancel()) {
+      if (!options?.onCancel || await options.onCancel()) {
         hideModal();
+        return true;
       }
+      return false;
     };
 
     return (
