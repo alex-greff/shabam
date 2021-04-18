@@ -35,16 +35,17 @@ import RouteView from "@/router/RouteView";
 
 import ThreeJSBackground from "@/components/background/ThreeJSBackground";
 import SearchScene from "@/components/scenes/SearchScene/SearchScene";
+import { useApolloClient } from "./hooks/useApolloClient";
 
 // No type declarations for these
 const { CSSPlugin, AttrPlugin } = require("gsap/all");
 
-// Create the GraphQL client that we will use to connect to the backend
-export const apolloClient = new ApolloClient({
-  uri: KEYS.GRAPHQL_API_ENDPOINT,
-  cache: new InMemoryCache(),
-  link: createUploadLink({ uri: KEYS.GRAPHQL_API_ENDPOINT })
-});
+// // Create the GraphQL client that we will use to connect to the backend
+// export const apolloClient = new ApolloClient({
+//   uri: KEYS.GRAPHQL_API_ENDPOINT,
+//   cache: new InMemoryCache(),
+//   link: createUploadLink({ uri: KEYS.GRAPHQL_API_ENDPOINT })
+// });
 
 // Initialize themer
 initializeThemer(schema, mixins, themes, namespaces);
@@ -64,6 +65,8 @@ const App: FunctionComponent = () => {
     osInstance: null,
   });
   const osRef = useRef<OverlayScrollbarsComponent>(null);
+
+  const client = useApolloClient();
 
   const updateOsInstance = () => {
     if (!state.osInstance) {
@@ -134,7 +137,7 @@ const App: FunctionComponent = () => {
                 },
               }}
             >
-              <ApolloProvider client={apolloClient}>
+              <ApolloProvider client={client}>
                 <ModalProvider rootComponent={TransitionGroup}>
                   <NavBar
                     scrollAmount={state.scrollAmount}

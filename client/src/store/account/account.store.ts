@@ -6,7 +6,7 @@ import { TOKEN_STORAGE_KEY } from "@/constants";
 // --- Type Declarations ---
 // -------------------------
 
-interface UserTokenStorage {
+export interface UserTokenStorage {
   username: string;
   token: string;
 }

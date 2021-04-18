@@ -1,5 +1,6 @@
 import KEYS from "@/keys";
 import { GraphQLClient } from "graphql-request";
+import { useMemo } from "react";
 
 // Sets up a graphql-request client
 // Note: this is only used because the Apollo client hooks do not work
@@ -7,8 +8,12 @@ import { GraphQLClient } from "graphql-request";
 // https://www.npmjs.com/package/graphql-request
 
 export function useGraphqlClient(token?: string) {
-  return new GraphQLClient(
-    KEYS.GRAPHQL_API_ENDPOINT,
-    token ? { headers: { authorization: `Bearer ${token}` } } : undefined
-  );
+  const client = useMemo(() => {
+    return new GraphQLClient(
+      KEYS.GRAPHQL_API_ENDPOINT,
+      token ? { headers: { authorization: `Bearer ${token}` } } : undefined
+    );
+  }, [token]);
+
+  return client;
 }
