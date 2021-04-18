@@ -2,16 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""Credentials object for users."""
-type AccessCredentials {
-  """JWT access token."""
-  access_token: String!
+"""An artist."""
+type Artist {
+  name: String!
+  type: ArtistType!
+}
+
+enum ArtistType {
+  PRIMARY
+  FEATURED
+  REMIX
 }
 
 """Metadata for a track."""
 type TrackMetadata {
   title: String!
-  artists: [String!]!
+  artists: [Artist!]!
   coverImage: String
   releaseDate: Date
   createdDate: Date!
@@ -26,6 +32,12 @@ type Track {
   id: ID!
   addressDatabase: Int!
   metadata: TrackMetadata!
+}
+
+"""Credentials object for users."""
+type AccessCredentials {
+  """JWT access token."""
+  access_token: String!
 }
 
 """Search result for an audio search. """
@@ -113,17 +125,16 @@ enum UserRole {
 """Input data for adding a new track."""
 input TrackAddDataInput {
   title: String!
-  artists: [String!]!
-  coverImage: String
+  artists: [ArtistInput!]!
   releaseDate: Date
+  fingerprint: FingerprintInput!
+  coverArt: Upload
 }
 
-"""Input data for editing a track."""
-input TrackEditDataInput {
-  title: String
-  artists: [String!]
-  coverImage: String
-  releaseDate: Date
+"""An artist input."""
+input ArtistInput {
+  name: String!
+  type: ArtistType!
 }
 
 """Input data for searching. """
@@ -135,6 +146,14 @@ input FingerprintInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+"""Input data for editing a track."""
+input TrackEditDataInput {
+  title: String
+  artists: [String!]
+  coverImage: String
+  releaseDate: Date
+}
 
 type Subscription {
   """Notifies whenever a track is added. """

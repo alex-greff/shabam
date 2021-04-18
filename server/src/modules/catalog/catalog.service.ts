@@ -5,7 +5,7 @@ import {
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
 import { TrackEntity } from '@/entities/Track.entity';
-import { Track } from './models/catalog.models';
+import { Artist, Track } from './models/catalog.models';
 import { SearchEntity } from '@/entities/Search.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,7 +26,12 @@ export class CatalogService {
       metadata: {
         title: track.title,
         coverImage: track.coverImage,
-        artists: track.artists.map((artist) => artist.id),
+        artists: track.artists.map((artist) => {
+          const artistObj = new Artist();
+          artistObj.type = artist.type;
+          artistObj.name = artist.name;
+          return artistObj;
+        }),
         createdDate: track.createdDate,
         updatedDate: track.updateDate,
       },
@@ -56,6 +61,7 @@ export class CatalogService {
   }
 
   async addTrack(data: TrackAddDataInput): Promise<TrackEntity> {
+    console.log("HERE", data);
     // TODO: implement
     return {} as any;
   }
