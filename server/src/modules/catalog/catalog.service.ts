@@ -1,54 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   TrackAddDataInput,
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
 import { TrackEntity } from '@/entities/Track.entity';
-import { Artist, Track } from './models/catalog.models';
-import { SearchEntity } from '@/entities/Search.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ArtistEntity } from '@/entities/Artist.entity';
+import { UserRequestData } from '@/types';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class CatalogService {
   constructor(
     @InjectRepository(TrackEntity)
-    private trackRepository: Repository<TrackEntity>
+    private trackRepository: Repository<TrackEntity>,
+    private readonly userService: UserService,
   ) {}
-
-  static transformFromTrackEntity(track: TrackEntity | null): Track {
-    if (!track) return null;
-
-    return {
-      id: track.id,
-      addressDatabase: track.addressDatabase,
-      metadata: {
-        title: track.title,
-        coverImage: track.coverImage,
-        artists: track.artists.map((artist) => {
-          const artistObj = new Artist();
-          artistObj.type = artist.type;
-          artistObj.name = artist.name;
-          return artistObj;
-        }),
-        createdDate: track.createdDate,
-        updatedDate: track.updateDate,
-      },
-    };
-  }
-
-  // TODO: remove
-  // static transformFromSearchEntity(search: SearchEntity): TrackSearchResult[] {
-  //   return search.results.map((result) => ({
-  //     track: this.transformFromTrackEntity(result.track),
-  //     similarity: result.similarity,
-  //   }));
-  // }
-
-  static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
-    return tracks.map((track) => this.transformFromTrackEntity(track));
-  }
 
   async getTrack(id: string): Promise<TrackEntity> {
     // TODO: implement
@@ -60,10 +29,52 @@ export class CatalogService {
     return [] as TrackEntity[];
   }
 
-  async addTrack(data: TrackAddDataInput): Promise<TrackEntity> {
-    console.log("HERE", data);
-    // TODO: implement
-    return {} as any;
+  async addTrack(data: TrackAddDataInput, userData: UserRequestData): Promise<TrackEntity> {
+    // TODO: save the addresses and get the address database where it was saved
+    const addressDatabase = 0;
+
+    // TODO: get the artists
+    const artists: ArtistEntity[] = [];
+
+    // TODO: upload the cover image, if it exists
+    const coverImage = null;
+
+    // Get the user who created the track
+    const user = await this.userService.findUser(userData.username);
+    if (!user) 
+      throw new NotFoundException("Username does not exist");
+
+    console.log("DATA", data);
+
+    // Create the track entity
+    // const track = new TrackEntity({
+    //   title: data.title,
+    //   addressDatabase, 
+    //   artists,
+    //   coverImage,
+    //   createdDate: new Date(),
+    //   updateDate: new Date(),
+    //   releaseDate: data.releaseDate,
+    //   uploaderUser: user,
+    // });
+
+    // track.title = data.title;
+    const track = this.trackRepository.create({ 
+      title: data.title,
+      addressDatabase, 
+      artists,
+      coverImage,
+      createdDate: new Date(),
+      updateDate: new Date(),
+      releaseDate: data.releaseDate,
+      uploaderUser: user,
+    });
+
+    console.log("Track", track);
+
+    await this.trackRepository.save(track);
+
+    return track;
   }
 
   async editTrack(id: string, data: TrackEditDataInput): Promise<TrackEntity> {

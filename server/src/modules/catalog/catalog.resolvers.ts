@@ -14,7 +14,7 @@ import {
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Track } from './models/catalog.models';
+import { Artist, Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
@@ -22,6 +22,10 @@ import { TrackEditPolicy } from './policies/track-edit.policy';
 import { TrackUploadPolicy } from './policies/track-upload.policy';
 import { TrackRemovePolicy } from './policies/track-remove.policy';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
+import { TrackEntity } from '@/entities/Track.entity';
+import { CurrentUser } from '../user/decorators/current-user.decorator';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
+import { UserRequestData } from '@/types';
 
 const SUBSCRIPTIONS_CONFIG = {
   TRACK_ADDED: 'trackAdded',
@@ -35,6 +39,43 @@ const pubSub = new PubSub();
 export class CatalogResolver {
   constructor(private readonly catalogService: CatalogService) {}
 
+  // -----------------------------
+  // --- Transformer Functions --- 
+  // -----------------------------
+
+  static transformFromTrackEntity(track: TrackEntity | null): Track {
+    if (!track) return null;
+
+    return {
+      id: track.id,
+      addressDatabase: track.addressDatabase,
+      metadata: {
+        title: track.title,
+        coverImage: track.coverImage,
+        artists: track.artists.map((artist) => {
+          const artistObj = new Artist();
+          artistObj.type = artist.type;
+          artistObj.name = artist.name;
+          return artistObj;
+        }),
+        createdDate: track.createdDate,
+        updatedDate: track.updateDate,
+      },
+    };
+  }
+
+  // TODO: remove
+  // static transformFromSearchEntity(search: SearchEntity): TrackSearchResult[] {
+  //   return search.results.map((result) => ({
+  //     track: this.transformFromTrackEntity(result.track),
+  //     similarity: result.similarity,
+  //   }));
+  // }
+
+  static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
+    return tracks.map((track) => this.transformFromTrackEntity(track));
+  }
+
   // ---------------
   // --- Queries ---
   // ---------------
@@ -47,7 +88,7 @@ export class CatalogResolver {
   ): Promise<Track> {
     const track = await this.catalogService.getTrack(id);
     if (!track) throw new NotFoundException();
-    return CatalogService.transformFromTrackEntity(track);
+    return CatalogResolver.transformFromTrackEntity(track);
   }
 
   @Query((returns) => [Track], {
@@ -55,7 +96,7 @@ export class CatalogResolver {
   })
   async getTracks(@Args() args: GetTracksArgs): Promise<Track[]> {
     const tracks = await this.catalogService.getTracks(args);
-    return CatalogService.transformFromTrackEntityMany(tracks);
+    return CatalogResolver.transformFromTrackEntityMany(tracks);
   }
 
   // TODO: remove
@@ -83,11 +124,12 @@ export class CatalogResolver {
   @CheckPolicies(TrackUploadPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async addTrack(
+    @CurrentUser() currUser: UserRequestData,
     @Args('trackData') trackData: TrackAddDataInput,
   ): Promise<Track> {
-    const track = await this.catalogService.addTrack(trackData);
+    const track = await this.catalogService.addTrack(trackData, currUser);
     pubSub.publish(SUBSCRIPTIONS_CONFIG.TRACK_ADDED, { trackAdded: track });
-    return CatalogService.transformFromTrackEntity(track);
+    return CatalogResolver.transformFromTrackEntity(track);
   }
 
   @Mutation((returns) => Track, {
@@ -102,7 +144,7 @@ export class CatalogResolver {
     const track = await this.catalogService.editTrack(id, trackData);
     if (!track) throw new NotFoundException();
     pubSub.publish(SUBSCRIPTIONS_CONFIG.TRACK_EDITED, { editedTrack: track });
-    return CatalogService.transformFromTrackEntity(track);
+    return CatalogResolver.transformFromTrackEntity(track);
   }
 
   @Mutation((returns) => Boolean, {

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { TrackEntity } from './Track.entity';
 import { SearchEntity } from './Search.entity';
+import { plainToClass } from 'class-transformer';
 
 @Entity({ name: 'search_result' })
 export class SearchResultEntity {

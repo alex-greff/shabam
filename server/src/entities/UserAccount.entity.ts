@@ -8,6 +8,7 @@ import {
 import { SearchEntity } from './Search.entity';
 import { TrackEntity } from './Track.entity';
 import { UserRole } from '@/modules/policies/policy.types';
+import { plainToClass } from 'class-transformer';
 
 @Entity({ name: 'user_account' })
 @Check('char_length(username) >= 5 AND char_length(username) <= 15')
@@ -24,10 +25,10 @@ export class UserAccountEntity {
   @Column({ type: 'integer' })
   role: UserRole;
 
-  @Column({ type: "timestamp with time zone" })
+  @Column({ type: 'timestamp with time zone' })
   signupDate: Date;
 
-  @Column({ type: "timestamp with time zone", nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   lastLogin: Date | null;
 
   @OneToMany(() => SearchEntity, (search) => search.user)

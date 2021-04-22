@@ -9,6 +9,6 @@ export class ArtistEntity {
   @Column({ type: 'varchar', length: 50, unique: true })
   name: string;
 
-  @Column({ type: "int" })
+  @Column({ type: 'int' })
   type: ArtistType;
 }

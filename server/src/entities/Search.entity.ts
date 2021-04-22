@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { UserAccountEntity } from './UserAccount.entity';
 import { SearchResultEntity } from './SearchResult.entity';
+import { plainToClass } from 'class-transformer';
 
 @Entity({ name: 'search' })
 export class SearchEntity {

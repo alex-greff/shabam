@@ -8,7 +8,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { UserAccountEntity } from './UserAccount.entity';
-import { SearchEntity } from './Search.entity';
 import { ArtistEntity } from './Artist.entity';
 import { SearchResultEntity } from './SearchResult.entity';
 
@@ -20,16 +19,16 @@ export class TrackEntity {
   @Column({ type: 'varchar', length: 50 })
   title: string;
 
-  @Column({ type: 'varchar', length: 355 })
+  @Column({ type: 'varchar', length: 355, nullable: true })
   coverImage: string;
 
   @Column({ type: 'integer' })
   addressDatabase: number;
 
-  @Column({ type: "time with time zone", nullable: true })
+  @Column({ type: 'time with time zone', nullable: true })
   releaseDate: Date | null;
 
-  @Column({ type: "timestamp with time zone" })
+  @Column({ type: 'timestamp with time zone' })
   createdDate: Date;
 
   @Column({ type: 'timestamp with time zone' })
