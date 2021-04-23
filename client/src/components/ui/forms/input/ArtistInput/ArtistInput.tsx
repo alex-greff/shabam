@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, FunctionComponent } from "react";
 import "./ArtistInput.scss";
 import classnames from "classnames";
-import { CatalogArtist, CatalogArtistType } from "@/types/catalog";
+import { CatalogArtist, CatalogCollaborationType } from "@/types/catalog";
 import * as Utilities from "@/utilities";
 
 import FormInput, {
@@ -15,7 +15,7 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import { FieldError } from "react-hook-form";
 
 interface OptionType {
-  value: CatalogArtistType;
+  value: CatalogCollaborationType;
   label: string;
 }
 
@@ -54,7 +54,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [currType, setCurrType] = useState<CatalogArtistType>("primary");
+  const [currType, setCurrType] = useState<CatalogCollaborationType>("primary");
   const [currInput, setCurrInput] = useState<string>("");
 
   const addableInput = !!currInput;
@@ -89,7 +89,7 @@ const ArtistInput: FunctionComponent<Props> = (props) => {
   };
 
   const handleDropdownChange = (e: ReactSelectData) => {
-    setCurrType(e!.value as CatalogArtistType);
+    setCurrType(e!.value as CatalogCollaborationType);
   };
 
   const renderCustom = () => {

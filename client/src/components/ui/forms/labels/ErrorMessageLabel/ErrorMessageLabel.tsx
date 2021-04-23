@@ -21,7 +21,7 @@ const ErrorMessageLabel: VoidFunctionComponent<Props> = (props) => {
       style={props.style}
       id={props.id}
     >
-      {error ? error.message : "hidden placeholder"}
+      {error ? error.message : "\u00a0"}
     </label>
   );
 };

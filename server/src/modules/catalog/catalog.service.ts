@@ -5,18 +5,20 @@ import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
 import { TrackEntity } from '@/entities/Track.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository, FilterQuery } from '@mikro-orm/core';
-import { ArtistEntity } from '@/entities/Artist.entity';
+import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class CatalogService {
   constructor(
+    private readonly orm: MikroORM,
     @InjectRepository(TrackEntity)
     private readonly trackRepository: EntityRepository<TrackEntity>,
     private readonly userService: UserService,
+    private readonly artistService: ArtistService,
   ) {}
 
-  async getTrack(id: string): Promise<TrackEntity> {
+  async getTrack(id: number): Promise<TrackEntity> {
     const track = await this.trackRepository.findOne({ id });
 
     if (!track) throw new NotFoundException('Track not found');
@@ -44,12 +46,6 @@ export class CatalogService {
     data: TrackAddDataInput,
     userData: UserRequestData,
   ): Promise<TrackEntity> {
-    // TODO: save the addresses and get the address database where it was saved
-    const addressDatabase = 0;
-
-    // TODO: get the artists
-    const artists: ArtistEntity[] = [];
-
     // TODO: upload the cover image, if it exists
     const coverImage = null;
 
@@ -57,19 +53,15 @@ export class CatalogService {
     const user = await this.userService.findUser(userData.username);
     if (!user) throw new NotFoundException('Username does not exist');
 
-    // console.log("DATA", data); // TODO: remove
+    // TODO: upload image
 
-    // const temp = await data.coverArt;
-    // console.log("Cover Art", temp);
+    // Begin transaction
+    const em = this.orm.em.fork();
+    await em.begin();
 
-    const fingerprintData = await data.fingerprint.fingerprintData;
-    console.log('fingerprint data', fingerprintData);
-
-    // Create the track
-    const track = this.trackRepository.create({
+    const track = em.create(TrackEntity, {
       title: data.title,
-      addressDatabase,
-      artists,
+      addressDatabase: -1,
       coverImage,
       createdDate: new Date(),
       updateDate: new Date(),
@@ -77,9 +69,33 @@ export class CatalogService {
       uploaderUser: user,
     });
 
-    // console.log("Track", track); // TODO: remove
+    // Create the collaborations
+    for (const artistCollab of data.artists) {
+      const artist = await this.artistService.findOrCreateArtistByName(
+        artistCollab.name,
+      );
+      await this.artistService.addCollaboration(
+        artist,
+        artistCollab.type,
+        track,
+      );
+    }
 
-    await this.trackRepository.persistAndFlush(track);
+    em.persist(track);
+
+    const fingerprintData = await data.fingerprint.fingerprintData;
+    console.log('fingerprint data', fingerprintData);
+
+    // TODO: save the fingerprint to the address database, rollback transaction
+    // and exit with exception if it fails
+
+    // TODO: update the address database field in `track`
+    const addressDatabase = 0;
+
+    // console.log("Track collaborators", track.collaborators.getItems()); // TODO: remove
+
+    // Finalize transaction
+    await em.commit();
 
     return track;
   }

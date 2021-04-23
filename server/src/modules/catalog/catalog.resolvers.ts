@@ -2,6 +2,7 @@ import { NotFoundException, UseGuards } from '@nestjs/common';
 import {
   Args,
   ID,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -14,7 +15,7 @@ import {
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { Artist, Track } from './models/catalog.models';
+import { Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
@@ -25,6 +26,7 @@ import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { TrackEntity } from '@/entities/Track.entity';
 import { CurrentUser } from '../user/decorators/current-user.decorator';
 import { UserRequestData } from '@/types';
+import { ArtistCollaboration } from '../artist/models/artist.models';
 
 const SUBSCRIPTIONS_CONFIG = {
   TRACK_ADDED: 'trackAdded',
@@ -51,10 +53,10 @@ export class CatalogResolver {
       metadata: {
         title: track.title,
         coverImage: track.coverImage,
-        artists: track.artists.getItems().map((artist) => {
-          const artistObj = new Artist();
-          artistObj.type = artist.type;
-          artistObj.name = artist.name;
+        artists: track.collaborators.getItems().map((collaborator) => {
+          const artistObj = new ArtistCollaboration();
+          artistObj.type = collaborator.type;
+          artistObj.name = collaborator.artist.name;
           return artistObj;
         }),
         createdDate: track.createdDate,
@@ -83,7 +85,7 @@ export class CatalogResolver {
     description: 'Get a specific track in the catalog.',
   })
   async getTrack(
-    @Args({ type: () => ID, name: 'id' }) id: string,
+    @Args({ type: () => Int, name: 'id' }) id: number,
   ): Promise<Track> {
     const track = await this.catalogService.getTrack(id);
     if (!track) throw new NotFoundException();

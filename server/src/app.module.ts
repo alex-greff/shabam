@@ -12,6 +12,7 @@ import { UserModule } from '@/modules/user/user.module';
 import { CatalogModule } from '@/modules/catalog/catalog.module';
 import { SearchModule } from '@/modules/search/search.module';
 import { AddressModule } from './modules/address/address.module';
+import { ArtistModule } from './modules/artist/artist.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { AddressModule } from './modules/address/address.module';
     // --- Graphql Modules ---
     AuthModule,
     UserModule,
+    ArtistModule,
     CatalogModule,
     SearchModule,
     AddressModule,

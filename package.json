@@ -41,7 +41,8 @@
         "codegen:client": "docker exec shabam_client npm run codegen",
         "init-schema--main": "cd ./postgres_client && npm run exec:init-schema--main ; cd ..",
         "orm:update--db-metadata": "docker exec shabam_api npm run orm:update--db-metadata",
-        "orm:drop--db-metadata": "docker exec shabam_api npm run orm:drop--db-metadata"
+        "orm:drop--db-metadata": "docker exec shabam_api npm run orm:drop--db-metadata",
+		"orm:reset--db-metadata": "npm run orm:drop--db-metadata && npm run orm:update--db-metadata"
     },
     "repository": {
         "type": "git",

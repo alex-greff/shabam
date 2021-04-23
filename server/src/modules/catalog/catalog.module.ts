@@ -7,7 +7,7 @@ import { CatalogService } from './catalog.service';
 @Global()
 @Module({
   imports: [ 
-    MikroOrmModule.forFeature([TrackEntity])
+    MikroOrmModule.forFeature([TrackEntity]),
   ],
   providers: [
     CatalogResolver, 

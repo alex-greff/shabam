@@ -1,13 +1,12 @@
 import { UserAccountEntity } from './UserAccount.entity';
-import { ArtistEntity } from './Artist.entity';
 import { SearchResultEntity } from './SearchResult.entity';
-import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
-import { v4 } from "uuid";
+import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { ArtistCollaborationEntity } from './ArtistCollaboration.entity';
 
 @Entity({ tableName: "track" })
 export class TrackEntity {
   @PrimaryKey()
-  id: string = v4();
+  id!: number;
 
   @Property()
   title!: string;
@@ -33,6 +32,6 @@ export class TrackEntity {
   @OneToMany(() => SearchResultEntity, searchResult => searchResult.track)
   searchResults = new Collection<SearchResultEntity>(this);
 
-  @ManyToMany(() => ArtistEntity, artist => artist.tracks)
-  artists = new Collection<ArtistEntity>(this);
+  @OneToMany(() => ArtistCollaborationEntity, collaboration => collaboration.track)
+  collaborators = new Collection<ArtistCollaborationEntity>(this);
 }

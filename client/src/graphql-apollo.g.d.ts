@@ -18,24 +18,31 @@ export type Scalars = {
   Upload: any;
 };
 
-/** An artist. */
-export type Artist = {
-  __typename?: 'Artist';
+/** An artist collaboration. */
+export type ArtistCollaboration = {
+  __typename?: 'ArtistCollaboration';
   name: Scalars['String'];
-  type: ArtistType;
+  type: CollaborationType;
 };
 
-export enum ArtistType {
+export enum CollaborationType {
   Primary = 'PRIMARY',
   Featured = 'FEATURED',
   Remix = 'REMIX'
 }
 
+/** Credentials object for users. */
+export type AccessCredentials = {
+  __typename?: 'AccessCredentials';
+  /** JWT access token. */
+  access_token: Scalars['String'];
+};
+
 /** Metadata for a track. */
 export type TrackMetadata = {
   __typename?: 'TrackMetadata';
   title: Scalars['String'];
-  artists: Array<Artist>;
+  artists: Array<ArtistCollaboration>;
   coverImage?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Date']>;
   createdDate: Scalars['Date'];
@@ -46,16 +53,9 @@ export type TrackMetadata = {
 /** A track object. */
 export type Track = {
   __typename?: 'Track';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   addressDatabase: Scalars['Int'];
   metadata: TrackMetadata;
-};
-
-/** Credentials object for users. */
-export type AccessCredentials = {
-  __typename?: 'AccessCredentials';
-  /** JWT access token. */
-  access_token: Scalars['String'];
 };
 
 /** Search result for an audio search.  */
@@ -81,13 +81,18 @@ export type QueryCheckUsernameAvailabilityArgs = {
 
 
 export type QueryGetTrackArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
 export type QueryGetTracksArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TracksFilterInput>;
+};
+
+export type TracksFilterInput = {
+  uploader?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -204,7 +209,7 @@ export type TrackAddDataInput = {
 /** An artist input. */
 export type ArtistInput = {
   name: Scalars['String'];
-  type: ArtistType;
+  type: CollaborationType;
 };
 
 /** Input data for searching.  */
@@ -247,8 +252,8 @@ export type AddTrackMutation = (
       { __typename?: 'TrackMetadata' }
       & Pick<TrackMetadata, 'title' | 'coverImage' | 'releaseDate' | 'createdDate' | 'updatedDate'>
       & { artists: Array<(
-        { __typename?: 'Artist' }
-        & Pick<Artist, 'name' | 'type'>
+        { __typename?: 'ArtistCollaboration' }
+        & Pick<ArtistCollaboration, 'name' | 'type'>
       )> }
     ) }
   ) }

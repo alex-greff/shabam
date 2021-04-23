@@ -1,8 +1,8 @@
-export type CatalogArtistType = "primary" | "featured" | "remix";
+export type CatalogCollaborationType = "primary" | "featured" | "remix";
 
 export interface CatalogArtist {
   name: string;
-  type: CatalogArtistType;
+  type: CatalogCollaborationType;
 }
 
 export interface CatalogItem {

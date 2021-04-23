@@ -3,16 +3,7 @@ import { IsOptional } from 'class-validator';
 import { FileUpload } from "graphql-upload";
 import { GraphQLUpload } from "apollo-server-express";
 import { FingerprintInput } from '@/modules/fingerprint/dto/fingerprint.inputs';
-import { Artist, ArtistType } from '../models/catalog.models';
-
-@InputType({ description: "An artist input." })
-export class ArtistInput {
-  @Field()
-  name: string;
-
-  @Field(type => ArtistType)
-  type: ArtistType;
-}
+import { ArtistInput } from '@/modules/artist/dto/artist.dto';
 
 @InputType({ description: 'Input data for adding a new track.' })
 export class TrackAddDataInput {
