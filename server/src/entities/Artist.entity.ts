@@ -1,14 +1,19 @@
 import { ArtistType } from '@/modules/catalog/models/catalog.models';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Collection, Entity, Enum, ManyToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from "uuid";
+import { TrackEntity } from './Track.entity';
 
-@Entity({ name: 'artist' })
+@Entity({ tableName: "artist" })
 export class ArtistEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryKey()
+  id: string = v4();
 
-  @Column({ type: 'varchar', length: 50, unique: true })
+  @Property({ unique: true })
   name: string;
 
-  @Column({ type: 'int' })
-  type: ArtistType;
+  @Enum()
+  type!: ArtistType;
+
+  @ManyToMany(() => TrackEntity, "artists", { owner: true })
+  tracks = new Collection<TrackEntity>(this);
 }

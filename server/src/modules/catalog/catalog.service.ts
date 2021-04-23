@@ -4,18 +4,18 @@ import {
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
-import { TrackEntity } from '@/entities/Track.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ArtistEntity } from '@/entities/Artist.entity';
 import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
+import { TrackEntity } from '@/entities/Track.entity';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/core';
+import { ArtistEntity } from '@/entities/Artist.entity';
 
 @Injectable()
 export class CatalogService {
   constructor(
     @InjectRepository(TrackEntity)
-    private trackRepository: Repository<TrackEntity>,
+    private readonly trackRepository: EntityRepository<TrackEntity>,
     private readonly userService: UserService,
   ) {}
 
@@ -44,21 +44,9 @@ export class CatalogService {
     if (!user) 
       throw new NotFoundException("Username does not exist");
 
-    console.log("DATA", data);
+    // console.log("DATA", data); // TODO: remove
 
-    // Create the track entity
-    // const track = new TrackEntity({
-    //   title: data.title,
-    //   addressDatabase, 
-    //   artists,
-    //   coverImage,
-    //   createdDate: new Date(),
-    //   updateDate: new Date(),
-    //   releaseDate: data.releaseDate,
-    //   uploaderUser: user,
-    // });
-
-    // track.title = data.title;
+    // Create the track
     const track = this.trackRepository.create({ 
       title: data.title,
       addressDatabase, 
@@ -70,9 +58,9 @@ export class CatalogService {
       uploaderUser: user,
     });
 
-    console.log("Track", track);
+    // console.log("Track", track); // TODO: remove
 
-    await this.trackRepository.save(track);
+    await this.trackRepository.persistAndFlush(track);
 
     return track;
   }

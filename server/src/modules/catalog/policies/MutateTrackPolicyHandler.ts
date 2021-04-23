@@ -4,9 +4,9 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import * as Utilities from '@/utilities';
-import { TrackEntity } from '@/entities/Track.entity';
 import { CatalogService } from '../catalog.service';
 import { UserAccountEntity } from '@/entities/UserAccount.entity';
+import { TrackEntity } from '@/entities/Track.entity';
 
 export interface MutateTrackPolicyHandlerConfig {
   targetTrackPath: string;

@@ -24,7 +24,6 @@ import { TrackRemovePolicy } from './policies/track-remove.policy';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { TrackEntity } from '@/entities/Track.entity';
 import { CurrentUser } from '../user/decorators/current-user.decorator';
-import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { UserRequestData } from '@/types';
 
 const SUBSCRIPTIONS_CONFIG = {
@@ -52,7 +51,7 @@ export class CatalogResolver {
       metadata: {
         title: track.title,
         coverImage: track.coverImage,
-        artists: track.artists.map((artist) => {
+        artists: track.artists.getItems().map((artist) => {
           const artistObj = new Artist();
           artistObj.type = artist.type;
           artistObj.name = artist.name;

@@ -1,39 +1,32 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Check,
-  OneToMany,
-} from 'typeorm';
 import { SearchEntity } from './Search.entity';
 import { TrackEntity } from './Track.entity';
 import { UserRole } from '@/modules/policies/policy.types';
-import { plainToClass } from 'class-transformer';
+import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from "uuid";
 
-@Entity({ name: 'user_account' })
-@Check('char_length(username) >= 5 AND char_length(username) <= 15')
+@Entity({ tableName: 'user_account' })
 export class UserAccountEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryKey()
+  id: string = v4();
 
-  @Column({ type: 'varchar', length: 15, unique: true })
-  username: string;
+  @Property({ unique: true })
+  username!: string;
 
-  @Column({ type: 'varchar', length: 60 })
-  password: string;
+  @Property()
+  password!: string;
 
-  @Column({ type: 'integer' })
-  role: UserRole;
+  @Enum()
+  role!: UserRole;
 
-  @Column({ type: 'timestamp with time zone' })
+  @Property()
   signupDate: Date;
 
-  @Column({ type: 'timestamp with time zone', nullable: true })
-  lastLogin: Date | null;
+  @Property({ nullable: true })
+  lastLogin?: Date;
 
-  @OneToMany(() => SearchEntity, (search) => search.user)
-  searches: Promise<SearchEntity[]>;
+  @OneToMany(() => SearchEntity, search => search.user)
+  searches = new Collection<SearchEntity>(this);
 
-  @OneToMany(() => TrackEntity, (track) => track.uploaderUser)
-  uploadedTracks: Promise<TrackEntity[]>;
+  @OneToMany(() => TrackEntity, track => track.uploaderUser)
+  uploadedTracks = new Collection<TrackEntity>(this);
 }

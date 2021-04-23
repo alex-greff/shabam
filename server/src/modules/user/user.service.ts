@@ -1,17 +1,17 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { UpdateUserCredentialsInput, UserDataInput } from './dto/user.inputs';
 import {} from './dto/user.args';
-import { UserAccountEntity } from '@/entities/UserAccount.entity';
 import { UserRole } from '@/modules/policies/policy.types';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { UserAccountEntity } from '@/entities/UserAccount.entity';
+import { EntityRepository } from '@mikro-orm/core';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserAccountEntity)
-    private userRepository: Repository<UserAccountEntity>,
+    private readonly userRepository: EntityRepository<UserAccountEntity>
   ) {}
 
   /** Finds a user entity with the given name. Returns null otherwise. */
@@ -34,7 +34,8 @@ export class UserService {
     const user = await this.userRepository.findOne({ username });
     if (!user) return false;
     user.lastLogin = new Date();
-    await this.userRepository.save(user);
+    this.userRepository.persist(user);
+
     return true;
   }
 
@@ -51,7 +52,7 @@ export class UserService {
       role: UserRole.Default,
       signupDate: new Date(),
     });
-    await this.userRepository.save(newUser);
+    await this.userRepository.persistAndFlush(newUser);
 
     return newUser;
   }
@@ -89,7 +90,7 @@ export class UserService {
     if (numFieldsUpdated < 1)
       return false;
 
-    await this.userRepository.save(user);
+    await this.userRepository.persistAndFlush(user);
 
     return true;
   }
@@ -101,7 +102,7 @@ export class UserService {
     
     if (user.role !== updatedRole) {
       user.role = updatedRole;
-      await this.userRepository.save(user);
+      await this.userRepository.persistAndFlush(user);
       return true;
     }
 

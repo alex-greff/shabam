@@ -1,27 +1,19 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
 import { UserAccountEntity } from './UserAccount.entity';
 import { SearchResultEntity } from './SearchResult.entity';
-import { plainToClass } from 'class-transformer';
+import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from "uuid";
 
-@Entity({ name: 'search' })
+@Entity({ tableName: "search" })
 export class SearchEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: number;
+  @PrimaryKey()
+  id: string = v4();
 
-  @ManyToOne(() => UserAccountEntity, (user) => user.searches, { eager: true })
-  user: UserAccountEntity;
+  @ManyToOne(() => UserAccountEntity)
+  user!: UserAccountEntity;
 
-  @OneToMany(() => SearchResultEntity, (searchResult) => searchResult.search, {
-    eager: true,
-  })
-  results: SearchResultEntity[];
+  @OneToMany(() => SearchResultEntity, searchResult => searchResult.search)
+  results = new Collection<SearchResultEntity>(this);
 
-  @Column({ type: 'timestamp with time zone' })
+  @Property()
   searchDate: Date;
 }

@@ -1,13 +1,13 @@
 import { SearchEntity } from '@/entities/Search.entity';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Global, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { SearchResolver } from './search.resolvers';
 import { SearchService } from './search.service';
 
 @Global()
 @Module({
   imports: [ 
-    TypeOrmModule.forFeature([SearchEntity])
+    MikroOrmModule.forFeature([SearchEntity])
   ],
   providers: [
     SearchResolver, 

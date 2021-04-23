@@ -1,19 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { TrackEntity } from './Track.entity';
-import { SearchEntity } from './Search.entity';
-import { plainToClass } from 'class-transformer';
+import { TrackEntity } from '../entities/Track.entity';
+import { SearchEntity } from '../entities/Search.entity';
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from "uuid";
 
-@Entity({ name: 'search_result' })
+@Entity({ tableName: "search_result" })
 export class SearchResultEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: number;
+  @PrimaryKey()
+  id: string = v4();
 
-  @ManyToOne(() => SearchEntity, (search) => search.results)
-  search: Promise<SearchEntity>;
+  @ManyToOne(() => SearchEntity)
+  search!: SearchEntity;
 
-  @ManyToOne(() => TrackEntity, (track) => track.searchResults, { eager: true })
-  track: TrackEntity;
+  @ManyToOne(() => TrackEntity)
+  track!: TrackEntity;
 
-  @Column({ type: 'float' })
-  similarity: number;
+  @Property()
+  similarity!: number;
 }

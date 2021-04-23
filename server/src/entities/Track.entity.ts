@@ -1,48 +1,38 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-  OneToMany,
-} from 'typeorm';
 import { UserAccountEntity } from './UserAccount.entity';
 import { ArtistEntity } from './Artist.entity';
 import { SearchResultEntity } from './SearchResult.entity';
+import { Collection, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import { v4 } from "uuid";
 
-@Entity({ name: 'track' })
+@Entity({ tableName: "track" })
 export class TrackEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryKey()
+  id: string = v4();
 
-  @Column({ type: 'varchar', length: 50 })
-  title: string;
+  @Property()
+  title!: string;
 
-  @Column({ type: 'varchar', length: 355, nullable: true })
-  coverImage: string;
+  @Property({ nullable: true })
+  coverImage?: string;
 
-  @Column({ type: 'integer' })
-  addressDatabase: number;
+  @Property({ columnType: "integer" })
+  addressDatabase!: number;
 
-  @Column({ type: 'time with time zone', nullable: true })
-  releaseDate: Date | null;
+  @Property({ nullable: true })
+  releaseDate?: Date;
 
-  @Column({ type: 'timestamp with time zone' })
-  createdDate: Date;
+  @Property()
+  createdDate!: Date;
+  
+  @Property()
+  updateDate!: Date;
 
-  @Column({ type: 'timestamp with time zone' })
-  updateDate: Date;
+  @ManyToOne(() => UserAccountEntity)
+  uploaderUser!: UserAccountEntity;
 
-  @ManyToOne(() => UserAccountEntity, (user) => user.uploadedTracks, {
-    eager: true,
-  })
-  uploaderUser: UserAccountEntity;
+  @OneToMany(() => SearchResultEntity, searchResult => searchResult.track)
+  searchResults = new Collection<SearchResultEntity>(this);
 
-  @OneToMany(() => SearchResultEntity, (searchResult) => searchResult.track)
-  searchResults: Promise<SearchResultEntity[]>;
-
-  @ManyToMany(() => ArtistEntity, { eager: true })
-  @JoinTable()
-  artists: ArtistEntity[];
+  @ManyToMany(() => ArtistEntity, artist => artist.tracks)
+  artists = new Collection<ArtistEntity>(this);
 }

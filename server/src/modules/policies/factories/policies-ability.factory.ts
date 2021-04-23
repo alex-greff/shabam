@@ -44,7 +44,7 @@ export class PoliciesAbilityFactory {
 
     // Admin specific abilities:
     if (user.role >= UserRole.Admin) {
-      // Has read-=write access to everything
+      // Has read-write access to everything
       ability.allow(UserAccountEntity, "$manage", "$all");
     }
 
