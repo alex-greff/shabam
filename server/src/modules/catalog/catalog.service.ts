@@ -1,14 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  TrackAddDataInput,
-  TrackEditDataInput,
-} from './dto/catalog.inputs';
+import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
 import { GetTracksArgs } from './dto/catalog.args';
 import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
 import { TrackEntity } from '@/entities/Track.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, FilterQuery } from '@mikro-orm/core';
 import { ArtistEntity } from '@/entities/Artist.entity';
 
 @Injectable()
@@ -20,16 +17,33 @@ export class CatalogService {
   ) {}
 
   async getTrack(id: string): Promise<TrackEntity> {
-    // TODO: implement
-    return {} as any;
+    const track = await this.trackRepository.findOne({ id });
+
+    if (!track) throw new NotFoundException('Track not found');
+
+    return track;
   }
 
   async getTracks(args: GetTracksArgs): Promise<TrackEntity[]> {
-    // TODO: implement
-    return [] as TrackEntity[];
+    let query: FilterQuery<TrackEntity> = {};
+
+    if (args.filter && args.filter.uploader) {
+      query = {
+        uploaderUser: { username: args.filter.uploader },
+      };
+    }
+
+    const tracksTuple = await this.trackRepository.findAndCount(query, {
+      limit: args.limit,
+      offset: args.offset,
+    });
+    return tracksTuple[0];
   }
 
-  async addTrack(data: TrackAddDataInput, userData: UserRequestData): Promise<TrackEntity> {
+  async addTrack(
+    data: TrackAddDataInput,
+    userData: UserRequestData,
+  ): Promise<TrackEntity> {
     // TODO: save the addresses and get the address database where it was saved
     const addressDatabase = 0;
 
@@ -41,15 +55,20 @@ export class CatalogService {
 
     // Get the user who created the track
     const user = await this.userService.findUser(userData.username);
-    if (!user) 
-      throw new NotFoundException("Username does not exist");
+    if (!user) throw new NotFoundException('Username does not exist');
 
     // console.log("DATA", data); // TODO: remove
 
+    // const temp = await data.coverArt;
+    // console.log("Cover Art", temp);
+
+    const fingerprintData = await data.fingerprint.fingerprintData;
+    console.log('fingerprint data', fingerprintData);
+
     // Create the track
-    const track = this.trackRepository.create({ 
+    const track = this.trackRepository.create({
       title: data.title,
-      addressDatabase, 
+      addressDatabase,
       artists,
       coverImage,
       createdDate: new Date(),

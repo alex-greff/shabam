@@ -1,5 +1,3 @@
-import { PermissionConfig } from "@/types";
-
 export const DEFAULT_PORT = 5000;
 
 // TODO: remove
@@ -9,7 +7,3 @@ export const USERNAME_COOKIE_NAME = "username";
 export const JWT_EXPIRE_TIME = "7d";
 
 export const CHECK_POLICIES_KEY = "check-policies";
-
-export const DEFAULT_PERMISSION_CONFIG: PermissionConfig = {
-  usernamePath: "username"
-};

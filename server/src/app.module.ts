@@ -11,6 +11,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { CatalogModule } from '@/modules/catalog/catalog.module';
 import { SearchModule } from '@/modules/search/search.module';
+import { AddressModule } from './modules/address/address.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { SearchModule } from '@/modules/search/search.module';
     UserModule,
     CatalogModule,
     SearchModule,
+    AddressModule,
     // --- GraphQL ---
     GraphQLModule.forRoot({
       debug: !KEYS.PRODUCTION,
