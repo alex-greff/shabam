@@ -9,10 +9,13 @@ import { useMemo } from "react";
 import KEYS from "@/keys";
 import { TOKEN_STORAGE_KEY } from "@/constants";
 import { UserTokenStorage } from "@/store/account/account.store";
+import { createUploadLink } from "apollo-upload-client";
 
 export function useApolloClient() {
   const client = useMemo(() => {
-    const httpLink = new HttpLink({ uri: KEYS.GRAPHQL_API_ENDPOINT });
+    const uploadLink = createUploadLink({ 
+      uri: KEYS.GRAPHQL_API_ENDPOINT,
+    });
 
     const authMiddleware = new ApolloLink((operation, forward) => {
       // Add authorization to headers
@@ -31,7 +34,7 @@ export function useApolloClient() {
 
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: concat(authMiddleware, httpLink),
+      link: concat(authMiddleware, uploadLink),
     });
   }, []);
 
