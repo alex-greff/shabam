@@ -11,7 +11,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { CatalogModule } from '@/modules/catalog/catalog.module';
 import { SearchModule } from '@/modules/search/search.module';
-import { AddressModule } from './modules/address/address.module';
+import { RecordsModule } from './modules/records/records.module';
 import { ArtistModule } from './modules/artist/artist.module';
 import { FingerprintModule } from './modules/fingerprint/fingerprint.module';
 
@@ -26,7 +26,7 @@ import { FingerprintModule } from './modules/fingerprint/fingerprint.module';
     CatalogModule,
     SearchModule,
     FingerprintModule,
-    AddressModule,
+    RecordsModule,
     // --- GraphQL ---
     GraphQLModule.forRoot({
       debug: !KEYS.PRODUCTION,

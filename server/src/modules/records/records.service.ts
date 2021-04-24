@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Fingerprint } from '../fingerprint/types';
-import { AddressRecords } from './types';
+import { RecordsTable } from './types';
 
 @Injectable()
-export class AddressService {
-  private computeAddresses(fingerprint: Fingerprint, trackId: number): AddressRecords {
-    const records = new AddressRecords();
+export class RecordsService {
+  private computeRecordTable(fingerprint: Fingerprint, trackId: number): RecordsTable {
+    const records = new RecordsTable();
 
     // TODO: implement
 
