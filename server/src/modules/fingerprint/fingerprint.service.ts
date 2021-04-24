@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Readable } from 'stream';
 import { FingerprintInput } from './dto/fingerprint.inputs';
-import { Fingerprint } from './types';
+import { Fingerprint } from './fingerprint.types';
 
 @Injectable()
 export class FingerprintService {

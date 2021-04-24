@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Fingerprint } from '../fingerprint/types';
-import { RecordsTable } from './types';
+import { Fingerprint } from '../fingerprint/fingerprint.types';
+import { RecordsTable } from './records.types';
 
 @Injectable()
 export class RecordsService {
