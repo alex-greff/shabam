@@ -13,6 +13,7 @@ import { CatalogModule } from '@/modules/catalog/catalog.module';
 import { SearchModule } from '@/modules/search/search.module';
 import { AddressModule } from './modules/address/address.module';
 import { ArtistModule } from './modules/artist/artist.module';
+import { FingerprintModule } from './modules/fingerprint/fingerprint.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { ArtistModule } from './modules/artist/artist.module';
     ArtistModule,
     CatalogModule,
     SearchModule,
+    FingerprintModule,
     AddressModule,
     // --- GraphQL ---
     GraphQLModule.forRoot({

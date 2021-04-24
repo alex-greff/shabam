@@ -7,6 +7,7 @@ import { TrackEntity } from '@/entities/Track.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
+import { FingerprintService } from '../fingerprint/fingerprint.service';
 
 @Injectable()
 export class CatalogService {
@@ -16,6 +17,7 @@ export class CatalogService {
     private readonly trackRepository: EntityRepository<TrackEntity>,
     private readonly userService: UserService,
     private readonly artistService: ArtistService,
+    private readonly fingerprintService: FingerprintService,
   ) {}
 
   async getTrack(id: number): Promise<TrackEntity> {
@@ -83,14 +85,21 @@ export class CatalogService {
 
     em.persist(track);
 
-    const fingerprintData = await data.fingerprint.fingerprintData;
-    console.log('fingerprint data', fingerprintData);
+    // Unwrap the fingerprint and store it in an address database
+    // let addressDatabase = 0;
+    try {
+      const fingerprint = await this.fingerprintService.unwrapFingerprintInput(
+        data.fingerprint,
+      );
 
-    // TODO: save the fingerprint to the address database, rollback transaction
-    // and exit with exception if it fails
+      console.log('FINGERPRINT', fingerprint);
 
-    // TODO: update the address database field in `track`
-    const addressDatabase = 0;
+      // TODO: store in address database
+    } catch (err) {
+      // Something failed, rollback the transaction and throw the error again
+      em.rollback();
+      throw err;
+    }
 
     // console.log("Track collaborators", track.collaborators.getItems()); // TODO: remove
 
