@@ -20,28 +20,28 @@ export class TrackAddDataInput {
   @Field(type => FingerprintInput)
   fingerprint: FingerprintInput;
 
-  @Field(type => GraphQLUpload, { nullable: true })
+  @Field(type => GraphQLUpload!, { nullable: true })
   @IsOptional()
-  coverArt: Promise<FileUpload>;
+  coverArt?: Promise<FileUpload>;
 }
 
 @InputType({ description: 'Input data for editing a track.' })
 export class TrackEditDataInput {
   @Field({ nullable: true })
   @IsOptional()
-  title: string;
+  title?: string;
 
   @Field(type => [String], { nullable: true })
   @IsOptional()
-  artists: string[];
+  artists?: string[];
 
   @Field({ nullable: true })
   @IsOptional()
-  coverImage: string;
+  coverImage?: string;
 
   @Field({ nullable: true })
   @IsOptional()
-  releaseDate: Date;
+  releaseDate?: Date;
 }
 
 // TODO: remove

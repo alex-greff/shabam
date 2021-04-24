@@ -32,7 +32,7 @@ export abstract class MutateTrackPolicyHandler extends ConfigurablePolicyHandler
     targetTrack: TrackEntity,
   ): boolean | Promise<boolean>;
 
-  async handle(ability: AppAbility, user: UserAccountEntity,  context: ExecutionContext) {
+  async handle(ability: AppAbility, user: UserAccountEntity, context: ExecutionContext) {
     const config = this.getConfig(context);
 
     const ctx = GqlExecutionContext.create(context);

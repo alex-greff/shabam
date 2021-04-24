@@ -10,6 +10,6 @@ export class FingerprintInput {
   @Field(type => Int)
   frequencyBinCount: number;
 
-  @Field(type => GraphQLUpload)
+  @Field(type => GraphQLUpload!)
   fingerprintData: Promise<FileUpload>;
 }

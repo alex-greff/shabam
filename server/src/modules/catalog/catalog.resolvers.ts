@@ -44,9 +44,7 @@ export class CatalogResolver {
   // --- Transformer Functions --- 
   // -----------------------------
 
-  static transformFromTrackEntity(track: TrackEntity | null): Track {
-    if (!track) return null;
-
+  static transformFromTrackEntity(track: TrackEntity): Track {
     return {
       id: track.id,
       addressDatabase: track.addressDatabase,

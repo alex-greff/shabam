@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { UserRequestData } from '@/types';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from "bcrypt";
@@ -29,7 +29,7 @@ export class AuthService {
 
     const payload: UserRequestData = {
       username,
-      role: user.role
+      role: user!.role
     };
 
     await this.userService.updateLastLogin(username);

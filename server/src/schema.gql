@@ -53,11 +53,11 @@ type Query {
   getTrack(id: Int!): Track!
 
   """Get a paginated list of all tracks in the catalog."""
-  getTracks(offset: Int = 0, limit: Int = 25, filter: TracksFilterInput = null): [Track!]!
+  getTracks(offset: Int = 0, limit: Int = 25, filter: TracksFilterInput): [Track!]!
 }
 
 input TracksFilterInput {
-  uploader: String = null
+  uploader: String
 }
 
 type Mutation {

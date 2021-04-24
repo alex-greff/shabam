@@ -4,7 +4,7 @@ import { Max, Min } from 'class-validator';
 @InputType()
 export class TracksFilterInput {
   @Field(type => String, { nullable: true })
-  uploader = null;
+  uploader?: string;
 }
 
 @ArgsType()
@@ -19,5 +19,5 @@ export class GetTracksArgs {
   limit = 25;
 
   @Field(type => TracksFilterInput, { nullable: true })
-  filter: TracksFilterInput | null = null;
+  filter?: TracksFilterInput;
 }

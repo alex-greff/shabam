@@ -19,12 +19,12 @@ export class UpdateUserCredentialsInput {
   @IsOptional()
   @Min(6)
   @Max(15)
-  username: string;
+  username?: string;
 
   @Field({
     description: 'The password (in clear) of the user.',
     nullable: true,
   })
   @IsOptional()
-  password: string;
+  password?: string;
 }

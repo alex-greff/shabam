@@ -1,0 +1,1 @@
+export const ANCHOR_POINT_GAP = 3;
