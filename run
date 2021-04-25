@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# --- rm-services commands ---
+
+function rm-services:dev() {
+  docker-compose -f docker-compose-dev.yml rm -f proxy api client;
+}
+
+function rm-services:dev-proxy() {
+  docker-compose -f docker-compose-dev.yml rm -f proxy;
+}
+
+function rm-services:dev-api() {
+  docker-compose -f docker-compose-dev.yml rm -f api;
+}
+
+function rm-services:dev-client() {
+  docker-compose -f docker-compose-dev.yml rm -f client
+}
+
+# --- start commands ---
+
+function start:dev () {
+  docker-compose -f docker-compose-dev.yml up --build;
+}
+
+function start:dev--recreate() {
+  bash run rm-services:dev && bash run start:dev;
+}
+
+function start:dev--recreate-proxy() {
+  bash run rm-services:dev-proxy && bash run start:dev;
+}
+
+function start:dev--recreate-client() {
+  bash run rm-services:dev-client && bash run start:dev;
+}
+
+function start:dev--recreate-api() {
+  bash run rm-services:dev-api && bash run start:dev;
+}
+
+function restart:dev() {
+  docker-compose -f docker-compose-dev.yml restart proxy api client;
+}
+
+function restart:dev-proxy() {
+  docker-compose -f docker-compose-dev.yml restart proxy;
+}
+
+function restart:dev-api() {
+  docker-compose -f docker-compose-dev.yml restart api;
+}
+
+function restart:dev-client() {
+  docker-compose -f docker-compose-dev.yml restart client;
+}
+
+# --- stop commands ---
+
+function stop:dev() {
+  docker-compose -f docker-compose-dev.yml down;
+}
+
+# --- shell commands ---
+
+function shell:proxy() {
+  docker exec -it shabam_proxy sh;
+}
+
+function shell:client() {
+  docker exec -it shabam_client bash;
+}
+
+function shell:api() {
+  docker exec -it shabam_api sh;
+}
+
+# --- generation commands ---
+
+function build:client--wasm() {
+  docker exec shabam_client npm run build:wasm;
+}
+
+function codegen:client() {
+  docker exec shabam_client npm run codegen;
+}
+
+function init-schema--db-metadata() {
+  docker exec shabam_api npm run orm:update--db-metadata;
+}
+
+function init-schema--db-address() {
+  cd ./postgres_client;
+  npm run exec:init-schema--address-all;
+  cd ..;
+}
+
+
+# Run a function name in the context of this script
+eval "$@"
