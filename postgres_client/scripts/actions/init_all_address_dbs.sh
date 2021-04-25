@@ -19,7 +19,7 @@ NUM_ADDRESS_DBS="$1"
 SKIP_PROMPT="$2"
 
 WARNING_PROMPT="\e[31mDANGER ZONE:\e[0m running this will reset all tables and data of all address databases. Run this command?"
-ACCEPTANCE_COMMAND="for i in \$(seq 1 "$NUM_ADDRESS_DBS"); do bash ./scripts/actions/init_address_db.sh "\""\$i"\"" 'true'; done"
+ACCEPTANCE_COMMAND="for i in \$(seq 0 `expr "$NUM_ADDRESS_DBS" - 1`); do bash ./scripts/actions/init_address_db.sh "\""\$i"\"" 'true'; done"
 REJECTION_COMMAND='echo Cancelled schema initialization'
 
 if [ "$SKIP_PROMPT" = true ]; then

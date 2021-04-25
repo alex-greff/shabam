@@ -1,4 +1,4 @@
-export interface RecordAddress {
+export interface Record {
   anchorFreq: number;
   pointFreq: number;
   delta: number;
@@ -6,7 +6,7 @@ export interface RecordAddress {
 }
 
 export interface RecordsTable {
-  addresses: RecordAddress[];
+  addresses: Record[];
   trackId: number;
 }
 

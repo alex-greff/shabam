@@ -1,25 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { Fingerprint } from '../fingerprint/fingerprint.types';
-import { RecordAddress, RecordsTable } from "./records.types";
+import { TARGET_ZONE_SIZE } from './records.config';
+import { Record, RecordsTable } from './records.types';
 
 @Injectable()
 export class RecordsService {
-  private computeRecordsTable(fingerprint: Fingerprint, trackId: number): RecordsTable {
+  private computeRecordsTable(
+    fingerprint: Fingerprint,
+    trackId: number,
+  ): RecordsTable {
     const recordsTable: RecordsTable = {
       addresses: [],
-      trackId
+      trackId,
     };
 
-    // Iterate through each point of the fingerprint
-    for (let i = 0; i < fingerprint.data.length / 2; i++) {
-      const currWindow = fingerprint.data[i*2];
-      const currPartition = fingerprint.data[i*2+1];
+    const ANCHOR_POINT_GAP = fingerprint.numberOfPartitions - 1;
 
-      // TODO: treat this point as the anchor point and compute its
-      // corresponding address records
+    // Treat this point as the anchor point and compute its
+    // corresponding address records
+    for (const anchorCell of fingerprint) {
+      // Generate addresses records for all target zones
+      for (let zone = 0; zone < TARGET_ZONE_SIZE; zone++) {
+        const pointCell = fingerprint.getCell(
+          anchorCell.cellNum + ANCHOR_POINT_GAP + zone,
+        );
+
+        // We reached the end of the fingerprint, so stop trying to
+        // create address records
+        if (!pointCell) break;
+
+        // Create a record and add it to the records table
+        const record: Record = {
+          anchorFreq: anchorCell.partition,
+          pointFreq: pointCell.partition,
+          delta: pointCell.window - anchorCell.window,
+          absoluteTime: anchorCell.window,
+        };
+
+        recordsTable.addresses.push(record);
+      }
     }
-
-    // TODO: implement
 
     return recordsTable;
   }
@@ -29,6 +49,8 @@ export class RecordsService {
     trackId: number,
     addressDb: number | null = null,
   ): Promise<boolean> {
+    const recordsTable = this.computeRecordsTable(fingerprint, trackId);
+
     // TODO: implement
     return false;
   }

@@ -5,6 +5,8 @@ import { Fingerprint } from './fingerprint.types';
 
 @Injectable()
 export class FingerprintService {
+
+
   private async getFingerprintBuffer(
     createFingerprintReadStream: () => Readable,
   ): Promise<Buffer> {
@@ -39,11 +41,13 @@ export class FingerprintService {
     );
 
     const fingerprintData = Uint32Array.from(fingerprintDataBuffer);
+    
+    return new Fingerprint(fingerprintInput.frequencyBinCount, fingerprintInput.numberOfWindows, fingerprintData);
 
-    return {
-      numberOfPartitions: fingerprintInput.frequencyBinCount,
-      numberOfWindows: fingerprintInput.numberOfWindows,
-      data: fingerprintData,
-    };
+    // return {
+    //   numberOfPartitions: fingerprintInput.frequencyBinCount,
+    //   numberOfWindows: fingerprintInput.numberOfWindows,
+    //   data: fingerprintData,
+    // };
   }
 }
