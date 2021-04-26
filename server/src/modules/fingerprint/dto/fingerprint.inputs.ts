@@ -8,7 +8,7 @@ export class FingerprintInput {
   numberOfWindows: number;
 
   @Field(type => Int)
-  frequencyBinCount: number;
+  numberOfPartitions: number;
 
   @Field(type => GraphQLUpload!)
   fingerprintData: Promise<FileUpload>;

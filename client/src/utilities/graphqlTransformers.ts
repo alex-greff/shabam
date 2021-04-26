@@ -28,7 +28,7 @@ export const toFingerprintInput = (
   const dataBin = new Blob([fingerprint.data], { type: "octet/stream" });
 
   return {
-    frequencyBinCount: fingerprint.frequencyBinCount,
+    numberOfPartitions: fingerprint.numberOfPartitions,
     numberOfWindows: fingerprint.numberOfWindows,
     fingerprintData: dataBin,
   };

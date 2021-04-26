@@ -144,7 +144,7 @@ input ArtistInput {
 """Input data for searching. """
 input FingerprintInput {
   numberOfWindows: Int!
-  frequencyBinCount: Int!
+  numberOfPartitions: Int!
   fingerprintData: Upload!
 }
 

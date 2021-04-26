@@ -59,7 +59,7 @@ const Search: FunctionComponent<Props> = (props) => {
 
     const searchResult = await runSearchMutation({ variables: { fingerprint: { 
       numberOfWindows: fingerprint.numberOfWindows,
-      frequencyBinCount: fingerprint.frequencyBinCount,
+      numberOfPartitions: fingerprint.numberOfPartitions,
       fingerprintData: fingerprintDataBlob
     }}});
 

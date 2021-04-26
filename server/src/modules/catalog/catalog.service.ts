@@ -8,6 +8,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
+import { RecordsService } from '../records/records.service';
 
 @Injectable()
 export class CatalogService {
@@ -18,6 +19,7 @@ export class CatalogService {
     private readonly userService: UserService,
     private readonly artistService: ArtistService,
     private readonly fingerprintService: FingerprintService,
+    private readonly recordsService: RecordsService,
   ) {}
 
   async getTrack(id: number): Promise<TrackEntity> {
@@ -86,13 +88,14 @@ export class CatalogService {
     em.persist(track);
 
     // Unwrap the fingerprint and store it in an address database
-    // let addressDatabase = 0;
     try {
       const fingerprint = await this.fingerprintService.unwrapFingerprintInput(
         data.fingerprint,
       );
 
       console.log('FINGERPRINT', fingerprint);
+
+      await this.recordsService.storeFingerprint(fingerprint, track.id);
 
       // TODO: store in address database
     } catch (err) {

@@ -215,7 +215,7 @@ export type ArtistInput = {
 /** Input data for searching.  */
 export type FingerprintInput = {
   numberOfWindows: Scalars['Int'];
-  frequencyBinCount: Scalars['Int'];
+  numberOfPartitions: Scalars['Int'];
   fingerprintData: Scalars['Upload'];
 };
 

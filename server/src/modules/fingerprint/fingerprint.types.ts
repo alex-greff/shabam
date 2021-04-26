@@ -33,11 +33,11 @@ export class Fingerprint implements Iterable<FingerprintCell> {
   }
 
   public getCell(index: number): FingerprintCell | null {
-    if (index > this.data.length / 2) return null;
+    if (index >= this.data.length / 2) return null;
 
     return {
-      partition: this.data[index * 2],
-      window: this.data[index * 2 + 1],
+      window: this.data[index * 2],
+      partition: this.data[index * 2 + 1],
       cellNum: index,
     };
   }

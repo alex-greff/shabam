@@ -46,8 +46,8 @@ export class FingerprintService {
     );
 
     return new Fingerprint(
-      fingerprintInput.frequencyBinCount,
       fingerprintInput.numberOfWindows,
+      fingerprintInput.numberOfPartitions,
       fingerprintData,
     );
   }

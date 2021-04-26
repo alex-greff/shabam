@@ -65,6 +65,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
       }
 
       console.log("Finished computing fingerprint!"); // TODO: remove
+      console.log(fingerprint); // TODO: remove
       console.log("Creating track..."); // TODO: remove
 
       // Attempt to create the track
