@@ -1,3 +1,14 @@
+export interface Address {
+  anchorFreq: number;
+  pointFreq: number;
+  delta: number;
+}
+
+export interface Couple {
+  absTime: number;
+  trackId: number;
+}
+
 export interface Record {
   anchorFreq: number;
   pointFreq: number;
