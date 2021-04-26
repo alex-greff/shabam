@@ -14,6 +14,10 @@ export class RecordsService {
       trackId,
     };
 
+    // The number of points between the anchor point and the first node of its
+    // target zone. This avoids any possibilities of having time deltas of 0
+    // since the anchor point is guaranteed to be in a different window than
+    // all the points in the target zone
     const ANCHOR_POINT_GAP = fingerprint.numberOfPartitions - 1;
 
     // Treat this point as the anchor point and compute its
