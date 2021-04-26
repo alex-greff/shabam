@@ -5,8 +5,6 @@ import { Fingerprint } from './fingerprint.types';
 
 @Injectable()
 export class FingerprintService {
-
-
   private async getFingerprintBuffer(
     createFingerprintReadStream: () => Readable,
   ): Promise<Buffer> {
@@ -40,14 +38,17 @@ export class FingerprintService {
       fingerprintDataReadStream,
     );
 
-    const fingerprintData = Uint32Array.from(fingerprintDataBuffer);
-    
-    return new Fingerprint(fingerprintInput.frequencyBinCount, fingerprintInput.numberOfWindows, fingerprintData);
+    // Source: https://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer
+    const fingerprintData = new Uint32Array(
+      fingerprintDataBuffer.buffer,
+      fingerprintDataBuffer.byteOffset,
+      fingerprintDataBuffer.byteLength / Uint32Array.BYTES_PER_ELEMENT,
+    );
 
-    // return {
-    //   numberOfPartitions: fingerprintInput.frequencyBinCount,
-    //   numberOfWindows: fingerprintInput.numberOfWindows,
-    //   data: fingerprintData,
-    // };
+    return new Fingerprint(
+      fingerprintInput.frequencyBinCount,
+      fingerprintInput.numberOfWindows,
+      fingerprintData,
+    );
   }
 }
