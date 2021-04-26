@@ -6,7 +6,7 @@ COPY ./package*.json ./
 
 # Install the needed dependencies 
 RUN apk --no-cache --virtual build-dependencies add \
-   python make g++
+   python3 make g++
 
 # Install npm dependencies
 RUN npm install

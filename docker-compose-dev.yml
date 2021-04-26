@@ -109,19 +109,19 @@ services:
       - "PG_ADDRESS_0_HOST=db-address-0"
       - "PG_ADDRESS_0_DATABASE=postgres"
       - "PG_ADDRESS_0_USER=postgres"
-      - "PG_ADDRESS_0_PORT=5433"
+      - "PG_ADDRESS_0_PORT=5432"
       - "PG_ADDRESS_0_PASSWORD=development"
       # Address 1 DB
       - "PG_ADDRESS_1_HOST=db-address-1"
       - "PG_ADDRESS_1_DATABASE=postgres"
       - "PG_ADDRESS_1_USER=postgres"
-      - "PG_ADDRESS_1_PORT=5434"
+      - "PG_ADDRESS_1_PORT=5432"
       - "PG_ADDRESS_1_PASSWORD=development"
       # Address 2 DB
       - "PG_ADDRESS_2_HOST=db-address-2"
       - "PG_ADDRESS_2_DATABASE=postgres"
       - "PG_ADDRESS_2_USER=postgres"
-      - "PG_ADDRESS_2_PORT=5435"
+      - "PG_ADDRESS_2_PORT=5432"
       - "PG_ADDRESS_2_PASSWORD=development"
       # Misc
       - "ADDRESS_DB_COUNT=3"

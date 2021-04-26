@@ -96,6 +96,11 @@ function init-schema--db-address() {
   cd ..;
 }
 
+function init-schemas() {
+  eval "init-schema--db-metadata";
+  eval "init-schema--db-address";
+}
+
 
 # Run a function name in the context of this script
 eval "$@"

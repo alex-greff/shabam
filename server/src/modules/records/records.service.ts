@@ -2,69 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Fingerprint } from '../fingerprint/fingerprint.types';
 import { TARGET_ZONE_SIZE } from './records.config';
 import { Address, Couple, Record, RecordsTable } from './records.types';
+import * as RecordsDb from '@/db/address/index';
 
 @Injectable()
 export class RecordsService {
-  private computeRecordsTable(
-    fingerprint: Fingerprint,
-    trackId: number,
-  ): RecordsTable {
-    const recordsTable: RecordsTable = {
-      addresses: [],
-      trackId,
-    };
-
-    // The number of points between the anchor point and the first node of its
-    // target zone. This avoids any possibilities of having time deltas of 0
-    // since the anchor point is guaranteed to be in a different window than
-    // all the points in the target zone
-    const ANCHOR_POINT_GAP = fingerprint.numberOfPartitions - 1;
-
-    // Treat this point as the anchor point and compute its
-    // corresponding address records
-    for (const anchorCell of fingerprint) {
-      // Generate addresses records for all target zones
-      for (let zone = 0; zone < TARGET_ZONE_SIZE; zone++) {
-        const pointCell = fingerprint.getCell(
-          anchorCell.cellNum + ANCHOR_POINT_GAP + zone,
-        );
-
-        // We reached the end of the fingerprint, so stop trying to
-        // create address records
-        if (!pointCell) break;
-
-        // Create a record and add it to the records table
-        const record: Record = {
-          anchorFreq: anchorCell.partition,
-          pointFreq: pointCell.partition,
-          delta: pointCell.window - anchorCell.window,
-          absoluteTime: anchorCell.window,
-        };
-
-        recordsTable.addresses.push(record);
-      }
-    }
-
-    return recordsTable;
-  }
-
-  async storeFingerprint(
-    fingerprint: Fingerprint,
-    trackId: number,
-    addressDb: number | null = null,
-  ): Promise<void> {
-    const recordsTable = this.computeRecordsTable(fingerprint, trackId);
-
-    if (!addressDb) {
-      // TODO: select a address db to insert into
-      addressDb = 0;
-    }
-
-    console.log("recordsTable", recordsTable);
-
-    // TODO: save to the database
-  }
-
   private encodeAddress({ anchorFreq, pointFreq, delta }: Address): number {
     // Check that we can actually encode it in a 32-bit integer
     const PARTITION_MAX = 512; // 2^9
@@ -148,5 +89,117 @@ export class RecordsService {
       absTime,
       trackId,
     };
+  }
+
+  private computeRecordsTable(
+    fingerprint: Fingerprint,
+    trackId: number,
+  ): RecordsTable {
+    const recordsTable: RecordsTable = {
+      addresses: [],
+      trackId,
+    };
+
+    // The number of points between the anchor point and the first node of its
+    // target zone. This avoids any possibilities of having time deltas of 0
+    // since the anchor point is guaranteed to be in a different window than
+    // all the points in the target zone
+    const ANCHOR_POINT_GAP = fingerprint.numberOfPartitions - 1;
+
+    // Treat this point as the anchor point and compute its
+    // corresponding address records
+    for (const anchorCell of fingerprint) {
+      // Generate addresses records for all target zones
+      for (let zone = 0; zone < TARGET_ZONE_SIZE; zone++) {
+        const pointCell = fingerprint.getCell(
+          anchorCell.cellNum + ANCHOR_POINT_GAP + zone,
+        );
+
+        // We reached the end of the fingerprint, so stop trying to
+        // create address records
+        if (!pointCell) break;
+
+        // Create a record and add it to the records table
+        const record: Record = {
+          anchorFreq: anchorCell.partition,
+          pointFreq: pointCell.partition,
+          delta: pointCell.window - anchorCell.window,
+          absoluteTime: anchorCell.window,
+        };
+
+        recordsTable.addresses.push(record);
+      }
+    }
+
+    return recordsTable;
+  }
+
+  async storeFingerprint(
+    fingerprint: Fingerprint,
+    trackId: number,
+    addressDbNum: number | null = null,
+  ): Promise<void> {
+    const recordsTable = this.computeRecordsTable(fingerprint, trackId);
+
+    if (!addressDbNum) {
+      // TODO: select a address db to insert into
+      addressDbNum = 0;
+    }
+
+    // console.log("recordsTable", recordsTable); // TODO: remove
+
+    const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
+
+    // Begin queries
+    let addressQuery = `INSERT INTO address (address_enc) VALUES `;
+    let couplesQuery = `INSERT INTO couple (couple_enc, address_enc) VALUES `;
+
+    const addressQueryValues: number[] = [];
+    const couplesQueryValues: (number | bigint)[] = [];
+
+    let addressQueryIdx = 1;
+    let couplesQueryIdx = 1;
+
+    const addressQueryValueText: string[] = [];
+    const couplesQueryValueText: string[] = [];
+
+    // Add every address in the records table to the query
+    for (const address of recordsTable.addresses) {
+      const addressEnc = this.encodeAddress({
+        anchorFreq: address.anchorFreq,
+        pointFreq: address.pointFreq,
+        delta: address.delta,
+      });
+
+      addressQueryValueText.push(`($${addressQueryIdx})`);
+      addressQueryIdx += 1;
+      addressQueryValues.push(addressEnc);
+
+      const coupleEnc = this.encodeCouple({
+        absTime: address.absoluteTime,
+        trackId: recordsTable.trackId,
+      });
+
+      couplesQueryValueText.push(
+        `($${couplesQueryIdx}, $${couplesQueryIdx + 1})`,
+      );
+      couplesQueryIdx += 2;
+      couplesQueryValues.push(coupleEnc, addressEnc);
+    }
+
+    // Join the value text arrays
+    addressQuery += addressQueryValueText.join(', ');
+    couplesQuery += couplesQueryValueText.join(', ');
+
+    // End queries
+    addressQuery += ' ON CONFLICT DO NOTHING;';
+    couplesQuery += ';';
+
+    // console.log('addressQuery', addressQuery); // TODO: remove
+    // console.log('couplesQuery', couplesQuery); // TODO: remove
+
+    // Insert the address and couples
+    await dbPool.query(addressQuery, addressQueryValues);
+    await dbPool.query(couplesQuery, couplesQueryValues);
   }
 }
