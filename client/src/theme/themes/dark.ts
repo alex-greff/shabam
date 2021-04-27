@@ -155,6 +155,9 @@ export default {
         secondary: BLUE_11,
         disabled: DARK_5,
       },
+      selected: {
+        secondary: BLUE_3
+      },
       error: {
         primary: ERROR_2,
         secondary: Color(ERROR_2).darken(0.05).round().toString(),

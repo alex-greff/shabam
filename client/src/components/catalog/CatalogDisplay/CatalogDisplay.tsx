@@ -2,7 +2,7 @@ import React, { useEffect, useState, VoidFunctionComponent } from "react";
 import { BaseProps } from "@/types";
 import "./CatalogDisplay.scss";
 import classnames from "classnames";
-import { Track, TracksFilterInput, useGetTracksQuery } from "@/graphql-apollo.g.d";
+import { TracksFilterInput, useGetTracksQuery } from "@/graphql-apollo.g.d";
 import withLoading, {
   Props as WithLoadingProps,
 } from "@/components/hoc/withLoading";
@@ -23,7 +23,7 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
 
   const [currPage, setCurrPage] = useState(initialPage!);
 
-  const { data, loading, error } = useGetTracksQuery({
+  const { data, loading, error, fetchMore } = useGetTracksQuery({
     variables: {
       limit: tracksPerPage!,
       offset: currPage * tracksPerPage!,
@@ -57,6 +57,19 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
     )
   }
 
+  const handlePageChange = (page: number) => {
+    fetchMore({
+      variables: {
+        limit: tracksPerPage!,
+        offset: page * tracksPerPage!,
+        filter: {
+          // TODO: set this up properly
+        },
+      },
+    });
+    setCurrPage(page);
+  };
+
   return (
     <div
       className={classnames("CatalogDisplay", props.className)}
@@ -68,7 +81,8 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
 
       <PaginationControls 
         className="CatalogDisplay__pagination-controls"
-        numPages={5}
+        numPages={data.getTracksNum}
+        onPageChange={handlePageChange}
       />
     </div>
   );
@@ -77,7 +91,7 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
 CatalogDisplay.defaultProps = {
   initialPage: 0,
   // tracksPerPage: 10, // TODO: set back
-  tracksPerPage: 2,
+  tracksPerPage: 1,
 } as Partial<Props>;
 
 export default withLoading(CatalogDisplay);
