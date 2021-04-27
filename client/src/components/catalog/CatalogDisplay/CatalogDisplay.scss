@@ -2,6 +2,56 @@
   display: flex;
   flex-direction: column;
 
+  gap: 0.5rem; 
+
+  & .CatalogDisplay__tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    & .CatalogDisplay__tracks-header {
+      display: grid;
+      grid-template-columns: 1.2fr 3fr 3fr 2fr 2fr;
+      grid-template-rows: auto;
+      grid-template-areas: 
+        "coverArt title artists duration searches";
+      align-items: center;
+      gap: 1rem;
+      padding: 0 0.5rem;
+
+      font-size: 1.7rem;
+  
+      & .CatalogDisplay__tracks-header-title {
+        grid-area: title;
+      }
+  
+      & .CatalogDisplay__tracks-header-artists {
+        grid-area: artists;
+      }
+  
+      & .CatalogDisplay__tracks-header-duration {
+        grid-area: duration;
+        justify-self: center;
+      }
+  
+      & .CatalogDisplay__tracks-header-searches {
+        grid-area: searches;
+        justify-self: center;
+      }
+
+      @include respond(phone) {
+        display: none;
+      }
+    }
+  
+    & .CatalogDisplay__tracks-list {
+      display: flex;
+      flex-direction: column;
+  
+      gap: 0.5rem;  
+    }
+  }
+
   & .CatalogDisplay__pagination-controls {
     align-self: center;
   }

@@ -6,7 +6,7 @@ import { BaseProps } from "@/types";
 import ImageIcon from "@material-ui/icons/Image";
 
 export interface Props extends BaseProps {
-  src?: Blob;
+  src?: Blob | string;
   alt?: string;
   disabled?: boolean;
 }
@@ -18,12 +18,16 @@ const CoverArtImage: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     if (src) {
-      const reader = new FileReader();
-      reader.addEventListener("loadend", () => {
-        const file = reader.result;
-        setSrcFile(file);
-      });
-      reader.readAsDataURL(src);
+      if (typeof src === "string") {
+        setSrcFile(src);
+      } else {
+        const reader = new FileReader();
+        reader.addEventListener("loadend", () => {
+          const file = reader.result;
+          setSrcFile(file);
+        });
+        reader.readAsDataURL(src);
+      }
     }
   }, [src]);
 

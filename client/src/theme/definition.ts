@@ -140,6 +140,8 @@ export const schema: Schema = {
       }
     }
   },
+  CatalogDisplay: { $inherits: "GLOBAL" },
+  CatalogDisplayItem: { $inherits: "GLOBAL" },
   // Modal components
   CatalogConfigureModal: { $inherits: "GLOBAL" },
 };

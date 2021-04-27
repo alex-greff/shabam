@@ -249,11 +249,11 @@ export default {
       },
     },
     CoverArtImage: {
+      background: {
+        primary: DARK_5
+      },
       text: {
         secondary: LIGHT_2
-      },
-      background: {
-        primary: DARK_6
       }
     },
     Home: {
@@ -328,6 +328,11 @@ export default {
         primary: BLUE_13,
         secondary: Color(BLUE_13).darken(0.1).round().toString(),
         disabled: Color(BLUE_13).lighten(0.1).round().toString(),
+      }
+    },
+    CatalogDisplayItem: {
+      background: {
+        primary: DARK_3
       }
     }
   }

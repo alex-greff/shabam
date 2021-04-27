@@ -7,7 +7,6 @@ import withLoading, {
   Props as WithLoadingProps,
 } from "@/components/hoc/withLoading";
 import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
-import { CatalogItemDisplayData } from "@/types/catalog";
 
 import CatalogDisplayItem from "@/components/catalog/CatalogDisplayItem/CatalogDisplayItem";
 import PaginationControls from "@/components/ui/pagination/PaginationControls/PaginationControls";
@@ -40,22 +39,37 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
   if (!data) return null;
 
   const renderTracks = () => {
-    return data.getTracks.map((track) => {
-      const trackItem = GraphqlTransformers.trackToCatalogItemDisplayData(
-        track
-      );
+    return (
+      <div className="CatalogDisplay__tracks">
+        <div className="CatalogDisplay__tracks-header">
+          <div className="CatalogDisplay__tracks-header-title">Title</div>
+          <div className="CatalogDisplay__tracks-header-artists">Artists</div>
+          <div className="CatalogDisplay__tracks-header-duration">Duration</div>
+          <div className="CatalogDisplay__tracks-header-searches">Searches</div>
+        </div>
+        <div className="CatalogDisplay__tracks-list">
+          {data.getTracks.map((track) => {
+            const trackItem = GraphqlTransformers.trackToCatalogItemDisplayData(
+              track
+            );
 
-      return <CatalogDisplayItem item={trackItem} />;
-    });
-  }
+            return (
+              <CatalogDisplayItem
+                className="CatalogDisplay__track"
+                item={trackItem}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
-  console.log("DATA", data); // TODO: remove
+  // console.log("DATA", data); // TODO: remove
 
   const renderNoTracksFound = () => {
-    return (
-      <div className="CatalogDisplay__empty-text">No tracks found.</div>
-    )
-  }
+    return <div className="CatalogDisplay__empty-text">No tracks found.</div>;
+  };
 
   const handlePageChange = (page: number) => {
     fetchMore({
@@ -79,7 +93,7 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
       {data.getTracks.length > 0 ? renderTracks() : renderNoTracksFound()}
       {/* TODO: render pagination controls */}
 
-      <PaginationControls 
+      <PaginationControls
         className="CatalogDisplay__pagination-controls"
         numPages={data.getTracksNum}
         onPageChange={handlePageChange}

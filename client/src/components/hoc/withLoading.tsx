@@ -24,17 +24,6 @@ function withLoading<T = unknown, P extends Props = Props>(
             ref={ref}
             setIsLoading={setIsLoadingHandler}
           />
-          
-          {/* {isLoading ? (
-            // TODO: add loading component
-            <div>Loading...</div>
-          ) : (
-            <WrappedComponent
-              {...(props as P)}
-              ref={ref}
-              setIsLoading={setIsLoadingHandler}
-            />
-          )} */}
         </>
       );
     }
