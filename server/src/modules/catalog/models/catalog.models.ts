@@ -12,6 +12,12 @@ export class TrackMetadata {
   @Field({ nullable: true })
   coverImage?: string;
 
+  @Field(type => Int)
+  duration: number;
+
+  @Field(type => Int)
+  numPlays: number;
+
   @Field({ nullable: true})
   releaseDate?: Date;
 

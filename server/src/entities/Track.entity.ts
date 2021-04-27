@@ -20,6 +20,12 @@ export class TrackEntity {
   @Property({ nullable: true })
   releaseDate?: Date;
 
+  @Property({ columnType: "integer" })
+  duration!: number; // milliseconds
+
+  @Property({ columnType: "integer", default: 0 })
+  numPlays!: number;
+
   @Property()
   createdDate!: Date;
   

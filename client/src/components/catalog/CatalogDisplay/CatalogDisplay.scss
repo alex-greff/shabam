@@ -1,0 +1,8 @@
+.CatalogDisplay {
+  display: flex;
+  flex-direction: column;
+
+  & .CatalogDisplay__pagination-controls {
+    align-self: center;
+  }
+}

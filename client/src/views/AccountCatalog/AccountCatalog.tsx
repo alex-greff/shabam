@@ -17,6 +17,7 @@ import BreadcrumbTrail, {
 import ConfigurationContainer from "@/components/containers/ConfigurationContainer/ConfigurationContainer";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import AddIcon from "@material-ui/icons/Add";
+import CatalogDisplay from "@/components/catalog/CatalogDisplay/CatalogDisplay";
 
 import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
 import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
@@ -68,6 +69,10 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
       console.log(fingerprint); // TODO: remove
       console.log("Creating track..."); // TODO: remove
 
+      const audioDuration = await AudioUtilities.getAudioDuration(
+        data.audioFile
+      );
+
       // Attempt to create the track
       const result = await addTrack({
         variables: {
@@ -78,6 +83,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
             ),
             fingerprint: GraphqlTransformers.toFingerprintInput(fingerprint),
             coverArt: data.coverArtFile,
+            duration: audioDuration,
           },
         },
       });
@@ -152,7 +158,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
         </ConfigurationContainer>
 
         <div className="AccountCatalog__result-container">
-          TODO: add catalog list
+          <CatalogDisplay />
         </div>
       </PageContent>
     </PageView>

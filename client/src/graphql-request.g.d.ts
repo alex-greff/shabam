@@ -44,6 +44,8 @@ export type TrackMetadata = {
   title: Scalars['String'];
   artists: Array<ArtistCollaboration>;
   coverImage?: Maybe<Scalars['String']>;
+  duration: Scalars['Int'];
+  numPlays: Scalars['Int'];
   releaseDate?: Maybe<Scalars['Date']>;
   createdDate: Scalars['Date'];
   updatedDate: Scalars['Date'];
@@ -72,6 +74,8 @@ export type Query = {
   getTrack: Track;
   /** Get a paginated list of all tracks in the catalog. */
   getTracks: Array<Track>;
+  /** Gives how many tracks are in the result for the given filter query */
+  getTracksNum: Scalars['Int'];
 };
 
 
@@ -88,6 +92,11 @@ export type QueryGetTrackArgs = {
 export type QueryGetTracksArgs = {
   offset?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TracksFilterInput>;
+};
+
+
+export type QueryGetTracksNumArgs = {
   filter?: Maybe<TracksFilterInput>;
 };
 
@@ -203,6 +212,7 @@ export type TrackAddDataInput = {
   artists: Array<ArtistInput>;
   releaseDate?: Maybe<Scalars['Date']>;
   fingerprint: FingerprintInput;
+  duration: Scalars['Int'];
   coverArt?: Maybe<Scalars['Upload']>;
 };
 
@@ -257,6 +267,30 @@ export type AddTrackMutation = (
       )> }
     ) }
   ) }
+);
+
+export type GetTracksQueryVariables = Exact<{
+  offset?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TracksFilterInput>;
+}>;
+
+
+export type GetTracksQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getTracksNum'>
+  & { getTracks: Array<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'addressDatabase'>
+    & { metadata: (
+      { __typename?: 'TrackMetadata' }
+      & Pick<TrackMetadata, 'title' | 'coverImage' | 'duration' | 'numPlays' | 'releaseDate' | 'createdDate' | 'updatedDate'>
+      & { artists: Array<(
+        { __typename?: 'ArtistCollaboration' }
+        & Pick<ArtistCollaboration, 'name' | 'type'>
+      )> }
+    ) }
+  )> }
 );
 
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
@@ -338,6 +372,28 @@ export const AddTrackDocument = gql`
   }
 }
     `;
+export const GetTracksDocument = gql`
+    query GetTracks($offset: Int = 0, $limit: Int = 25, $filter: TracksFilterInput) {
+  getTracks(offset: $offset, limit: $limit, filter: $filter) {
+    id
+    addressDatabase
+    metadata {
+      title
+      artists {
+        name
+        type
+      }
+      coverImage
+      duration
+      numPlays
+      releaseDate
+      createdDate
+      updatedDate
+    }
+  }
+  getTracksNum(filter: $filter)
+}
+    `;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)
@@ -378,6 +434,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     AddTrack(variables: AddTrackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AddTrackMutation> {
       return withWrapper(() => client.request<AddTrackMutation>(AddTrackDocument, variables, requestHeaders));
+    },
+    GetTracks(variables?: GetTracksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTracksQuery> {
+      return withWrapper(() => client.request<GetTracksQuery>(GetTracksDocument, variables, requestHeaders));
     },
     CheckUsernameAvailability(variables: CheckUsernameAvailabilityQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckUsernameAvailabilityQuery> {
       return withWrapper(() => client.request<CheckUsernameAvailabilityQuery>(CheckUsernameAvailabilityDocument, variables, requestHeaders));

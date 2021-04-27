@@ -50,11 +50,14 @@ export class CatalogService {
     const tracksTuple = await this.trackRepository.findAndCount(query, {
       limit: args.limit,
       offset: args.offset,
+      populate: ["searchResults", "collaborators", "collaborators.artist"]
     });
-    return tracksTuple[0];
+
+    const tracks = tracksTuple[0];
+    return tracks;
   }
 
-  async getTracksNumber(filter: TracksFilterInput): Promise<number> {
+  async getTracksNumber(filter: TracksFilterInput | undefined): Promise<number> {
     const query = this.constructTracksFilterQuery(filter);
 
     const tracksNum = await this.trackRepository.count(query);
@@ -84,6 +87,8 @@ export class CatalogService {
       coverImage,
       createdDate: new Date(),
       updateDate: new Date(),
+      duration: data.duration,
+      numPlays: 0,
       releaseDate: data.releaseDate,
       uploaderUser: user,
     });

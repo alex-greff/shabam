@@ -3,22 +3,35 @@ import {
   ArtistInput,
   CollaborationType,
   FingerprintInput,
+  Track,
 } from "@/graphql-apollo.g.d";
-import { CatalogArtist, CatalogCollaborationType } from "@/types/catalog";
+import {
+  CatalogArtist,
+  CatalogCollaborationType,
+  CatalogItemDisplayData,
+} from "@/types/catalog";
 
 export const toArtistInput = (artist: CatalogArtist): ArtistInput => {
   return {
     name: artist.name,
-    type: toCatalogCollaborationType(artist.type),
+    type: toCollaborationType(artist.type),
   };
 };
 
-export const toCatalogCollaborationType = (
+export const toCollaborationType = (
   type: CatalogCollaborationType
 ): CollaborationType => {
   if (type === "primary") return CollaborationType.Primary;
   else if (type === "featured") return CollaborationType.Featured;
   return CollaborationType.Remix;
+};
+
+export const toCatalogCollaborationType = (
+  type: CollaborationType
+): CatalogCollaborationType => {
+  if (type === CollaborationType.Primary) return "primary";
+  else if (type === CollaborationType.Featured) return "featured";
+  else return "remix";
 };
 
 export const toFingerprintInput = (
@@ -32,4 +45,22 @@ export const toFingerprintInput = (
     numberOfWindows: fingerprint.numberOfWindows,
     fingerprintData: dataBin,
   };
+};
+
+export const trackToCatalogItemDisplayData = (
+  track: Track
+): CatalogItemDisplayData => {
+  const trackItem: CatalogItemDisplayData = {
+    title: track.metadata.title,
+    duration: track.metadata.duration,
+    plays: track.metadata.numPlays,
+    coverArtSrc: track.metadata.coverImage ?? undefined,
+    artists: track.metadata.artists.map((artist) => {
+      return {
+        name: artist.name,
+        type: toCatalogCollaborationType(artist.type),
+      };
+    }),
+  };
+  return trackItem;
 };

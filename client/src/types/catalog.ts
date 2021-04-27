@@ -9,3 +9,11 @@ export interface CatalogItem {
   title: string;
   artists: CatalogArtist[];
 }
+
+export interface CatalogItemDisplayData {
+  title: string;
+  artists: CatalogArtist[];
+  duration: number; // milliseconds
+  plays: number; // integer
+  coverArtSrc?: string;
+}

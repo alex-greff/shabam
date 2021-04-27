@@ -2,7 +2,6 @@ import { ArgsType, Field, InputType, Int,  } from '@nestjs/graphql';
 import { Max, Min } from 'class-validator';
 
 @InputType()
-@ArgsType()
 export class TracksFilterInput {
   @Field(type => String, { nullable: true })
   uploader?: string;
@@ -19,6 +18,12 @@ export class GetTracksArgs {
   @Max(50)
   limit = 25;
 
+  @Field(type => TracksFilterInput, { nullable: true })
+  filter?: TracksFilterInput;
+}
+
+@ArgsType() 
+export class GetTracksNumArgs {
   @Field(type => TracksFilterInput, { nullable: true })
   filter?: TracksFilterInput;
 }

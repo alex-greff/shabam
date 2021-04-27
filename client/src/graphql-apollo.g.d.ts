@@ -44,6 +44,8 @@ export type TrackMetadata = {
   title: Scalars['String'];
   artists: Array<ArtistCollaboration>;
   coverImage?: Maybe<Scalars['String']>;
+  duration: Scalars['Int'];
+  numPlays: Scalars['Int'];
   releaseDate?: Maybe<Scalars['Date']>;
   createdDate: Scalars['Date'];
   updatedDate: Scalars['Date'];
@@ -72,6 +74,8 @@ export type Query = {
   getTrack: Track;
   /** Get a paginated list of all tracks in the catalog. */
   getTracks: Array<Track>;
+  /** Gives how many tracks are in the result for the given filter query */
+  getTracksNum: Scalars['Int'];
 };
 
 
@@ -88,6 +92,11 @@ export type QueryGetTrackArgs = {
 export type QueryGetTracksArgs = {
   offset?: Maybe<Scalars['Int']>;
   limit?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TracksFilterInput>;
+};
+
+
+export type QueryGetTracksNumArgs = {
   filter?: Maybe<TracksFilterInput>;
 };
 
@@ -203,6 +212,7 @@ export type TrackAddDataInput = {
   artists: Array<ArtistInput>;
   releaseDate?: Maybe<Scalars['Date']>;
   fingerprint: FingerprintInput;
+  duration: Scalars['Int'];
   coverArt?: Maybe<Scalars['Upload']>;
 };
 
@@ -257,6 +267,30 @@ export type AddTrackMutation = (
       )> }
     ) }
   ) }
+);
+
+export type GetTracksQueryVariables = Exact<{
+  offset?: Maybe<Scalars['Int']>;
+  limit?: Maybe<Scalars['Int']>;
+  filter?: Maybe<TracksFilterInput>;
+}>;
+
+
+export type GetTracksQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getTracksNum'>
+  & { getTracks: Array<(
+    { __typename?: 'Track' }
+    & Pick<Track, 'id' | 'addressDatabase'>
+    & { metadata: (
+      { __typename?: 'TrackMetadata' }
+      & Pick<TrackMetadata, 'title' | 'coverImage' | 'duration' | 'numPlays' | 'releaseDate' | 'createdDate' | 'updatedDate'>
+      & { artists: Array<(
+        { __typename?: 'ArtistCollaboration' }
+        & Pick<ArtistCollaboration, 'name' | 'type'>
+      )> }
+    ) }
+  )> }
 );
 
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
@@ -364,6 +398,58 @@ export function useAddTrackMutation(baseOptions?: Apollo.MutationHookOptions<Add
 export type AddTrackMutationHookResult = ReturnType<typeof useAddTrackMutation>;
 export type AddTrackMutationResult = Apollo.MutationResult<AddTrackMutation>;
 export type AddTrackMutationOptions = Apollo.BaseMutationOptions<AddTrackMutation, AddTrackMutationVariables>;
+export const GetTracksDocument = gql`
+    query GetTracks($offset: Int = 0, $limit: Int = 25, $filter: TracksFilterInput) {
+  getTracks(offset: $offset, limit: $limit, filter: $filter) {
+    id
+    addressDatabase
+    metadata {
+      title
+      artists {
+        name
+        type
+      }
+      coverImage
+      duration
+      numPlays
+      releaseDate
+      createdDate
+      updatedDate
+    }
+  }
+  getTracksNum(filter: $filter)
+}
+    `;
+
+/**
+ * __useGetTracksQuery__
+ *
+ * To run a query within a React component, call `useGetTracksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTracksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTracksQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetTracksQuery(baseOptions?: Apollo.QueryHookOptions<GetTracksQuery, GetTracksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTracksQuery, GetTracksQueryVariables>(GetTracksDocument, options);
+      }
+export function useGetTracksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTracksQuery, GetTracksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTracksQuery, GetTracksQueryVariables>(GetTracksDocument, options);
+        }
+export type GetTracksQueryHookResult = ReturnType<typeof useGetTracksQuery>;
+export type GetTracksLazyQueryHookResult = ReturnType<typeof useGetTracksLazyQuery>;
+export type GetTracksQueryResult = Apollo.QueryResult<GetTracksQuery, GetTracksQueryVariables>;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)

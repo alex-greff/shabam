@@ -25,6 +25,8 @@ type TrackMetadata {
   title: String!
   artists: [ArtistCollaboration!]!
   coverImage: String
+  duration: Int!
+  numPlays: Int!
   releaseDate: Date
   createdDate: Date!
   updatedDate: Date!
@@ -56,7 +58,7 @@ type Query {
   getTracks(offset: Int = 0, limit: Int = 25, filter: TracksFilterInput): [Track!]!
 
   """Gives how many tracks are in the result for the given filter query"""
-  getTracksNum(uploader: String): [Int!]!
+  getTracksNum(filter: TracksFilterInput): Int!
 }
 
 input TracksFilterInput {
@@ -135,6 +137,7 @@ input TrackAddDataInput {
   artists: [ArtistInput!]!
   releaseDate: Date
   fingerprint: FingerprintInput!
+  duration: Int!
   coverArt: Upload
 }
 

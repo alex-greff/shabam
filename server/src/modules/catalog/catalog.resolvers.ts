@@ -11,7 +11,7 @@ import {
 import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
 import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
-import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
+import { GetTracksArgs, GetTracksNumArgs } from './dto/catalog.args';
 import { Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
@@ -49,15 +49,21 @@ export class CatalogResolver {
         title: track.title,
         coverImage: track.coverImage,
         artists: track.collaborators.getItems().map((collaborator) => {
-          const artistObj = new ArtistCollaboration();
-          artistObj.type = collaborator.type;
-          artistObj.name = collaborator.artist.name;
-          return artistObj;
+          return {
+            name: collaborator.artist.name,
+            type: collaborator.type
+          };
         }),
+        duration: track.duration,
+        numPlays: track.numPlays,
         createdDate: track.createdDate,
         updatedDate: track.updateDate,
       },
     };
+  }
+
+  static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
+    return tracks.map((track) => this.transformFromTrackEntity(track));
   }
 
   // TODO: remove
@@ -67,10 +73,6 @@ export class CatalogResolver {
   //     similarity: result.similarity,
   //   }));
   // }
-
-  static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
-    return tracks.map((track) => this.transformFromTrackEntity(track));
-  }
 
   // ---------------
   // --- Queries ---
@@ -95,12 +97,12 @@ export class CatalogResolver {
     return CatalogResolver.transformFromTrackEntityMany(tracks);
   }
 
-  @Query((returns) => [Int], {
+  @Query((returns) => Int, {
     description:
       'Gives how many tracks are in the result for the given filter query',
   })
-  async getTracksNum(@Args() filter: TracksFilterInput): Promise<number> {
-    const tracksNum = this.catalogService.getTracksNumber(filter);
+  async getTracksNum(@Args() args: GetTracksNumArgs): Promise<number> {
+    const tracksNum = await this.catalogService.getTracksNumber(args.filter);
     return tracksNum;
   }
 

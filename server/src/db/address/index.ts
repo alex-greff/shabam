@@ -12,8 +12,6 @@ const addressDbPools: AddressPools = {};
 for (let i = 0; i < KEYS.ADDRESS_DB_COUNT; i++) {
   const currDbKeys = KEYS.getAddressDbKeys(i);
 
-  console.log("DB KEYS", currDbKeys); // TODO: remove
-
   const pool = new Pool({
     user: currDbKeys.PG_ADDRESS_USER,
     host: currDbKeys.PG_ADDRESS_HOST,

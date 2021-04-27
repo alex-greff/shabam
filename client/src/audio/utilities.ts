@@ -295,3 +295,22 @@ export function convertBlobToAudioBuffer(blob: Blob): Promise<AudioBuffer> {
     fileReader.readAsArrayBuffer(blob);
   });
 }
+
+/**
+ * Gets the duration (in milliseconds) of an audio file.
+ * 
+ * @param audioFile The audio file.
+ */
+export function getAudioDuration(audioFile: Blob): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const audio = new Audio();
+    audio.addEventListener("loadedmetadata", () => {
+      let duration = Math.round(audio.duration * 1000);
+      resolve(duration);
+    });
+    audio.addEventListener("error", (err) => {
+      reject(err);
+    });
+    audio.src = URL.createObjectURL(audioFile);
+  });
+}
