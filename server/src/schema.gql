@@ -54,6 +54,9 @@ type Query {
 
   """Get a paginated list of all tracks in the catalog."""
   getTracks(offset: Int = 0, limit: Int = 25, filter: TracksFilterInput): [Track!]!
+
+  """Gives how many tracks are in the result for the given filter query"""
+  getTracksNum(uploader: String): [Int!]!
 }
 
 input TracksFilterInput {
