@@ -17,6 +17,7 @@ export interface Props extends BaseProps, ButtonBaseProps {
   textColor?: TextColor;
   mode?: Mode;
   disabled?: boolean;
+  selected?: boolean;
 }
 
 const NormalButton: FunctionComponent<Props> = (props) => {
@@ -28,6 +29,7 @@ const NormalButton: FunctionComponent<Props> = (props) => {
     textColor,
     mode,
     disabled,
+    selected,
     ...rest
   } = props;
 
@@ -36,6 +38,7 @@ const NormalButton: FunctionComponent<Props> = (props) => {
       {...rest}
       className={classnames("NormalButton", className, {
         disabled,
+        selected,
         [`appearance-${appearance}`]: true,
         [`text-color-${textColor}`]: true,
         [`mode-${mode}`]: true,
@@ -53,6 +56,7 @@ NormalButton.defaultProps = {
   textColor: "primary",
   mode: "info",
   disabled: false,
+  selected: false
 } as Partial<Props>;
 
 export default NormalButton;

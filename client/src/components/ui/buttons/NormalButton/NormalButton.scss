@@ -16,7 +16,7 @@
   &.mode-#{$mode} {
     background-color: color-link("NormalButton", $mode, "primary");
 
-    &:hover {
+    &:hover:not(.selected) {
       background-color: color-link("NormalButton", $mode, "secondary");
     }
 
@@ -78,8 +78,12 @@
     @include solid-mode-modifier("grey");
   }
 
-  &:hover {
+  &:hover:not(.selected) {
     color: color-link("NormalButton", "selected", "primary");
+  }
+
+  &.selected.selected {
+    background-color: color-link("NormalButton", "selected", "secondary");
   }
 
   &.disabled {
