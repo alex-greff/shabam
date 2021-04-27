@@ -10,11 +10,8 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
-import {
-  TrackAddDataInput,
-  TrackEditDataInput,
-} from './dto/catalog.inputs';
-import { GetTracksArgs } from './dto/catalog.args';
+import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
+import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
 import { Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
@@ -41,7 +38,7 @@ export class CatalogResolver {
   constructor(private readonly catalogService: CatalogService) {}
 
   // -----------------------------
-  // --- Transformer Functions --- 
+  // --- Transformer Functions ---
   // -----------------------------
 
   static transformFromTrackEntity(track: TrackEntity): Track {
@@ -96,6 +93,15 @@ export class CatalogResolver {
   async getTracks(@Args() args: GetTracksArgs): Promise<Track[]> {
     const tracks = await this.catalogService.getTracks(args);
     return CatalogResolver.transformFromTrackEntityMany(tracks);
+  }
+
+  @Query((returns) => [Int], {
+    description:
+      'Gives how many tracks are in the result for the given filter query',
+  })
+  async getTracksNum(@Args() filter: TracksFilterInput): Promise<number> {
+    const tracksNum = this.catalogService.getTracksNumber(filter);
+    return tracksNum;
   }
 
   // TODO: remove
@@ -167,8 +173,8 @@ export class CatalogResolver {
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async recomputeTrackFingerprint(
     @Args({ type: () => ID, name: 'id' }) id: string,
-    @Args("fingerprint", { description: "Fingerprint data." }) fingerprint: FingerprintInput
-
+    @Args('fingerprint', { description: 'Fingerprint data.' })
+    fingerprint: FingerprintInput,
   ): Promise<boolean> {
     // TODO: implement
     return false;

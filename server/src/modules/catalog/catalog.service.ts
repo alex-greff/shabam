@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
-import { GetTracksArgs } from './dto/catalog.args';
+import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
 import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
 import { TrackEntity } from '@/entities/Track.entity';
@@ -30,20 +30,35 @@ export class CatalogService {
     return track;
   }
 
-  async getTracks(args: GetTracksArgs): Promise<TrackEntity[]> {
+  private constructTracksFilterQuery(
+    filter: TracksFilterInput | undefined,
+  ): FilterQuery<TrackEntity> {
     let query: FilterQuery<TrackEntity> = {};
 
-    if (args.filter && args.filter.uploader) {
+    if (filter && filter.uploader) {
       query = {
-        uploaderUser: { username: args.filter.uploader },
+        uploaderUser: { username: filter.uploader },
       };
     }
+
+    return query;
+  }
+
+  async getTracks(args: GetTracksArgs): Promise<TrackEntity[]> {
+    const query = this.constructTracksFilterQuery(args.filter);
 
     const tracksTuple = await this.trackRepository.findAndCount(query, {
       limit: args.limit,
       offset: args.offset,
     });
     return tracksTuple[0];
+  }
+
+  async getTracksNumber(filter: TracksFilterInput): Promise<number> {
+    const query = this.constructTracksFilterQuery(filter);
+
+    const tracksNum = await this.trackRepository.count(query);
+    return tracksNum;
   }
 
   async addTrack(
