@@ -87,6 +87,7 @@ function codegen:client() {
 }
 
 function init-schema--db-metadata() {
+  docker exec shabam_api npm run orm:drop--db-metadata;
   docker exec shabam_api npm run orm:update--db-metadata;
 }
 
@@ -97,8 +98,8 @@ function init-schema--db-address() {
 }
 
 function init-schemas() {
-  eval "init-schema--db-metadata";
   eval "init-schema--db-address";
+  eval "init-schema--db-metadata";
 }
 
 
