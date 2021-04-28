@@ -7,6 +7,7 @@ import withLoading, {
   Props as WithLoadingProps,
 } from "@/components/hoc/withLoading";
 import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
+import { CatalogItemDisplayData } from "@/types/catalog";
 
 import CatalogDisplayItem from "@/components/catalog/CatalogDisplayItem/CatalogDisplayItem";
 import PaginationControls from "@/components/ui/pagination/PaginationControls/PaginationControls";
@@ -15,10 +16,21 @@ export interface Props extends BaseProps, WithLoadingProps {
   filter?: TracksFilterInput;
   initialPage?: number;
   tracksPerPage?: number;
+  configurable?: boolean;
+  onEditClick?: (trackItem: CatalogItemDisplayData) => unknown;
+  onRemoveClick?: (trackItem: CatalogItemDisplayData) => unknown;
 }
 
 const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
-  const { setIsLoading, filter, initialPage, tracksPerPage } = props;
+  const {
+    setIsLoading,
+    filter,
+    initialPage,
+    tracksPerPage,
+    configurable,
+    onEditClick,
+    onRemoveClick,
+  } = props;
 
   const [currPage, setCurrPage] = useState(initialPage!);
 
@@ -41,7 +53,11 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
   const renderTracks = () => {
     return (
       <div className="CatalogDisplay__tracks">
-        <div className="CatalogDisplay__tracks-header">
+        <div
+          className={classnames("CatalogDisplay__tracks-header", {
+            configurable,
+          })}
+        >
           <div className="CatalogDisplay__tracks-header-title">Title</div>
           <div className="CatalogDisplay__tracks-header-artists">Artists</div>
           <div className="CatalogDisplay__tracks-header-duration">Duration</div>
@@ -57,6 +73,13 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
               <CatalogDisplayItem
                 className="CatalogDisplay__track"
                 item={trackItem}
+                configurable={configurable}
+                onEditClick={() => {
+                  if (onEditClick) onEditClick(trackItem);
+                }}
+                onRemoveClick={() => {
+                  if (onRemoveClick) onRemoveClick(trackItem);
+                }}
               />
             );
           })}
@@ -91,7 +114,6 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
       id={props.id}
     >
       {data.getTracks.length > 0 ? renderTracks() : renderNoTracksFound()}
-      {/* TODO: render pagination controls */}
 
       <PaginationControls
         className="CatalogDisplay__pagination-controls"
@@ -106,6 +128,7 @@ CatalogDisplay.defaultProps = {
   initialPage: 0,
   // tracksPerPage: 10, // TODO: set back
   tracksPerPage: 1,
+  configurable: false,
 } as Partial<Props>;
 
 export default withLoading(CatalogDisplay);

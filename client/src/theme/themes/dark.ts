@@ -332,7 +332,8 @@ export default {
     },
     CatalogDisplayItem: {
       background: {
-        primary: DARK_3
+        primary: DARK_3,
+        tertiary: DARK_2
       }
     }
   }

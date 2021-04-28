@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useRef } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { BaseProps } from "@/types";
 import "./AccountControls.scss";
 import classnames from "classnames";
@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { accountStore } from "@/store/account/account.store";
 import { CSSTransition } from "react-transition-group";
 import { useSignoutMutation } from "@/graphql-apollo.g.d";
+import useOutsideClick from "@/hooks/useOutsideClick";
 
 import NormalButton from "@/components/ui/buttons/NormalButton/NormalButton";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
@@ -26,30 +27,13 @@ interface Props extends BaseProps {
 const AccountControls: FunctionComponent<Props> = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useOutsideClick<HTMLDivElement>(() => {
+    // Close the dropdown if the click was outside the element
+    if (dropdownOpen)
+      setDropdownOpen(false);
+  }, [dropdownOpen]);
 
   const [runSignout] = useSignoutMutation();
-
-  useEffect(() => {
-    const handleDocumentClick = (e: MouseEvent) => {
-      // Stop if the click was inside the element
-      if (rootRef.current?.contains(e.target as Node)) {
-        return;
-      }
-
-      // Close the dropdown if the click was outside the element
-      if (dropdownOpen) {
-        setDropdownOpen(false);
-      }
-    };
-
-    window.addEventListener("mousedown", handleDocumentClick, false);
-
-    // returned function will be called on component unmount
-    return () => {
-      window.removeEventListener("mousedown", handleDocumentClick, false);
-    };
-  }, [dropdownOpen]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);

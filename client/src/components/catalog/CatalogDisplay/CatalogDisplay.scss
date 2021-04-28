@@ -17,9 +17,17 @@
         "coverArt title artists duration searches";
       align-items: center;
       gap: 1rem;
-      padding: 0 0.5rem;
+      padding: 0 1rem;
 
       font-size: 1.7rem;
+
+      // --- Modifiers ---
+      &.configurable {
+        grid-template-columns: 1.2fr 3fr 3fr 2fr 2fr 0.5fr;
+        grid-template-rows: auto;
+        grid-template-areas: 
+          "coverArt title artists duration searches config";
+      }
   
       & .CatalogDisplay__tracks-header-title {
         grid-area: title;
