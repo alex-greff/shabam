@@ -1,5 +1,5 @@
 import { ArtistEntity } from '@/entities/Artist.entity';
-import { EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, MikroORM } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
 import { ArtistInput } from './dto/artist.dto';
@@ -10,6 +10,7 @@ import { ArtistCollaborationEntity } from '@/entities/ArtistCollaboration.entity
 @Injectable()
 export class ArtistService {
   constructor(
+    private readonly orm: MikroORM,
     @InjectRepository(ArtistEntity)
     private readonly artistRepository: EntityRepository<ArtistEntity>,
     @InjectRepository(ArtistCollaborationEntity)
@@ -54,12 +55,15 @@ export class ArtistService {
   }
 
   async cleanArtists() {
-    // TODO: make this actually work as intended
-    // const stragglers = await this.artistRepository.find(
-    //   { collaborations: [] },
-    //   ['collaborators'],
-    // );
-    // console.log("STRAGGLERS", stragglers); // TODO: remove
-    // await this.artistRepository.removeAndFlush(stragglers);
+    const connection = this.orm.em.getConnection();
+
+    // Note: I should figure out a way to do this directly in the ORM
+    await connection.execute(`
+      DELETE FROM artist AS A
+      WHERE NOT EXISTS (
+        SELECT FROM artist_collaboration as AC
+        WHERE A.id = AC.artist_id
+      );
+    `);
   }
 }

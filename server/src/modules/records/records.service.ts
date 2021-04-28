@@ -91,10 +91,7 @@ export class RecordsService {
     };
   }
 
-  computeRecordsTable(
-    fingerprint: Fingerprint,
-    trackId: number,
-  ): RecordsTable {
+  computeRecordsTable(fingerprint: Fingerprint, trackId: number): RecordsTable {
     const recordsTable: RecordsTable = {
       addresses: [],
       trackId,
@@ -211,7 +208,7 @@ export class RecordsService {
 
     // Delete all couples relating to this track id
     const couplesDeleteQuery = `
-      DELETE FROM couple as C
+      DELETE FROM couple AS C
       WHERE (C.couple_enc & 4294967295) = $1;
     `;
     await dbPool.query(couplesDeleteQuery, [trackId]);

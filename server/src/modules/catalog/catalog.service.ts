@@ -131,8 +131,6 @@ export class CatalogService {
         recordsTable,
         track.addressDatabase,
       );
-
-      // TODO: store in address database
     } catch (err) {
       // Something failed, rollback the transaction and throw the error again
       em.rollback();
