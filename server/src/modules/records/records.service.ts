@@ -91,7 +91,7 @@ export class RecordsService {
     };
   }
 
-  private computeRecordsTable(
+  computeRecordsTable(
     fingerprint: Fingerprint,
     trackId: number,
   ): RecordsTable {
@@ -134,20 +134,10 @@ export class RecordsService {
     return recordsTable;
   }
 
-  async storeFingerprint(
-    fingerprint: Fingerprint,
-    trackId: number,
-    addressDbNum: number | null = null,
+  async storeRecordsTable(
+    recordsTable: RecordsTable,
+    addressDbNum: number,
   ): Promise<void> {
-    const recordsTable = this.computeRecordsTable(fingerprint, trackId);
-
-    if (!addressDbNum) {
-      // TODO: select a address db to insert into
-      addressDbNum = 0;
-    }
-
-    // console.log("recordsTable", recordsTable); // TODO: remove
-
     const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
 
     // Begin queries
@@ -201,5 +191,33 @@ export class RecordsService {
     // Insert the address and couples
     await dbPool.query(addressQuery, addressQueryValues);
     await dbPool.query(couplesQuery, couplesQueryValues);
+  }
+
+  private async cleanAddresses(addressDbNum: number) {
+    const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
+
+    const addressDeleteQuery = `
+      DELETE FROM address AS A 
+      WHERE NOT EXISTS (
+        SELECT FROM couple AS C
+        WHERE C.address_enc = A.address_enc
+      );
+    `;
+    await dbPool.query(addressDeleteQuery);
+  }
+
+  async removeRecords(trackId: number, addressDbNum: number): Promise<void> {
+    const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
+
+    // Delete all couples relating to this track id
+    const couplesDeleteQuery = `
+      DELETE FROM couple as C
+      WHERE (C.couple_enc & 4294967295) = $1;
+    `;
+    await dbPool.query(couplesDeleteQuery, [trackId]);
+
+    // Delete any straggling addresses that do not reference any other tracks
+    // (this is just to keep the database clean and minimize bloat)
+    await this.cleanAddresses(addressDbNum);
   }
 }

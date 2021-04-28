@@ -50,14 +50,16 @@ export class CatalogService {
     const tracksTuple = await this.trackRepository.findAndCount(query, {
       limit: args.limit,
       offset: args.offset,
-      populate: ["searchResults", "collaborators", "collaborators.artist"]
+      populate: ['searchResults', 'collaborators', 'collaborators.artist'],
     });
 
     const tracks = tracksTuple[0];
     return tracks;
   }
 
-  async getTracksNumber(filter: TracksFilterInput | undefined): Promise<number> {
+  async getTracksNumber(
+    filter: TracksFilterInput | undefined,
+  ): Promise<number> {
     const query = this.constructTracksFilterQuery(filter);
 
     const tracksNum = await this.trackRepository.count(query);
@@ -77,13 +79,16 @@ export class CatalogService {
 
     // TODO: upload image
 
+    // TODO: obtain actual address db number
+    const addressDbNum = 0;
+
     // Begin transaction
     const em = this.orm.em.fork();
     await em.begin();
 
     const track = em.create(TrackEntity, {
       title: data.title,
-      addressDatabase: -1,
+      addressDatabase: addressDbNum,
       coverImage,
       createdDate: new Date(),
       updateDate: new Date(),
@@ -113,9 +118,19 @@ export class CatalogService {
         data.fingerprint,
       );
 
-      console.log('FINGERPRINT', fingerprint);
+      // console.log('FINGERPRINT', fingerprint); // TODO: remove
 
-      await this.recordsService.storeFingerprint(fingerprint, track.id);
+      // Compute the records table of the fingerprint
+      const recordsTable = this.recordsService.computeRecordsTable(
+        fingerprint,
+        track.id,
+      );
+
+      // Store the records table in the address database
+      await this.recordsService.storeRecordsTable(
+        recordsTable,
+        track.addressDatabase,
+      );
 
       // TODO: store in address database
     } catch (err) {
@@ -132,13 +147,23 @@ export class CatalogService {
     return track;
   }
 
-  async editTrack(id: string, data: TrackEditDataInput): Promise<TrackEntity> {
+  async editTrack(id: number, data: TrackEditDataInput): Promise<TrackEntity> {
     // TODO: implement
     return {} as any;
   }
 
-  async removeTrack(id: string): Promise<boolean> {
-    // TODO: implement
+  async removeTrack(id: number): Promise<boolean> {
+    const track = await this.getTrack(id);
+
+    // Remove the track
+    await this.trackRepository.removeAndFlush(track);
+
+    // Remove any artists that do not have any tracks associated with them
+    await this.artistService.cleanArtists();
+
+    // Remove all records corresponding to the track
+    await this.recordsService.removeRecords(id, track.addressDatabase);
+
     return true;
   }
 

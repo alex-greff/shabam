@@ -88,10 +88,10 @@ type Mutation {
   addTrack(trackData: TrackAddDataInput!): Track!
 
   """Edit an existing track in the catalog."""
-  editTrack(trackData: TrackEditDataInput!, id: ID!): Track!
+  editTrack(trackData: TrackEditDataInput!, id: Int!): Track!
 
   """Remove a track from the catalog."""
-  removeTrack(id: ID!): Boolean!
+  removeTrack(id: Int!): Boolean!
 
   """Recomputes a track's stored fingerprint."""
   recomputeTrackFingerprint(

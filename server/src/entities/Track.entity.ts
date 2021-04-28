@@ -1,9 +1,17 @@
 import { UserAccountEntity } from './UserAccount.entity';
 import { SearchResultEntity } from './SearchResult.entity';
-import { Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
 import { ArtistCollaborationEntity } from './ArtistCollaboration.entity';
 
-@Entity({ tableName: "track" })
+@Entity({ tableName: 'track' })
 export class TrackEntity {
   @PrimaryKey()
   id!: number;
@@ -14,30 +22,36 @@ export class TrackEntity {
   @Property({ nullable: true })
   coverImage?: string;
 
-  @Property({ columnType: "integer" })
+  @Property({ columnType: 'integer' })
   addressDatabase!: number;
 
   @Property({ nullable: true })
   releaseDate?: Date;
 
-  @Property({ columnType: "integer" })
+  @Property({ columnType: 'integer' })
   duration!: number; // milliseconds
 
-  @Property({ columnType: "integer", default: 0 })
+  @Property({ columnType: 'integer', default: 0 })
   numPlays!: number;
 
   @Property()
   createdDate!: Date;
-  
+
   @Property()
   updateDate!: Date;
 
   @ManyToOne(() => UserAccountEntity)
   uploaderUser!: UserAccountEntity;
 
-  @OneToMany(() => SearchResultEntity, searchResult => searchResult.track)
+  @OneToMany(() => SearchResultEntity, (searchResult) => searchResult.track, {
+    cascade: [Cascade.REMOVE],
+  })
   searchResults = new Collection<SearchResultEntity>(this);
 
-  @OneToMany(() => ArtistCollaborationEntity, collaboration => collaboration.track)
+  @OneToMany(
+    () => ArtistCollaborationEntity,
+    (collaboration) => collaboration.track,
+    { cascade: [Cascade.REMOVE] },
+  )
   collaborators = new Collection<ArtistCollaborationEntity>(this);
 }

@@ -1,8 +1,16 @@
 import { SearchEntity } from './Search.entity';
 import { TrackEntity } from './Track.entity';
 import { UserRole } from '@/modules/policies/policy.types';
-import { Collection, Entity, Enum, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
-import { v4 } from "uuid";
+import {
+  Cascade,
+  Collection,
+  Entity,
+  Enum,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
 
 @Entity({ tableName: 'user_account' })
 export class UserAccountEntity {
@@ -24,9 +32,13 @@ export class UserAccountEntity {
   @Property({ nullable: true })
   lastLogin?: Date;
 
-  @OneToMany(() => SearchEntity, search => search.user)
+  @OneToMany(() => SearchEntity, (search) => search.user, {
+    cascade: [Cascade.REMOVE],
+  })
   searches = new Collection<SearchEntity>(this);
 
-  @OneToMany(() => TrackEntity, track => track.uploaderUser)
+  @OneToMany(() => TrackEntity, (track) => track.uploaderUser, {
+    cascade: [Cascade.REMOVE],
+  })
   uploadedTracks = new Collection<TrackEntity>(this);
 }

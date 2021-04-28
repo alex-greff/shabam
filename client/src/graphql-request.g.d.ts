@@ -165,12 +165,12 @@ export type MutationAddTrackArgs = {
 
 export type MutationEditTrackArgs = {
   trackData: TrackEditDataInput;
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
 export type MutationRemoveTrackArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
@@ -293,6 +293,16 @@ export type GetTracksQuery = (
   )> }
 );
 
+export type RemoveTrackMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveTrackMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeTrack'>
+);
+
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -394,6 +404,11 @@ export const GetTracksDocument = gql`
   getTracksNum(filter: $filter)
 }
     `;
+export const RemoveTrackDocument = gql`
+    mutation RemoveTrack($id: Int!) {
+  removeTrack(id: $id)
+}
+    `;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)
@@ -437,6 +452,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetTracks(variables?: GetTracksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTracksQuery> {
       return withWrapper(() => client.request<GetTracksQuery>(GetTracksDocument, variables, requestHeaders));
+    },
+    RemoveTrack(variables: RemoveTrackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveTrackMutation> {
+      return withWrapper(() => client.request<RemoveTrackMutation>(RemoveTrackDocument, variables, requestHeaders));
     },
     CheckUsernameAvailability(variables: CheckUsernameAvailabilityQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckUsernameAvailabilityQuery> {
       return withWrapper(() => client.request<CheckUsernameAvailabilityQuery>(CheckUsernameAvailabilityDocument, variables, requestHeaders));

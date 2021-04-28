@@ -52,4 +52,14 @@ export class ArtistService {
 
     return collaboration;
   }
+
+  async cleanArtists() {
+    // TODO: make this actually work as intended
+    // const stragglers = await this.artistRepository.find(
+    //   { collaborations: [] },
+    //   ['collaborators'],
+    // );
+    // console.log("STRAGGLERS", stragglers); // TODO: remove
+    // await this.artistRepository.removeAndFlush(stragglers);
+  }
 }

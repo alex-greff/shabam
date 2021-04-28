@@ -21,16 +21,21 @@ import CatalogDisplay from "@/components/catalog/CatalogDisplay/CatalogDisplay";
 
 import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
 import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
-import { useAddTrackMutation } from "@/graphql-apollo.g.d";
+import { useAddTrackMutation, useRemoveTrackMutation } from "@/graphql-apollo.g.d";
 import { CatalogItemDisplayData } from "@/types/catalog";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const wasmFpGenerator = new WasmFingerprintGenerator();
 
+// TODO: need to figure out a way to trigger an update of the track list
+// when tracks are added/removed/edited
+
 const AccountCatalog: FunctionComponent<Props> = (props) => {
   const accountId = useAccountLocation();
   const [addTrack] = useAddTrackMutation();
+
+  const [runRemoveTrack, data] = useRemoveTrackMutation();
 
   const onCreateCatalogItem = async (data: CatalogItemData) => {
     console.log("Catalog Data", data); // TODO: remove
@@ -127,11 +132,15 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
   };
 
   const handleCatalogEdit = (trackItem: CatalogItemDisplayData) => {
-    // TODO: implement
+    console.log("TODO: handle catalog edit");
   };
 
-  const handleCatalogRemove = (trackItem: CatalogItemDisplayData) => {
-    // TODO: implement
+  const handleCatalogRemove = async (trackItem: CatalogItemDisplayData) => {
+    const data = await runRemoveTrack({ variables: { id: trackItem.id }});
+
+    if (data.errors || !data.data?.removeTrack) {
+      NotificationManager.showErrorNotification("Unable to delete track.");
+    }
   };
 
   return (

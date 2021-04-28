@@ -11,6 +11,7 @@ export interface CatalogItem {
 }
 
 export interface CatalogItemDisplayData {
+  id: number;
   title: string;
   artists: CatalogArtist[];
   duration: number; // milliseconds

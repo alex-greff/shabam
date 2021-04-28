@@ -165,12 +165,12 @@ export type MutationAddTrackArgs = {
 
 export type MutationEditTrackArgs = {
   trackData: TrackEditDataInput;
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
 export type MutationRemoveTrackArgs = {
-  id: Scalars['ID'];
+  id: Scalars['Int'];
 };
 
 
@@ -291,6 +291,16 @@ export type GetTracksQuery = (
       )> }
     ) }
   )> }
+);
+
+export type RemoveTrackMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type RemoveTrackMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeTrack'>
 );
 
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
@@ -450,6 +460,37 @@ export function useGetTracksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetTracksQueryHookResult = ReturnType<typeof useGetTracksQuery>;
 export type GetTracksLazyQueryHookResult = ReturnType<typeof useGetTracksLazyQuery>;
 export type GetTracksQueryResult = Apollo.QueryResult<GetTracksQuery, GetTracksQueryVariables>;
+export const RemoveTrackDocument = gql`
+    mutation RemoveTrack($id: Int!) {
+  removeTrack(id: $id)
+}
+    `;
+export type RemoveTrackMutationFn = Apollo.MutationFunction<RemoveTrackMutation, RemoveTrackMutationVariables>;
+
+/**
+ * __useRemoveTrackMutation__
+ *
+ * To run a mutation, you first call `useRemoveTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTrackMutation, { data, loading, error }] = useRemoveTrackMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveTrackMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTrackMutation, RemoveTrackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTrackMutation, RemoveTrackMutationVariables>(RemoveTrackDocument, options);
+      }
+export type RemoveTrackMutationHookResult = ReturnType<typeof useRemoveTrackMutation>;
+export type RemoveTrackMutationResult = Apollo.MutationResult<RemoveTrackMutation>;
+export type RemoveTrackMutationOptions = Apollo.BaseMutationOptions<RemoveTrackMutation, RemoveTrackMutationVariables>;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)

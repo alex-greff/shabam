@@ -145,7 +145,7 @@ export class CatalogResolver {
   @CheckPolicies(TrackEditPolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async editTrack(
-    @Args({ type: () => ID, name: 'id' }) id: string,
+    @Args({ type: () => Int, name: 'id' }) id: number,
     @Args('trackData') trackData: TrackEditDataInput,
   ): Promise<Track> {
     const track = await this.catalogService.editTrack(id, trackData);
@@ -160,7 +160,7 @@ export class CatalogResolver {
   @CheckPolicies(TrackRemovePolicy)
   @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
   async removeTrack(
-    @Args({ type: () => ID, name: 'id' }) id: string,
+    @Args({ type: () => Int, name: 'id' }) id: number,
   ): Promise<boolean> {
     const removed = await this.catalogService.removeTrack(id);
     if (removed)

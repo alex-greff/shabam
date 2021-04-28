@@ -51,6 +51,7 @@ export const trackToCatalogItemDisplayData = (
   track: Track
 ): CatalogItemDisplayData => {
   const trackItem: CatalogItemDisplayData = {
+    id: track.id,
     title: track.metadata.title,
     duration: track.metadata.duration,
     plays: track.metadata.numPlays,
