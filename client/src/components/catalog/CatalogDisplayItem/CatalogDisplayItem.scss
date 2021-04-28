@@ -2,7 +2,7 @@
   @include register-top-slide-transition(CatalogDisplayItem-anim, 200ms);
 
   display: grid;
-  grid-template-columns: 1.2fr 3fr 3fr 2fr 2fr;
+  grid-template-columns: 1.2fr 3fr 3fr 1.5fr 1.5fr;
   grid-template-rows: auto;
   grid-template-areas: 
     "coverArt title artists duration searches";
@@ -17,7 +17,7 @@
 
   // --- Modifiers ---
   &.configurable {
-    grid-template-columns: 1.2fr 3fr 3fr 2fr 2fr 0.5fr;
+    grid-template-columns: 1.2fr 3fr 3fr 1.5fr 1.5fr 0.5fr;
     grid-template-rows: auto;
     grid-template-areas: 
       "coverArt title artists duration searches config";
