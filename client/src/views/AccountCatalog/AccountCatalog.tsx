@@ -141,6 +141,9 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
       NotificationManager.showErrorNotification("An unexpected error ocurred.");
       return false;
     }
+    
+    // Update the track list
+    refetchTracks();
 
     return true;
   };
@@ -169,6 +172,9 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
 
   const handleCatalogEdit = (trackItem: CatalogItemDisplayData) => {
     console.log("TODO: handle catalog edit");
+
+    // Update the track list
+    refetchTracks();
   };
 
   const handleCatalogRemove = async (trackItem: CatalogItemDisplayData) => {

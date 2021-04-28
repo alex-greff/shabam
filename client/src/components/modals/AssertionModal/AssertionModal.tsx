@@ -6,12 +6,14 @@ import FooteredModal, {
   Props as FooteredModalProps,
 } from "@/components/modals/FooteredModal/FooteredModal";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
+import { Mode as NormalButtonMode } from "@/components/ui/buttons/NormalButton/NormalButton";
 
 export interface Props extends Omit<FooteredModalProps, "renderFooter" | "onRequestClose"> {
   assertionButtonText?: string;
   renderAssertionButtonIcon?: () => JSX.Element;
   disableAssertionButton?: boolean;
   onAssertionClose: () => unknown;
+  assertionButtonMode?: NormalButtonMode;
 }
 
 const AssertionModal: FunctionComponent<Props> = (props) => {
@@ -19,6 +21,7 @@ const AssertionModal: FunctionComponent<Props> = (props) => {
     className,
     assertionButtonText,
     disableAssertionButton,
+    assertionButtonMode,
     renderAssertionButtonIcon,
     onAssertionClose,
     ...rest
@@ -32,7 +35,7 @@ const AssertionModal: FunctionComponent<Props> = (props) => {
         onClick={onAssertionClose}
         disabled={disableAssertionButton}
         appearance="solid"
-        mode="blue"
+        mode={assertionButtonMode}
       >
         {assertionButtonText}
       </IconButton>
@@ -53,6 +56,7 @@ const AssertionModal: FunctionComponent<Props> = (props) => {
 
 AssertionModal.defaultProps = {
   assertionButtonText: "Okay",
+  assertionButtonMode: "blue",
   disableAssertionButton: false,
 } as Partial<Props>;
 

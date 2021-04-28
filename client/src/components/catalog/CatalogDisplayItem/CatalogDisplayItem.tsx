@@ -13,24 +13,31 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import CreateIcon from "@material-ui/icons/Create";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { useMessageConfirmationModal } from "@/hooks/modals/messages/useMessageConfirmationModal";
 
 export interface Props extends BaseProps {
   item: CatalogItemDisplayData;
   configurable?: boolean;
+  warnOnRemove?: boolean;
   onEditClick?: () => unknown;
   onRemoveClick?: () => unknown;
 }
 
 const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
-  const { item, configurable, onEditClick, onRemoveClick } = props;
+  const {
+    item,
+    configurable,
+    warnOnRemove,
+    onEditClick,
+    onRemoveClick,
+  } = props;
   const { title, artists, duration, plays, coverArtSrc } = item;
 
   const [configOpen, setConfigOpen] = useState(false);
 
   const configRootRef = useOutsideClick<HTMLDivElement>(() => {
     // Close the config dropdown if the click was outside the element
-    if (configOpen)
-      setConfigOpen(false);
+    if (configOpen) setConfigOpen(false);
   }, [configOpen]);
 
   const artistDisplay = useMemo(() => Utilities.formatArtists(artists), [
@@ -42,6 +49,18 @@ const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
   const searchesDisplay = useMemo(() => Utilities.formatPlays(plays), [plays]);
 
   const toggleConfig = () => setConfigOpen(!configOpen);
+
+  const [showRemoveTrackConfirmationModal] = useMessageConfirmationModal(
+    "Remove track",
+    "Permanently remove this track?",
+    {
+      onAccept: () => {
+        if (onRemoveClick) onRemoveClick();
+        return true;
+      },
+      acceptButtonMode: "error",
+    }
+  );
 
   return (
     <div
@@ -63,7 +82,7 @@ const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
         {searchesDisplay}
       </div>
       {configurable && (
-        <div className="CatalogDisplayItem__config" ref={configRootRef} >
+        <div className="CatalogDisplayItem__config" ref={configRootRef}>
           <IconButton
             className="CatalogDisplayItem__config-button"
             renderIcon={() => <MoreHorizIcon />}
@@ -81,8 +100,7 @@ const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
                 className="CatalogDisplayItem__config-edit-button"
                 renderIcon={() => <CreateIcon />}
                 onClick={() => {
-                  if (onEditClick)
-                    onEditClick();
+                  if (onEditClick) onEditClick();
                 }}
               >
                 Edit
@@ -92,8 +110,8 @@ const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
                 className="CatalogDisplayItem__config-delete-button"
                 renderIcon={() => <DeleteIcon />}
                 onClick={() => {
-                  if (onRemoveClick)
-                  onRemoveClick();
+                  if (warnOnRemove) showRemoveTrackConfirmationModal();
+                  else if (onRemoveClick) onRemoveClick();
                 }}
               >
                 Delete
@@ -108,6 +126,7 @@ const CatalogDisplayItem: FunctionComponent<Props> = (props) => {
 
 CatalogDisplayItem.defaultProps = {
   configurable: false,
+  warnOnRemove: true,
 } as Partial<Props>;
 
 export default CatalogDisplayItem;

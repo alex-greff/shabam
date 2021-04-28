@@ -7,9 +7,9 @@ import ButtonBase, {
   Props as ButtonBaseProps,
 } from "@/components/ui/buttons/ButtonBase/ButtonBase";
 
-type Appearance = "outlined" | "solid" | "none";
-type TextColor = "primary" | "secondary";
-type Mode = "info" | "error" | "success" | "warning" | "blue" | "grey";
+export type Appearance = "outlined" | "solid" | "none";
+export type TextColor = "primary" | "secondary";
+export type Mode = "info" | "error" | "success" | "warning" | "blue" | "grey";
 
 export interface Props extends BaseProps, ButtonBaseProps {
   outlined?: boolean;

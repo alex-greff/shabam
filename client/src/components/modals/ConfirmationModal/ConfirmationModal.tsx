@@ -6,6 +6,7 @@ import FooteredModal, {
   Props as FooteredModalProps,
 } from "@/components/modals/FooteredModal/FooteredModal";
 import IconButton from "@/components/ui/buttons/IconButton/IconButton";
+import { Mode as NormalButtonMode } from "@/components/ui/buttons/NormalButton/NormalButton";
 
 export interface Props
   extends Omit<FooteredModalProps, "renderFooter" | "onRequestClose" | "disabled"> {
@@ -13,11 +14,13 @@ export interface Props
   renderAcceptButtonIcon?: () => JSX.Element;
   disableAcceptButton?: boolean;
   onAcceptClose: () => unknown;
+  acceptButtonMode?: NormalButtonMode;
 
   cancelButtonText?: string;
   renderCancelButtonIcon?: () => JSX.Element;
   disableCancelButton?: boolean;
   onCancelClose: () => unknown;
+  cancelButtonMode?: NormalButtonMode;
 }
 
 const ConfirmationModal: FunctionComponent<Props> = (props) => {
@@ -25,10 +28,12 @@ const ConfirmationModal: FunctionComponent<Props> = (props) => {
     acceptButtonText,
     renderAcceptButtonIcon,
     disableAcceptButton,
+    acceptButtonMode,
     onAcceptClose,
     cancelButtonText,
     renderCancelButtonIcon,
     disableCancelButton,
+    cancelButtonMode,
     onCancelClose,
     ...rest
   } = props;
@@ -42,7 +47,7 @@ const ConfirmationModal: FunctionComponent<Props> = (props) => {
           onClick={onAcceptClose}
           disabled={disableAcceptButton}
           appearance="solid"
-          mode="blue"
+          mode={acceptButtonMode}
         >
           {acceptButtonText}
         </IconButton>
@@ -53,7 +58,7 @@ const ConfirmationModal: FunctionComponent<Props> = (props) => {
           onClick={onCancelClose}
           disabled={disableCancelButton}
           appearance="solid"
-          mode="grey"
+          mode={cancelButtonMode}
         >
           {cancelButtonText}
         </IconButton>
@@ -77,8 +82,10 @@ const ConfirmationModal: FunctionComponent<Props> = (props) => {
 ConfirmationModal.defaultProps = {
   acceptButtonText: "Okay",
   disableAcceptButton: false,
+  acceptButtonMode: "blue",
   cancelButtonText: "Cancel",
   disableCancelButton: false,
+  cancelButtonMode: "grey"
 } as Partial<Props>;
 
 export default ConfirmationModal;
