@@ -22,6 +22,7 @@ import CatalogDisplay from "@/components/catalog/CatalogDisplay/CatalogDisplay";
 import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
 import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
 import { useAddTrackMutation } from "@/graphql-apollo.g.d";
+import { CatalogItemDisplayData } from "@/types/catalog";
 
 export interface Props extends Omit<BaseProps, "id"> {}
 
@@ -125,6 +126,14 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
     showCreateModal();
   };
 
+  const handleCatalogEdit = (trackItem: CatalogItemDisplayData) => {
+    // TODO: implement
+  };
+
+  const handleCatalogRemove = (trackItem: CatalogItemDisplayData) => {
+    // TODO: implement
+  };
+
   return (
     <PageView
       id="AccountCatalog"
@@ -158,7 +167,12 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
         </ConfigurationContainer>
 
         <div className="AccountCatalog__result-container">
-          <CatalogDisplay />
+          <CatalogDisplay 
+            className="AccountCatalog__catalog-display"
+            configurable={true}
+            onEditClick={handleCatalogEdit}
+            onRemoveClick={handleCatalogRemove}
+          />
         </div>
       </PageContent>
     </PageView>

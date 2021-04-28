@@ -88,8 +88,6 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
     );
   };
 
-  // console.log("DATA", data); // TODO: remove
-
   const renderNoTracksFound = () => {
     return <div className="CatalogDisplay__empty-text">No tracks found.</div>;
   };
@@ -117,7 +115,7 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
 
       <PaginationControls
         className="CatalogDisplay__pagination-controls"
-        numPages={data.getTracksNum}
+        numPages={Math.ceil(data.getTracksNum / tracksPerPage!)}
         onPageChange={handlePageChange}
       />
     </div>
@@ -126,8 +124,7 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
 
 CatalogDisplay.defaultProps = {
   initialPage: 0,
-  // tracksPerPage: 10, // TODO: set back
-  tracksPerPage: 1,
+  tracksPerPage: 10,
   configurable: false,
 } as Partial<Props>;
 
