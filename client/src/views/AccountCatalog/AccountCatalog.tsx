@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useMemo, useState } from "react";
 import { BaseProps } from "@/types";
 import "./AccountCatalog.scss";
 import classnames from "classnames";
@@ -8,6 +8,14 @@ import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator
 import * as AudioUtilities from "@/audio/utilities";
 import * as NotificationManager from "@/managers/NotificationManager";
 import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
+import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
+import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
+import {
+  useAddTrackMutation,
+  useRemoveTrackMutation,
+  useGetTracksQuery,
+} from "@/graphql-apollo.g.d";
+import { CatalogItemDisplayData } from "@/types/catalog";
 
 import PageView from "@/components/page/PageView/PageView";
 import PageContent from "@/components/page/PageContent/PageContent";
@@ -19,23 +27,51 @@ import IconButton from "@/components/ui/buttons/IconButton/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import CatalogDisplay from "@/components/catalog/CatalogDisplay/CatalogDisplay";
 
-import { useCatalogConfigureModal } from "@/hooks/modals/catalog/useCatalogConfigureModal";
-import { CatalogItemData } from "@/components/modals/catalog/CatalogConfigureModal/CatalogConfigureModal";
-import { useAddTrackMutation, useRemoveTrackMutation } from "@/graphql-apollo.g.d";
-import { CatalogItemDisplayData } from "@/types/catalog";
-
 export interface Props extends Omit<BaseProps, "id"> {}
+
+const TRACKS_PER_PAGE = 10;
+const DEFAULT_INITIAL_PAGE = 0;
 
 const wasmFpGenerator = new WasmFingerprintGenerator();
 
-// TODO: need to figure out a way to trigger an update of the track list
-// when tracks are added/removed/edited
-
 const AccountCatalog: FunctionComponent<Props> = (props) => {
   const accountId = useAccountLocation();
-  const [addTrack] = useAddTrackMutation();
 
-  const [runRemoveTrack, data] = useRemoveTrackMutation();
+  const initPage = DEFAULT_INITIAL_PAGE;
+
+  // TODO: grab the initial page from a query param
+  const [currPage, setCurrPage] = useState(initPage);
+
+  const [addTrack] = useAddTrackMutation();
+  const [runRemoveTrack] = useRemoveTrackMutation();
+
+  const {
+    data: tracksData,
+    loading: tracksLoading,
+    refetch: refetchTracks,
+  } = useGetTracksQuery({
+    variables: {
+      limit: TRACKS_PER_PAGE,
+      offset: currPage * TRACKS_PER_PAGE,
+      filter: {
+        // TODO: set this up
+      },
+    },
+  });
+
+  const tracks = useMemo(() => {
+    if (!tracksData) return undefined;
+    return tracksData.getTracks.map((trackData) =>
+      GraphqlTransformers.trackToCatalogItemDisplayData(trackData)
+    );
+  }, [tracksData]);
+
+  const totalTracksNum = useMemo(() => tracksData?.getTracksNum, [tracksData]);
+
+  const handleTrackPageChange = (newPage: number) => {
+    // Note: this will trigger the query to rerun
+    setCurrPage(newPage);
+  };
 
   const onCreateCatalogItem = async (data: CatalogItemData) => {
     console.log("Catalog Data", data); // TODO: remove
@@ -136,11 +172,16 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
   };
 
   const handleCatalogRemove = async (trackItem: CatalogItemDisplayData) => {
-    const data = await runRemoveTrack({ variables: { id: trackItem.id }});
+    // TODO: show a confirmation modal for this
 
-    if (data.errors || !data.data?.removeTrack) {
+    const data = await runRemoveTrack({ variables: { id: trackItem.id } });
+
+    if (data.errors || !data.data?.removeTrack)
       NotificationManager.showErrorNotification("Unable to delete track.");
-    }
+    else NotificationManager.showInfoNotification("Track deleted.");
+
+    // Update the track list
+    refetchTracks();
   };
 
   return (
@@ -176,9 +217,15 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
         </ConfigurationContainer>
 
         <div className="AccountCatalog__result-container">
-          <CatalogDisplay 
+          <CatalogDisplay
             className="AccountCatalog__catalog-display"
+            tracks={tracks}
+            loading={tracksLoading}
+            totalTrackNum={totalTracksNum}
+            tracksPerPage={TRACKS_PER_PAGE}
+            initialPage={initPage}
             configurable={true}
+            onPageChange={handleTrackPageChange}
             onEditClick={handleCatalogEdit}
             onRemoveClick={handleCatalogRemove}
           />

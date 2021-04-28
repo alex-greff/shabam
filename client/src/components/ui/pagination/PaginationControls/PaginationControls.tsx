@@ -22,6 +22,7 @@ const PaginationControls: VoidFunctionComponent<Props> = (props) => {
   const renderPageButton = (idx: number) => {
     return (
       <PaginationButton
+        key={idx}
         selected={idx === page}
         page={idx}
         onClick={() => {

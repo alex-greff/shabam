@@ -1,54 +1,44 @@
-import React, { useEffect, useState, VoidFunctionComponent } from "react";
+import React, { useEffect, VoidFunctionComponent } from "react";
 import { BaseProps } from "@/types";
 import "./CatalogDisplay.scss";
 import classnames from "classnames";
-import { TracksFilterInput, useGetTracksQuery } from "@/graphql-apollo.g.d";
 import withLoading, {
   Props as WithLoadingProps,
 } from "@/components/hoc/withLoading";
-import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
 import { CatalogItemDisplayData } from "@/types/catalog";
 
 import CatalogDisplayItem from "@/components/catalog/CatalogDisplayItem/CatalogDisplayItem";
 import PaginationControls from "@/components/ui/pagination/PaginationControls/PaginationControls";
 
 export interface Props extends BaseProps, WithLoadingProps {
-  filter?: TracksFilterInput;
+  tracks?: CatalogItemDisplayData[];
+  loading?: boolean;
+  totalTrackNum?: number;
   initialPage?: number;
   tracksPerPage?: number;
   configurable?: boolean;
+  onPageChange?: (pageNum: number) => unknown;
   onEditClick?: (trackItem: CatalogItemDisplayData) => unknown;
   onRemoveClick?: (trackItem: CatalogItemDisplayData) => unknown;
 }
 
 const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
   const {
+    tracks,
+    loading,
     setIsLoading,
-    filter,
+    totalTrackNum,
     initialPage,
     tracksPerPage,
     configurable,
+    onPageChange,
     onEditClick,
     onRemoveClick,
   } = props;
 
-  const [currPage, setCurrPage] = useState(initialPage!);
-
-  const { data, loading, error, fetchMore } = useGetTracksQuery({
-    variables: {
-      limit: tracksPerPage!,
-      offset: currPage * tracksPerPage!,
-      filter: {
-        // TODO: set this up properly
-      },
-    },
-  });
-
   useEffect(() => {
-    setIsLoading(loading);
+    setIsLoading(loading!);
   }, [loading, setIsLoading]);
-
-  if (!data) return null;
 
   const renderTracks = () => {
     return (
@@ -64,21 +54,18 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
           <div className="CatalogDisplay__tracks-header-searches">Searches</div>
         </div>
         <div className="CatalogDisplay__tracks-list">
-          {data.getTracks.map((track) => {
-            const trackItem = GraphqlTransformers.trackToCatalogItemDisplayData(
-              track
-            );
-
+          {tracks!.map((track, idx) => {
             return (
               <CatalogDisplayItem
+                key={idx}
                 className="CatalogDisplay__track"
-                item={trackItem}
+                item={track}
                 configurable={configurable}
                 onEditClick={() => {
-                  if (onEditClick) onEditClick(trackItem);
+                  if (onEditClick) onEditClick(track);
                 }}
                 onRemoveClick={() => {
-                  if (onRemoveClick) onRemoveClick(trackItem);
+                  if (onRemoveClick) onRemoveClick(track);
                 }}
               />
             );
@@ -92,37 +79,28 @@ const CatalogDisplay: VoidFunctionComponent<Props> = (props) => {
     return <div className="CatalogDisplay__empty-text">No tracks found.</div>;
   };
 
-  const handlePageChange = (page: number) => {
-    fetchMore({
-      variables: {
-        limit: tracksPerPage!,
-        offset: page * tracksPerPage!,
-        filter: {
-          // TODO: set this up properly
-        },
-      },
-    });
-    setCurrPage(page);
-  };
-
   return (
     <div
       className={classnames("CatalogDisplay", props.className)}
       style={props.style}
       id={props.id}
     >
-      {data.getTracks.length > 0 ? renderTracks() : renderNoTracksFound()}
+      {tracks!.length > 0 ? renderTracks() : renderNoTracksFound()}
 
       <PaginationControls
         className="CatalogDisplay__pagination-controls"
-        numPages={Math.ceil(data.getTracksNum / tracksPerPage!)}
-        onPageChange={handlePageChange}
+        initPage={initialPage}
+        numPages={Math.ceil(totalTrackNum! / tracksPerPage!)}
+        onPageChange={onPageChange}
       />
     </div>
   );
 };
 
 CatalogDisplay.defaultProps = {
+  loading: false,
+  tracks: [],
+  totalTrackNum: 0,
   initialPage: 0,
   tracksPerPage: 10,
   configurable: false,
