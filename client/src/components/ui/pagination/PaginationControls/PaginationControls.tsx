@@ -4,6 +4,7 @@ import "./PaginationControls.scss";
 import classnames from "classnames";
 
 import PaginationButton from "@/components/ui/pagination/PaginationButton/PaginationButton"
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 const MAX_SLOTS = 7;
 
@@ -33,7 +34,7 @@ const PaginationControls: VoidFunctionComponent<Props> = (props) => {
   };
 
   const renderEllipses = () => {
-    return (<div className="PaginationControls__ellipses">...</div>);
+    return (<div className="PaginationControls__ellipses"><MoreHorizIcon /></div>);
   }
 
   const renderPaginationList = () => {

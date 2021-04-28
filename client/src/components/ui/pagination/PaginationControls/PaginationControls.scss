@@ -16,5 +16,11 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+
+    & > svg {
+      width: 2rem;
+      height: 2rem;
+      align-self: flex-end;
+    }
   }
 }
