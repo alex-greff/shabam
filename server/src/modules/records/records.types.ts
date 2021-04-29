@@ -1,3 +1,7 @@
+import { Pool } from 'pg';
+import { Fingerprint } from '../fingerprint/fingerprint.types';
+import { TARGET_ZONE_SIZE } from './records.config';
+
 export interface Address {
   anchorFreq: number;
   pointFreq: number;
@@ -16,74 +20,39 @@ export interface Record {
   absoluteTime: number;
 }
 
-export interface RecordsTable {
-  addresses: Record[];
-  trackId: number;
+export class RecordsTable implements Iterable<Record> {
+  constructor(private fingerprint: Fingerprint, public trackId: number) {}
+
+  *[Symbol.iterator](): Iterator<Record> {
+    // The number of points between the anchor point and the first node of its
+    // target zone. This avoids any possibilities of having time deltas of 0
+    // since the anchor point is guaranteed to be in a different window than
+    // all the points in the target zone
+    const ANCHOR_POINT_GAP = this.fingerprint.numberOfPartitions - 1;
+
+    // Treat this point as the anchor point and compute its
+    // corresponding address records
+    for (const anchorCell of this.fingerprint) {
+      // Generate addresses records for all target zones
+      for (let zone = 0; zone < TARGET_ZONE_SIZE; zone++) {
+        const pointCell = this.fingerprint.getCell(
+          anchorCell.cellNum + ANCHOR_POINT_GAP + zone,
+        );
+
+        // We reached the end of the fingerprint, so stop trying to
+        // create address records
+        if (!pointCell) break;
+
+        // Create a record and add yield it
+        const record: Record = {
+          anchorFreq: anchorCell.partition,
+          pointFreq: pointCell.partition,
+          delta: pointCell.window - anchorCell.window,
+          absoluteTime: anchorCell.window,
+        };
+
+        yield record;
+      }
+    }
+  }
 }
-
-// TODO: remove
-// interface RecordAddressBase {
-//   anchorFreq: number;
-//   pointFreq: number;
-//   delta: number;
-//   absoluteTime: number;
-// }
-
-// interface RecordAddress extends RecordAddressBase {
-//   trackId: number;
-// }
-
-// abstract class BaseRecordsTable implements Iterable<RecordAddressBase> {
-//   protected addresses: RecordAddressBase[] = [];
-
-//   insertRecord(
-//     anchorFreq: number,
-//     pointFreq: number,
-//     delta: number,
-//     absoluteTime: number,
-//   ) {
-//     this.addresses.push({
-//       anchorFreq,
-//       pointFreq,
-//       delta,
-//       absoluteTime,
-//     });
-//   }
-
-//   getRecord(index: number) {
-//     return this.addresses[index];
-//   }
-
-//   removeRecord(index: number) {
-//     this.addresses.splice(index, 1);
-//   }
-
-//   *[Symbol.iterator](): Iterator<RecordAddressBase> {
-//     for (const address of this.addresses) {
-//       yield address;
-//     }
-//   }
-// }
-
-// export class RecordsTable
-//   extends BaseRecordsTable
-//   implements Iterable<RecordAddressBase> {
-//   constructor(private trackId: number) {
-//     super();
-//   }
-
-//   getRecord(index: number): RecordAddress {
-//     return { ...this.addresses[index], trackId: this.trackId };
-//   }
-
-//   *[Symbol.iterator](): Iterator<RecordAddress> {
-//     for (const address of this.addresses) {
-//       yield {
-//         ...address,
-//         trackId: this.trackId,
-//       };
-//     }
-//   }
-// }
-
-// export class RecordsSearchTable extends BaseRecordsTable {}

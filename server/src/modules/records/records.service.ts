@@ -3,6 +3,10 @@ import { Fingerprint } from '../fingerprint/fingerprint.types';
 import { TARGET_ZONE_SIZE } from './records.config';
 import { Address, Couple, Record, RecordsTable } from './records.types';
 import * as RecordsDb from '@/db/address/index';
+import { Pool } from 'pg';
+
+// How many addresses/couples to put into a query before running it
+const UPLOAD_EVERY_NTH_ITEMS = 5000;
 
 @Injectable()
 export class RecordsService {
@@ -91,44 +95,27 @@ export class RecordsService {
     };
   }
 
-  computeRecordsTable(fingerprint: Fingerprint, trackId: number): RecordsTable {
-    const recordsTable: RecordsTable = {
-      addresses: [],
-      trackId,
-    };
+  private async flushChunk(
+    dbPool: Pool,
+    addressQueryValueText: string[],
+    couplesQueryValueText: string[],
+    addressQueryValues: number[],
+    couplesQueryValues: (number | bigint)[],
+  ) {
+    // Construct queries
+    const addressQuery = `
+      INSERT INTO address (address_enc) 
+      VALUES ${addressQueryValueText.join(', ')}
+      ON CONFLICT DO NOTHING;
+    `;
+    const couplesQuery = `
+      INSERT INTO couple (couple_enc, address_enc)
+      VALUES ${couplesQueryValueText.join(', ')};
+    `;
 
-    // The number of points between the anchor point and the first node of its
-    // target zone. This avoids any possibilities of having time deltas of 0
-    // since the anchor point is guaranteed to be in a different window than
-    // all the points in the target zone
-    const ANCHOR_POINT_GAP = fingerprint.numberOfPartitions - 1;
-
-    // Treat this point as the anchor point and compute its
-    // corresponding address records
-    for (const anchorCell of fingerprint) {
-      // Generate addresses records for all target zones
-      for (let zone = 0; zone < TARGET_ZONE_SIZE; zone++) {
-        const pointCell = fingerprint.getCell(
-          anchorCell.cellNum + ANCHOR_POINT_GAP + zone,
-        );
-
-        // We reached the end of the fingerprint, so stop trying to
-        // create address records
-        if (!pointCell) break;
-
-        // Create a record and add it to the records table
-        const record: Record = {
-          anchorFreq: anchorCell.partition,
-          pointFreq: pointCell.partition,
-          delta: pointCell.window - anchorCell.window,
-          absoluteTime: anchorCell.window,
-        };
-
-        recordsTable.addresses.push(record);
-      }
-    }
-
-    return recordsTable;
+    // Insert the address and couples into the address database
+    await dbPool.query(addressQuery, addressQueryValues);
+    await dbPool.query(couplesQuery, couplesQueryValues);
   }
 
   async storeRecordsTable(
@@ -137,25 +124,44 @@ export class RecordsService {
   ): Promise<void> {
     const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
 
-    // Begin queries
-    let addressQuery = `INSERT INTO address (address_enc) VALUES `;
-    let couplesQuery = `INSERT INTO couple (couple_enc, address_enc) VALUES `;
-
-    const addressQueryValues: number[] = [];
-    const couplesQueryValues: (number | bigint)[] = [];
-
     let addressQueryIdx = 1;
     let couplesQueryIdx = 1;
 
-    const addressQueryValueText: string[] = [];
-    const couplesQueryValueText: string[] = [];
+    let addressQueryValueText: string[] = [];
+    let couplesQueryValueText: string[] = [];
 
-    // Add every address in the records table to the query
-    for (const address of recordsTable.addresses) {
+    let addressQueryValues: number[] = [];
+    let couplesQueryValues: (number | bigint)[] = [];
+
+    let i = 0;
+    for (const record of recordsTable) {
+      // New chunk, upload accumulated data and reset accumulators
+      if (i % UPLOAD_EVERY_NTH_ITEMS === 0) {
+        // Only upload if there is a chunk
+        if (i !== 0) {
+          await this.flushChunk(
+            dbPool,
+            addressQueryValueText,
+            couplesQueryValueText,
+            addressQueryValues,
+            couplesQueryValues,
+          );
+
+          // Reset accumulators
+          addressQueryIdx = 1;
+          couplesQueryIdx = 1;
+          addressQueryValueText = [];
+          couplesQueryValueText = [];
+          addressQueryValues = [];
+          couplesQueryValues = [];
+        }
+      }
+
+      // Add this record to the accumulator
       const addressEnc = this.encodeAddress({
-        anchorFreq: address.anchorFreq,
-        pointFreq: address.pointFreq,
-        delta: address.delta,
+        anchorFreq: record.anchorFreq,
+        pointFreq: record.pointFreq,
+        delta: record.delta,
       });
 
       addressQueryValueText.push(`($${addressQueryIdx})`);
@@ -163,7 +169,7 @@ export class RecordsService {
       addressQueryValues.push(addressEnc);
 
       const coupleEnc = this.encodeCouple({
-        absTime: address.absoluteTime,
+        absTime: record.absoluteTime,
         trackId: recordsTable.trackId,
       });
 
@@ -172,22 +178,20 @@ export class RecordsService {
       );
       couplesQueryIdx += 2;
       couplesQueryValues.push(coupleEnc, addressEnc);
+
+      i++;
     }
 
-    // Join the value text arrays
-    addressQuery += addressQueryValueText.join(', ');
-    couplesQuery += couplesQueryValueText.join(', ');
-
-    // End queries
-    addressQuery += ' ON CONFLICT DO NOTHING;';
-    couplesQuery += ';';
-
-    // console.log('addressQuery', addressQuery); // TODO: remove
-    // console.log('couplesQuery', couplesQuery); // TODO: remove
-
-    // Insert the address and couples
-    await dbPool.query(addressQuery, addressQueryValues);
-    await dbPool.query(couplesQuery, couplesQueryValues);
+    // Flush any remainder chunks at the end
+    if (addressQueryValues.length > 0 || couplesQueryValues.length > 0) {
+      await this.flushChunk(
+        dbPool,
+        addressQueryValueText,
+        couplesQueryValueText,
+        addressQueryValues,
+        couplesQueryValues,
+      );
+    }
   }
 
   private async cleanAddresses(addressDbNum: number) {

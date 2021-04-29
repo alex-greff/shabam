@@ -9,6 +9,7 @@ import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
 import { RecordsService } from '../records/records.service';
+import { RecordsTable } from '../records/records.types';
 
 @Injectable()
 export class CatalogService {
@@ -120,11 +121,8 @@ export class CatalogService {
 
       // console.log('FINGERPRINT', fingerprint); // TODO: remove
 
-      // Compute the records table of the fingerprint
-      const recordsTable = this.recordsService.computeRecordsTable(
-        fingerprint,
-        track.id,
-      );
+      // Create an instance of a records table
+      const recordsTable = new RecordsTable(fingerprint, track.id);
 
       // Store the records table in the address database
       await this.recordsService.storeRecordsTable(

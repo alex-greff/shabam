@@ -7,6 +7,7 @@ import { CollaborationType } from '@/modules/artist/models/artist.models';
 import { TrackEntity } from '@/entities/Track.entity';
 import { ArtistCollaborationEntity } from '@/entities/ArtistCollaboration.entity';
 
+
 @Injectable()
 export class ArtistService {
   constructor(
