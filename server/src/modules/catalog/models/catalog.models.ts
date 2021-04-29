@@ -1,5 +1,5 @@
 import { ArtistCollaboration } from '@/modules/artist/models/artist.models';
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({ description: "Metadata for a track." })
 export class TrackMetadata {
@@ -40,12 +40,17 @@ export class Track {
   metadata: TrackMetadata;
 }
 
-// TODO: remove
-// @ObjectType({ description: "A possible search result." })
-// export class TrackSearchResult {
-//   @Field(type => Track)
-//   track: Track;
+@ObjectType({ description: "A track candidate for a search. "})
+export class SearchCandidate {
+  @Field(type => Track)
+  track: Track;
 
-//   @Field(type => Float)
-//   similarity: number;
-// }
+  @Field(type => Float)
+  similarity: number;
+}
+
+@ObjectType({ description: "Search result for an audio search. "})
+export class SearchResult { 
+  @Field(type => [SearchCandidate])
+  candidates: SearchCandidate[];
+}

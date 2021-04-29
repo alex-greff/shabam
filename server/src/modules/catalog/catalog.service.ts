@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
+import { SearchArgs, TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
 import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
 import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
@@ -10,6 +10,8 @@ import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
 import { RecordsService } from '../records/records.service';
 import { RecordsTable } from '../records/records.types';
+import { SearchEntity } from '@/entities/Search.entity';
+import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 
 @Injectable()
 export class CatalogService {
@@ -163,21 +165,10 @@ export class CatalogService {
     return true;
   }
 
-  // TODO: remove
-  // async searchTrack(
-  //   fingerprint: UploadScalar,
-  //   info: FingerprintInfoInput,
-  // ): Promise<SearchEntity> {
-  //   // TODO: implement
-  //   return null;
-  // }
-
-  // async recomputeTrackFingerprint(
-  //   id: string,
-  //   fingerprint: UploadScalar,
-  //   info: FingerprintInfoInput,
-  // ): Promise<boolean> {
-  //   // TODO: implement
-  //   return false;
-  // }
+  async searchTrack(
+    fingerprint: FingerprintInput,
+    args?: SearchArgs
+  ): Promise<SearchEntity> {
+    throw "TODO: implement";
+  }
 }

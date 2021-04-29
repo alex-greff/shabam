@@ -47,6 +47,12 @@ export class TrackEditDataInput {
   releaseDate?: Date;
 }
 
+@InputType({ description: "Arguments for a track search. "})
+export class SearchArgs {
+  @Field(type => Int, { defaultValue: 1 })
+  maxResults: number;
+}
+
 // TODO: remove
 // @InputType({
 //   description: 'Supporting information for the raw fingerprint data.',

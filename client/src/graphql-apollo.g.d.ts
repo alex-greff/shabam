@@ -60,10 +60,17 @@ export type Track = {
   metadata: TrackMetadata;
 };
 
+/** A track candidate for a search.  */
+export type SearchCandidate = {
+  __typename?: 'SearchCandidate';
+  track: Track;
+  similarity: Scalars['Float'];
+};
+
 /** Search result for an audio search.  */
 export type SearchResult = {
   __typename?: 'SearchResult';
-  something: Scalars['String'];
+  candidates: Array<SearchCandidate>;
 };
 
 export type Query = {
@@ -126,8 +133,8 @@ export type Mutation = {
   removeTrack: Scalars['Boolean'];
   /** Recomputes a track's stored fingerprint. */
   recomputeTrackFingerprint: Scalars['Boolean'];
-  /** Search for a track. */
-  search: SearchResult;
+  /** Searches for a track. */
+  searchTrack: SearchResult;
 };
 
 
@@ -180,7 +187,8 @@ export type MutationRecomputeTrackFingerprintArgs = {
 };
 
 
-export type MutationSearchArgs = {
+export type MutationSearchTrackArgs = {
+  args?: Maybe<SearchArgs>;
   fingerprint: FingerprintInput;
 };
 
@@ -236,6 +244,11 @@ export type TrackEditDataInput = {
   artists?: Maybe<Array<Scalars['String']>>;
   coverImage?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Date']>;
+};
+
+/** Arguments for a track search.  */
+export type SearchArgs = {
+  maxResults?: Maybe<Scalars['Int']>;
 };
 
 export type Subscription = {
@@ -303,6 +316,35 @@ export type RemoveTrackMutation = (
   & Pick<Mutation, 'removeTrack'>
 );
 
+export type SearchTrackMutationVariables = Exact<{
+  fingerprint: FingerprintInput;
+  args?: Maybe<SearchArgs>;
+}>;
+
+
+export type SearchTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { searchTrack: (
+    { __typename?: 'SearchResult' }
+    & { candidates: Array<(
+      { __typename?: 'SearchCandidate' }
+      & Pick<SearchCandidate, 'similarity'>
+      & { track: (
+        { __typename?: 'Track' }
+        & Pick<Track, 'id' | 'addressDatabase'>
+        & { metadata: (
+          { __typename?: 'TrackMetadata' }
+          & Pick<TrackMetadata, 'title' | 'coverImage' | 'releaseDate' | 'createdDate' | 'updatedDate'>
+          & { artists: Array<(
+            { __typename?: 'ArtistCollaboration' }
+            & Pick<ArtistCollaboration, 'name' | 'type'>
+          )> }
+        ) }
+      ) }
+    )> }
+  ) }
+);
+
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -311,19 +353,6 @@ export type CheckUsernameAvailabilityQueryVariables = Exact<{
 export type CheckUsernameAvailabilityQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'checkUsernameAvailability'>
-);
-
-export type SearchMutationVariables = Exact<{
-  fingerprint: FingerprintInput;
-}>;
-
-
-export type SearchMutation = (
-  { __typename?: 'Mutation' }
-  & { search: (
-    { __typename?: 'SearchResult' }
-    & Pick<SearchResult, 'something'>
-  ) }
 );
 
 export type SigninMutationVariables = Exact<{
@@ -491,6 +520,57 @@ export function useRemoveTrackMutation(baseOptions?: Apollo.MutationHookOptions<
 export type RemoveTrackMutationHookResult = ReturnType<typeof useRemoveTrackMutation>;
 export type RemoveTrackMutationResult = Apollo.MutationResult<RemoveTrackMutation>;
 export type RemoveTrackMutationOptions = Apollo.BaseMutationOptions<RemoveTrackMutation, RemoveTrackMutationVariables>;
+export const SearchTrackDocument = gql`
+    mutation searchTrack($fingerprint: FingerprintInput!, $args: SearchArgs) {
+  searchTrack(fingerprint: $fingerprint, args: $args) {
+    candidates {
+      track {
+        id
+        addressDatabase
+        metadata {
+          title
+          artists {
+            name
+            type
+          }
+          coverImage
+          releaseDate
+          createdDate
+          updatedDate
+        }
+      }
+      similarity
+    }
+  }
+}
+    `;
+export type SearchTrackMutationFn = Apollo.MutationFunction<SearchTrackMutation, SearchTrackMutationVariables>;
+
+/**
+ * __useSearchTrackMutation__
+ *
+ * To run a mutation, you first call `useSearchTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSearchTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [searchTrackMutation, { data, loading, error }] = useSearchTrackMutation({
+ *   variables: {
+ *      fingerprint: // value for 'fingerprint'
+ *      args: // value for 'args'
+ *   },
+ * });
+ */
+export function useSearchTrackMutation(baseOptions?: Apollo.MutationHookOptions<SearchTrackMutation, SearchTrackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SearchTrackMutation, SearchTrackMutationVariables>(SearchTrackDocument, options);
+      }
+export type SearchTrackMutationHookResult = ReturnType<typeof useSearchTrackMutation>;
+export type SearchTrackMutationResult = Apollo.MutationResult<SearchTrackMutation>;
+export type SearchTrackMutationOptions = Apollo.BaseMutationOptions<SearchTrackMutation, SearchTrackMutationVariables>;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)
@@ -524,39 +604,6 @@ export function useCheckUsernameAvailabilityLazyQuery(baseOptions?: Apollo.LazyQ
 export type CheckUsernameAvailabilityQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityQuery>;
 export type CheckUsernameAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckUsernameAvailabilityLazyQuery>;
 export type CheckUsernameAvailabilityQueryResult = Apollo.QueryResult<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryVariables>;
-export const SearchDocument = gql`
-    mutation search($fingerprint: FingerprintInput!) {
-  search(fingerprint: $fingerprint) {
-    something
-  }
-}
-    `;
-export type SearchMutationFn = Apollo.MutationFunction<SearchMutation, SearchMutationVariables>;
-
-/**
- * __useSearchMutation__
- *
- * To run a mutation, you first call `useSearchMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSearchMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [searchMutation, { data, loading, error }] = useSearchMutation({
- *   variables: {
- *      fingerprint: // value for 'fingerprint'
- *   },
- * });
- */
-export function useSearchMutation(baseOptions?: Apollo.MutationHookOptions<SearchMutation, SearchMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SearchMutation, SearchMutationVariables>(SearchDocument, options);
-      }
-export type SearchMutationHookResult = ReturnType<typeof useSearchMutation>;
-export type SearchMutationResult = Apollo.MutationResult<SearchMutation>;
-export type SearchMutationOptions = Apollo.BaseMutationOptions<SearchMutation, SearchMutationVariables>;
 export const SigninDocument = gql`
     mutation signin($username: String!, $password: String!) {
   login(userData: {username: $username, password: $password}) {

@@ -10,7 +10,6 @@ import { PoliciesModule } from '@/modules/policies/policies.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { CatalogModule } from '@/modules/catalog/catalog.module';
-import { SearchModule } from '@/modules/search/search.module';
 import { RecordsModule } from './modules/records/records.module';
 import { ArtistModule } from './modules/artist/artist.module';
 import { FingerprintModule } from './modules/fingerprint/fingerprint.module';
@@ -24,7 +23,6 @@ import { FingerprintModule } from './modules/fingerprint/fingerprint.module';
     UserModule,
     ArtistModule,
     CatalogModule,
-    SearchModule,
     FingerprintModule,
     RecordsModule,
     // --- GraphQL ---

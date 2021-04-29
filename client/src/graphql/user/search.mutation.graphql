@@ -1,5 +1,0 @@
-mutation search($fingerprint: FingerprintInput!) {
-  search(fingerprint: $fingerprint) {
-    something
-  }
-}

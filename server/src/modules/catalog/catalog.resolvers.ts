@@ -10,9 +10,9 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
-import { TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
+import { SearchArgs, TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
 import { GetTracksArgs, GetTracksNumArgs } from './dto/catalog.args';
-import { Track } from './models/catalog.models';
+import { SearchResult, Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
@@ -181,6 +181,18 @@ export class CatalogResolver {
     // TODO: implement
     return false;
     // return this.recomputeTrackFingerprint(id, fingerprint, fingerprintInfo);
+  }
+
+  @Mutation(returns => SearchResult, {
+    description: "Searches for a track."
+  })
+  async searchTrack(
+    @Args('fingerprint', { description: 'Fingerprint of the clip to search.' })
+    fingerprint: FingerprintInput,
+    @Args('args', { nullable: true })
+    args?: SearchArgs
+  ): Promise<SearchResult> {
+    throw "TODO: implement";
   }
 
   // ---------------------

@@ -42,9 +42,15 @@ type Track {
   metadata: TrackMetadata!
 }
 
+"""A track candidate for a search. """
+type SearchCandidate {
+  track: Track!
+  similarity: Float!
+}
+
 """Search result for an audio search. """
 type SearchResult {
-  something: String!
+  candidates: [SearchCandidate!]!
 }
 
 type Query {
@@ -100,9 +106,11 @@ type Mutation {
     id: ID!
   ): Boolean!
 
-  """Search for a track."""
-  search(
-    """Fingerprint data."""
+  """Searches for a track."""
+  searchTrack(
+    args: SearchArgs
+
+    """Fingerprint of the clip to search."""
     fingerprint: FingerprintInput!
   ): SearchResult!
 }
@@ -163,6 +171,11 @@ input TrackEditDataInput {
   artists: [String!]
   coverImage: String
   releaseDate: Date
+}
+
+"""Arguments for a track search. """
+input SearchArgs {
+  maxResults: Int = 1
 }
 
 type Subscription {

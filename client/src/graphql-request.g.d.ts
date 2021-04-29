@@ -60,10 +60,17 @@ export type Track = {
   metadata: TrackMetadata;
 };
 
+/** A track candidate for a search.  */
+export type SearchCandidate = {
+  __typename?: 'SearchCandidate';
+  track: Track;
+  similarity: Scalars['Float'];
+};
+
 /** Search result for an audio search.  */
 export type SearchResult = {
   __typename?: 'SearchResult';
-  something: Scalars['String'];
+  candidates: Array<SearchCandidate>;
 };
 
 export type Query = {
@@ -126,8 +133,8 @@ export type Mutation = {
   removeTrack: Scalars['Boolean'];
   /** Recomputes a track's stored fingerprint. */
   recomputeTrackFingerprint: Scalars['Boolean'];
-  /** Search for a track. */
-  search: SearchResult;
+  /** Searches for a track. */
+  searchTrack: SearchResult;
 };
 
 
@@ -180,7 +187,8 @@ export type MutationRecomputeTrackFingerprintArgs = {
 };
 
 
-export type MutationSearchArgs = {
+export type MutationSearchTrackArgs = {
+  args?: Maybe<SearchArgs>;
   fingerprint: FingerprintInput;
 };
 
@@ -236,6 +244,11 @@ export type TrackEditDataInput = {
   artists?: Maybe<Array<Scalars['String']>>;
   coverImage?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Date']>;
+};
+
+/** Arguments for a track search.  */
+export type SearchArgs = {
+  maxResults?: Maybe<Scalars['Int']>;
 };
 
 export type Subscription = {
@@ -303,6 +316,35 @@ export type RemoveTrackMutation = (
   & Pick<Mutation, 'removeTrack'>
 );
 
+export type SearchTrackMutationVariables = Exact<{
+  fingerprint: FingerprintInput;
+  args?: Maybe<SearchArgs>;
+}>;
+
+
+export type SearchTrackMutation = (
+  { __typename?: 'Mutation' }
+  & { searchTrack: (
+    { __typename?: 'SearchResult' }
+    & { candidates: Array<(
+      { __typename?: 'SearchCandidate' }
+      & Pick<SearchCandidate, 'similarity'>
+      & { track: (
+        { __typename?: 'Track' }
+        & Pick<Track, 'id' | 'addressDatabase'>
+        & { metadata: (
+          { __typename?: 'TrackMetadata' }
+          & Pick<TrackMetadata, 'title' | 'coverImage' | 'releaseDate' | 'createdDate' | 'updatedDate'>
+          & { artists: Array<(
+            { __typename?: 'ArtistCollaboration' }
+            & Pick<ArtistCollaboration, 'name' | 'type'>
+          )> }
+        ) }
+      ) }
+    )> }
+  ) }
+);
+
 export type CheckUsernameAvailabilityQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -311,19 +353,6 @@ export type CheckUsernameAvailabilityQueryVariables = Exact<{
 export type CheckUsernameAvailabilityQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'checkUsernameAvailability'>
-);
-
-export type SearchMutationVariables = Exact<{
-  fingerprint: FingerprintInput;
-}>;
-
-
-export type SearchMutation = (
-  { __typename?: 'Mutation' }
-  & { search: (
-    { __typename?: 'SearchResult' }
-    & Pick<SearchResult, 'something'>
-  ) }
 );
 
 export type SigninMutationVariables = Exact<{
@@ -409,16 +438,33 @@ export const RemoveTrackDocument = gql`
   removeTrack(id: $id)
 }
     `;
+export const SearchTrackDocument = gql`
+    mutation searchTrack($fingerprint: FingerprintInput!, $args: SearchArgs) {
+  searchTrack(fingerprint: $fingerprint, args: $args) {
+    candidates {
+      track {
+        id
+        addressDatabase
+        metadata {
+          title
+          artists {
+            name
+            type
+          }
+          coverImage
+          releaseDate
+          createdDate
+          updatedDate
+        }
+      }
+      similarity
+    }
+  }
+}
+    `;
 export const CheckUsernameAvailabilityDocument = gql`
     query CheckUsernameAvailability($username: String!) {
   checkUsernameAvailability(username: $username)
-}
-    `;
-export const SearchDocument = gql`
-    mutation search($fingerprint: FingerprintInput!) {
-  search(fingerprint: $fingerprint) {
-    something
-  }
 }
     `;
 export const SigninDocument = gql`
@@ -456,11 +502,11 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     RemoveTrack(variables: RemoveTrackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveTrackMutation> {
       return withWrapper(() => client.request<RemoveTrackMutation>(RemoveTrackDocument, variables, requestHeaders));
     },
+    searchTrack(variables: SearchTrackMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SearchTrackMutation> {
+      return withWrapper(() => client.request<SearchTrackMutation>(SearchTrackDocument, variables, requestHeaders));
+    },
     CheckUsernameAvailability(variables: CheckUsernameAvailabilityQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckUsernameAvailabilityQuery> {
       return withWrapper(() => client.request<CheckUsernameAvailabilityQuery>(CheckUsernameAvailabilityDocument, variables, requestHeaders));
-    },
-    search(variables: SearchMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SearchMutation> {
-      return withWrapper(() => client.request<SearchMutation>(SearchDocument, variables, requestHeaders));
     },
     signin(variables: SigninMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SigninMutation> {
       return withWrapper(() => client.request<SigninMutation>(SigninDocument, variables, requestHeaders));
