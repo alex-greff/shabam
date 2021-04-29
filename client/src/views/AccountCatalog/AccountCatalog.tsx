@@ -152,6 +152,7 @@ const AccountCatalog: FunctionComponent<Props> = (props) => {
     title: "Create Catalog Item",
     onAccept: onCreateCatalogItem,
     requestCloseOnOuterClick: false,
+    acceptButtonText: "Create"
   });
 
   const breadcrumbItems: BreadcrumbTrailItem[] = [
