@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Fingerprint } from '../fingerprint/fingerprint.types';
-import { TARGET_ZONE_SIZE } from './records.config';
-import { Address, Couple, Record, RecordsTable } from './records.types';
+import { Address, Couple, RecordsTable } from './records.types';
 import * as RecordsDb from '@/db/address/index';
 import { Pool } from 'pg';
 
@@ -97,24 +95,15 @@ export class RecordsService {
 
   private async flushChunk(
     dbPool: Pool,
-    addressQueryValueText: string[],
     couplesQueryValueText: string[],
-    addressQueryValues: number[],
     couplesQueryValues: (number | bigint)[],
   ) {
-    // Construct queries
-    const addressQuery = `
-      INSERT INTO address (address_enc) 
-      VALUES ${addressQueryValueText.join(', ')}
-      ON CONFLICT DO NOTHING;
-    `;
     const couplesQuery = `
       INSERT INTO couple (couple_enc, address_enc)
       VALUES ${couplesQueryValueText.join(', ')};
     `;
 
-    // Insert the address and couples into the address database
-    await dbPool.query(addressQuery, addressQueryValues);
+    // Insert the couples into the address database
     await dbPool.query(couplesQuery, couplesQueryValues);
   }
 
@@ -124,13 +113,8 @@ export class RecordsService {
   ): Promise<void> {
     const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
 
-    let addressQueryIdx = 1;
     let couplesQueryIdx = 1;
-
-    let addressQueryValueText: string[] = [];
     let couplesQueryValueText: string[] = [];
-
-    let addressQueryValues: number[] = [];
     let couplesQueryValues: (number | bigint)[] = [];
 
     let i = 0;
@@ -141,18 +125,13 @@ export class RecordsService {
         if (i !== 0) {
           await this.flushChunk(
             dbPool,
-            addressQueryValueText,
             couplesQueryValueText,
-            addressQueryValues,
             couplesQueryValues,
           );
 
           // Reset accumulators
-          addressQueryIdx = 1;
           couplesQueryIdx = 1;
-          addressQueryValueText = [];
           couplesQueryValueText = [];
-          addressQueryValues = [];
           couplesQueryValues = [];
         }
       }
@@ -163,10 +142,6 @@ export class RecordsService {
         pointFreq: record.pointFreq,
         delta: record.delta,
       });
-
-      addressQueryValueText.push(`($${addressQueryIdx})`);
-      addressQueryIdx += 1;
-      addressQueryValues.push(addressEnc);
 
       const coupleEnc = this.encodeCouple({
         absTime: record.absoluteTime,
@@ -183,28 +158,13 @@ export class RecordsService {
     }
 
     // Flush any remainder chunks at the end
-    if (addressQueryValues.length > 0 || couplesQueryValues.length > 0) {
+    if (couplesQueryValues.length > 0) {
       await this.flushChunk(
         dbPool,
-        addressQueryValueText,
         couplesQueryValueText,
-        addressQueryValues,
         couplesQueryValues,
       );
     }
-  }
-
-  private async cleanAddresses(addressDbNum: number) {
-    const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
-
-    const addressDeleteQuery = `
-      DELETE FROM address AS A 
-      WHERE NOT EXISTS (
-        SELECT FROM couple AS C
-        WHERE C.address_enc = A.address_enc
-      );
-    `;
-    await dbPool.query(addressDeleteQuery);
   }
 
   async removeRecords(trackId: number, addressDbNum: number): Promise<void> {
@@ -216,9 +176,5 @@ export class RecordsService {
       WHERE (C.couple_enc & 4294967295) = $1;
     `;
     await dbPool.query(couplesDeleteQuery, [trackId]);
-
-    // Delete any straggling addresses that do not reference any other tracks
-    // (this is just to keep the database clean and minimize bloat)
-    await this.cleanAddresses(addressDbNum);
   }
 }

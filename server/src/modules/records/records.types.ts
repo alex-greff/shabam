@@ -1,4 +1,3 @@
-import { Pool } from 'pg';
 import { Fingerprint } from '../fingerprint/fingerprint.types';
 import { TARGET_ZONE_SIZE } from './records.config';
 
