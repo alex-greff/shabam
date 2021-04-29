@@ -45,23 +45,32 @@ const Search: FunctionComponent<Props> = (props) => {
       downsampledAudioBuffer
     );
 
-    const fingerprint = await fingerprintGenerator.generateFingerprint(spectrogramData);
+    const fingerprint = await fingerprintGenerator.generateFingerprint(
+      spectrogramData
+    );
 
     if (fingerprint === null) {
-      NotificationManager.showErrorNotification("Failed to generate fingerprint.");
+      NotificationManager.showErrorNotification(
+        "Failed to generate fingerprint."
+      );
       return;
     }
 
-    // const fingerprintDataBlob = new Blob([fingerprint.data], { type: 'text/plain' });
-    const fingerprintDataBlob = new Blob([fingerprint.data], { type: 'application/octet-stream' });
+    const fingerprintDataBlob = new Blob([fingerprint.data], {
+      type: "application/octet-stream",
+    });
 
     console.log(fingerprintDataBlob);
 
-    const searchResult = await runSearchMutation({ variables: { fingerprint: { 
-      numberOfWindows: fingerprint.numberOfWindows,
-      numberOfPartitions: fingerprint.numberOfPartitions,
-      fingerprintData: fingerprintDataBlob
-    }}});
+    const searchResult = await runSearchMutation({
+      variables: {
+        fingerprint: {
+          numberOfWindows: fingerprint.numberOfWindows,
+          numberOfPartitions: fingerprint.numberOfPartitions,
+          fingerprintData: fingerprintDataBlob,
+        },
+      },
+    });
 
     console.log("Search result", searchResult.data?.search);
   };
@@ -76,14 +85,16 @@ const Search: FunctionComponent<Props> = (props) => {
       {/* <br />
       <button onClick={temp}>Click Me</button> */}
       <br />
-      <input 
-        type="file" 
-        name="audio" 
+      <input
+        type="file"
+        name="audio"
         accept="audio/wav, audio/mp3"
         onChange={audioFileChange}
       />
       <br />
-      <button disabled={!audioBlob} onClick={searchFingerprint}>Search</button>
+      <button disabled={!audioBlob} onClick={searchFingerprint}>
+        Search
+      </button>
     </PageView>
   );
 };
