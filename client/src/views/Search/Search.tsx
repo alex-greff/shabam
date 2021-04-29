@@ -6,7 +6,7 @@ import * as NotificationManager from "@/managers/NotificationManager";
 import * as AudioUtilities from "@/audio/utilities";
 
 import PageView from "@/components/page/PageView/PageView";
-import { useSearchMutation } from "@/graphql-apollo.g.d";
+import { useSearchTrackMutation } from "@/graphql-apollo.g.d";
 import { WasmFingerprintGenerator } from "@/fingerprint/WasmFingerprintGenerator";
 
 const fingerprintGenerator = new WasmFingerprintGenerator();
@@ -14,7 +14,7 @@ const fingerprintGenerator = new WasmFingerprintGenerator();
 export interface Props extends Omit<BaseProps, "id"> {}
 
 const Search: FunctionComponent<Props> = (props) => {
-  const [runSearchMutation, { data }] = useSearchMutation();
+  const [runSearchMutation, { data }] = useSearchTrackMutation();
 
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
@@ -72,7 +72,7 @@ const Search: FunctionComponent<Props> = (props) => {
       },
     });
 
-    console.log("Search result", searchResult.data?.search);
+    console.log("Search result", searchResult.data?.searchTrack);
   };
 
   return (
