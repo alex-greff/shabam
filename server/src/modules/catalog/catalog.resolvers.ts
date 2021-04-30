@@ -192,6 +192,8 @@ export class CatalogResolver {
     @Args('args', { nullable: true })
     args?: SearchArgs
   ): Promise<SearchResult> {
+    const results = await this.catalogService.searchTrack(fingerprint, args);
+    // TODO: transform results and return
     throw "TODO: implement";
   }
 

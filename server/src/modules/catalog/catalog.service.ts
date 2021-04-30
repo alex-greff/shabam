@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SearchArgs, TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
+import {
+  SearchArgs,
+  TrackAddDataInput,
+  TrackEditDataInput,
+} from './dto/catalog.inputs';
 import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
 import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
@@ -9,16 +13,23 @@ import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
 import { RecordsService } from '../records/records.service';
-import { RecordsTable } from '../records/records.types';
+import { RecordsClipTable, RecordsTable } from '../records/records.types';
 import { SearchEntity } from '@/entities/Search.entity';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
+import { SearchResultEntity } from '@/entities/SearchResult.entity';
 
 @Injectable()
 export class CatalogService {
   constructor(
     private readonly orm: MikroORM,
+    // Entity repositories
     @InjectRepository(TrackEntity)
     private readonly trackRepository: EntityRepository<TrackEntity>,
+    @InjectRepository(SearchEntity)
+    private readonly searchRepository: EntityRepository<SearchEntity>,
+    @InjectRepository(SearchResultEntity)
+    private readonly searchResultRepository: EntityRepository<SearchResultEntity>,
+    // Services
     private readonly userService: UserService,
     private readonly artistService: ArtistService,
     private readonly fingerprintService: FingerprintService,
@@ -166,9 +177,18 @@ export class CatalogService {
   }
 
   async searchTrack(
-    fingerprint: FingerprintInput,
-    args?: SearchArgs
+    fingerprintInput: FingerprintInput,
+    args?: SearchArgs,
   ): Promise<SearchEntity> {
-    throw "TODO: implement";
+    const fingerprint = await this.fingerprintService.unwrapFingerprintInput(
+      fingerprintInput,
+    );
+    const recordsClipTable = new RecordsClipTable(fingerprint);
+
+    const results = await this.recordsService.searchRecords(recordsClipTable, args?.maxResults);
+
+    // TODO: create search entity and stuff for the result
+
+    throw 'TODO: implement';
   }
 }

@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Address, Couple, RecordsTable } from './records.types';
+import {
+  Address,
+  Couple,
+  RecordsClipTable,
+  RecordsSearchMatch,
+  RecordsTable,
+} from './records.types';
 import * as RecordsDb from '@/db/address/index';
 import { Pool } from 'pg';
-
-// How many addresses/couples to put into a query before running it
-const UPLOAD_EVERY_NTH_ITEMS = 5000;
+import {
+  SEARCH_EVERY_N_COUPLES,
+  TARGET_ZONE_SIZE,
+  UPLOAD_EVERY_NTH_ITEMS,
+} from './records.config';
 
 @Injectable()
 export class RecordsService {
@@ -144,7 +152,7 @@ export class RecordsService {
       });
 
       const coupleEnc = this.encodeCouple({
-        absTime: record.absoluteTime,
+        absTime: record.anchorAbsoluteTime,
         trackId: recordsTable.trackId,
       });
 
@@ -159,11 +167,7 @@ export class RecordsService {
 
     // Flush any remainder chunks at the end
     if (couplesQueryValues.length > 0) {
-      await this.flushChunk(
-        dbPool,
-        couplesQueryValueText,
-        couplesQueryValues,
-      );
+      await this.flushChunk(dbPool, couplesQueryValueText, couplesQueryValues);
     }
   }
 
@@ -176,5 +180,113 @@ export class RecordsService {
       WHERE (C.couple_enc & 4294967295) = $1;
     `;
     await dbPool.query(couplesDeleteQuery, [trackId]);
+  }
+
+  async searchRecords(
+    recordsClipTable: RecordsClipTable,
+    maxResults = 1,
+  ): Promise<RecordsSearchMatch[]> {
+    // A map that counts the number of times a couple appears in the clip table
+    const coupleToHits = new Map<bigint, number>();
+
+    // TODO: figure out if this is needed or getNumRecords instead
+    // The number of target zones
+    const numTargetZonesClipTable = recordsClipTable.getNumTargetZones();
+
+    // For each record in the clip table, perform a search for its address
+    // in each records database and accumulate its results in
+    // the coupleToHits map
+    for (const clipRecord of recordsClipTable) {
+      const address_enc = this.encodeAddress({
+        anchorFreq: clipRecord.anchorFreq,
+        pointFreq: clipRecord.pointFreq,
+        delta: clipRecord.delta,
+      });
+
+      // TODO: do this for all records databases
+      // For each address database, search the current address and accumulate
+      // the hits to coupleToHits
+      const numDbs = 0; // TODO: get this from KEYS or something
+      const dbJobs = Array(numDbs)
+        .fill(0)
+        .map(async (_, addressDbNum) => {
+          const dbPool = RecordsDb.getAddressDbPool(addressDbNum);
+
+          // Determine how many matches exist
+          const matchNumQuery = `
+            SELECT COUNT(C.couple_enc) FROM couple AS C 
+            WHERE C.address_enc = $1;
+          `;
+          const matchNumRes = await dbPool.query(matchNumQuery, [address_enc]);
+          const numMatches = parseInt(matchNumRes.rows[0].count);
+
+          // Query the matches in chunks and accumulate the
+          // results in coupleToHits
+          let accumulatedMatches = 0;
+          while (accumulatedMatches < numMatches) {
+            const matchQuery = `
+              SELECT C.couple_enc FROM couple AS C
+              WHERE C.address_enc = $1
+              ORDER BY C.couple_enc
+              LIMIT $2 OFFSET $3;
+            `;
+
+            const matchRes = await dbPool.query(matchQuery, [
+              address_enc,
+              SEARCH_EVERY_N_COUPLES,
+              accumulatedMatches,
+            ]);
+
+            for (const row of matchRes.rows) {
+              const couple_enc = BigInt(row.couple_enc as string);
+
+              // Update the appearance count map
+              const currHits = coupleToHits.get(couple_enc) ?? 0;
+              coupleToHits.set(couple_enc, currHits + 1);
+            }
+
+            accumulatedMatches += matchRes.rowCount;
+          }
+        });
+
+      // Wait for all the database accumulation jobs to complete before going
+      // on to the next record
+      // Note: I don't think it is a good idea to perform this await after
+      // the records loop because you are going to end up with an insanely long
+      // array of promises to await on which I imagine is going to incur a
+      // significant performance overhead after a certain size
+      await Promise.all(dbJobs);
+    }
+
+    // Now that we have the appearance count map we can start filtering tracks
+
+    // Tracks tracks to the total number of hits that they had
+    // in the coupleToHits map
+    const trackIdToTotalHits = new Map<number, number>();
+
+    // Populate trackIdToTotalHits from coupleToHits and filter out any couples
+    // who do not form a target zone
+    for (const [couple_enc, num_hits] of coupleToHits) {
+      // Ignore couples that appear less than TARGET_ZONE_SIZE times
+      // (i.e. all points that don't form a target zone)
+      // TODO: the article used 4 but I used 5 here, I should double check
+      // again to see if this is right and he made a typo
+      if (num_hits < TARGET_ZONE_SIZE) 
+        continue;
+
+      const { trackId } = this.decodeCouple(couple_enc);
+      
+      const currTotalHits = trackIdToTotalHits.get(trackId) ?? 0;
+      trackIdToTotalHits.set(trackId, currTotalHits + 1);
+    }
+
+    // Filter out all tracks that do not pass the cutoff
+    for (const [trackId, totalNumHits] of trackIdToTotalHits) {
+      // TODO: do the coefficient stuff
+    }
+
+    const trackMatches: RecordsSearchMatch[] = [];
+
+    throw 'TODO: implement';
   }
 }

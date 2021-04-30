@@ -4,6 +4,7 @@ import "./Search.scss";
 import classnames from "classnames";
 import * as NotificationManager from "@/managers/NotificationManager";
 import * as AudioUtilities from "@/audio/utilities";
+import * as GraphqlTransformers from "@/utilities/graphqlTransformers";
 
 import PageView from "@/components/page/PageView/PageView";
 import { useSearchTrackMutation } from "@/graphql-apollo.g.d";
@@ -56,19 +57,9 @@ const Search: FunctionComponent<Props> = (props) => {
       return;
     }
 
-    const fingerprintDataBlob = new Blob([fingerprint.data], {
-      type: "application/octet-stream",
-    });
-
-    console.log(fingerprintDataBlob);
-
     const searchResult = await runSearchMutation({
       variables: {
-        fingerprint: {
-          numberOfWindows: fingerprint.numberOfWindows,
-          numberOfPartitions: fingerprint.numberOfPartitions,
-          fingerprintData: fingerprintDataBlob,
-        },
+        fingerprint: GraphqlTransformers.toFingerprintInput(fingerprint)
       },
     });
 
