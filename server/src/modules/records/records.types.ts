@@ -111,6 +111,11 @@ class RecordsBaseTable implements Iterable<Record> {
 
     return numRecordsPartialPoints + numRecordsFullPoints;
   }
+
+  getNumTargetZones() {
+    // TODO: implement
+    return 0;
+  }
 }
 
 export class RecordsTable extends RecordsBaseTable {
