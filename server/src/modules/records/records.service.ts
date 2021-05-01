@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   Address,
   Couple,
-  RecordsClipTable,
+  ClipRecordsTable,
   RecordsSearchMatch,
   RecordsTable,
 } from './records.types';
@@ -184,16 +184,20 @@ export class RecordsService {
   }
 
   async searchRecords(
-    recordsClipTable: RecordsClipTable,
+    clipRecordsTable: ClipRecordsTable,
     maxResults = 1,
   ): Promise<RecordsSearchMatch[]> {
+    // ------------------------------
+    // --- Hits Compilation Phase ---
+    // ------------------------------
+
     // A map that counts the number of times a couple appears in the clip table
     const coupleToHits = new Map<bigint, number>();
 
     // For each record in the clip table, perform a search for its address
     // in each records database and accumulate its results in
     // the coupleToHits map
-    for (const clipRecord of recordsClipTable) {
+    for (const clipRecord of clipRecordsTable) {
       const address_enc = this.encodeAddress({
         anchorFreq: clipRecord.anchorFreq,
         pointFreq: clipRecord.pointFreq,
@@ -255,6 +259,10 @@ export class RecordsService {
       await Promise.all(dbJobs);
     }
 
+    // -----------------------
+    // --- Filtering Phase ---
+    // -----------------------
+
     // Now that we have the appearance count map we can start filtering tracks
 
     // Tracks tracks to the total number of hits that they had
@@ -279,13 +287,17 @@ export class RecordsService {
       trackIdToTotalTZHits.set(trackId, currTotalTZHits + 1);
     }
 
-    const numTZClipTable = recordsClipTable.getNumTargetZones();
+    const numTZClipTable = clipRecordsTable.getNumTargetZones();
 
     // Filter out all tracks that do not pass the cutoff
     for (const [trackId, totalNumTZHits] of trackIdToTotalTZHits) {
       if (totalNumTZHits < SEARCH_SELECTION_COEFFICIENT * numTZClipTable)
         trackIdToTotalTZHits.delete(trackId);
     }
+
+    // ----------------------------
+    // --- Time Coherency Phase ---
+    // ----------------------------
 
     // TODO: perform the final time coherency check
 

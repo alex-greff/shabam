@@ -115,4 +115,4 @@ export class RecordsTable extends RecordsBaseTable {
   }
 }
 
-export class RecordsClipTable extends RecordsBaseTable {}
+export class ClipRecordsTable extends RecordsBaseTable {}

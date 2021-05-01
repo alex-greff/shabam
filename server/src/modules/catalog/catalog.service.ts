@@ -13,7 +13,7 @@ import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
 import { RecordsService } from '../records/records.service';
-import { RecordsClipTable, RecordsTable } from '../records/records.types';
+import { ClipRecordsTable, RecordsTable } from '../records/records.types';
 import { SearchEntity } from '@/entities/Search.entity';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { SearchResultEntity } from '@/entities/SearchResult.entity';
@@ -183,7 +183,7 @@ export class CatalogService {
     const fingerprint = await this.fingerprintService.unwrapFingerprintInput(
       fingerprintInput,
     );
-    const recordsClipTable = new RecordsClipTable(fingerprint);
+    const recordsClipTable = new ClipRecordsTable(fingerprint);
 
     const results = await this.recordsService.searchRecords(recordsClipTable, args?.maxResults);
 
