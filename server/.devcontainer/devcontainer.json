@@ -1,6 +1,6 @@
 {
   "name": "Shabam Server",
-  "dockerComposeFile": ["..\\..\\docker-compose-dev.yml"],
+  "dockerComposeFile": ["../../docker-compose-dev.yml"],
   "service": "api",
   "workspaceFolder": "/app",
   "shutdownAction": "none",
