@@ -10,6 +10,7 @@ import * as RecordsDb from '@/db/address/index';
 import { Pool } from 'pg';
 import {
   SEARCH_EVERY_N_COUPLES,
+  SEARCH_SELECTION_COEFFICIENT,
   TARGET_ZONE_SIZE,
   UPLOAD_EVERY_NTH_ITEMS,
 } from './records.config';
@@ -189,10 +190,6 @@ export class RecordsService {
     // A map that counts the number of times a couple appears in the clip table
     const coupleToHits = new Map<bigint, number>();
 
-    // TODO: figure out if this is needed or getNumRecords instead
-    // The number of target zones
-    const numTargetZonesClipTable = recordsClipTable.getNumTargetZones();
-
     // For each record in the clip table, perform a search for its address
     // in each records database and accumulate its results in
     // the coupleToHits map
@@ -262,12 +259,14 @@ export class RecordsService {
 
     // Tracks tracks to the total number of hits that they had
     // in the coupleToHits map
-    const trackIdToTotalHits = new Map<number, number>();
+    // Note: TZ = target zone
+    const trackIdToTotalTZHits = new Map<number, number>();
 
     // Populate trackIdToTotalHits from coupleToHits and filter out any couples
     // who do not form a target zone
     for (const [couple_enc, num_hits] of coupleToHits) {
-      // Ignore couples that appear less than TARGET_ZONE_SIZE times
+      // Ignore couples that appear less than TARGET_ZONE_SIZE times 
+      // (i.e. a full target zone was not matched for this anchor)
       // (i.e. all points that don't form a target zone)
       // TODO: the article used 4 but I used 5 here, I should double check
       // again to see if this is right and he made a typo
@@ -276,14 +275,19 @@ export class RecordsService {
 
       const { trackId } = this.decodeCouple(couple_enc);
       
-      const currTotalHits = trackIdToTotalHits.get(trackId) ?? 0;
-      trackIdToTotalHits.set(trackId, currTotalHits + 1);
+      const currTotalTZHits = trackIdToTotalTZHits.get(trackId) ?? 0;
+      trackIdToTotalTZHits.set(trackId, currTotalTZHits + 1);
     }
 
+    const numTZClipTable = recordsClipTable.getNumTargetZones();
+
     // Filter out all tracks that do not pass the cutoff
-    for (const [trackId, totalNumHits] of trackIdToTotalHits) {
-      // TODO: do the coefficient stuff
+    for (const [trackId, totalNumTZHits] of trackIdToTotalTZHits) {
+      if (totalNumTZHits < SEARCH_SELECTION_COEFFICIENT * numTZClipTable)
+        trackIdToTotalTZHits.delete(trackId);
     }
+
+    // TODO: perform the final time coherency check
 
     const trackMatches: RecordsSearchMatch[] = [];
 

@@ -41,4 +41,8 @@ export class Fingerprint implements Iterable<FingerprintCell> {
       cellNum: index,
     };
   }
+
+  public hasCell(index: number): boolean {
+    return index < this.data.length / 2;
+  }
 }
