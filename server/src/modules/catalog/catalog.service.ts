@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   SearchArgs,
   TrackAddDataInput,
@@ -33,6 +33,7 @@ export class CatalogService {
     private readonly userService: UserService,
     private readonly artistService: ArtistService,
     private readonly fingerprintService: FingerprintService,
+    @Inject(forwardRef(() => RecordsService))
     private readonly recordsService: RecordsService,
   ) {}
 

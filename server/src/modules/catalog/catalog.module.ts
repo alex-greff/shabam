@@ -12,5 +12,6 @@ import { CatalogService } from './catalog.service';
     MikroOrmModule.forFeature([TrackEntity, SearchEntity, SearchResultEntity]),
   ],
   providers: [CatalogResolver, CatalogService],
+  exports: [CatalogService],
 })
 export class CatalogModule {}

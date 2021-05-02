@@ -24,6 +24,11 @@ export interface RecordsSearchMatch {
   similarity: number;
 }
 
+export interface TimeCoherencyDeltaMatch {
+  trackId: number;
+  timeDelta: number;
+}
+
 class RecordsBaseTable implements Iterable<Record> {
   constructor(private fingerprint: Fingerprint) {}
 
