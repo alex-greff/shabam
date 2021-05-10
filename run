@@ -93,7 +93,7 @@ function init-schema--db-metadata() {
 
 function init-schema--db-address() {
   cd ./postgres_client;
-  npm run exec:init-schema--address-all;
+  bash run exec:init-schema--address-all;
   cd ..;
 }
 
