@@ -10,9 +10,13 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'apollo-server-express';
 import { CatalogService } from './catalog.service';
-import { SearchArgs, TrackAddDataInput, TrackEditDataInput } from './dto/catalog.inputs';
+import {
+  SearchArgs,
+  TrackAddDataInput,
+  TrackEditDataInput,
+} from './dto/catalog.inputs';
 import { GetTracksArgs, GetTracksNumArgs } from './dto/catalog.args';
-import { SearchResult, Track } from './models/catalog.models';
+import { SearchCandidate, SearchResult, Track } from './models/catalog.models';
 import { GqlJwtAuthGuard } from '../auth/guards/gql-jwt-auth.guard';
 import { PoliciesGuard } from '../policies/guards/policies.guard';
 import { CheckPolicies } from '../policies/dectorators/check-policies.decorator';
@@ -24,6 +28,7 @@ import { TrackEntity } from '@/entities/Track.entity';
 import { CurrentUser } from '../user/decorators/current-user.decorator';
 import { UserRequestData } from '@/types';
 import { ArtistCollaboration } from '../artist/models/artist.models';
+import { RecordsSearchMatch } from '../records/records.types';
 
 const SUBSCRIPTIONS_CONFIG = {
   TRACK_ADDED: 'trackAdded',
@@ -51,7 +56,7 @@ export class CatalogResolver {
         artists: track.collaborators.getItems().map((collaborator) => {
           return {
             name: collaborator.artist.name,
-            type: collaborator.type
+            type: collaborator.type,
           };
         }),
         duration: track.duration,
@@ -64,6 +69,33 @@ export class CatalogResolver {
 
   static transformFromTrackEntityMany(tracks: TrackEntity[]): Track[] {
     return tracks.map((track) => this.transformFromTrackEntity(track));
+  }
+
+  async transformRecordsSearchMatchToSearchResult(
+    searchMatches: RecordsSearchMatch[],
+  ): Promise<SearchResult> {
+    const candidateJobs: Promise<SearchCandidate>[] = searchMatches.map(
+      async (match) => {
+        const track = await this.catalogService.getTrack(match.trackId);
+
+        if (!track)
+          throw new NotFoundException(
+            `Search Track: track ${match.trackId} not found`,
+          );
+
+        return {
+          track: CatalogResolver.transformFromTrackEntity(track),
+          similarity: match.similarity,
+        };
+      },
+    );
+
+    // Wait for all the candidate jobs to complete
+    const candidates = await Promise.all(candidateJobs);
+
+    return {
+      candidates,
+    };
   }
 
   // TODO: remove
@@ -183,18 +215,24 @@ export class CatalogResolver {
     // return this.recomputeTrackFingerprint(id, fingerprint, fingerprintInfo);
   }
 
-  @Mutation(returns => SearchResult, {
-    description: "Searches for a track."
+  @Mutation((returns) => SearchResult, {
+    description: 'Searches for a track.',
   })
   async searchTrack(
     @Args('fingerprint', { description: 'Fingerprint of the clip to search.' })
     fingerprint: FingerprintInput,
     @Args('args', { nullable: true })
-    args?: SearchArgs
+    args?: SearchArgs,
   ): Promise<SearchResult> {
-    const results = await this.catalogService.searchTrack(fingerprint, args);
-    // TODO: transform results and return
-    throw "TODO: implement";
+    const matches = await this.catalogService.searchTrack(fingerprint, args);
+
+    // TODO: replace with a transformer for SearchEntity
+    console.log('HERE 1'); // TODO: remove
+    const searchResult = await this.transformRecordsSearchMatchToSearchResult(
+      matches,
+    );
+    console.log('HERE 2'); // TODO: remove
+    return searchResult;
   }
 
   // ---------------------

@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   SearchArgs,
   TrackAddDataInput,
@@ -9,11 +14,20 @@ import { UserRequestData } from '@/types';
 import { UserService } from '../user/user.service';
 import { TrackEntity } from '@/entities/Track.entity';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository, FilterQuery, MikroORM } from '@mikro-orm/core';
+import {
+  EntityRepository,
+  FilterQuery,
+  MikroORM,
+  Populate,
+} from '@mikro-orm/core';
 import { ArtistService } from '../artist/artist.service';
 import { FingerprintService } from '../fingerprint/fingerprint.service';
 import { RecordsService } from '../records/records.service';
-import { ClipRecordsTable, RecordsTable } from '../records/records.types';
+import {
+  ClipRecordsTable,
+  RecordsSearchMatch,
+  RecordsTable,
+} from '../records/records.types';
 import { SearchEntity } from '@/entities/Search.entity';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { SearchResultEntity } from '@/entities/SearchResult.entity';
@@ -37,8 +51,15 @@ export class CatalogService {
     private readonly recordsService: RecordsService,
   ) {}
 
-  async getTrack(id: number): Promise<TrackEntity> {
-    const track = await this.trackRepository.findOne({ id });
+  async getTrack<P extends Populate<TrackEntity> = any>(
+    id: number,
+    populate: P = [
+      'searchResults',
+      'collaborators',
+      'collaborators.artist',
+    ] as any, // TODO: this is a little hacky, fix it
+  ): Promise<TrackEntity> {
+    const track = await this.trackRepository.findOne({ id }, populate);
 
     if (!track) throw new NotFoundException('Track not found');
 
@@ -59,13 +80,20 @@ export class CatalogService {
     return query;
   }
 
-  async getTracks(args: GetTracksArgs): Promise<TrackEntity[]> {
+  async getTracks<P extends Populate<TrackEntity>>(
+    args: GetTracksArgs,
+    populate: P = [
+      'searchResults',
+      'collaborators',
+      'collaborators.artist',
+    ] as any, // TODO: this is a little hacky, fix it
+  ): Promise<TrackEntity[]> {
     const query = this.constructTracksFilterQuery(args.filter);
 
     const tracksTuple = await this.trackRepository.findAndCount(query, {
       limit: args.limit,
       offset: args.offset,
-      populate: ['searchResults', 'collaborators', 'collaborators.artist'],
+      populate: populate,
     });
 
     const tracks = tracksTuple[0];
@@ -180,16 +208,22 @@ export class CatalogService {
   async searchTrack(
     fingerprintInput: FingerprintInput,
     args?: SearchArgs,
-  ): Promise<SearchEntity> {
+    // ): Promise<SearchEntity> { // TODO: put this back in
+  ): Promise<RecordsSearchMatch[]> {
     const fingerprint = await this.fingerprintService.unwrapFingerprintInput(
       fingerprintInput,
     );
     const recordsClipTable = new ClipRecordsTable(fingerprint);
 
-    const results = await this.recordsService.searchRecords(recordsClipTable, args?.maxResults);
+    const results = await this.recordsService.searchRecords(
+      recordsClipTable,
+      args?.maxResults,
+    );
 
     // TODO: create search entity and stuff for the result
+    // throw 'TODO: implement';
 
-    throw 'TODO: implement';
+    // TODO: remove
+    return results;
   }
 }

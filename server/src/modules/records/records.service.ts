@@ -220,7 +220,7 @@ export class RecordsService {
       // TODO: do this for all records databases
       // For each address database, search the current address and accumulate
       // the hits to coupleToHits
-      const numDbs = 0; // TODO: get this from KEYS or something
+      const numDbs = 1; // TODO: get this from KEYS or something
       const dbJobs = Array(numDbs)
         .fill(0)
         .map(async (_, addressDbNum) => {
@@ -306,6 +306,14 @@ export class RecordsService {
       if (totalNumTZHits < SEARCH_SELECTION_COEFFICIENT * numTZClipTable)
         trackIdToTotalTZHits.delete(trackId);
     }
+
+    // TODO: put in the time coherency checks
+    // for now we're just returning the results here
+    const _trackMatches: RecordsSearchMatch[] = [];
+    for (const [trackId, totalTZHits] of trackIdToTotalTZHits) {
+      _trackMatches.push({ trackId, similarity: totalTZHits });
+    }
+    return _trackMatches;
 
     // ----------------------------
     // --- Time Coherency Phase ---
