@@ -1,12 +1,14 @@
-import { Command, Flags } from "@oclif/core";
+import { Flags } from "@oclif/core";
+import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
 import { GetF } from "../../utilities";
 
 interface Args {}
 
-export default class CatalogList extends Command {
+export default class CatalogList extends AuthenticatedCommand {
   static description = "List the tracks in the Shabam catalog.";
 
   static flags = {
+    ...AuthenticatedCommand.flags,
     uploader: Flags.string({
       char: "u",
       description: "The uploader of the track.",
@@ -32,6 +34,8 @@ export default class CatalogList extends Command {
   ];
 
   async run(): Promise<void> {
+    await super.run();
+
     const { args, flags } = await this.parse<GetF<typeof CatalogList>, Args>(
       CatalogList
     );

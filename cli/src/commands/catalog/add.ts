@@ -1,11 +1,12 @@
-import { Command, Flags,  } from "@oclif/core";
+import { Flags,  } from "@oclif/core";
+import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
 import { GetF } from "../../utilities";
 
 interface Args {
   file: string;
 }
 
-export default class CatalogAdd extends Command {
+export default class CatalogAdd extends AuthenticatedCommand {
   static description = "Upload and add new track to Shabam database.";
 
   static args = [
@@ -17,6 +18,7 @@ export default class CatalogAdd extends Command {
   ];
 
   static flags = {
+    ...AuthenticatedCommand.flags,
     title: Flags.string({
       char: "t",
       description: "Title of the track.",
@@ -58,6 +60,8 @@ export default class CatalogAdd extends Command {
   ];
 
   async run(): Promise<void> {
+    await super.run();
+
     const { args, flags } = await this.parse<GetF<typeof CatalogAdd>, Args>(CatalogAdd);
 
     this.log("TODO: implement upload");

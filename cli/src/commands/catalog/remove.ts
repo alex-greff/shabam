@@ -1,11 +1,12 @@
 import { Command } from "@oclif/core";
+import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
 import { GetF } from "../../utilities";
 
 interface Args {
   id: string;
 }
 
-export default class CatalogRemove extends Command {
+export default class CatalogRemove extends AuthenticatedCommand {
   static description = "Remove a track from the catalog.";
 
   static args = [
@@ -16,9 +17,15 @@ export default class CatalogRemove extends Command {
     },
   ];
 
+  static flags = {
+    ...AuthenticatedCommand.flags,
+  };
+
   static examples = [`$ shabam search path/to/audio-clip`];
 
   async run(): Promise<void> {
+    await super.run();
+
     const { args, flags } = await this.parse<GetF<typeof CatalogRemove>, Args>(
       CatalogRemove
     );
