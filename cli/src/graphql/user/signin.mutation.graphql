@@ -1,0 +1,5 @@
+mutation signin($username: String!, $password: String!) {
+  login(userData: { username: $username, password: $password }) {
+    access_token
+  }
+}

@@ -1,5 +1,5 @@
 import * as Utilities from "./utilities";
 
 export default {
-  API_URL: Utilities.trailingSlash(process.env.API_URL!),
+  GRAPHQL_API_URL: Utilities.trailingSlash(process.env.GRAPHQL_API_URL!),
 };

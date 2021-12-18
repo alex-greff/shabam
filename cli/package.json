@@ -6,30 +6,14 @@
   "bin": {
     "shabam": "./bin/run"
   },
-  "bugs": "https://github.com/alex-greff/shabam/issues",
-  "dependencies": {
-    "@oclif/core": "^1",
-    "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.0.1",
-    "dotenv": "^10.0.0",
-    "got": "^12.0.0"
-  },
-  "devDependencies": {
-    "@oclif/test": "^2",
-    "@types/chai": "^4",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.9.4",
-    "chai": "^4",
-    "eslint": "^7.32.0",
-    "eslint-config-oclif": "^4",
-    "eslint-config-oclif-typescript": "^1.0.2",
-    "globby": "^11",
-    "mocha": "^9",
-    "oclif": "^2.0.0-main.10",
-    "shx": "^0.3.3",
-    "ts-node": "^10.2.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts --config .eslintrc",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "yarn lint",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "version": "oclif readme && git add README.md",
+    "codegen": "graphql-codegen -r dotenv/config"
   },
   "dirname": "oex",
   "engines": {
@@ -41,6 +25,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
+  "bugs": "https://github.com/alex-greff/shabam/issues",
   "homepage": "https://github.com/alex-greff/shabam",
   "keywords": [
     "oclif"
@@ -61,14 +46,37 @@
       }
     }
   },
-  "repository": "alex-greff/shabam",
-  "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
-    "lint": "eslint . --ext .ts --config .eslintrc",
-    "postpack": "shx rm -f oclif.manifest.json",
-    "posttest": "yarn lint",
-    "prepack": "yarn build && oclif manifest && oclif readme",
-    "version": "oclif readme && git add README.md"
+  "repository": "https://github.com/alex-greff/shabam",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@oclif/core": "^1",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.0.1",
+    "dotenv": "^10.0.0",
+    "got": "^12.0.0",
+    "graphql": "^16.2.0",
+    "graphql-request": "^3.7.0",
+    "graphql-tag": "^2.12.6"
   },
-  "types": "dist/index.d.ts"
+  "devDependencies": {
+    "@graphql-codegen/cli": "^2.3.0",
+    "@graphql-codegen/typescript": "^2.4.1",
+    "@graphql-codegen/typescript-graphql-request": "^4.3.2",
+    "@graphql-codegen/typescript-operations": "^2.2.1",
+    "@oclif/test": "^2",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.9.4",
+    "chai": "^4",
+    "eslint": "^7.32.0",
+    "eslint-config-oclif": "^4",
+    "eslint-config-oclif-typescript": "^1.0.2",
+    "globby": "^11",
+    "mocha": "^9",
+    "oclif": "^2.0.0-main.10",
+    "shx": "^0.3.3",
+    "ts-node": "^10.2.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
+  }
 }
