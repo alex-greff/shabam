@@ -13,7 +13,7 @@ export class AuthenticationService {
   }
 
   public async hydrateAuthToken(
-    email: string,
+    username: string,
     password: string
   ): Promise<string> {
     this.cmd.log("TODO: implement hydrateAuthToken");
