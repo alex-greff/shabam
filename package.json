@@ -13,7 +13,11 @@
         "rm-services:dev-fingerprint-worker": "docker-compose -f docker-compose-dev.yml rm -f fingerprint_worker",
         "rm-services:dev-identification-worker": "docker-compose -f docker-compose-dev.yml rm -f identification_worker",
         "rm-services:dev-records-worker": "docker-compose -f docker-compose-dev.yml rm -f records_worker",
-        "start:dev": "docker-compose -f docker-compose-dev.yml up --build",
+
+        "start:dev-webapp": "docker-compose -f docker-compose-dev.yml --profile webapp up --build",
+        "start:dev-cli": "docker-compose -f docker-compose-dev.yml --profile cli up --build",
+        "start:dev": "npm run start:dev-webapp",
+
         "start:dev--recreate": "npm run rm-services:dev && npm run start:dev",
         "start:dev--recreate-proxy": "npm run rm-services:dev-proxy && npm run start:dev",
         "start:dev--recreate-client": "npm run rm-services:dev-client && npm run start:dev",

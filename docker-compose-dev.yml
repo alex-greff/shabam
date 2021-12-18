@@ -2,6 +2,7 @@
 version: "3.2"
 services:
   proxy:
+    profiles: ["webapp"]
     restart: always
     build:
       dockerfile: Dockerfile.dev
@@ -17,6 +18,24 @@ services:
     depends_on:
       - "api"
       - "client"
+      - "fingerprint-worker"
+      - "identification-worker"
+  proxy-headless:
+    profiles: ["cli"]
+    restart: always
+    build:
+      dockerfile: Dockerfile.headless.dev
+      context: ./proxy
+    ports:
+      - "3050:80"
+    networks:
+      - app-network
+    hostname: proxy
+    container_name: shabam_proxy_headless
+    logging:
+      driver: none
+    depends_on:
+      - "api"
       - "fingerprint-worker"
       - "identification-worker"
   # Databases
@@ -139,6 +158,7 @@ services:
       - "identification-worker"
       - "records-worker"
   client:
+    profiles: ["webapp"]
     build:
       dockerfile: Dockerfile.dev
       context: ./client
