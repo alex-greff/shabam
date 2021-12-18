@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
 import { GetF } from "../../utilities";
+import { AuthenticationService } from "../../services/authentication.service";
 
 interface Args {
   email?: string;
@@ -42,9 +43,24 @@ export default class Login extends Command {
     const email = args.email ?? flags.email;
     const password = args.password ?? flags.password;
 
-    // TODO: validate that email and password are provided
-    // TODO: add some explicit message if arg is used over flag version
+    if (!email)
+      this.error("No email provided.");
+    if (!password)
+    this.error("No password provided.");
 
-    this.log("TODO: implement login");
+    if (flags.email && args.email)
+      this.warn(
+        "Multiple email inputs detected, using email provided in arguments."
+      );
+    if (flags.password && args.password)
+      this.warn(
+        "Multiple password inputs detected, using password provided in arguments."
+      );
+
+    // TODO: validate email and password
+      
+    const auth = new AuthenticationService(this);
+
+    await auth.hydrateAuthToken(email, password);
   }
 }
