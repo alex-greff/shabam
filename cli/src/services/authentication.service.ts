@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as Utilities from "../utilities";
 import * as Constants from "../constants";
 import { getSdk } from "../graphql-request.g";
-import cli from "cli-ux";
 
 export type AuthenticationMode = "signin" | "signup";
 
@@ -15,10 +14,7 @@ export class AuthenticationService {
     return path.join(this.cmd.config.dataDir, Constants.TOKEN_DIR);
   }
 
-  public async getAuthToken(promptCreds: true): Promise<string>;
-  public async getAuthToken(
-    promptCreds: boolean = false
-  ): Promise<string | null> {
+  public async getAuthToken(): Promise<string | null> {
     const exists = await fs.promises
       .access(this.authTokenPath, fs.constants.F_OK)
       .then(() => true)
@@ -26,18 +22,6 @@ export class AuthenticationService {
 
     if (exists) {
       const token = await fs.promises.readFile(this.authTokenPath, "utf-8");
-      return token;
-    }
-
-    if (promptCreds) {
-      this.cmd.log("Not currently logged in...");
-
-      const username = await cli.prompt("What is your username?");
-      const password = await cli.prompt("What is your password?", {
-        type: "hide",
-      });
-
-      const token = await this.hydrateAuthToken(username, password);
       return token;
     }
 
