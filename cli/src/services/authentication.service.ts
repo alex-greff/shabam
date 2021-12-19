@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as Utilities from "../utilities";
 import * as Constants from "../constants";
 import { getSdk } from "../graphql-request.g";
+import color from "@oclif/color";
 
 export type AuthenticationMode = "signin" | "signup";
 
@@ -31,7 +32,7 @@ export class AuthenticationService {
   public async hydrateAuthToken(
     username: string,
     password: string,
-    mode: AuthenticationMode = "signin"
+    mode: AuthenticationMode = "signin",
   ): Promise<string> {
     const client = Utilities.getGraphqlClient();
     const sdk = getSdk(client);

@@ -8,7 +8,7 @@ export interface AuthPromptResponse {
 }
 
 export async function authPrompt(this: Command): Promise<AuthPromptResponse> {
-  this.log(`Not currently ${color.red("logged in")}...`);
+  this.log(`Not currently ${color.blueBright("signed in")}...`);
 
   const response = await prompt<AuthPromptResponse>([
     {

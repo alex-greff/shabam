@@ -1,4 +1,5 @@
 import { Command, Flags } from "@oclif/core";
+import color from "@oclif/color";
 import { AuthenticationService } from "../services/authentication.service";
 import { assert } from "tsafe";
 import * as AuthenticationPrompts from "../prompts/authentication.prompts";
@@ -44,6 +45,8 @@ export abstract class AuthenticatedCommand extends Command {
         const res = await AuthenticationPrompts.authPrompt.bind(this)();
         username = res.username;
         password = res.password;
+
+        this.log(`Signed in as ${color.blueBright(username)}!`);
       }
 
       assert(username && password);

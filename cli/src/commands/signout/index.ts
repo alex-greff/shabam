@@ -1,7 +1,7 @@
-import { Command, Flags } from "@oclif/core";
-import cli from "cli-ux";
+import { Command } from "@oclif/core";
 import { GetF } from "../../types";
 import { AuthenticationService } from "../../services/authentication.service";
+import color from "@oclif/color";
 
 interface Args {
   username?: string;
@@ -16,16 +16,14 @@ export default class Signin extends Command {
   async run(): Promise<void> {
     await this.parse<GetF<typeof Signin>, Args>(Signin);
 
-    cli.action.start("Signing out");
-
     const auth = new AuthenticationService(this);
 
     try {
       await auth.clearAuthToken();
     } catch (err) {
-      this.error("Failed to signout.");
+      this.error(`${color.red("Failed to signout!")}`);
     }
 
-    cli.action.stop();
+    this.log(`${color.blueBright("Signed out!")}`);
   }
 }
