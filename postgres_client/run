@@ -12,6 +12,7 @@ function start:psql--metadata() {
   bash ./scripts/start_psql.sh 'db-metadata' postgres postgres development 5432;
 }
 
+# TODO: remove, ORM is used now
 function exec:init-schema--metadata() {
   bash ./scripts/actions/init_metadata_db.sh false;
 }

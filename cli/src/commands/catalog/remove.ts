@@ -1,6 +1,6 @@
 import { Command } from "@oclif/core";
 import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
-import { GetF } from "../../utilities";
+import { GetF } from "../../types";
 
 interface Args {
   id: string;

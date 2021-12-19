@@ -1,5 +1,5 @@
 import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
-import { GetF } from "../../utilities";
+import { GetF } from "../../types";
 
 interface Args {
   file: string;

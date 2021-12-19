@@ -1,5 +1,7 @@
-import * as Utilities from "./utilities";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export default {
-  GRAPHQL_API_URL: Utilities.trailingSlash(process.env.GRAPHQL_API_URL!),
+  GRAPHQL_API_URL: process.env.GRAPHQL_API_URL!,
 };

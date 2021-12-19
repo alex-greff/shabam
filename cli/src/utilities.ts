@@ -1,8 +1,6 @@
-import { Interfaces } from "@oclif/core";
 
-// Workaround for no strong typing for args.
-// Source: https://github.com/oclif/oclif/issues/404#issuecomment-686173464
-export type GetF<T> = T extends Interfaces.Input<infer F> ? F : never;
+import { GraphQLClient } from "graphql-request";
+import KEYS from "./keys";
 
 
 /**
@@ -10,4 +8,12 @@ export type GetF<T> = T extends Interfaces.Input<infer F> ? F : never;
  */
 export function trailingSlash(s: string) {
   return (s.endsWith("/") ? s : `${s}/`);
+}
+
+export function getGraphqlClient(token?: string): GraphQLClient {
+  const client = new GraphQLClient(
+    KEYS.GRAPHQL_API_URL,
+    token ? { headers: { authorization: `Bearer ${token}` } } : undefined
+  );
+  return client;
 }

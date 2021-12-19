@@ -1,0 +1,1 @@
+export const TOKEN_DIR = "auth_token";

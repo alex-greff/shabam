@@ -1,5 +1,6 @@
 import { Command } from "@oclif/core";
-import KEYS from "../keys";
+import * as Utilities from "../utilities";
+import { getSdk } from "../graphql-request.g";
 
 export class AuthenticationService {
   constructor(private cmd: Command) {}
@@ -16,8 +17,19 @@ export class AuthenticationService {
     username: string,
     password: string
   ): Promise<string> {
-    this.cmd.log("TODO: implement hydrateAuthToken");
-    return "TODO: token here";
+    const client = Utilities.getGraphqlClient();
+    const sdk = getSdk(client);
+
+    const res = await sdk.signin({
+      username,
+      password,
+    });
+
+    const token = res.login.access_token;
+
+    // TODO: save token
+
+    return token;
   }
 
   public async clearAuthToken(): Promise<void> {

@@ -1,5 +1,6 @@
 import { Command, Flags } from "@oclif/core";
-import { GetF } from "../../utilities";
+import cli from "cli-ux";
+import { GetF } from "../../types";
 import { AuthenticationService } from "../../services/authentication.service";
 
 interface Args {
@@ -55,10 +56,18 @@ export default class Login extends Command {
         "Multiple password inputs detected, using password provided in arguments."
       );
 
-    // TODO: validate username1 and password
+    // TODO: validate username and password
+
+    cli.action.start("Logging in");
 
     const auth = new AuthenticationService(this);
 
-    await auth.hydrateAuthToken(username, password);
+    try {
+      await auth.hydrateAuthToken(username, password);
+    } catch(err) {
+      this.error("Failed to login.");
+    }
+
+    cli.action.stop();
   }
 }

@@ -1,5 +1,5 @@
 import { Command } from "@oclif/core";
-import { GetF } from "../../utilities";
+import { GetF } from "../../types";
 
 interface Args {
   file: string;

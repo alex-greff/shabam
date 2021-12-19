@@ -1,7 +1,7 @@
 schema: ${SCHEMA_URL}
 documents: ./src/**/*.graphql
 generates:
-  ./src/graphql-request.g.d.ts:
+  ./src/graphql-request.g.ts:
     plugins:
       - typescript
       - typescript-operations
