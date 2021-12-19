@@ -1,13 +1,11 @@
-
 import { GraphQLClient } from "graphql-request";
 import KEYS from "./keys";
-
 
 /**
  * Returns given string with a trailing slash, if it does not have it already.
  */
 export function trailingSlash(s: string) {
-  return (s.endsWith("/") ? s : `${s}/`);
+  return s.endsWith("/") ? s : `${s}/`;
 }
 
 export function getGraphqlClient(token?: string): GraphQLClient {

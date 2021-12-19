@@ -8,38 +8,38 @@ interface Args {
   password?: string;
 }
 
-export default class Login extends Command {
-  static description = "Login to the Shabam CLI.";
+export default class Signin extends Command {
+  static description = "Signin to Shabam.";
 
   static flags = {
     username: Flags.string({
       char: "u",
-      description: "Username to login with.",
+      description: "Username to signin with.",
     }),
     password: Flags.string({
       char: "p",
-      description: "Password to login with.",
+      description: "Password to signin with.",
     }),
   };
 
   static args = [
     {
       name: "username",
-      description: "Username to login with.",
+      description: "Username to signin with.",
     },
     {
       name: "password",
-      description: "Password to login with.",
+      description: "Password to signin with.",
     },
   ];
 
   static examples = [
-    `$ shabam login test@example.com myPassword`,
-    `$ shabam login --email test@example.com --password myPassword`,
+    `$ shabam signin test@example.com myPassword`,
+    `$ shabam signin --email test@example.com --password myPassword`,
   ];
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse<GetF<typeof Login>, Args>(Login);
+    const { args, flags } = await this.parse<GetF<typeof Signin>, Args>(Signin);
 
     const username = args.username ?? flags.username;
     const password = args.password ?? flags.password;
@@ -58,14 +58,14 @@ export default class Login extends Command {
 
     // TODO: validate username and password
 
-    cli.action.start("Logging in");
+    cli.action.start("Signing in");
 
     const auth = new AuthenticationService(this);
 
     try {
-      await auth.hydrateAuthToken(username, password);
-    } catch(err) {
-      this.error("Failed to login.");
+      await auth.hydrateAuthToken(username, password, "signin");
+    } catch (err) {
+      this.error("Failed to signin.");
     }
 
     cli.action.stop();
