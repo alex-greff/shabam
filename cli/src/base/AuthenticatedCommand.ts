@@ -1,7 +1,7 @@
 import { Command, Flags } from "@oclif/core";
 import { AuthenticationService } from "../services/authentication.service";
-import cli from "cli-ux";
 import { assert } from "tsafe";
+import * as AuthenticationPrompts from "../prompts/authentication.prompts";
 
 export abstract class AuthenticatedCommand extends Command {
   private _token: string | null = null;
@@ -23,7 +23,7 @@ export abstract class AuthenticatedCommand extends Command {
     password: Flags.string({
       char: "p",
       description: "Password to login with (if not logged in already).",
-      dependsOn: ["username"]
+      dependsOn: ["username"],
     }),
   };
 
@@ -41,12 +41,9 @@ export abstract class AuthenticatedCommand extends Command {
 
       // No credentials provided in flags, prompt user
       if (!username) {
-        this.log("Not currently logged in...");
-
-        username = await cli.prompt("What is your username?");
-        password = await cli.prompt("What is your password?", {
-          type: "hide",
-        });
+        const res = await AuthenticationPrompts.authPrompt.bind(this)();
+        username = res.username;
+        password = res.password;
       }
 
       assert(username && password);
