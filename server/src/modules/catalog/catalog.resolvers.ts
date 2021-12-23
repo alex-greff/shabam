@@ -29,7 +29,6 @@ import { CurrentUser } from '../user/decorators/current-user.decorator';
 import { UserRequestData } from '@/types';
 import { ArtistCollaboration } from '../artist/models/artist.models';
 import { RecordsSearchMatch } from '../records/records.types';
-import { hello } from "@shabam/fingerprint-lib";
 
 const SUBSCRIPTIONS_CONFIG = {
   TRACK_ADDED: 'trackAdded',

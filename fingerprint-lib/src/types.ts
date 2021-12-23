@@ -1,5 +1,3 @@
-// TODO: use the shared library
-
 export interface SpectrogramData {
   /** The number of windows in the spectrogram (x-axis) */
   numberOfWindows: number;
