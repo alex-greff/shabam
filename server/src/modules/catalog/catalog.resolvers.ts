@@ -13,6 +13,7 @@ import { CatalogService } from './catalog.service';
 import {
   SearchArgs,
   TrackAddDataInput,
+  TrackAddDataInputWithFile,
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs, GetTracksNumArgs } from './dto/catalog.args';
@@ -157,6 +158,7 @@ export class CatalogResolver {
   // --- Mutations ---
   // -----------------
 
+  // TODO: replace with addTrackWithFile
   @Mutation((returns) => Track, {
     description: 'Add a new track to the catalog.',
   })
@@ -167,6 +169,23 @@ export class CatalogResolver {
     @Args('trackData') trackData: TrackAddDataInput,
   ): Promise<Track> {
     const track = await this.catalogService.addTrack(trackData, currUser);
+    pubSub.publish(SUBSCRIPTIONS_CONFIG.TRACK_ADDED, { trackAdded: track });
+    return CatalogResolver.transformFromTrackEntity(track);
+  }
+
+  @Mutation((returns) => Track, {
+    description: 'Add a new track to the catalog.',
+  })
+  @CheckPolicies(TrackUploadPolicy)
+  @UseGuards(GqlJwtAuthGuard, PoliciesGuard)
+  async addTrackWithFile(
+    @CurrentUser() currUser: UserRequestData,
+    @Args('trackData') trackData: TrackAddDataInputWithFile,
+  ): Promise<Track> {
+    const track = await this.catalogService.addTrackWithFile(
+      trackData,
+      currUser,
+    );
     pubSub.publish(SUBSCRIPTIONS_CONFIG.TRACK_ADDED, { trackAdded: track });
     return CatalogResolver.transformFromTrackEntity(track);
   }

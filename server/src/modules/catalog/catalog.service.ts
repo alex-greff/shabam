@@ -7,6 +7,7 @@ import {
 import {
   SearchArgs,
   TrackAddDataInput,
+  TrackAddDataInputWithFile,
   TrackEditDataInput,
 } from './dto/catalog.inputs';
 import { GetTracksArgs, TracksFilterInput } from './dto/catalog.args';
@@ -31,6 +32,10 @@ import {
 import { SearchEntity } from '@/entities/Search.entity';
 import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { SearchResultEntity } from '@/entities/SearchResult.entity';
+import * as AudioUtilities from '@/utilities/audio';
+import * as AudioConfig from '@/config/audio';
+import * as FingerprintLib from '@shabam/fingerprint-lib';
+import { Fingerprint } from '../fingerprint/fingerprint.types';
 
 @Injectable()
 export class CatalogService {
@@ -109,6 +114,112 @@ export class CatalogService {
     return tracksNum;
   }
 
+  async addTrackWithFile(
+    data: TrackAddDataInputWithFile,
+    userData: UserRequestData,
+  ): Promise<TrackEntity> {
+    // TODO: upload the cover image, if it exists
+    const coverImage = null;
+
+    // Get the user who created the track
+    const user = await this.userService.findUser(userData.username);
+    if (!user) throw new NotFoundException('Username does not exist');
+
+    // TODO: upload image
+
+    // TODO: obtain actual address db number
+    const addressDbNum = 0;
+
+    // Load the audio WAV file
+    const audioFileUpload = await data.audioFile;
+    // TODO: none of this code handles stereo WAVs
+    const audioWav = await this.fingerprintService.loadAudioWav(
+      audioFileUpload,
+      true,
+    );
+
+    // Duration of the WAV file
+    const duration = AudioUtilities.getWavFileDuration(
+      audioWav.getSamples().length,
+      AudioConfig.TARGET_SAMPLE_RATE,
+    );
+
+    // Begin transaction
+    const em = this.orm.em.fork();
+    await em.begin();
+
+    const track = em.create(TrackEntity, {
+      title: data.title,
+      addressDatabase: addressDbNum,
+      coverImage,
+      createdDate: new Date(),
+      updateDate: new Date(),
+      duration,
+      numPlays: 0,
+      releaseDate: data.releaseDate,
+      uploaderUser: user,
+    });
+
+    // Create the collaborations
+    for (const artistCollab of data.artists) {
+      const artist = await this.artistService.findOrCreateArtistByName(
+        artistCollab.name,
+      );
+      await this.artistService.addCollaboration(
+        artist,
+        artistCollab.type,
+        track,
+      );
+    }
+
+    em.persist(track);
+
+    // Generate the fingerprint and store it in the fingerprint database
+    try {
+      // TODO: compute spectrogram using FFT
+      const spectrogramData = await this.fingerprintService.computeSpectrogramData(
+        audioWav,
+        AudioConfig.TARGET_SAMPLE_RATE,
+      );
+      console.log('Spectrogram data:', spectrogramData); // TODO: remove
+
+      // TODO: add functionality to specify which fingerprint to use
+
+      // Generate the fingerprint
+      const fingerprintData = await FingerprintLib.iterativeGenerateFingerprint(
+        spectrogramData,
+        { FFTSize: AudioConfig.FFT_SIZE },
+      );
+
+      console.log('Fingerprint: ', fingerprintData); // TODO: remove
+
+      const fingerprint = new Fingerprint(
+        fingerprintData.numberOfWindows,
+        fingerprintData.numberOfPartitions,
+        fingerprintData.data,
+      );
+
+      // Create an instance of a records table
+      const recordsTable = new RecordsTable(fingerprint, track.id);
+
+      // Store the records table in the address database
+      await this.recordsService.storeRecordsTable(
+        recordsTable,
+        track.addressDatabase,
+      );
+    } catch (err) {
+      // Something failed, rollback the transaction and throw the error again
+      em.rollback();
+      throw err;
+    }
+
+    // Finalize transaction
+    await em.commit();
+
+    return track;
+  }
+
+  // TODO: replace with addTrackWithFile
   async addTrack(
     data: TrackAddDataInput,
     userData: UserRequestData,

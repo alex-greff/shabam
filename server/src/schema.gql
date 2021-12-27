@@ -93,6 +93,9 @@ type Mutation {
   """Add a new track to the catalog."""
   addTrack(trackData: TrackAddDataInput!): Track!
 
+  """Add a new track to the catalog."""
+  addTrackWithFile(trackData: TrackAddDataInputWithFile!): Track!
+
   """Edit an existing track in the catalog."""
   editTrack(trackData: TrackEditDataInput!, id: Int!): Track!
 
@@ -164,6 +167,15 @@ input FingerprintInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+"""Input data for adding a new track."""
+input TrackAddDataInputWithFile {
+  title: String!
+  artists: [ArtistInput!]!
+  releaseDate: Date
+  audioFile: Upload!
+  coverArt: Upload
+}
 
 """Input data for editing a track."""
 input TrackEditDataInput {

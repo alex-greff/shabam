@@ -33,6 +33,7 @@
     "class-transformer": "^0.4.0",
     "class-validator": "^0.12.2",
     "connect-redis": "^5.0.0",
+    "dsp.js": "^1.0.1",
     "express-session": "^1.17.1",
     "graphql": "^15.4.0",
     "graphql-tools": "^7.0.2",
@@ -48,7 +49,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "wavefile": "^11.0.0"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^4.5.3",

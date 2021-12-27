@@ -5,6 +5,7 @@ import { GraphQLUpload } from "apollo-server-express";
 import { FingerprintInput } from '@/modules/fingerprint/dto/fingerprint.inputs';
 import { ArtistInput } from '@/modules/artist/dto/artist.dto';
 
+// TODO: replace with TrackAddDataInputWithFile
 @InputType({ description: 'Input data for adding a new track.' })
 export class TrackAddDataInput {
   @Field()
@@ -22,6 +23,26 @@ export class TrackAddDataInput {
 
   @Field(type => Int)
   duration: number;
+
+  @Field(type => GraphQLUpload!, { nullable: true })
+  @IsOptional()
+  coverArt?: Promise<FileUpload>;
+}
+
+@InputType({ description: 'Input data for adding a new track.' })
+export class TrackAddDataInputWithFile {
+  @Field()
+  title: string;
+
+  @Field(type => [ArtistInput])
+  artists: ArtistInput[];
+
+  @Field({ nullable: true })
+  @IsOptional()
+  releaseDate?: Date;
+
+  @Field(type => GraphQLUpload!)
+  audioFile: Promise<FileUpload>;
 
   @Field(type => GraphQLUpload!, { nullable: true })
   @IsOptional()

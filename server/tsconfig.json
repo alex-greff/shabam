@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*", "*.d.ts"]
     },
     "strictNullChecks": true
   }
