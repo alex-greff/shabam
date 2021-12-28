@@ -82,8 +82,9 @@ export class FingerprintService {
     // Calculate the start index from where the copy will take place
     const startIndex = Math.floor(sampleRate * windowIndex * windowDuration);
 
+    // TODO: only uses one channel at the moment
     // Create the buffer for the FFT
-    const fftBuffer = Buffer.from(audio.getSamples(), startIndex, FFTSize);
+    const fftBuffer = Buffer.from(audio.getSamples()[0], startIndex, FFTSize);
 
     // Perform the FFT
     const fft = new FFT(FFTSize, sampleRate);
@@ -112,7 +113,7 @@ export class FingerprintService {
     const { FFTSize, windowDuration, windowSmoothing } = optionsNormalized;
 
     const duration = AudioUtilities.getWavFileDuration(
-      audio.getSamples().length,
+      audio.getSamples()[0].length,
       sampleRate,
     );
 

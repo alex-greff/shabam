@@ -56,6 +56,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Add a new track to the catalog. */
   addTrack: Track;
+  /** Add a new track to the catalog. */
+  addTrackWithFile: Track;
   /** Edit an existing track in the catalog. */
   editTrack: Track;
   /** Edits a user's account details. */
@@ -81,6 +83,11 @@ export type Mutation = {
 
 export type MutationAddTrackArgs = {
   trackData: TrackAddDataInput;
+};
+
+
+export type MutationAddTrackWithFileArgs = {
+  trackData: TrackAddDataInputWithFile;
 };
 
 
@@ -213,6 +220,15 @@ export type TrackAddDataInput = {
   title: Scalars['String'];
 };
 
+/** Input data for adding a new track. */
+export type TrackAddDataInputWithFile = {
+  artists: Array<ArtistInput>;
+  audioFile: Scalars['Upload'];
+  coverArt?: InputMaybe<Scalars['Upload']>;
+  releaseDate?: InputMaybe<Scalars['Date']>;
+  title: Scalars['String'];
+};
+
 /** Input data for editing a track. */
 export type TrackEditDataInput = {
   artists?: InputMaybe<Array<Scalars['String']>>;
@@ -261,11 +277,11 @@ export enum UserRole {
 }
 
 export type AddTrackMutationVariables = Exact<{
-  trackData: TrackAddDataInput;
+  trackData: TrackAddDataInputWithFile;
 }>;
 
 
-export type AddTrackMutation = { __typename?: 'Mutation', addTrack: { __typename?: 'Track', id: number, addressDatabase: number, metadata: { __typename?: 'TrackMetadata', title: string, coverImage?: string | null | undefined, releaseDate?: any | null | undefined, createdDate: any, updatedDate: any, artists: Array<{ __typename?: 'ArtistCollaboration', name: string, type: CollaborationType }> } } };
+export type AddTrackMutation = { __typename?: 'Mutation', addTrackWithFile: { __typename?: 'Track', id: number, addressDatabase: number, metadata: { __typename?: 'TrackMetadata', title: string, coverImage?: string | null | undefined, releaseDate?: any | null | undefined, createdDate: any, updatedDate: any, artists: Array<{ __typename?: 'ArtistCollaboration', name: string, type: CollaborationType }> } } };
 
 export type GetTracksQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
@@ -321,8 +337,8 @@ export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: '
 
 
 export const AddTrackDocument = gql`
-    mutation AddTrack($trackData: TrackAddDataInput!) {
-  addTrack(trackData: $trackData) {
+    mutation AddTrack($trackData: TrackAddDataInputWithFile!) {
+  addTrackWithFile(trackData: $trackData) {
     id
     addressDatabase
     metadata {

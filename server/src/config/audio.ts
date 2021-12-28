@@ -1,5 +1,9 @@
 /* Supported audio file mime types. */
-export const SUPPORTED_AUDIO_MIME_TYPES = ['audio/wav', 'audio/x-wav'];
+export const SUPPORTED_AUDIO_MIME_TYPES = [
+  'audio/wav',
+  'audio/x-wav',
+  'audio/wave',
+];
 
 /* Target sample rate of the spectrogram (Hz). */
 export const TARGET_SAMPLE_RATE = 16000;

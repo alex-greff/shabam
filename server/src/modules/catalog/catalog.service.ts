@@ -140,9 +140,13 @@ export class CatalogService {
 
     // Duration of the WAV file
     const duration = AudioUtilities.getWavFileDuration(
-      audioWav.getSamples().length,
+      audioWav.getSamples()[0].length,
       AudioConfig.TARGET_SAMPLE_RATE,
     );
+
+    console.log("Duration ", duration); // TODO: remove
+
+    throw "TODO: remove";
 
     // Begin transaction
     const em = this.orm.em.fork();

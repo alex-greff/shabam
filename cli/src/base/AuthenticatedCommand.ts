@@ -3,9 +3,14 @@ import color from "@oclif/color";
 import { AuthenticationService } from "../services/authentication.service";
 import { assert } from "tsafe";
 import * as AuthenticationPrompts from "../prompts/authentication.prompts";
+import { Sdk } from "../graphql-request.g";
+import * as Utilities from "../utilities";
+import { Input } from "@oclif/core/lib/interfaces";
+
 
 export abstract class AuthenticatedCommand extends Command {
   private _token: string | null = null;
+  private _sdkClient: Sdk | null = null;
 
   protected get token() {
     if (!this._token)
@@ -13,6 +18,13 @@ export abstract class AuthenticatedCommand extends Command {
         "Authentication token not initialized (perhaps super.run() was not called)."
       );
     return this._token;
+  }
+
+  protected get sdkClient(): Sdk {
+    if (!this._sdkClient)
+      this._sdkClient = Utilities.getGraphqlClientSdk(this.token);
+
+    return this._sdkClient!;
   }
 
   static flags = {
@@ -29,7 +41,8 @@ export abstract class AuthenticatedCommand extends Command {
   };
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(AuthenticatedCommand);
+    // Source: https://github.com/oclif/oclif/issues/225
+    const { flags } = await this.parse(<Input<any>>this.constructor);
 
     const auth = new AuthenticationService(this);
     let token = await auth.getAuthToken();

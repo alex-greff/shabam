@@ -1,5 +1,5 @@
-mutation AddTrack($trackData: TrackAddDataInput!) {
-  addTrack(trackData: $trackData) {
+mutation AddTrack($trackData: TrackAddDataInputWithFile!) {
+  addTrackWithFile(trackData: $trackData) {
     id
     addressDatabase
     metadata {
