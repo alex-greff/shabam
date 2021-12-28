@@ -20,8 +20,16 @@ function rm-services:dev-client() {
 
 # --- start commands ---
 
-function start:dev () {
-  docker-compose -f docker-compose-dev.yml up --build;
+function start:dev-webapp() {
+  docker-compose -f docker-compose-dev.yml --profile webapp up --build;
+}
+
+function start:dev-cli() {
+  docker-compose -f docker-compose-dev.yml --profile cli up --build;
+}
+
+function start:dev() {
+  eval "start:dev-webapp";
 }
 
 function start:dev--recreate() {
@@ -100,6 +108,14 @@ function init-schema--db-address() {
 function init-schemas() {
   eval "init-schema--db-address";
   eval "init-schema--db-metadata";
+}
+
+# --- Docker build commands ---
+
+function build-docker:postgress-client() {
+  cd ./postgres_client;
+  bash run build;
+  cd ..;
 }
 
 

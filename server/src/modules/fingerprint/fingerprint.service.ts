@@ -84,7 +84,8 @@ export class FingerprintService {
 
     // TODO: only uses one channel at the moment
     // Create the buffer for the FFT
-    const fftBuffer = Buffer.from(audio.getSamples()[0], startIndex, FFTSize);
+    // Issue with length being ignored: https://github.com/nodejs/node/issues/22387
+    const fftBuffer = Buffer.from(audio.getSamples()[0].buffer, startIndex, FFTSize);
 
     // Perform the FFT
     const fft = new FFT(FFTSize, sampleRate);

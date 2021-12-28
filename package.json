@@ -4,6 +4,7 @@
     "description": "A replica of the popular music-recognition app Shazam",
     "main": "index.js",
     "scripts": {
+        "TODO: remove": "DO NOT USE THESE SCRIPTS, THEY NEED TO BE REMOVED EVENTUALLY",
         "test": "echo \"Error: no test specified\" && exit 1",
         
         "rm-services:dev": "docker-compose -f docker-compose-dev.yml rm -f proxy api client fingerprint_worker identification_worker",

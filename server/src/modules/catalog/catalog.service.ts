@@ -144,9 +144,7 @@ export class CatalogService {
       AudioConfig.TARGET_SAMPLE_RATE,
     );
 
-    console.log("Duration ", duration); // TODO: remove
-
-    throw "TODO: remove";
+    // throw "TODO: remove";
 
     // Begin transaction
     const em = this.orm.em.fork();
@@ -187,7 +185,7 @@ export class CatalogService {
       );
       console.log('Spectrogram data:', spectrogramData); // TODO: remove
 
-      // TODO: add functionality to specify which fingerprint to use
+      // TODO: add functionality to specify which fingerprint version to use
 
       // Generate the fingerprint
       const fingerprintData = await FingerprintLib.iterativeGenerateFingerprint(
@@ -211,6 +209,7 @@ export class CatalogService {
         recordsTable,
         track.addressDatabase,
       );
+
     } catch (err) {
       // Something failed, rollback the transaction and throw the error again
       em.rollback();
