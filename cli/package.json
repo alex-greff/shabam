@@ -59,6 +59,8 @@
     "graphql": "^16.2.0",
     "graphql-request": "^3.7.0",
     "graphql-tag": "^2.12.6",
+    "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2",
     "tsafe": "^0.9.0",
     "wavefile": "^11.0.0"
   },
@@ -70,6 +72,7 @@
     "@oclif/test": "^2",
     "@types/chai": "^4",
     "@types/mocha": "^9.0.0",
+    "@types/moment-duration-format": "^2.2.3",
     "@types/node": "^16.11.14",
     "@types/supports-color": "^8.1.1",
     "chai": "^4",

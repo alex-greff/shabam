@@ -1,11 +1,17 @@
 import { Flags } from "@oclif/core";
 import { AuthenticatedCommand } from "../../base/AuthenticatedCommand";
 import { GetF } from "../../types";
+import * as Utilities from "../../utilities";
+import { ClientError } from "graphql-request";
+import { GetTracksQuery } from "../../graphql-request.g";
+import color from "@oclif/color";
 
 interface Args {}
 
 export default class CatalogList extends AuthenticatedCommand {
   static description = "List the tracks in the Shabam catalog.";
+
+  static args = [...(AuthenticatedCommand.args ?? [])];
 
   static flags = {
     ...AuthenticatedCommand.flags,
@@ -40,6 +46,30 @@ export default class CatalogList extends AuthenticatedCommand {
       CatalogList
     );
 
-    this.log("TODO: implement catalog list");
+    const { page, pageSize, uploader } = flags;
+
+    if (page < 0) this.error("Page number must be positive.");
+    if (pageSize < 0) this.error("Page size must be positive.");
+
+    let tracksRet: GetTracksQuery;
+    try {
+      tracksRet = await this.sdkClient.GetTracks({
+        limit: pageSize,
+        offset: page * pageSize,
+        filter: {
+          uploader,
+        },
+      });
+    } catch (err) {
+      this.error(
+        Utilities.prettyPrintErrors(err as ClientError, "Unable to list tracks")
+      );
+    }
+
+    if (tracksRet.getTracks.length > 0) {
+      this.log(Utilities.prettyPrintTracks(tracksRet.getTracks));
+    } else {
+      this.log(`${color.gray("No tracks found.")}`);
+    }
   }
 }

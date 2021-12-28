@@ -9,6 +9,8 @@ mutation AddTrack($trackData: TrackAddDataInputWithFile!) {
         type
       }
       coverImage
+      duration
+      numPlays
       releaseDate
       createdDate
       updatedDate

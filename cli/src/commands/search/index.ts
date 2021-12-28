@@ -9,6 +9,7 @@ export default class Search extends AuthenticatedCommand {
   static description = "Search for a track in the Shabam database.";
 
   static args = [
+    ...(AuthenticatedCommand.args ?? []),
     {
       name: "file",
       description: "File path to audio clip that will be searched.",

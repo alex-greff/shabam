@@ -281,7 +281,7 @@ export type AddTrackMutationVariables = Exact<{
 }>;
 
 
-export type AddTrackMutation = { __typename?: 'Mutation', addTrackWithFile: { __typename?: 'Track', id: number, addressDatabase: number, metadata: { __typename?: 'TrackMetadata', title: string, coverImage?: string | null | undefined, releaseDate?: any | null | undefined, createdDate: any, updatedDate: any, artists: Array<{ __typename?: 'ArtistCollaboration', name: string, type: CollaborationType }> } } };
+export type AddTrackMutation = { __typename?: 'Mutation', addTrackWithFile: { __typename?: 'Track', id: number, addressDatabase: number, metadata: { __typename?: 'TrackMetadata', title: string, coverImage?: string | null | undefined, duration: number, numPlays: number, releaseDate?: any | null | undefined, createdDate: any, updatedDate: any, artists: Array<{ __typename?: 'ArtistCollaboration', name: string, type: CollaborationType }> } } };
 
 export type GetTracksQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
@@ -348,6 +348,8 @@ export const AddTrackDocument = gql`
         type
       }
       coverImage
+      duration
+      numPlays
       releaseDate
       createdDate
       updatedDate

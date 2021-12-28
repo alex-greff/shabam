@@ -108,8 +108,9 @@ export default class CatalogAdd extends AuthenticatedCommand {
     }
     const audioFileStream = fs.createReadStream(file);
 
+    let trackRes: AddTrackMutation;
     try {
-      await this.sdkClient.AddTrack({
+      trackRes = await this.sdkClient.AddTrack({
         trackData: {
           title,
           // TODO: implement coverImage,
@@ -131,6 +132,7 @@ export default class CatalogAdd extends AuthenticatedCommand {
       );
     }
 
-    this.log("Successfully created track!");
+    this.log("Successfully created track:");
+    this.log(Utilities.prettyPrintTrack(trackRes.addTrackWithFile));
   }
 }
