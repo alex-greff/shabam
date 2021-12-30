@@ -1,8 +1,4 @@
-import {
-  FFT_SIZE,
-  FINGERPRINT_PARTITION_AMOUNT,
-  FINGERPRINT_PARTITION_CURVE,
-} from "../constants";
+import { config } from "../configuration";
 import { PartitionRanges } from "../types";
 
 /**
@@ -37,9 +33,9 @@ function getBoundaryIndex(
  * @param partitionCurve The curve that the partition ranges are calculated on.
  */
 export function computePartitionRanges(
-  partitionAmount = FINGERPRINT_PARTITION_AMOUNT,
-  FFTSize = FFT_SIZE,
-  partitionCurve = FINGERPRINT_PARTITION_CURVE
+  partitionAmount = config.FINGERPRINT_PARTITION_AMOUNT,
+  FFTSize = config.FFT_SIZE,
+  partitionCurve = config.FINGERPRINT_PARTITION_CURVE
 ): PartitionRanges {
   if (FFTSize / 2 <= 0)
     throw "Invalid number of bins, must have more than 0 bins";

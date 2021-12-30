@@ -1,11 +1,4 @@
-import {
-  FFT_SIZE,
-  FINGERPRINT_PARTITION_AMOUNT,
-  FINGERPRINT_PARTITION_CURVE,
-  FINGERPRINT_SLIDER_HEIGHT,
-  FINGERPRINT_SLIDER_WIDTH,
-  FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER,
-} from "../constants";
+import { config } from "../configuration";
 import {
   FingerprintGeneratorOptions,
   FingerprintGeneratorFunction,
@@ -17,9 +10,9 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   options
 ) => {
   const defaultOptions: FingerprintGeneratorOptions = {
-    FFTSize: FFT_SIZE,
-    partitionAmount: FINGERPRINT_PARTITION_AMOUNT,
-    partitionCurve: FINGERPRINT_PARTITION_CURVE,
+    FFTSize: config.FFT_SIZE,
+    partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,
+    partitionCurve: config.FINGERPRINT_PARTITION_CURVE,
   };
   const optionsNormalized = { ...defaultOptions, ...options };
   const { partitionAmount, FFTSize, partitionCurve } = optionsNormalized;
@@ -64,8 +57,8 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   for (let curWindow = 0; curWindow < numWindows; curWindow++) {
     for (let curPartition = 0; curPartition < numPartitions; curPartition++) {
       // Determine slider window range
-      const SLIDER_WIDTH = FINGERPRINT_SLIDER_WIDTH;
-      const SLIDER_HEIGHT = FINGERPRINT_SLIDER_HEIGHT;
+      const SLIDER_WIDTH = config.FINGERPRINT_SLIDER_WIDTH;
+      const SLIDER_HEIGHT = config.FINGERPRINT_SLIDER_HEIGHT;
       const sliderXStart = Math.max(0, curWindow - SLIDER_WIDTH);
       const sliderXEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
       const sliderYStart = Math.max(0, curPartition - SLIDER_HEIGHT);
@@ -107,7 +100,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
       const cellValue = cellData[cellIdx];
 
       const STANDARD_DEVIATION_MULTIPLIER =
-        FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
+        config.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
       const thresholdValue = Math.max(
         0,
         sliderMean + sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER

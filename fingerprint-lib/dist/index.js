@@ -2,6 +2,62 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+class Configuration {
+    constructor() {
+        /**
+         * Sample size of the FFT.
+         */
+        this.FFT_SIZE = 1024;
+        /**
+         * Target sample rate of the spectrogram (kHz).
+         */
+        this.TARGET_SAMPLE_RATE = 16000;
+        /**
+         * Duration of the spectrogram/fingerprint window (seconds).
+         */
+        this.WINDOW_DURATION = 0.05;
+        /**
+         * Smoothing used when analyzing the frequency for the spectrogram
+         * (browser only)
+         * Range: [0, 1]
+         */
+        this.WINDOW_SMOOTHING = 0.8;
+        /**
+         * Number of partitions in the fingerprints.
+         * Range: [1, infinity)
+         */
+        this.FINGERPRINT_PARTITION_AMOUNT = 10;
+        /**
+         * Curve used to calculate partitions.
+         * Range: (1, infinity)
+         */
+        this.FINGERPRINT_PARTITION_CURVE = 50;
+        /**
+         * Number of windows on each side of the slider
+         * TOTAL_SLIDER_WIDTH = 2 * FINGERPRINT_SLIDER_WIDTH + 1
+         */
+        this.FINGERPRINT_SLIDER_WIDTH = 20;
+        /**
+         * Number of windows above and below the slider
+         * TOTAL_SLIDER_HEIGHT = 2 * FINGERPRINT_SLIDER_HEIGHT + 1
+         */
+        this.FINGERPRINT_SLIDER_HEIGHT = 2;
+        /**
+         * How much of the standard deviation is added to the fingerprint cell
+         * acceptance threshold value.
+         * In general, larger values make the fingerprint cell filtering more
+         * sensitive.
+         * <0: the standard deviation is subtracted from the mean
+         * 0: no weight (only the mean is used)
+         * 1: entire standard deviation is added
+         * >1: more than the entire standard deviation is added
+         */
+        this.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER = 1;
+    }
+}
+let configInstance = new Configuration();
+const config = configInstance;
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -27,34 +83,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-/* Sample size of the FFT.  */
-const FFT_SIZE = 1024;
-/* Number of partitions in the fingerprints.
-   Range: [1, infinity)
-*/
-const FINGERPRINT_PARTITION_AMOUNT = 10;
-/* Curve used to calculate partitions.
-   Range: (1, infinity)
-*/
-const FINGERPRINT_PARTITION_CURVE = 50;
-/* Number of windows on each side of the slider
-   TOTAL_SLIDER_WIDTH = 2 * FINGERPRINT_SLIDER_WIDTH + 1
-*/
-const FINGERPRINT_SLIDER_WIDTH = 20;
-/* Number of windows above and below the slider
-   TOTAL_SLIDER_HEIGHT = 2 * FINGERPRINT_SLIDER_HEIGHT + 1
-*/
-const FINGERPRINT_SLIDER_HEIGHT = 2;
-/* How much of the standard deviation is added to the fingerprint cell
-   acceptance threshold value.
-   In general, larger values make the fingerprint cell filtering more sensitive.
-   <0: the standard deviation is subtracted from the mean
-   0: no weight (only the mean is used)
-   1: entire standard deviation is added
-   >1: more than the entire standard deviation is added
-*/
-const FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER = 1;
-
 /**
  * Helper function used by computePartitionRanges to get the boundary indexes
  * of each partition range.
@@ -78,7 +106,7 @@ function getBoundaryIndex(partitionIdx, totalPartitions, totalBins, partitionCur
  * @param FFTSize The size of the FFT window.
  * @param partitionCurve The curve that the partition ranges are calculated on.
  */
-function computePartitionRanges(partitionAmount = FINGERPRINT_PARTITION_AMOUNT, FFTSize = FFT_SIZE, partitionCurve = FINGERPRINT_PARTITION_CURVE) {
+function computePartitionRanges(partitionAmount = config.FINGERPRINT_PARTITION_AMOUNT, FFTSize = config.FFT_SIZE, partitionCurve = config.FINGERPRINT_PARTITION_CURVE) {
     if (FFTSize / 2 <= 0)
         throw "Invalid number of bins, must have more than 0 bins";
     if (partitionAmount <= 0)
@@ -102,9 +130,9 @@ function range(start, end) {
 
 const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, void 0, void 0, function* () {
     const defaultOptions = {
-        FFTSize: FFT_SIZE,
-        partitionAmount: FINGERPRINT_PARTITION_AMOUNT,
-        partitionCurve: FINGERPRINT_PARTITION_CURVE,
+        FFTSize: config.FFT_SIZE,
+        partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,
+        partitionCurve: config.FINGERPRINT_PARTITION_CURVE,
     };
     const optionsNormalized = Object.assign(Object.assign({}, defaultOptions), options);
     const { partitionAmount, FFTSize, partitionCurve } = optionsNormalized;
@@ -134,8 +162,8 @@ const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, vo
         const curWindow = Math.floor(cellIdx / numPartitions);
         const curPartition = cellIdx - curWindow * numPartitions;
         // Determine slider window range
-        const SLIDER_WIDTH = FINGERPRINT_SLIDER_WIDTH;
-        const SLIDER_HEIGHT = FINGERPRINT_SLIDER_HEIGHT;
+        const SLIDER_WIDTH = config.FINGERPRINT_SLIDER_WIDTH;
+        const SLIDER_HEIGHT = config.FINGERPRINT_SLIDER_HEIGHT;
         const sliderXStart = Math.max(0, curWindow - SLIDER_WIDTH);
         const sliderXEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
         const sliderYStart = Math.max(0, curPartition - SLIDER_HEIGHT);
@@ -165,7 +193,7 @@ const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, vo
         // Compute the standard deviation of the slider
         const sliderStandardDeviation = Math.round(Math.sqrt(sliderVariance));
         // Determine if the current cell passes
-        const STANDARD_DEVIATION_MULTIPLIER = FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
+        const STANDARD_DEVIATION_MULTIPLIER = config.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
         const thresholdValue = Math.max(0, sliderMean + sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER);
         const passes = cellValue > thresholdValue;
         return passes ? [...acc, [curWindow, curPartition]] : acc;
@@ -188,9 +216,9 @@ const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, vo
 
 const generateFingerprint = (spectrogramData, options) => __awaiter(void 0, void 0, void 0, function* () {
     const defaultOptions = {
-        FFTSize: FFT_SIZE,
-        partitionAmount: FINGERPRINT_PARTITION_AMOUNT,
-        partitionCurve: FINGERPRINT_PARTITION_CURVE,
+        FFTSize: config.FFT_SIZE,
+        partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,
+        partitionCurve: config.FINGERPRINT_PARTITION_CURVE,
     };
     const optionsNormalized = Object.assign(Object.assign({}, defaultOptions), options);
     const { partitionAmount, FFTSize, partitionCurve } = optionsNormalized;
@@ -223,8 +251,8 @@ const generateFingerprint = (spectrogramData, options) => __awaiter(void 0, void
     for (let curWindow = 0; curWindow < numWindows; curWindow++) {
         for (let curPartition = 0; curPartition < numPartitions; curPartition++) {
             // Determine slider window range
-            const SLIDER_WIDTH = FINGERPRINT_SLIDER_WIDTH;
-            const SLIDER_HEIGHT = FINGERPRINT_SLIDER_HEIGHT;
+            const SLIDER_WIDTH = config.FINGERPRINT_SLIDER_WIDTH;
+            const SLIDER_HEIGHT = config.FINGERPRINT_SLIDER_HEIGHT;
             const sliderXStart = Math.max(0, curWindow - SLIDER_WIDTH);
             const sliderXEnd = Math.min(numWindows, curWindow + SLIDER_WIDTH + 1);
             const sliderYStart = Math.max(0, curPartition - SLIDER_HEIGHT);
@@ -256,7 +284,7 @@ const generateFingerprint = (spectrogramData, options) => __awaiter(void 0, void
             // Determine if the current cell passes
             const cellIdx = curWindow * numPartitions + curPartition;
             const cellValue = cellData[cellIdx];
-            const STANDARD_DEVIATION_MULTIPLIER = FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
+            const STANDARD_DEVIATION_MULTIPLIER = config.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER;
             const thresholdValue = Math.max(0, sliderMean + sliderStandardDeviation * STANDARD_DEVIATION_MULTIPLIER);
             const passes = cellValue > thresholdValue;
             if (passes)
@@ -279,5 +307,6 @@ const generateFingerprint = (spectrogramData, options) => __awaiter(void 0, void
     };
 });
 
+exports.config = config;
 exports.functionalGenerateFingerprint = generateFingerprint$1;
 exports.iterativeGenerateFingerprint = generateFingerprint;
