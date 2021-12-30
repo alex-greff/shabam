@@ -10,3 +10,11 @@ import { PartitionRanges } from "../types";
  * @param partitionCurve The curve that the partition ranges are calculated on.
  */
 export declare function computePartitionRanges(partitionAmount?: number, FFTSize?: number, partitionCurve?: number): PartitionRanges;
+/**
+ * Gets the duration (in seconds) of a WAV file with the given number of samples
+ * and sample rate.
+ *
+ * @param numberOfSamples The number of samples.
+ * @param sampleRate The sample rate (Hz)
+ */
+export declare function getWavFileDuration(numberOfSamples: number, sampleRate: number): number;

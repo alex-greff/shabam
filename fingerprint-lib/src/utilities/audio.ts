@@ -64,3 +64,17 @@ export function computePartitionRanges(
 
   return ret;
 }
+
+/**
+ * Gets the duration (in seconds) of a WAV file with the given number of samples
+ * and sample rate.
+ *
+ * @param numberOfSamples The number of samples.
+ * @param sampleRate The sample rate (Hz)
+ */
+ export function getWavFileDuration(
+  numberOfSamples: number,
+  sampleRate: number,
+): number {
+  return numberOfSamples / sampleRate;
+}

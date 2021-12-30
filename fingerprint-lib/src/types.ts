@@ -7,6 +7,19 @@ export interface SpectrogramData {
   data: Uint8Array;
 }
 
+export interface ComputeSpectrogramDataOptions {
+  /** The durations (seconds) of the window */
+  windowDuration: number;
+  /** The number of samples in the FFT window */
+  FFTSize: number;
+  /** 
+   * The smoothing value for the Blackman windowing function used internally
+   * by the WebAudio API. 
+   * Only used in the browser, ignored on Node.js environments.
+   */
+  windowSmoothing: number;
+}
+
 export type PartitionRanges = [number, number][];
 
 export interface Fingerprint {
