@@ -1,5 +1,5 @@
 import { config } from "../configuration";
-import { PartitionRanges } from "../types";
+import { PartitionRanges } from "../fingerprint/types";
 
 /**
  * Helper function used by computePartitionRanges to get the boundary indexes

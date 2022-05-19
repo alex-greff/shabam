@@ -1,9 +1,9 @@
-import { config } from "../configuration";
+import { config } from "../../configuration";
 import {
   FingerprintGeneratorOptions,
   FingerprintGeneratorFunction,
 } from "../types";
-import { computePartitionRanges } from "../utilities/audio";
+import { computePartitionRanges } from "../../utilities/audio";
 
 export const generateFingerprint: FingerprintGeneratorFunction = async (
   spectrogramData,

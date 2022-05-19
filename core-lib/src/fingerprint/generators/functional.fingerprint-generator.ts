@@ -1,6 +1,6 @@
-import { range } from "../utilities";
-import { computePartitionRanges } from "../utilities/audio";
-import { config } from "../configuration";
+import { range } from "../../utilities";
+import { computePartitionRanges } from "../../utilities/audio";
+import { config } from "../../configuration";
 import {
   FingerprintGeneratorOptions,
   FingerprintGeneratorFunction,

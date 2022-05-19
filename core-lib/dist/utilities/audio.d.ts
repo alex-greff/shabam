@@ -1,4 +1,4 @@
-import { PartitionRanges } from "../types";
+import { PartitionRanges } from "../fingerprint/types";
 /**
  * Computes the partition ranges for the given FFT size in respect to the
  * number of partitions needed.

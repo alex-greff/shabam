@@ -1,5 +1,5 @@
 import { ComputeSpectrogramDataOptions, SpectrogramData } from "../types";
-import { config } from "../configuration";
+import { config } from "../../configuration";
 import { isBrowser } from "browser-or-node";
 import { assert } from "tsafe";
 

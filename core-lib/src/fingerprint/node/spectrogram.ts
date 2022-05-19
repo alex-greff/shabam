@@ -2,9 +2,9 @@ import { isNode } from "browser-or-node";
 import { FFT } from "dsp.js";
 import { assert } from "tsafe";
 import { WaveFile } from "wavefile";
-import { config } from "../configuration";
+import { config } from "../../configuration";
 import { ComputeSpectrogramDataOptions, SpectrogramData } from "../types";
-import * as AudioUtilities from "../utilities/audio";
+import * as AudioUtilities from "../../utilities/audio";
 
 
 /**
