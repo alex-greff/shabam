@@ -7,7 +7,7 @@ import { Fingerprint } from './fingerprint.types';
 import * as AudioUtilities from '@/utilities/audio';
 import * as AudioConfig from '@/config/audio';
 import { FFT } from 'dsp.js';
-import { SpectrogramData } from '@shabam/fingerprint-lib';
+import { SpectrogramData } from '@shabam/core-lib';
 
 export interface ComputeSpectrogramDataOptions {
   /** The durations (seconds) of the window */

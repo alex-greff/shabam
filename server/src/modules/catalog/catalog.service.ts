@@ -34,7 +34,7 @@ import { FingerprintInput } from '../fingerprint/dto/fingerprint.inputs';
 import { SearchResultEntity } from '@/entities/SearchResult.entity';
 import * as AudioUtilities from '@/utilities/audio';
 import * as AudioConfig from '@/config/audio';
-import * as FingerprintLib from '@shabam/fingerprint-lib';
+import * as FingerprintLib from '@shabam/core-lib';
 import { Fingerprint } from '../fingerprint/fingerprint.types';
 
 @Injectable()

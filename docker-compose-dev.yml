@@ -113,7 +113,7 @@ services:
       - /app/node_modules
       - ./server:/app
       - .:/workspace:cached # For vscode dev container
-      - ./fingerprint-lib:/app/node_modules/@shabam/fingerprint-lib
+      - ./core-lib:/app/node_modules/@shabam/core-lib
     environment:
       # Metadata DB
       - "PG_METADATA_HOST=db-metadata"
