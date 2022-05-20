@@ -1,4 +1,4 @@
-import { RecordsTable } from "./records-table";
+import { RecordsTable, TrackRecordsTable } from "./records-table";
 import { config } from "../configuration";
 import { encodeAddress, encodeCouple } from "./encode";
 import { RecordsSearchMatch } from "./types";
@@ -37,7 +37,10 @@ export abstract class RecordsEngine {
    * Stores the records table. If `chunkRecords` is enabled, then the record
    * table will be flushed in `FLUSH_EVERY_NTH_ITEMS` sized record chunks.
    */
-  async storeRecords(recordsTable: RecordsTable, chunkRecords: boolean = true) {
+  async storeRecords(
+    recordsTable: TrackRecordsTable,
+    chunkRecords: boolean = true
+  ) {
     let chunkNumber = 1;
     let addressesEncodedAcc: number[] = [];
     let couplesEncodedAcc: bigint[] = [];

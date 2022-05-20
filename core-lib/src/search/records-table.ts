@@ -9,7 +9,7 @@ export interface Record {
 }
 
 export class RecordsTable implements Iterable<Record> {
-  constructor(private fingerprint: FingerprintClass, public trackId: number) {}
+  constructor(private fingerprint: FingerprintClass) {}
 
   *[Symbol.iterator](): Iterator<Record> {
     // The number of points between the anchor point and the first node of its
@@ -90,5 +90,11 @@ export class RecordsTable implements Iterable<Record> {
       config.TARGET_ZONE_SIZE *
       (this.fingerprint.numberOfPartitions - config.TARGET_ZONE_SIZE - 1)
     );
+  }
+}
+
+export class TrackRecordsTable extends RecordsTable {
+  constructor(fingerprint: FingerprintClass, public trackId: number) {
+    super(fingerprint);
   }
 }
