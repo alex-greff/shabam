@@ -57,13 +57,20 @@ async function saveSpectrogramToCache(
   const engine = new MemoryRecordsEngine();
 
   // const valorFileName = "valor_clip_30sec.wav";
-  const valorFileName = "valor_clip_1min.wav";
+  // const valorFileName = "valor_clip_1min.wav";
+  const valorFileName = "valor.wav";
+
   console.log("Loading Valor wav file...");
+  let timerStart = performance.now();
   const valorWav = await loadWavFileFromPath(
     path.join(DATA_DIR, valorFileName),
     true
   );
+  let timerEnd = performance.now();
+  console.log(`> Done (${(timerEnd - timerStart)/1000}s)`);
+  
   console.log("Computing Valor spectrogram...");
+  timerStart = performance.now();
   // We need to cache the spectrogram b/c generating it currently is really slow
   let valorSpectrogram: SpectrogramData | null = await loadSpectrogramFromCache(
     valorFileName
@@ -72,17 +79,31 @@ async function saveSpectrogramToCache(
     valorSpectrogram = await computeSpectrogramData(valorWav);
     await saveSpectrogramToCache(valorSpectrogram, valorFileName);
   }
+  timerEnd = performance.now();
+  console.log(`> Done (${(timerEnd - timerStart)/1000}s)`);
   console.log(valorSpectrogram);
+
   console.log("Computing Valor fingerprint...");
+  timerStart = performance.now();
   const valorFingerprint = await generateFingerprint(valorSpectrogram);
+  timerEnd = performance.now();
   console.log(valorFingerprint);
+  console.log(`> Done (${(timerEnd - timerStart)/1000}s)`);
+
   console.log("Computing Valor records table...");
+  timerStart = performance.now();
   const valorRecordsTable = new RecordsTable(
     FingerprintClass.fromFingerprintInterface(valorFingerprint),
     1
   );
-  console.log("Storing Valor records...");
-  await engine.storeRecords(valorRecordsTable, true);
+  timerEnd = performance.now();
+  console.log(`> Done (${(timerEnd - timerStart)/1000}s)`);
 
-  console.log("Done!");
+  console.log("Storing Valor records...");
+  timerStart = performance.now();
+  await engine.storeRecords(valorRecordsTable, true);
+  timerEnd = performance.now();
+  console.log(`> Done (${(timerEnd - timerStart)/1000}s)`);
+
+  console.log("Finished!");
 })();
