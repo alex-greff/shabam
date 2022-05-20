@@ -56,7 +56,8 @@ async function saveSpectrogramToCache(
 (async function () {
   const engine = new MemoryRecordsEngine();
 
-  const valorFileName = "valor_clip_30sec.wav";
+  // const valorFileName = "valor_clip_30sec.wav";
+  const valorFileName = "valor_clip_1min.wav";
   console.log("Loading Valor wav file...");
   const valorWav = await loadWavFileFromPath(
     path.join(DATA_DIR, valorFileName),
