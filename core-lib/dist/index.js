@@ -2,6 +2,9 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+// TODO: this config system isn't great, there should be an explicit API for
+// configuring them globally
+// Also I should have a separation for each feature (fingerprint, search, etc)
 class Configuration {
     constructor() {
         /**
@@ -53,6 +56,27 @@ class Configuration {
          * >1: more than the entire standard deviation is added
          */
         this.FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER = 1;
+        // --- Search Config ---
+        /**
+         * The size of the target zone.
+         */
+        this.TARGET_ZONE_SIZE = 5;
+        /**
+         * How many addresses/couples to flush in each chunk.
+         */
+        this.FLUSH_EVERY_NTH_ITEMS = 5000;
+        /**
+         * The number of couples that will be searched in a single database query.
+         */
+        this.SEARCH_EVERY_N_COUPLES = 5000;
+        /**
+         * Dictates how picky the selection cutoff is when comparing the total hit
+         * numbers of potential tracks.
+         * 0 = every potential track is selected
+         * 1 = only clips who have all their target zones match
+         * Range: [0, 1]
+         */
+        this.SEARCH_SELECTION_COEFFICIENT = 0.8;
     }
 }
 let configInstance = new Configuration();
@@ -138,7 +162,7 @@ function range(start, end) {
     return Array.from({ length: end - start }, (_, i) => i + start);
 }
 
-const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, void 0, void 0, function* () {
+const generateFingerprint$1 = (spectrogramData, options = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const defaultOptions = {
         FFTSize: config.FFT_SIZE,
         partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,
@@ -224,7 +248,7 @@ const generateFingerprint$1 = (spectrogramData, options) => __awaiter(void 0, vo
     };
 });
 
-const generateFingerprint = (spectrogramData, options) => __awaiter(void 0, void 0, void 0, function* () {
+const generateFingerprint = (spectrogramData, options = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const defaultOptions = {
         FFTSize: config.FFT_SIZE,
         partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,

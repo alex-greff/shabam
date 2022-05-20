@@ -1,7 +1,7 @@
 import { isNode } from "browser-or-node";
 import { FFT } from "dsp.js";
 import { assert } from "tsafe";
-import { WaveFile } from "wavefile";
+import wavefile from "wavefile";
 import { config } from "../../configuration";
 import { ComputeSpectrogramDataOptions, SpectrogramData } from "../types";
 import * as AudioUtilities from "../../utilities/audio";
@@ -11,7 +11,7 @@ import * as AudioUtilities from "../../utilities/audio";
  * Resamples the given audio WAV file to the given sample rate.
  * For Node.js only
  */
-export function resample(audio: WaveFile, sampleRate: number): WaveFile {
+export function resample(audio: wavefile.WaveFile, sampleRate: number): wavefile.WaveFile {
   assert(isNode);
 
   audio.toSampleRate(sampleRate);
@@ -21,7 +21,7 @@ export function resample(audio: WaveFile, sampleRate: number): WaveFile {
 
 
 function computeFFTData(
-  audio: WaveFile,
+  audio: wavefile.WaveFile,
   sampleRate = config.TARGET_SAMPLE_RATE,
   windowIndex: number,
   windowDuration: number,
@@ -53,7 +53,7 @@ function computeFFTData(
  * @param options Spectrogram options.
  */
 export async function computeSpectrogramData(
-  audio: WaveFile,
+  audio: wavefile.WaveFile,
   sampleRate = config.TARGET_SAMPLE_RATE,
   options: Partial<ComputeSpectrogramDataOptions> = {},
 ): Promise<SpectrogramData> {

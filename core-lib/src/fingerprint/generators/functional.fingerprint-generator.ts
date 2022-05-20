@@ -8,7 +8,7 @@ import {
 
 export const generateFingerprint: FingerprintGeneratorFunction = async (
   spectrogramData,
-  options
+  options = {}
 ) => {
   const defaultOptions: FingerprintGeneratorOptions = {
     FFTSize: config.FFT_SIZE,

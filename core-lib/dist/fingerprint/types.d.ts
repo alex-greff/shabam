@@ -39,4 +39,4 @@ export interface FingerprintGeneratorOptions {
     /** The curve that the partition ranges are calculated on. */
     partitionCurve: number;
 }
-export declare type FingerprintGeneratorFunction = (spectrogramData: SpectrogramData, options: Partial<FingerprintGeneratorOptions>) => Promise<Fingerprint>;
+export declare type FingerprintGeneratorFunction = (spectrogramData: SpectrogramData, options?: Partial<FingerprintGeneratorOptions>) => Promise<Fingerprint>;

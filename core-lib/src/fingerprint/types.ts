@@ -46,5 +46,5 @@ export interface FingerprintGeneratorOptions {
 
 export type FingerprintGeneratorFunction = (
   spectrogramData: SpectrogramData,
-  options: Partial<FingerprintGeneratorOptions>
+  options?: Partial<FingerprintGeneratorOptions>
 ) => Promise<Fingerprint>;

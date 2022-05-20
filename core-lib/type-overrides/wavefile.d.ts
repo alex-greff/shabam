@@ -3,6 +3,8 @@
 // Definitions by: Rafael da Silva Rocha <https://github.com/rochars>
 // Definitions: https://github.com/rochars/wavefile
 
+// export = "wavefile";
+
 declare module "wavefile" {
   class WaveFile {
     /**

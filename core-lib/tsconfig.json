@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es2015",
+    "module": "es2015",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "preserveConstEnums": true,
@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "declaration": true,
     "strict": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "src/**/*.ts",
@@ -19,5 +20,13 @@
   "exclude": [
     "src/**/*.spec.ts",
     "node_modules"
-  ]
+  ],
+  "ts-node": {
+    "esm": true,
+    "files": true
+  },
+  "files": [
+    "type-overrides/dsp.js.d.ts",
+    "type-overrides/wavefile.d.ts",
+  ],
 }

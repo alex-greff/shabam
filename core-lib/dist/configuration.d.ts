@@ -48,6 +48,26 @@ declare class Configuration {
      * >1: more than the entire standard deviation is added
      */
     FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER: number;
+    /**
+     * The size of the target zone.
+     */
+    TARGET_ZONE_SIZE: number;
+    /**
+     * How many addresses/couples to flush in each chunk.
+     */
+    FLUSH_EVERY_NTH_ITEMS: number;
+    /**
+     * The number of couples that will be searched in a single database query.
+     */
+    SEARCH_EVERY_N_COUPLES: number;
+    /**
+     * Dictates how picky the selection cutoff is when comparing the total hit
+     * numbers of potential tracks.
+     * 0 = every potential track is selected
+     * 1 = only clips who have all their target zones match
+     * Range: [0, 1]
+     */
+    SEARCH_SELECTION_COEFFICIENT: number;
 }
 export declare const config: Configuration;
 export {};
