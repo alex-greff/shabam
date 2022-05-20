@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "browser-or-node": "^2.0.0",
+    "bson": "^4.6.4",
     "dsp.js": "^1.0.1",
     "tsafe": "^0.9.0",
     "wavefile": "^11.0.0"

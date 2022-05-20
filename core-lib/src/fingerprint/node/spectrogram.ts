@@ -27,6 +27,8 @@ function computeFFTData(
   windowDuration: number,
   FFTSize: number,
 ): Float64Array {
+  // console.log(">>> HERE 1"); // TODO: remove
+
   // Calculate the start index from where the copy will take place
   const startIndex = Math.floor(sampleRate * windowIndex * windowDuration);
 
@@ -40,6 +42,8 @@ function computeFFTData(
   fft.forward(fftBuffer);
 
   const spectrum = fft.spectrum;
+
+  // console.log(">>> HERE 2"); // TODO: remove
 
   return spectrum;
 }
