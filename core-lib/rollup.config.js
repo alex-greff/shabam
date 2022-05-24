@@ -1,4 +1,7 @@
 import typescript from 'rollup-plugin-typescript2';
+// TODO: need to figure out how to bundle the native modules
+// import nativePlugin from 'rollup-plugin-natives';
+// import native from 'rollup-plugin-native';
 import pkg from './package.json';
 
 export default {
@@ -21,5 +24,11 @@ export default {
     typescript({
       typescript: require('typescript'),
     }),
+    // nativePlugin({
+
+    //   copyTo: "dist/build",
+    //   destDir: "./build",
+    // })
+    // native(),
   ],
 }

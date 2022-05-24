@@ -7,8 +7,13 @@ import { RecordsTable, TrackRecordsTable } from "../src/search/records-table";
 import path from "path";
 import * as fs from "fs";
 import * as bson from "bson";
+import { performance } from "perf_hooks";
 import { SpectrogramData } from "../src/fingerprint/types";
 import { RecordsEngine } from "../src/search/engine";
+import coreLibNative from "../build/Release/core_lib_native.node";
+
+console.log("exports", coreLibNative);
+console.log(coreLibNative.greetHello());
 
 const DATA_DIR = "./tests/data";
 

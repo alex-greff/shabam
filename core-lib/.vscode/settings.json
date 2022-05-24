@@ -1,0 +1,5 @@
+{
+  "C_Cpp.default.includePath": [
+    "./node_modules/node-addon-api/"
+  ]
+}

@@ -18,6 +18,8 @@ RUN ./bootstrap.sh && ./configure && make && make install
 
 WORKDIR /core-lib
 
+RUN npm install -g node-gyp
+
 COPY package*.json .
 RUN npm install
 

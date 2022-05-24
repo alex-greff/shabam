@@ -7,11 +7,13 @@
   ],
   "extensions": [
     "streetsidesoftware.code-spell-checker",
-    "coenraads.bracket-pair-colorizer-2",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "naumovs.color-highlight",
-    "wayou.vscode-todo-highlight"
+    "wayou.vscode-todo-highlight",
+    "ms-vscode.cpptools",
+    "jeff-hykin.better-cpp-syntax",
+    "ms-vscode.cpptools-themes"
   ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/core-lib,type=bind,consistency=delegated",
   "workspaceFolder": "/core-lib"

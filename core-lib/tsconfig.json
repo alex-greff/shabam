@@ -21,14 +21,10 @@
   "include": [
     "./src/**/*.ts",
     "./tests/**/*.ts",
-    "./type-overrides/**/*.d.ts"
+    "global-types/**/*.d.ts"
   ],
   "exclude": [
     "./src/**/*.spec.ts",
     "node_modules"
-  ],
-  "files": [
-    "./type-overrides/dsp.js.d.ts",
-    "./type-overrides/wavefile.d.ts",
   ],
 }
