@@ -1,3 +1,0 @@
-[submodule "core-lib/liquid-dsp"]
-	path = core-lib/liquid-dsp
-	url = https://github.com/jgaeddert/liquid-dsp
