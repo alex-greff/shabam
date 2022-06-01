@@ -5,7 +5,8 @@
       "cflags!": [ "-fno-exceptions" ],
       "cflags_cc!": [ "-fno-exceptions" ],
       "sources": [
-        "./src/search/native/greeting.cpp",
+        "./src/native/greeting.cpp",
+        "./src/native/spectrogram/spectrogram.cpp",
         "./src/index.cpp"
       ],
       "include_dirs": [

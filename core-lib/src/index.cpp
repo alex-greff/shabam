@@ -1,6 +1,7 @@
 #include <napi.h>
 #include <string>
-#include "search/native/greeting.hpp"
+#include "native/greeting.hpp"
+#include "native/spectrogram/spectrogram.hpp"
 
 Napi::String greetHello(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -14,6 +15,11 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(
     Napi::String::New(env, "greetHello"),
     Napi::Function::New(env, greetHello)
+  );
+
+  exports.Set(
+    Napi::String::New(env, "Spectrogram"),
+    Spectrogram::GetClass(env)
   );
 
   return exports;
