@@ -20,7 +20,7 @@ WORKDIR /core-lib
 
 RUN npm install -g node-gyp
 
-COPY package*.json .
+COPY ./package*.json ./
 RUN npm install
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
