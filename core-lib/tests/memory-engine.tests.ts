@@ -11,53 +11,11 @@ import { performance } from "perf_hooks";
 import { SpectrogramData } from "../src/fingerprint/types";
 import { RecordsEngine } from "../src/search/engine";
 import coreLibNative from "../build/Release/core_lib_native.node";
+import { loadSpectrogramFromCache, saveSpectrogramToCache } from "./utilities/spectrogram-cache";
+import { DATA_DIR } from "./utilities/constants";
 
 console.log("exports", coreLibNative);
 console.log(coreLibNative.greetHello());
-
-const DATA_DIR = "./tests/data";
-
-async function loadSpectrogramFromCache(
-  fileName: string
-): Promise<SpectrogramData | null> {
-  const cacheFileName = `${fileName}.cache.bson`;
-
-  try {
-    const cacheFileBuff = await fs.promises.readFile(
-      path.join(DATA_DIR, cacheFileName)
-    );
-
-    interface BsonSpectrogramData {
-      numberOfWindows: number;
-      frequencyBinCount: number;
-      data: bson.Binary;
-    }
-
-    const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
-
-    return {
-      numberOfWindows: cache.numberOfWindows,
-      frequencyBinCount: cache.frequencyBinCount,
-      data: cache.data.buffer,
-    };
-  } catch (err) {
-    return null;
-  }
-}
-
-async function saveSpectrogramToCache(
-  spectrogram: SpectrogramData,
-  fileName: string
-) {
-  const cacheFileName = `${fileName}.cache.bson`;
-
-  const spectrogramSerialized = bson.serialize(spectrogram);
-
-  await fs.promises.writeFile(
-    path.join(DATA_DIR, cacheFileName),
-    spectrogramSerialized
-  );
-}
 
 async function computeFingerprint(
   fileName: string,
@@ -67,7 +25,7 @@ async function computeFingerprint(
   let timerStart = 0,
     timerEnd = 0;
 
-  let spectrogram = await loadSpectrogramFromCache(fileName);
+  let spectrogram = await loadSpectrogramFromCache(fileName, DATA_DIR);
   if (debugPrint && spectrogram !== null)
     console.log(
       `Found cached spectrogram for ${displayName}, skipping wav file loading and spectrogram computation`
@@ -90,10 +48,10 @@ async function computeFingerprint(
     timerEnd = performance.now();
     // We need to cache the spectrogram b/c generating it currently is
     // really slow
-    await saveSpectrogramToCache(spectrogram, fileName);
+    await saveSpectrogramToCache(spectrogram, fileName, DATA_DIR);
     if (debugPrint) {
       process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-      console.log(spectrogram);
+      // console.log(spectrogram); // TODO: remove
     }
   }
 
@@ -105,7 +63,7 @@ async function computeFingerprint(
   timerEnd = performance.now();
   if (debugPrint) {
     process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-    console.log(fingerprint);
+    // console.log(fingerprint); // TODO: remove
   }
 
   return FingerprintClass.fromFingerprintInterface(fingerprint);
@@ -165,12 +123,12 @@ async function computeFingerprint(
   const valorSampleRecordsTable = new RecordsTable(valorSampleFingerprint);
   timerEnd = performance.now();
   process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  process.stdout.write("Searching records with Valor Sample... ");
-  timerStart = performance.now();
-  const matches = await engine.searchRecords(valorSampleRecordsTable);
-  timerEnd = performance.now();
-  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  console.log(matches);
+  // process.stdout.write("Searching records with Valor Sample... ");
+  // timerStart = performance.now();
+  // const matches = await engine.searchRecords(valorSampleRecordsTable);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // // console.log(matches); // TODO: remove
 
-  console.log("Finished!");
+  console.log("Finished!"); // TODO: remove
 })();
