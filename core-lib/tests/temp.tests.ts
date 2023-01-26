@@ -7,6 +7,8 @@ import { assert } from "tsafe";
   const spectrogram = await loadSpectrogramFromCache("valor_clip_30sec.wav", DATA_DIR);
   assert(spectrogram !== null);
 
+  console.log(spectrogram);
+
   await renderSpectrogram(spectrogram, "valor_clip_30sec.png", DATA_DIR);
   console.log("Done!");
 })();

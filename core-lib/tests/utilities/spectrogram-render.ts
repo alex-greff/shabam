@@ -12,6 +12,13 @@ import path from "path";
 
 // Reference: https://stackoverflow.com/a/57397987
 
+interface SpectrogramChartAuxData {
+  colorScalePallet: string[];
+  renderPartitionDividers: boolean;
+  partitionDividerColors?: [string, string];
+  backgroundColor: string;
+}
+
 const DEFAULT_WIDTH = 500;
 const DEFAULT_HEIGHT = 300;
 
@@ -20,7 +27,7 @@ export async function renderSpectrogram(
   outputFileName: string,
   dataDir: string,
   width = DEFAULT_WIDTH,
-  height = DEFAULT_HEIGHT,
+  height = DEFAULT_HEIGHT
 ) {
   const dom = new JSDOM("");
   const { document } = dom.window;
@@ -49,6 +56,7 @@ export async function renderSpectrogram(
       "rgba(80, 80, 80, 0.2)",
       "rgba(100, 100, 100, 0.2)",
     ],
+    backgroundColor: "black",
   };
 
   renderCanvas(canvasNode, spectrogramData, width, height, auxData);
@@ -62,12 +70,6 @@ export async function renderSpectrogram(
   const data = dataAll.replace(/^data:image\/\w+;base64,/, "");
   const buf = Buffer.from(data, "base64");
   await fs.promises.writeFile(path.join(dataDir, outputFileName), buf);
-}
-
-interface SpectrogramChartAuxData {
-  colorScalePallet: string[];
-  renderPartitionDividers: boolean;
-  partitionDividerColors?: [string, string];
 }
 
 // The number of pixels each cell bleeds over into the next
@@ -122,7 +124,12 @@ const renderCanvas: CanvasRenderFunction<
   spectrogramData,
   canvasWidth,
   canvasHeight,
-  { colorScalePallet, renderPartitionDividers, partitionDividerColors }
+  {
+    colorScalePallet,
+    renderPartitionDividers,
+    partitionDividerColors,
+    backgroundColor,
+  }
 ) => {
   const { xScale, yScale } = getAxisScales(
     spectrogramData,
@@ -136,6 +143,9 @@ const renderCanvas: CanvasRenderFunction<
     | null;
 
   if (context == null) throw "Unable to get 2D context from canvas.";
+
+  context.fillStyle = backgroundColor;
+  context.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // Get the largest value in the spectrogram data
   const maxVal = d3.max(spectrogramData.data)!;
