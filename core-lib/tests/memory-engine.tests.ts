@@ -11,8 +11,13 @@ import { performance } from "perf_hooks";
 import { SpectrogramData } from "../src/fingerprint/types";
 import { RecordsEngine } from "../src/search/engine";
 import coreLibNative from "../build/Release/core_lib_native.node";
-import { loadSpectrogramFromCache, saveSpectrogramToCache } from "./utilities/spectrogram-cache";
+import {
+  loadSpectrogramFromCache,
+  saveSpectrogramToCache,
+} from "./utilities/spectrogram-cache";
 import { DATA_DIR } from "./utilities/constants";
+import { renderSpectrogram } from "./utilities/spectrogram-renderer";
+import { renderFingerprint } from "./utilities/fingerprint-renderer";
 
 console.log("exports", coreLibNative);
 console.log(coreLibNative.greetHello());
@@ -55,6 +60,9 @@ async function computeFingerprint(
     }
   }
 
+  // --- Render Spectrogram ---
+  await renderSpectrogram(spectrogram, `${fileName}.spectrogram.png`, DATA_DIR);
+
   // --- Compute fingerprint ---
   if (debugPrint)
     process.stdout.write(`Computing ${displayName} fingerprint... `);
@@ -65,6 +73,9 @@ async function computeFingerprint(
     process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
     // console.log(fingerprint); // TODO: remove
   }
+
+  // --- Render Fingerprint ---
+  await renderFingerprint(fingerprint, `${fileName}.fingerprint.png`, DATA_DIR);
 
   return FingerprintClass.fromFingerprintInterface(fingerprint);
 }

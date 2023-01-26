@@ -144,6 +144,7 @@ const renderCanvas: CanvasRenderFunction<
 
   if (context == null) throw "Unable to get 2D context from canvas.";
 
+  // Set background color
   context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
