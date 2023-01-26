@@ -19,8 +19,23 @@ interface SpectrogramChartAuxData {
   backgroundColor: string;
 }
 
-const DEFAULT_WIDTH = 500;
-const DEFAULT_HEIGHT = 300;
+const DEFAULT_WIDTH = 1920;
+const DEFAULT_HEIGHT = 1080;
+
+const AUX_DATA: SpectrogramChartAuxData = {
+  colorScalePallet: [
+    "rgba(0, 0, 0, 0)",
+    "rgba(8, 79, 200, 0.8)",
+    "rgba(0, 252, 239, 1)",
+    "rgba(255, 255, 255, 1)",
+  ],
+  renderPartitionDividers: true,
+  partitionDividerColors: [
+    "rgba(80, 80, 80, 0.2)",
+    "rgba(100, 100, 100, 0.2)",
+  ],
+  backgroundColor: "black",
+};
 
 export async function renderSpectrogram(
   spectrogramData: SpectrogramData,
@@ -44,22 +59,7 @@ export async function renderSpectrogram(
     .attr("height", height);
   const canvasNode = canvas.node()!;
 
-  const auxData: SpectrogramChartAuxData = {
-    colorScalePallet: [
-      "rgba(0, 0, 0, 0)",
-      "rgba(8, 79, 200, 0.8)",
-      "rgba(0, 252, 239, 1)",
-      "rgba(255, 255, 255, 1)",
-    ],
-    renderPartitionDividers: true,
-    partitionDividerColors: [
-      "rgba(80, 80, 80, 0.2)",
-      "rgba(100, 100, 100, 0.2)",
-    ],
-    backgroundColor: "black",
-  };
-
-  renderCanvas(canvasNode, spectrogramData, width, height, auxData);
+  renderCanvas(canvasNode, spectrogramData, width, height, AUX_DATA);
 
   // Save canvas to PNG
   // Source: https://stackoverflow.com/a/5971674

@@ -18,8 +18,18 @@ interface FingerprintChartAuxData {
 
 const POINT_RADIUS = 1.5;
 
-const DEFAULT_WIDTH = 500;
-const DEFAULT_HEIGHT = 300;
+const DEFAULT_WIDTH = 1920;
+const DEFAULT_HEIGHT = 1080;
+
+const AUX_DATA: FingerprintChartAuxData = {
+  selectionColor: "#08B4F4",
+  renderPartitionDividers: true,
+  partitionDividerColors: [
+    "rgba(80, 80, 80, 0.2)",
+    "rgba(100, 100, 100, 0.2)",
+  ],
+  backgroundColor: "black",
+};
 
 export async function renderFingerprint(
   fingerprint: Fingerprint,
@@ -43,17 +53,7 @@ export async function renderFingerprint(
     .attr("height", height);
   const canvasNode = canvas.node()!;
 
-  const auxData: FingerprintChartAuxData = {
-    selectionColor: "#08B4F4",
-    renderPartitionDividers: true,
-    partitionDividerColors: [
-      "rgba(80, 80, 80, 0.2)",
-      "rgba(100, 100, 100, 0.2)",
-    ],
-    backgroundColor: "black",
-  };
-
-  renderCanvas(canvasNode, fingerprint, width, height, auxData);
+  renderCanvas(canvasNode, fingerprint, width, height, AUX_DATA);
 
   // Save canvas to PNG
   // Source: https://stackoverflow.com/a/5971674
