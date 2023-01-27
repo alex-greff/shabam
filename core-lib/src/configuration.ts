@@ -11,7 +11,8 @@ class Configuration {
   /**
    * Target sample rate of the spectrogram (kHz).
    */
-  TARGET_SAMPLE_RATE: number = 16000;
+  TARGET_SAMPLE_RATE: number = 16000; // TODO: put back in
+  // TARGET_SAMPLE_RATE: number = 44100; // TODO: remove
 
   /**
    * Duration of the spectrogram/fingerprint window (seconds).

@@ -127,7 +127,7 @@ export async function computeSpectrogramData(
   const numWindows = Math.floor(source.duration / windowDuration);
   const frequencyBinSize = Math.floor(FFTSize / 2);
 
-  const data = new Uint8Array(numWindows * frequencyBinSize);
+  const data = new Float64Array(numWindows * frequencyBinSize);
 
   // Compute the frequency data for each of the windows
   for (let currWindow = 0; currWindow < numWindows; currWindow++) {

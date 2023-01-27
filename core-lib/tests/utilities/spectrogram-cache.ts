@@ -21,11 +21,13 @@ export async function loadSpectrogramFromCache(
     }
 
     const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
+    const dataBuf = cache.data.buffer;
+    const data = new Float64Array(dataBuf);
 
     return {
       numberOfWindows: cache.numberOfWindows,
       frequencyBinCount: cache.frequencyBinCount,
-      data: cache.data.buffer,
+      data,
     };
   } catch (err) {
     return null;

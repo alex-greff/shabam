@@ -25,6 +25,8 @@
   "devDependencies": {
     "@types/jsdom": "^20.0.1",
     "@types/node": "17.0.5",
+    "@types/node-wav": "0.0.0",
+    "@types/ooura": "^2.1.0",
     "@types/web": "0.0.89",
     "canvas": "^2.11.0",
     "jsdom": "^21.1.0",
@@ -36,13 +38,17 @@
     "typescript": "4.5.4"
   },
   "dependencies": {
+    "@descript/web-audio-js": "^0.15.3-patched.5",
     "@types/d3": "^7.4.0",
     "browser-or-node": "2.0.0",
     "bson": "4.6.4",
     "d3": "^7.8.2",
     "dsp.js": "1.0.1",
     "node-addon-api": "5.0.0",
+    "node-wav": "0.0.2",
+    "ooura": "^2.1.6",
     "tsafe": "0.9.0",
+    "wave-resampler": "^1.0.0",
     "wavefile": "11.0.0"
   }
 }
