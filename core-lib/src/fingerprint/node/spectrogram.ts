@@ -7,12 +7,17 @@ import { ComputeSpectrogramDataOptions, SpectrogramData } from "../types";
 import * as AudioUtilities from "../../utilities/audio";
 import Ooura from "ooura";
 import { WavFileData } from "./loader";
+import Spectro from "spectro";
+import { Duplex } from "stream";
 
 /**
  * Resamples the given audio WAV file to the given sample rate.
  * For Node.js only
  */
-export function resample(audio: wavefile.WaveFile, sampleRate: number): wavefile.WaveFile {
+export function resample(
+  audio: wavefile.WaveFile,
+  sampleRate: number
+): wavefile.WaveFile {
   assert(isNode);
 
   audio.toSampleRate(sampleRate);
@@ -20,16 +25,15 @@ export function resample(audio: wavefile.WaveFile, sampleRate: number): wavefile
   return audio;
 }
 
-
 function computeFFTData(
   audio: WavFileData,
   sampleRate = config.TARGET_SAMPLE_RATE,
   windowIndex: number,
   windowDuration: number,
-  FFTSize: number,
+  FFTSize: number
 ): Float64Array {
   // Calculate the start index from where the copy will take place
-  const startIndex = Math.floor(sampleRate * windowIndex * windowDuration);
+  const startIndex = Math.floor(sampleRate * windowDuration * windowIndex);
 
   // TODO: remove, this does not work
   // // TODO: only uses one channel at the moment
@@ -44,30 +48,46 @@ function computeFFTData(
   // const spectrum = fft.spectrum;
   // return spectrum;
 
-
   // TODO: not sure why the output buffer is the same size as the input buffer
   // From what I understand it should be half the size
   // (FFTSize/2 rather than FFTSize)
   // Issue with length being ignored: https://github.com/nodejs/node/issues/22387
   // so we need to pass it the buffer, not the typed array
-  const inputBuf = Buffer.from(audio.channelData.buffer, startIndex, Math.floor(FFTSize / 2));
+  // const buf = Buffer.from(
+  //   audio.channelData.buffer,
+  //   startIndex,
+  //   FFTSize
+  //   // Math.floor(FFTSize / 2)
+  // );
 
   // TODO: remove
   // const oo = new Ooura(inputBuf.length, {"type":"real", "radix":4});
-  const oo = new Ooura(inputBuf.length);
-  const output = oo.scalarArrayFactory();
-  const re = oo.vectorArrayFactory();
-  const im = oo.vectorArrayFactory();
-  oo.fft(inputBuf, re.buffer, im.buffer); // Populates re and im from input
-  oo.ifft(output.buffer, re.buffer, im.buffer); // Populates output from re and im
+  // const oo = new Ooura(buf.length, { type: "real", radix: 4 });
+  // oo.fftInPlace(buf);
+  // const re = oo.vectorArrayFactory();
+  // const im = oo.vectorArrayFactory();
+  // oo.fft(inputBuf, re.buffer, im.buffer); // Populates re and im from input
 
-  return output;
+  // return new Float64Array(buf);
+
+  const windowSamples = audio.channelData.slice(startIndex, startIndex + (sampleRate * windowDuration));
+  const oo = new Ooura(FFTSize, { type: "real", radix: 4 });
+  oo.fftInPlace(windowSamples);
+
+  return windowSamples;
+}
+
+function bufferToStream(buf: Buffer): Duplex {
+  let tmp = new Duplex();
+  tmp.push(buf);
+  tmp.push(null);
+  return tmp;
 }
 
 /**
  * Computes the spectrogram data for the given audio file. Note: assumes the
  * given audio is already resampled to `sampleRate`.
- * 
+ *
  * @param audio The audio to compute the spectrogram of.
  * @param sampleRate The sample rate of the audio.
  * @param options Spectrogram options.
@@ -75,7 +95,7 @@ function computeFFTData(
 export async function computeSpectrogramData(
   audio: WavFileData,
   sampleRate = config.TARGET_SAMPLE_RATE,
-  options: Partial<ComputeSpectrogramDataOptions> = {},
+  options: Partial<ComputeSpectrogramDataOptions> = {}
 ): Promise<SpectrogramData> {
   assert(isNode);
 
@@ -91,46 +111,128 @@ export async function computeSpectrogramData(
   };
   const { FFTSize, windowDuration, windowSmoothing } = optionsNormalized;
 
-  const duration = AudioUtilities.getWavFileDuration(
-    audio.channelData.length,
-    sampleRate,
-  );
+  const spectro = new Spectro({
+    wSize: FFTSize,
+    workers: 1,
+  });
 
-  // Calculate the total number of windows for the given audio source
-  const numWindows = Math.floor(duration / windowDuration);
-  const frequencyBinSize = Math.floor(FFTSize / 2);
+  const audioStream = bufferToStream(Buffer.from(audio.channelData.buffer));
+  audioStream.pipe(spectro);
 
-  const data = new Float64Array(numWindows * frequencyBinSize);
+  console.log(">>> Starting processing", audio.channelData.length, audio.channelData.length / FFTSize);
 
-  // console.log(">>> audio.channelData", audio.channelData); // TODO: remove
+  const spectrogramData2DRedundantData = await new Promise<number[][]>((resolve) => {
+    let finishedAudioStream = false;
+    let firstTime = true;
+    audioStream.on("end", () => {
+      finishedAudioStream = true;
+    });
+  
+    spectro.on("end", (err, data: number[][]) => {
+      if (finishedAudioStream !== true) return;
 
-  // Compute the frequency data for each of the windows
-  for (let currWindow = 0; currWindow < numWindows; currWindow++) {
-    const frequencyData = computeFFTData(
-      audio,
-      sampleRate,
-      currWindow,
-      windowDuration,
-      FFTSize,
-    );
+      if (firstTime) {
+        firstTime = false;
+        return;
+      }
+  
+      // console.log(">>> data", data);
+      // console.log(">>> HERE, data.length", data.length, "data[0].length", data[0].length);
+      try {
+        spectro.stop();
+      } catch(err) {
+        // Ignore
+      }
+      
+      resolve(data);
+    });
+  });
 
-    // TODO: remove try catch
-    try {
-      data.set(frequencyData, currWindow * frequencyBinSize);
-      // TODO: remove
-      // for (let i = 0; i < frequencyBinSize; i++) {
-      //   const j = currWindow * frequencyBinSize + i;
-      //   data[j] = frequencyData[i]; 
-      // }
-    } catch(err) {
-      console.log(">>> frequencyData.length", frequencyData.length, currWindow, frequencyBinSize);
-      throw err;
-    }
+  if (spectrogramData2DRedundantData.length === 0) {
+    return {
+      data: new Float64Array(),
+      frequencyBinCount: FFTSize / 2,
+      numberOfWindows: 0,
+    };
   }
 
+  const spectrogramData2D: number[][] = [];
+  for (let i = 0; i < spectrogramData2DRedundantData.length; i++) {
+    const bucketData = spectrogramData2DRedundantData[i];
+    assert(bucketData.length === FFTSize);
+
+    spectrogramData2D.push(bucketData.slice(0, FFTSize / 2));
+  }
+
+  const spectrogramData1D = spectrogramData2D.flat(1);
+  const spectrogramData = new Float64Array(spectrogramData1D);
+
+  console.log(">>> spectrogramData", spectrogramData);
+
   return {
-    numberOfWindows: numWindows,
-    frequencyBinCount: frequencyBinSize,
-    data,
+    data: spectrogramData,
+    frequencyBinCount: FFTSize / 2,
+    numberOfWindows: spectrogramData2D.length,
   };
+
+  // return {
+  //   data: audio.channelData,
+  //   frequencyBinCount: 0,
+  //   numberOfWindows: 0,
+  // };
+
+
+
+
+  // const duration = AudioUtilities.getWavFileDuration(
+  //   audio.channelData.length,
+  //   sampleRate
+  // );
+
+  // // Calculate the total number of windows for the given audio source
+  // const numWindows = Math.floor(duration / windowDuration);
+  // const frequencyBinSize = Math.floor(FFTSize / 2);
+
+  // const data = new Float64Array(numWindows * frequencyBinSize);
+
+  // // console.log(">>> audio.channelData", audio.channelData); // TODO: remove
+
+  // // Compute the frequency data for each of the windows
+  // for (let currWindow = 0; currWindow < numWindows; currWindow++) {
+  //   const frequencyData = computeFFTData(
+  //     audio,
+  //     sampleRate,
+  //     currWindow,
+  //     windowDuration,
+  //     FFTSize
+  //   );
+
+  //   // TODO: remove
+  //   console.log(">>> frequencyData.length", frequencyData.length);
+  //   console.log(">>> frequencyData", frequencyData);
+
+  //   // TODO: remove try catch
+  //   try {
+  //     data.set(frequencyData, currWindow * frequencyBinSize);
+  //     // TODO: remove
+  //     // for (let i = 0; i < frequencyBinSize; i++) {
+  //     //   const j = currWindow * frequencyBinSize + i;
+  //     //   data[j] = frequencyData[i];
+  //     // }
+  //   } catch (err) {
+  //     console.log(
+  //       ">>> frequencyData.length",
+  //       frequencyData.length,
+  //       currWindow,
+  //       frequencyBinSize
+  //     );
+  //     throw err;
+  //   }
+  // }
+
+  // return {
+  //   numberOfWindows: numWindows,
+  //   frequencyBinCount: frequencyBinSize,
+  //   data,
+  // };
 }
