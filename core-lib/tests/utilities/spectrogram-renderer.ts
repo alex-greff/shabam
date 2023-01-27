@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { JSDOM } from "jsdom";
 import * as fs from "fs";
+import path from "path";
 import {
   CanvasGetScaleFunction,
   CanvasRenderFunction,
@@ -8,7 +9,6 @@ import {
 } from "./canvas-chart-base";
 import { SpectrogramData } from "../../src/fingerprint/types";
 import { computePartitionRanges } from "../../src/utilities/audio";
-import path from "path";
 
 // Reference: https://stackoverflow.com/a/57397987
 

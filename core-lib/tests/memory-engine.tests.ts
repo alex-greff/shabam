@@ -18,6 +18,7 @@ import {
 import { DATA_DIR } from "./utilities/constants";
 import { renderSpectrogram } from "./utilities/spectrogram-renderer";
 import { renderFingerprint } from "./utilities/fingerprint-renderer";
+import { renderTimeDomain } from "./utilities/time-domain-renderer";
 
 console.log("exports", coreLibNative);
 console.log(coreLibNative.greetHello());
@@ -30,21 +31,25 @@ async function computeFingerprint(
   let timerStart = 0,
     timerEnd = 0;
 
+  // --- Load Wave file ---
+  if (debugPrint) process.stdout.write(`Loading ${displayName} wav file... `);
+  timerStart = performance.now();
+  const wav = await loadWavFileFromPath(path.join(DATA_DIR, fileName), true);
+  timerEnd = performance.now();
+  if (debugPrint)
+    process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  
+  // --- Render Time Domain ---
+  await renderTimeDomain(wav, `${fileName}.time-domain.png`, DATA_DIR);
+
+  // --- Attempt to load spectrogram from cache ---
   let spectrogram = await loadSpectrogramFromCache(fileName, DATA_DIR);
   if (debugPrint && spectrogram !== null)
     console.log(
-      `Found cached spectrogram for ${displayName}, skipping wav file loading and spectrogram computation`
+      `Found cached spectrogram for ${displayName}, skipping spectrogram computation`
     );
 
   if (spectrogram === null) {
-    // --- Load Wave file ---
-    if (debugPrint) process.stdout.write(`Loading ${displayName} wav file... `);
-    timerStart = performance.now();
-    const wav = await loadWavFileFromPath(path.join(DATA_DIR, fileName), true);
-    timerEnd = performance.now();
-    if (debugPrint)
-      process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-
     // --- Compute spectrogram or load from cache ---
     if (debugPrint)
       process.stdout.write(`Computing ${displayName} spectrogram... `);
@@ -153,7 +158,7 @@ async function computeFingerprint(
   // timerEnd = performance.now();
   // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
-  // --- Sine text ---
+  // --- Sine test ---
   const sineTestSampleFileName = "sine_test.wav";
   const sineTestSampleFingerprint = await computeFingerprint(
     sineTestSampleFileName,
@@ -164,6 +169,18 @@ async function computeFingerprint(
   const sineTestSampleRecordsTable = new RecordsTable(sineTestSampleFingerprint);
   timerEnd = performance.now();
   process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+
+  // // --- Sub test ---
+  // const subTestSampleFileName = "sub_test.wav";
+  // const subTestSampleFingerprint = await computeFingerprint(
+  //   subTestSampleFileName,
+  //   "Sub Test"
+  // );
+  // process.stdout.write(`Computing Sub Text records table... `);
+  // timerStart = performance.now();
+  // const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
 
   console.log("Finished!"); // TODO: remove

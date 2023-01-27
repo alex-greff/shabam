@@ -102,7 +102,7 @@ export async function computeSpectrogramData(
 
   const data = new Float64Array(numWindows * frequencyBinSize);
 
-  console.log(">>> audio.channelData", audio.channelData);
+  // console.log(">>> audio.channelData", audio.channelData); // TODO: remove
 
   // Compute the frequency data for each of the windows
   for (let currWindow = 0; currWindow < numWindows; currWindow++) {
