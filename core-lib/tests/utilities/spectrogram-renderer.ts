@@ -101,14 +101,21 @@ const getAxisScales: CanvasGetScaleFunction<SpectrogramData, number> = (
 /**
  * Generates a color scale from the given pallet and maximum value.
  */
-function generateColorScale(pallet: string[], maxVal: number) {
-  const domainArray = pallet.map((_, idx) => {
-    return (maxVal * (idx + 1)) / pallet.length;
-  });
-  // First element in domain must be 0
-  domainArray.unshift(0);
+function generateColorScale(pallet: string[], maxVal: number, minVal: number) {
+  // TODO: move these out
+  const NOISE_CEILING_MULTIPLIER = 1;
+  const NOISE_FLOOR_MULTIPLIER = 0;
 
-  const colorScale = d3.scaleLinear<string>().range(pallet).domain(domainArray);
+  const domainMax = maxVal * NOISE_CEILING_MULTIPLIER;
+  const domainMin = maxVal * NOISE_FLOOR_MULTIPLIER;
+
+  const domainScale = d3.scaleLinear<number>().domain([0, 1]).range([domainMin, domainMax]);
+  const domainArray = pallet.map((_, idx) => {
+    const percentage = idx / (pallet.length - 1);
+    return domainScale(percentage);
+  }) 
+
+  const colorScale = d3.scaleLinear<string>().domain(domainArray).range(pallet);
 
   return colorScale;
 }
@@ -148,14 +155,16 @@ const renderCanvas: CanvasRenderFunction<
   context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  // Get the largest value in the spectrogram data
+  // Get extrema
   const maxVal = d3.max(spectrogramData.data)!;
+  const minVal = d3.min(spectrogramData.data)!;
+  console.log(">>> minVal", minVal, "maxVal", maxVal);
 
   // Compute the tick size of the xAxis
   const xAxisTickSize = canvasWidth / spectrogramData.numberOfWindows;
 
   // Generate color scale from pallet
-  const colorScale = generateColorScale(colorScalePallet, maxVal);
+  const colorScale = generateColorScale(colorScalePallet, maxVal, minVal);
 
   // Render the partition dividers, if needed
   if (renderPartitionDividers) {

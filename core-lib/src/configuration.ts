@@ -14,6 +14,7 @@ class Configuration {
   TARGET_SAMPLE_RATE: number = 16000; // TODO: put back in
   // TARGET_SAMPLE_RATE: number = 44100; // TODO: remove
 
+  // TODO: this should be removed
   /**
    * Duration of the spectrogram/fingerprint window (seconds).
    */
@@ -30,7 +31,7 @@ class Configuration {
    * Number of partitions in the fingerprints.
    * Range: [1, infinity)
    */
-  FINGERPRINT_PARTITION_AMOUNT: number = 10;
+  FINGERPRINT_PARTITION_AMOUNT: number = 50;
 
   /**
    * Curve used to calculate partitions.

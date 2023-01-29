@@ -114,6 +114,7 @@ export async function computeSpectrogramData(
   const spectro = new Spectro({
     wSize: FFTSize,
     workers: 1,
+    // wFunc: "Blackman",
   });
 
   const audioStream = bufferToStream(Buffer.from(audio.channelData.buffer));
