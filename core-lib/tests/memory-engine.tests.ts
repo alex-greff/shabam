@@ -10,7 +10,7 @@ import * as bson from "bson";
 import { performance } from "perf_hooks";
 import { SpectrogramData } from "../src/fingerprint/types";
 import { RecordsEngine } from "../src/search/engine";
-import coreLibNative from "../build/Release/core_lib_native.node";
+import CoreLibNative from "../build/Release/core_lib_native.node";
 import {
   loadSpectrogramFromCache,
   saveSpectrogramToCache,
@@ -20,8 +20,10 @@ import { renderSpectrogram } from "./utilities/spectrogram-renderer";
 import { renderFingerprint } from "./utilities/fingerprint-renderer";
 import { renderTimeDomain } from "./utilities/time-domain-renderer";
 
-console.log("exports", coreLibNative);
-console.log(coreLibNative.greetHello());
+console.log("exports", CoreLibNative);
+console.log(CoreLibNative.greetHello());
+const temp = new CoreLibNative.Spectrogram(new Float32Array(), 10, 9, 1024);
+console.log(">>> temp", temp, temp.compute, temp.getSpectrogram);
 
 async function computeFingerprint(
   fileName: string,

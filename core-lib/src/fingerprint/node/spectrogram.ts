@@ -9,6 +9,7 @@ import Ooura from "ooura";
 import { WavFileData } from "./loader";
 import Spectro from "spectro";
 import { Duplex } from "stream";
+import CoreLibNative from "../../../build/Release/core_lib_native.node";
 
 /**
  * Resamples the given audio WAV file to the given sample rate.
@@ -70,7 +71,10 @@ function computeFFTData(
 
   // return new Float64Array(buf);
 
-  const windowSamples = audio.channelData.slice(startIndex, startIndex + (sampleRate * windowDuration));
+  const windowSamples = audio.channelData.slice(
+    startIndex,
+    startIndex + sampleRate * windowDuration
+  );
   const oo = new Ooura(FFTSize, { type: "real", radix: 4 });
   oo.fftInPlace(windowSamples);
 
@@ -82,6 +86,14 @@ function bufferToStream(buf: Buffer): Duplex {
   tmp.push(buf);
   tmp.push(null);
   return tmp;
+}
+
+/**
+ * Converts the given duration (in seconds) to the number of samples it is at
+ * the given sample rate.
+ */
+function durationToSampleNum(duration: number, sampleRate: number) {
+  return duration * sampleRate;
 }
 
 /**
@@ -111,79 +123,112 @@ export async function computeSpectrogramData(
   };
   const { FFTSize, windowDuration, windowSmoothing } = optionsNormalized;
 
-  const spectro = new Spectro({
-    wSize: FFTSize,
-    workers: 1,
-    // wFunc: "Blackman",
-  });
+  // --- Native version ---
 
-  const audioStream = bufferToStream(Buffer.from(audio.channelData.buffer));
-  audioStream.pipe(spectro);
+  // TODO: update type definitions to just use Float32Array
+  const audioData = new Float32Array(audio.channelData);
 
-  console.log(">>> Starting processing", audio.channelData.length, audio.channelData.length / FFTSize);
+  const FFT_SIZE = 2048;
+  const WINDOW_DURATION = 0.1; // seconds
+  const windowSize = durationToSampleNum(WINDOW_DURATION, sampleRate);
+  const hopSize =
+    (windowSize / 2) % 2 === 0 ? windowSize / 2 + 1 : windowSize / 2;
 
-  const spectrogramData2DRedundantData = await new Promise<number[][]>((resolve) => {
-    let finishedAudioStream = false;
-    let firstTime = true;
-    audioStream.on("end", () => {
-      finishedAudioStream = true;
-    });
-  
-    spectro.on("end", (err, data: number[][]) => {
-      if (finishedAudioStream !== true) return;
+  // TODO: remove
+  console.log(">>> windowSize", windowSize, "FFT_SIZE", FFT_SIZE, "hopSize", hopSize, "audioData.length", audioData.length)
 
-      if (firstTime) {
-        firstTime = false;
-        return;
-      }
-  
-      // console.log(">>> data", data);
-      // console.log(">>> HERE, data.length", data.length, "data[0].length", data[0].length);
-      try {
-        spectro.stop();
-      } catch(err) {
-        // Ignore
-      }
-      
-      resolve(data);
-    });
-  });
+  const spectrogram = new CoreLibNative.Spectrogram(
+    audioData,
+    windowSize,
+    hopSize,
+    FFT_SIZE,
+  );
 
-  if (spectrogramData2DRedundantData.length === 0) {
-    return {
-      data: new Float64Array(),
-      frequencyBinCount: FFTSize / 2,
-      numberOfWindows: 0,
-    };
-  }
+  console.log(">>> JS: Here 1"); // TODO: remove
 
-  const spectrogramData2D: number[][] = [];
-  for (let i = 0; i < spectrogramData2DRedundantData.length; i++) {
-    const bucketData = spectrogramData2DRedundantData[i];
-    assert(bucketData.length === FFTSize);
+  spectrogram.compute();
 
-    spectrogramData2D.push(bucketData.slice(0, FFTSize / 2));
-  }
+  console.log(">>> JS: Here 2"); // TODO: remove
 
-  const spectrogramData1D = spectrogramData2D.flat(1);
-  const spectrogramData = new Float64Array(spectrogramData1D);
+  const spectrogramResult = spectrogram.getSpectrogram();
 
-  console.log(">>> spectrogramData", spectrogramData);
+  console.log(">>> JS: Here 3"); // TODO: remove
 
   return {
-    data: spectrogramData,
-    frequencyBinCount: FFTSize / 2,
-    numberOfWindows: spectrogramData2D.length,
+    // TODO: update type definitions to just use Float32Array
+    data: new Float64Array(spectrogramResult.data),
+    frequencyBinCount: spectrogramResult.numBuckets,
+    numberOfWindows: spectrogramResult.numWindows,
   };
 
+  // --- Spectro version (working) ---
+
+  // const spectro = new Spectro({
+  //   wSize: FFTSize,
+  //   workers: 1,
+  //   // wFunc: "Blackman",
+  // });
+
+  // const audioStream = bufferToStream(Buffer.from(audio.channelData.buffer));
+  // audioStream.pipe(spectro);
+
+  // console.log(">>> Starting processing", audio.channelData.length, audio.channelData.length / FFTSize);
+
+  // const spectrogramData2DRedundantData = await new Promise<number[][]>((resolve) => {
+  //   let finishedAudioStream = false;
+  //   let firstTime = true;
+  //   audioStream.on("end", () => {
+  //     finishedAudioStream = true;
+  //   });
+
+  //   spectro.on("end", (err, data: number[][]) => {
+  //     if (finishedAudioStream !== true) return;
+
+  //     if (firstTime) {
+  //       firstTime = false;
+  //       return;
+  //     }
+
+  //     // console.log(">>> data", data);
+  //     // console.log(">>> HERE, data.length", data.length, "data[0].length", data[0].length);
+  //     try {
+  //       spectro.stop();
+  //     } catch(err) {
+  //       // Ignore
+  //     }
+
+  //     resolve(data);
+  //   });
+  // });
+
+  // if (spectrogramData2DRedundantData.length === 0) {
+  //   return {
+  //     data: new Float64Array(),
+  //     frequencyBinCount: FFTSize / 2,
+  //     numberOfWindows: 0,
+  //   };
+  // }
+
+  // const spectrogramData2D: number[][] = [];
+  // for (let i = 0; i < spectrogramData2DRedundantData.length; i++) {
+  //   const bucketData = spectrogramData2DRedundantData[i];
+  //   assert(bucketData.length === FFTSize);
+
+  //   spectrogramData2D.push(bucketData.slice(0, FFTSize / 2));
+  // }
+
+  // const spectrogramData1D = spectrogramData2D.flat(1);
+  // const spectrogramData = new Float64Array(spectrogramData1D);
+
+  // console.log(">>> spectrogramData", spectrogramData);
+
   // return {
-  //   data: audio.channelData,
-  //   frequencyBinCount: 0,
-  //   numberOfWindows: 0,
+  //   data: spectrogramData,
+  //   frequencyBinCount: FFTSize / 2,
+  //   numberOfWindows: spectrogramData2D.length,
   // };
 
-
-
+  // --- Old stuff ---
 
   // const duration = AudioUtilities.getWavFileDuration(
   //   audio.channelData.length,

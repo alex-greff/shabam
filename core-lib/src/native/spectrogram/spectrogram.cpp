@@ -1,141 +1,162 @@
 #include "spectrogram.hpp"
+#include <iostream>
+#include <liquid/liquid.h>
 #include <math.h>
+#include <stdexcept>
+#include <string.h>
 
-using namespace Napi;
+Spectrogram::Spectrogram(float *samples, size_t samples_length,
+                         size_t window_size, size_t hop_size, size_t FFT_size,
+                         window_function window_func) {
+  if (samples == nullptr)
+    throw std::invalid_argument("samples must not be nullptr.");
 
-Spectrogram::Spectrogram(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-  Napi::Env env = info.Env();
+  if (hop_size % 2 != 1)
+    throw std::invalid_argument("hop_size must be an odd number.");
 
-  if (info.Length() != 4) {
-    Napi::TypeError::New(env, "Wrong number of arguments")
-        .ThrowAsJavaScriptException();
-    return;
+  if (FFT_size < window_size)
+    throw std::invalid_argument(
+        "FFT_size must be greater than or equal to window_size.");
+
+  if (window_func == nullptr)
+    throw std::invalid_argument("window_func must not be nullptr.");
+
+  // Reference:
+  // https://www.educative.io/answers/how-to-check-if-a-number-is-a-power-of-2-in-cpp
+  if (ceil(log2f32(FFT_size)) != floor(log2f32(FFT_size))) {
+    throw std::invalid_argument("FFT_size must be a power of 2.");
   }
 
-  if (!info[0].IsTypedArray()) {
-    Napi::TypeError::New(env,
-                         "audio_sample argument needs to be a typed array.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
+  this->samples = samples;
+  this->samples_length = samples_length;
+  this->window_size = window_size;
+  this->hop_size = hop_size;
+  this->FFT_size = FFT_size;
 
-  if (!info[1].IsNumber()) {
-    Napi::TypeError::New(env, "sample_rate argument needs to be an integer.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
-
-  if (!info[2].IsNumber()) {
-    Napi::TypeError::New(env, "FFT_size argument needs to be an integer.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
-
-  if (!info[3].IsNumber()) {
-    Napi::TypeError::New(env, "window_duration argument needs to be a float.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
-
-  auto audio_samples_typed_arr = info[0].As<Napi::TypedArrayOf<double>>();
-  size_t num_audio_samples = audio_samples_typed_arr.ElementLength();
-  this->audio_samples = new float[num_audio_samples];
-  memcpy(this->audio_samples, audio_samples_typed_arr.Data(),
-         num_audio_samples * sizeof(float));
-  this->num_audio_samples = num_audio_samples;
-
-  this->audio_samples_complex = new liquid_float_complex[num_audio_samples];
-  for (size_t i = 0; i < num_audio_samples; i++) {
-    this->audio_samples_complex[i].real = this->audio_samples[i];
-    this->audio_samples_complex[i].imag = 0;
-  }
-
-  this->spectrogram_samples = nullptr;
-  this->sample_rate = info[1].As<Napi::Number>();
-  this->FFT_size = info[2].As<Napi::Number>();
-  this->window_duration = info[3].As<Napi::Number>();
+  this->spectrogram_result = nullptr;
+  this->spectrogram_result_length = 0;
+  this->spectrogram_result_num_buckets = 0;
+  this->spectrogram_result_num_windows = 0;
 }
 
 Spectrogram::~Spectrogram() {
-  delete this->audio_samples;
-  delete this->audio_samples_complex;
-  if (this->spectrogram_samples != nullptr)
-    delete this->spectrogram_samples;
+  if (this->spectrogram_result != nullptr)
+    delete this->spectrogram_result;
 }
 
-// TODO: remove?
-// void Spectrogram::ComputeFFTData(double *freq_data, int curr_window) {
-//   // TODO: implement
-// }
+void Spectrogram::Compute() {
+  size_t hop_size = this->hop_size;
+  size_t window_size = this->window_size;
+  size_t padded_window_size = this->FFT_size;
 
-void Spectrogram::ComputeSpectrogram(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
+  window_function window_func = this->window_func;
 
-  if (info.Length() != 0) {
-    Napi::TypeError::New(env, "No arguments expected.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
+  // We fit as many full windows as possible. Remaining samples at the end
+  // that don't fit into a window will just be discarded.
+  size_t num_windows = floor(
+      (double)(this->samples_length - window_size) / (double)hop_size);
+  size_t num_buckets = floor(this->FFT_size / 2);
 
-  double duration = (double)this->num_audio_samples / (double)this->sample_rate;
+  // TODO: remove
+  std::cout << ">>> C++: num_windows " << num_windows << " num_buckets "
+            << num_buckets << " samples_length " << this->samples_length
+            << " window_size " << window_size << " hop_size " << hop_size
+            << " FFT_size " << this->FFT_size << "\n";
+  std::cout << "window_size " << window_size << " padded_window_size " << padded_window_size << "\n";
 
-  int num_windows = floor(duration / this->window_duration);
-  this->num_windows = num_windows;
-  int freq_bin_size = floor(this->FFT_size / 2);
-  this->freq_bin_size = freq_bin_size;
+  // Setup spectrogram result
+  float *spectrogram_result = new float[num_buckets * num_windows];
 
-  liquid_float_complex *spectrogram_samples_complex =
-      new liquid_float_complex[num_windows * freq_bin_size];
+  std::cout << ">>> C++: here 1\n"; // TODO: remove
 
-  for (int curr_window = 0; curr_window < num_windows; curr_window++) {
-    // double *freq_data = new double[freq_bin_size];
+  this->spectrogram_result = spectrogram_result;
+  this->spectrogram_result_length = num_buckets * num_windows;
+  this->spectrogram_result_num_buckets = num_buckets;
+  this->spectrogram_result_num_windows = num_windows;
 
-    // this->ComputeFFTData(freq_data, curr_window);
+  for (size_t window = 0; window < num_windows; window++) {
+    size_t start_idx = window * hop_size;
+    // TODO: remove
+    // size_t high_idx = low_idx + window_length - 1; // inclusive
 
-    // memcpy(&spectrogram_samples[curr_window * freq_bin_size], freq_data,
-    //        freq_bin_size * sizeof(double));
+    // Initialize window samples
+    liquid_float_complex *window_samples =
+        new liquid_float_complex[padded_window_size];
+    // liquid_float_complex *window_samples = (liquid_float_complex *)malloc(
+    //     padded_window_length * sizeof(liquid_float_complex));
 
-    // delete freq_data;
-
-    // double *freq_data = new double[freq_bin_size];
-
-    // liquid_float_complex *x = new liquid_float_complex[freq_bin_size];
-    // liquid_float_complex *y = new liquid_float_complex[freq_bin_size];
-
-    size_t audio_samples_start_idx =
-        floor(this->sample_rate * this->window_duration * curr_window);
+    // Initialize FFT result
+    liquid_float_complex *fft_result =
+        new liquid_float_complex[padded_window_size];
+    // liquid_float_complex *fft_result = (liquid_float_complex *)malloc(
+    //     padded_window_length * sizeof(liquid_float_complex));
 
     int flags = 0;
-    // fftplan plan =
-    //     fft_create_plan(freq_bin_size, freq_data,
-    //                     &spectrogram_samples[curr_window * freq_bin_size],
-    //                     LIQUID_FFT_FORWARD, flags);
-    // TODO: is this->FFT_size * this->sample_rate the right size?
-    fftplan plan = fft_create_plan(
-        this->FFT_size, &audio_samples_complex[audio_samples_start_idx],
-        &spectrogram_samples_complex[curr_window * freq_bin_size],
-        LIQUID_FFT_FORWARD, flags);
+    fftplan plan = fft_create_plan(padded_window_size, window_samples,
+                                   fft_result, LIQUID_FFT_FORWARD, flags);
 
+    
+    // Initialize window_samples
+    memset(window_samples, 0,
+           padded_window_size * sizeof(liquid_float_complex));
+    std::cout << ">>> C++: here 1.1\n"; // TODO: remove
+    // Copy in the window sample to the real component
+    for (size_t window_idx = 0, sample_idx = start_idx;
+         window_idx < window_size; window_idx++, sample_idx++) {
+
+      // float window_val = window_func(window_idx, window_length);
+      // float window_val = 1.0;
+      float window_val = blackmanharris(window_idx, window_size);
+      // TODO: remove
+      // std::cout << ">>> C++: here 1.2 window_idx " << window_idx
+      //           << " sample_idx " << sample_idx << "\n";
+      window_samples[window_idx].real = samples[sample_idx] * window_val;
+    }
+
+    std::cout << ">>> C++: here 2\n"; // TODO: remove
+
+    // Compute FFT
     fft_execute(plan);
+
+    std::cout << ">>> C++: here 3\n"; // TODO: remove
+
+    // The start of the bucket that this current window corresponds to
+    float *spectrogram_result_bucket =
+        &spectrogram_result[window * num_buckets];
+
+    // Copy out FFT result
+    // Note: fft_result has a length of FFT_size but half of it is just mirrored
+    // so we can just take the first half as our FFT window
+    for (size_t bucket_idx = 0; bucket_idx < num_buckets; bucket_idx++) {
+      spectrogram_result_bucket[bucket_idx] = fft_result[bucket_idx].real;
+    }
+
+    std::cout << ">>> C++: here 4\n"; // TODO: remove
+
+    // Cleanup
     fft_destroy_plan(plan);
-  }
+    // free(window_samples);
+    // free(fft_result);
+    delete window_samples;
+    delete fft_result;
 
-  // Allocate space for the spectrogram samples and copy over
-  // audio_samples_complex to spectrogram_samples
-  if (this->spectrogram_samples != nullptr)
-    delete this->spectrogram_samples;
-  float *spectrogram_samples = new float[num_windows * freq_bin_size];
-  this->spectrogram_samples = spectrogram_samples;
-  for (int i = 0; i < num_windows * freq_bin_size; i++) {
-    spectrogram_samples[i] = spectrogram_samples_complex[i].real;
-  }
-}
+    // TODO: remove
+    // for (size_t i = 0; i < window_length; i++) {
+    //   window_samples[i].real = window_samples[i];
+    // }
 
-Napi::Function Spectrogram::GetClass(Napi::Env env) {
-  return DefineClass(
-      env, "Spectrogram",
-      {
-          Spectrogram::InstanceMethod("computeSpectrogram",
-                                      &Spectrogram::ComputeSpectrogram),
-      });
+    // float *window_samples = new float[padded_window_length];
+    // mempcpy(window_samples, &this->samples[start_idx], window_length);
+    // // Zero pad the remaining samples in the window
+    // if (window_length < padded_window_length)
+    //   memset(&window_samples[window_length], 0,
+    //          padded_window_length - window_length);
+
+    // liquid_float_complex *x = new liquid_float_complex[padded_window_length];
+    // liquid_float_complex *y = new liquid_float_complex[padded_window_length];
+
+    // for (int i = 0; i < padded_window_length; i++) {
+    //   x[i].real = 0;
+    // }
+  }
 }
