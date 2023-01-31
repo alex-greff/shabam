@@ -67,8 +67,6 @@ void Spectrogram::Compute() {
   // Setup spectrogram result
   float *spectrogram_result = new float[num_buckets * num_windows];
 
-  std::cout << ">>> C++: here 1\n"; // TODO: remove
-
   this->spectrogram_result = spectrogram_result;
   this->spectrogram_result_length = num_buckets * num_windows;
   this->spectrogram_result_num_buckets = num_buckets;
@@ -76,20 +74,14 @@ void Spectrogram::Compute() {
 
   for (size_t window = 0; window < num_windows; window++) {
     size_t start_idx = window * hop_size;
-    // TODO: remove
-    // size_t high_idx = low_idx + window_length - 1; // inclusive
 
     // Initialize window samples
     liquid_float_complex *window_samples =
         new liquid_float_complex[padded_window_size];
-    // liquid_float_complex *window_samples = (liquid_float_complex *)malloc(
-    //     padded_window_length * sizeof(liquid_float_complex));
 
     // Initialize FFT result
     liquid_float_complex *fft_result =
         new liquid_float_complex[padded_window_size];
-    // liquid_float_complex *fft_result = (liquid_float_complex *)malloc(
-    //     padded_window_length * sizeof(liquid_float_complex));
 
     int flags = 0;
     fftplan plan = fft_create_plan(padded_window_size, window_samples,
@@ -99,26 +91,15 @@ void Spectrogram::Compute() {
     // Initialize window_samples
     memset(window_samples, 0,
            padded_window_size * sizeof(liquid_float_complex));
-    std::cout << ">>> C++: here 1.1\n"; // TODO: remove
     // Copy in the window sample to the real component
     for (size_t window_idx = 0, sample_idx = start_idx;
          window_idx < window_size; window_idx++, sample_idx++) {
-
-      // float window_val = window_func(window_idx, window_length);
-      // float window_val = 1.0;
       float window_val = blackmanharris(window_idx, window_size);
-      // TODO: remove
-      // std::cout << ">>> C++: here 1.2 window_idx " << window_idx
-      //           << " sample_idx " << sample_idx << "\n";
       window_samples[window_idx].real = samples[sample_idx] * window_val;
     }
 
-    std::cout << ">>> C++: here 2\n"; // TODO: remove
-
     // Compute FFT
     fft_execute(plan);
-
-    std::cout << ">>> C++: here 3\n"; // TODO: remove
 
     // The start of the bucket that this current window corresponds to
     float *spectrogram_result_bucket =
@@ -131,32 +112,9 @@ void Spectrogram::Compute() {
       spectrogram_result_bucket[bucket_idx] = fft_result[bucket_idx].real;
     }
 
-    std::cout << ">>> C++: here 4\n"; // TODO: remove
-
     // Cleanup
     fft_destroy_plan(plan);
-    // free(window_samples);
-    // free(fft_result);
     delete window_samples;
     delete fft_result;
-
-    // TODO: remove
-    // for (size_t i = 0; i < window_length; i++) {
-    //   window_samples[i].real = window_samples[i];
-    // }
-
-    // float *window_samples = new float[padded_window_length];
-    // mempcpy(window_samples, &this->samples[start_idx], window_length);
-    // // Zero pad the remaining samples in the window
-    // if (window_length < padded_window_length)
-    //   memset(&window_samples[window_length], 0,
-    //          padded_window_length - window_length);
-
-    // liquid_float_complex *x = new liquid_float_complex[padded_window_length];
-    // liquid_float_complex *y = new liquid_float_complex[padded_window_length];
-
-    // for (int i = 0; i < padded_window_length; i++) {
-    //   x[i].real = 0;
-    // }
   }
 }
