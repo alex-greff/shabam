@@ -145,15 +145,8 @@ export async function computeSpectrogramData(
     FFT_SIZE,
   );
 
-  console.log(">>> JS: Here 1"); // TODO: remove
-
   spectrogram.compute();
-
-  console.log(">>> JS: Here 2"); // TODO: remove
-
   const spectrogramResult = spectrogram.getSpectrogram();
-
-  console.log(">>> JS: Here 3"); // TODO: remove
 
   return {
     // TODO: update type definitions to just use Float32Array
@@ -162,7 +155,7 @@ export async function computeSpectrogramData(
     numberOfWindows: spectrogramResult.numWindows,
   };
 
-  // --- Spectro version (working) ---
+  // --- Spectro version (working-kinda) ---
 
   // const spectro = new Spectro({
   //   wSize: FFTSize,

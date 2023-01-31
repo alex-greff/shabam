@@ -17,12 +17,11 @@ export async function loadSpectrogramFromCache(
     interface BsonSpectrogramData {
       numberOfWindows: number;
       frequencyBinCount: number;
-      data: bson.Binary;
+      data: Record<number, number>; 
     }
 
     const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
-    const dataBuf = cache.data.buffer;
-    const data = new Float64Array(dataBuf);
+    const data = new Float64Array(Object.values(cache.data));
 
     return {
       numberOfWindows: cache.numberOfWindows,
@@ -41,7 +40,19 @@ export async function saveSpectrogramToCache(
 ) {
   const cacheFileName = `${fileName}.cache.bson`;
 
-  const spectrogramSerialized = bson.serialize(spectrogram);
+  interface BsonSpectrogramDataIn {
+    numberOfWindows: number;
+    frequencyBinCount: number;
+    data: Float64Array;
+  }
+
+  const spectrogramBsonObj: BsonSpectrogramDataIn = {
+    numberOfWindows: spectrogram.numberOfWindows,
+    frequencyBinCount: spectrogram.frequencyBinCount,
+    data: spectrogram.data,
+  }
+
+  const spectrogramSerialized = bson.serialize(spectrogramBsonObj);
 
   await fs.promises.writeFile(
     path.join(dataDir, cacheFileName),
