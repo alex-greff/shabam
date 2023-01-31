@@ -1,3 +1,4 @@
+// Typescript declarations for the native extension for the core library
 declare module "*core_lib_native.node" {
   type WindowFunction = "hamming" | "hann" | "blackman-harris" | "blackman-harris-7" | "flat-top";
 
