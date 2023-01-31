@@ -20,9 +20,16 @@ import { renderSpectrogram } from "./utilities/spectrogram-renderer";
 import { renderFingerprint } from "./utilities/fingerprint-renderer";
 import { renderTimeDomain } from "./utilities/time-domain-renderer";
 
+// TODO: remove
 console.log("exports", CoreLibNative);
 console.log(CoreLibNative.greetHello());
-const temp = new CoreLibNative.Spectrogram(new Float32Array(), 10, 9, 1024);
+const temp = new CoreLibNative.Spectrogram(
+  new Float32Array(),
+  "blackman-harris",
+  10,
+  9,
+  1024
+);
 console.log(">>> temp", temp, temp.compute, temp.getSpectrogram);
 
 async function computeFingerprint(
@@ -40,7 +47,7 @@ async function computeFingerprint(
   timerEnd = performance.now();
   if (debugPrint)
     process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  
+
   // --- Render Time Domain ---
   await renderTimeDomain(wav, `${fileName}.time-domain.png`, DATA_DIR);
 
@@ -168,7 +175,9 @@ async function computeFingerprint(
   );
   process.stdout.write(`Computing Sine Text records table... `);
   timerStart = performance.now();
-  const sineTestSampleRecordsTable = new RecordsTable(sineTestSampleFingerprint);
+  const sineTestSampleRecordsTable = new RecordsTable(
+    sineTestSampleFingerprint
+  );
   timerEnd = performance.now();
   process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
@@ -183,7 +192,6 @@ async function computeFingerprint(
   // const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
   // timerEnd = performance.now();
   // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-
 
   console.log("Finished!"); // TODO: remove
 })();

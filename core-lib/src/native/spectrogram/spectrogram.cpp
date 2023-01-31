@@ -4,10 +4,20 @@
 #include <math.h>
 #include <stdexcept>
 #include <string.h>
+#include <unordered_map>
+
+// Supported window function mappings
+std::unordered_map<std::string, window_function> window_functions = {
+    {"hamming", liquid_hamming},
+    {"hann", liquid_hann},
+    {"blackman-harris", liquid_blackmanharris},
+    {"blackman-harris-7", liquid_blackmanharris7},
+    {"flat-top", liquid_flattop},
+};
 
 Spectrogram::Spectrogram(float *samples, size_t samples_length,
                          size_t window_size, size_t hop_size, size_t FFT_size,
-                         window_function window_func) {
+                         std::string window_func_name) {
   if (samples == nullptr)
     throw std::invalid_argument("samples must not be nullptr.");
 
@@ -18,8 +28,10 @@ Spectrogram::Spectrogram(float *samples, size_t samples_length,
     throw std::invalid_argument(
         "FFT_size must be greater than or equal to window_size.");
 
-  if (window_func == nullptr)
-    throw std::invalid_argument("window_func must not be nullptr.");
+  if (window_functions.find(window_func_name) == window_functions.end()) {
+    throw std::invalid_argument(
+        "window_func_name must be a valid window function name.");
+  }
 
   // Reference:
   // https://www.educative.io/answers/how-to-check-if-a-number-is-a-power-of-2-in-cpp
@@ -30,6 +42,7 @@ Spectrogram::Spectrogram(float *samples, size_t samples_length,
   this->samples = samples;
   this->samples_length = samples_length;
   this->window_size = window_size;
+  this->window_func = window_functions[window_func_name];
   this->hop_size = hop_size;
   this->FFT_size = FFT_size;
 
@@ -53,8 +66,8 @@ void Spectrogram::Compute() {
 
   // We fit as many full windows as possible. Remaining samples at the end
   // that don't fit into a window will just be discarded.
-  size_t num_windows = floor(
-      (double)(this->samples_length - window_size) / (double)hop_size);
+  size_t num_windows =
+      floor((double)(this->samples_length - window_size) / (double)hop_size);
   size_t num_buckets = floor(this->FFT_size / 2);
 
   // TODO: remove
@@ -62,7 +75,8 @@ void Spectrogram::Compute() {
             << num_buckets << " samples_length " << this->samples_length
             << " window_size " << window_size << " hop_size " << hop_size
             << " FFT_size " << this->FFT_size << "\n";
-  std::cout << "window_size " << window_size << " padded_window_size " << padded_window_size << "\n";
+  std::cout << "window_size " << window_size << " padded_window_size "
+            << padded_window_size << "\n";
 
   // Setup spectrogram result
   float *spectrogram_result = new float[num_buckets * num_windows];
@@ -87,14 +101,13 @@ void Spectrogram::Compute() {
     fftplan plan = fft_create_plan(padded_window_size, window_samples,
                                    fft_result, LIQUID_FFT_FORWARD, flags);
 
-    
     // Initialize window_samples
     memset(window_samples, 0,
            padded_window_size * sizeof(liquid_float_complex));
     // Copy in the window sample to the real component
     for (size_t window_idx = 0, sample_idx = start_idx;
          window_idx < window_size; window_idx++, sample_idx++) {
-      float window_val = blackmanharris(window_idx, window_size);
+      float window_val = window_func(window_idx, window_size);
       window_samples[window_idx].real = samples[sample_idx] * window_val;
     }
 

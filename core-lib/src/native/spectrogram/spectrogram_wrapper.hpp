@@ -7,40 +7,25 @@
 
 class SpectrogramWrapper : public Napi::ObjectWrap<SpectrogramWrapper> {
 private:
-  // // Napi::Float64Array audio_samples_typed_arr; // TODO: remove
-  // float *audio_samples;
-  // liquid_float_complex *audio_samples_complex;
-  // size_t num_audio_samples;
-
-  // // --- Config Data ---
-
-  // int sample_rate;
-  // int FFT_size;
-  // float window_duration;
-
-  // // --- Spectrogram Data ---
-
-  // float *spectrogram_samples;
-  // int num_windows;
-  // int freq_bin_size;
-
-  // --- Internal Functions ---
-
-  // TODO: remove?
-  // void ComputeFFTData(double *freq_data, int curr_window);
-
+  /**
+   * Sample data buffer.
+  */
   float *samples;
 
+  /**
+   * Spectrogram instance tied to the wrapper instance.
+  */
   Spectrogram *spectrogram;
 
 public:
   /**
    * Constructs a spectrogram object.
    * Arguments:
-   * - audio_samples: Float64Array (or ArrayBuffer)
-   * - sample_rate: integer
-   * - FFT_size: integer
-   * - window_duration: float
+   * - samples: Float32Array
+   * - windowFuncName: string
+   * - windowSize: number (uint)
+   * - hopSize: number (uint)
+   * - FFTSize: number (uint, power of 2)
    */
   SpectrogramWrapper(const Napi::CallbackInfo &info);
   ~SpectrogramWrapper();

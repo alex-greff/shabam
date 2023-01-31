@@ -3,6 +3,7 @@
 
 #include <liquid/liquid.h>
 #include <stdlib.h>
+#include <string>
 
 typedef float (*window_function)(uint32_t i, uint32_t wlen);
 
@@ -58,12 +59,12 @@ private:
    * The windowing function to apply.
    * Can use the windowing functions provided by liquid:
    * https://liquidsdr.org/doc/windowing/
-  */
+   */
   window_function window_func;
 
 public:
   Spectrogram(float *samples, size_t samples_length, size_t window_size,
-              size_t hop_size, size_t FFT_size, window_function window_func);
+              size_t hop_size, size_t FFT_size, std::string window_func_name);
   ~Spectrogram();
 
   /**

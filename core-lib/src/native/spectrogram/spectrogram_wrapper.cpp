@@ -8,38 +8,44 @@ SpectrogramWrapper::SpectrogramWrapper(const Napi::CallbackInfo &info)
     : ObjectWrap(info) {
   // Expected arguments:
   // - samples: Float32Array
+  // - windowFuncName: string
   // - windowSize: number (uint)
   // - hopSize: number (uint)
   // - FFTSize: number (uint, power of 2)
 
   Napi::Env env = info.Env();
 
-  if (info.Length() != 4) {
+  if (info.Length() != 5) {
     Napi::TypeError::New(env, "Wrong number of arguments")
         .ThrowAsJavaScriptException();
     return;
   }
 
   if (!info[0].IsTypedArray()) {
-    Napi::TypeError::New(env,
-                         "audio_sample argument needs to be a typed array.")
+    Napi::TypeError::New(env, "samples argument needs to be a typed array.")
         .ThrowAsJavaScriptException();
     return;
   }
 
-  if (!info[1].IsNumber()) {
-    Napi::TypeError::New(env, "windowSize argument needs to be an integer.")
+  if (!info[1].IsString()) {
+    Napi::TypeError::New(env, "windowFuncName argument needs to be a string.")
         .ThrowAsJavaScriptException();
     return;
   }
 
   if (!info[2].IsNumber()) {
-    Napi::TypeError::New(env, "hopSize argument needs to be an integer.")
+    Napi::TypeError::New(env, "windowSize argument needs to be an integer.")
         .ThrowAsJavaScriptException();
     return;
   }
 
   if (!info[3].IsNumber()) {
+    Napi::TypeError::New(env, "hopSize argument needs to be an integer.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  if (!info[4].IsNumber()) {
     Napi::TypeError::New(env, "FFTSize argument needs to be an integer.")
         .ThrowAsJavaScriptException();
     return;
@@ -51,12 +57,13 @@ SpectrogramWrapper::SpectrogramWrapper(const Napi::CallbackInfo &info)
   memcpy(samples, samples_typed_arr.Data(), samples_length * sizeof(float));
   this->samples = samples;
 
-  int window_size = info[1].As<Napi::Number>().Int32Value();
-  int hop_size = info[2].As<Napi::Number>().Int32Value();
-  int FFT_size = info[3].As<Napi::Number>().Int32Value();
+  Napi::String window_func_name = info[1].As<Napi::String>();
+  int window_size = info[2].As<Napi::Number>().Int32Value();
+  int hop_size = info[3].As<Napi::Number>().Int32Value();
+  int FFT_size = info[4].As<Napi::Number>().Int32Value();
 
   this->spectrogram = new Spectrogram(samples, samples_length, window_size,
-                                      hop_size, FFT_size, liquid_blackmanharris);
+                                      hop_size, FFT_size, window_func_name);
 }
 
 SpectrogramWrapper::~SpectrogramWrapper() {
@@ -116,10 +123,5 @@ Napi::Function SpectrogramWrapper::GetClass(Napi::Env env) {
                        "compute", &SpectrogramWrapper::Compute),
                    SpectrogramWrapper::InstanceMethod(
                        "getSpectrogram", &SpectrogramWrapper::GetSpectrogram)});
-
-  // TODO: is this persistence stuff needed here
-  // auto constructor = Napi::Persistent(func);
-  // constructor.SuppressDestruct();
-
   return func;
 }

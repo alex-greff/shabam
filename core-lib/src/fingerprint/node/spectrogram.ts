@@ -139,6 +139,7 @@ export async function computeSpectrogramData(
 
   const spectrogram = new CoreLibNative.Spectrogram(
     audioData,
+    "blackman-harris",
     windowSize,
     hopSize,
     FFT_SIZE,
