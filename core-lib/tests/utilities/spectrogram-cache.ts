@@ -21,7 +21,7 @@ export async function loadSpectrogramFromCache(
     }
 
     const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
-    const data = new Float64Array(Object.values(cache.data));
+    const data = new Float32Array(Object.values(cache.data));
 
     return {
       numberOfWindows: cache.numberOfWindows,
@@ -43,7 +43,7 @@ export async function saveSpectrogramToCache(
   interface BsonSpectrogramDataIn {
     numberOfWindows: number;
     frequencyBinCount: number;
-    data: Float64Array;
+    data: Float32Array;
   }
 
   const spectrogramBsonObj: BsonSpectrogramDataIn = {

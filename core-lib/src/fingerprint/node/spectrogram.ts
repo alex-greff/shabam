@@ -42,8 +42,7 @@ export async function computeSpectrogramData(
 
   // --- Native version ---
 
-  // TODO: update type definitions to just use Float32Array
-  const audioData = new Float32Array(audio.channelData);
+  const audioData = audio.channelData;
 
   const FFT_SIZE = 2048;
   const WINDOW_DURATION = 0.1; // seconds
@@ -66,8 +65,7 @@ export async function computeSpectrogramData(
   const spectrogramResult = spectrogram.getSpectrogram();
 
   return {
-    // TODO: update type definitions to just use Float32Array
-    data: new Float64Array(spectrogramResult.data),
+    data: spectrogramResult.data,
     frequencyBinCount: spectrogramResult.numBuckets,
     numberOfWindows: spectrogramResult.numWindows,
   };

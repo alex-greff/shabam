@@ -5,7 +5,7 @@ import { RenderingAudioContext as AudioContext } from "@descript/web-audio-js";
 
 export interface WavFileData {
   readonly sampleRate: number;
-  readonly channelData: Float64Array;
+  readonly channelData: Float32Array;
 }
 
 export async function loadWavFileFromPath(
@@ -18,7 +18,8 @@ export async function loadWavFileFromPath(
   const fileData = await new Promise<WavFileData>((resolve) => {
     context.decodeAudioData(audioFileBuf, (audioBuffer: AudioBuffer) => {
       resolve({
-        channelData: new Float64Array(audioBuffer.getChannelData(0)),
+        // NOTE: for now we just use the first channel
+        channelData: audioBuffer.getChannelData(0),
         sampleRate: audioBuffer.sampleRate,
       });
     });
@@ -31,7 +32,7 @@ export async function loadWavFileFromPath(
     fileData.sampleRate,
     config.TARGET_SAMPLE_RATE
   );
-  const resampledChannelData = new Float64Array(resampledAudio);
+  const resampledChannelData = new Float32Array(resampledAudio);
   const resampledFileData: WavFileData = {
     sampleRate: config.TARGET_SAMPLE_RATE,
     channelData: resampledChannelData

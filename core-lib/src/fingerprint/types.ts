@@ -4,7 +4,7 @@ export interface SpectrogramData {
   /** The number of frequency bins in the spectrogram (y-axis) */
   frequencyBinCount: number;
   /** The spectrogram data */
-  data: Float64Array;
+  data: Float32Array;
 }
 
 export interface ComputeSpectrogramDataOptions {
