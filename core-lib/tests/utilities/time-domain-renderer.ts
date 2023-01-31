@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { JSDOM } from "jsdom";
 import * as fs from "fs";
 import path from "path";
-import { WavFileData } from "../../src/fingerprint/node/loader";
+import { WavFileData } from "../../src/loader/loader";
 import { assert } from "tsafe";
 
 const MAX_WIDTH = 30000;

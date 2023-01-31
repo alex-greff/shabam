@@ -1,1 +1,1 @@
-export * from "./spectrogram";
+export * from "../../spectrogram/spectrogram-browser-old";

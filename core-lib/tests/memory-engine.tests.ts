@@ -1,14 +1,11 @@
 import { generateFingerprint } from "../src/fingerprint/generators/iterative.fingerprint-generator";
-import { computeSpectrogramData } from "../src/fingerprint/node";
-import { loadWavFileFromPath } from "../src/fingerprint/node/loader";
+import { computeSpectrogramData } from "../src/spectrogram/spectrogram";
+import { loadWavFileFromPath } from "../src/loader/loader";
 import { MemoryRecordsEngine } from "../src/search/engine-implementations/memory.engine";
 import { FingerprintClass } from "../src/search/fingerprint-class";
 import { RecordsTable, TrackRecordsTable } from "../src/search/records-table";
 import path from "path";
-import * as fs from "fs";
-import * as bson from "bson";
 import { performance } from "perf_hooks";
-import { SpectrogramData } from "../src/fingerprint/types";
 import { RecordsEngine } from "../src/search/engine";
 import CoreLibNative from "../build/Release/core_lib_native.node";
 import {
@@ -23,14 +20,6 @@ import { renderTimeDomain } from "./utilities/time-domain-renderer";
 // TODO: remove
 console.log("exports", CoreLibNative);
 console.log(CoreLibNative.greetHello());
-const temp = new CoreLibNative.Spectrogram(
-  new Float32Array(),
-  "blackman-harris",
-  10,
-  9,
-  1024
-);
-console.log(">>> temp", temp, temp.compute, temp.getSpectrogram);
 
 async function computeFingerprint(
   fileName: string,

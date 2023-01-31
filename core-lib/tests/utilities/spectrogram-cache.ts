@@ -1,11 +1,11 @@
-import { SpectrogramData } from "../../src/fingerprint/types";
 import * as fs from "fs";
 import * as bson from "bson";
 import path from "path";
+import { SpectrogramData } from "../../src/spectrogram/types";
 
 export async function loadSpectrogramFromCache(
   fileName: string,
-  dataDir: string,
+  dataDir: string
 ): Promise<SpectrogramData | null> {
   const cacheFileName = `${fileName}.cache.bson`;
 
@@ -17,7 +17,7 @@ export async function loadSpectrogramFromCache(
     interface BsonSpectrogramData {
       numberOfWindows: number;
       frequencyBinCount: number;
-      data: Record<number, number>; 
+      data: Record<number, number>;
     }
 
     const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
@@ -36,7 +36,7 @@ export async function loadSpectrogramFromCache(
 export async function saveSpectrogramToCache(
   spectrogram: SpectrogramData,
   fileName: string,
-  dataDir: string,
+  dataDir: string
 ) {
   const cacheFileName = `${fileName}.cache.bson`;
 
@@ -50,7 +50,7 @@ export async function saveSpectrogramToCache(
     numberOfWindows: spectrogram.numberOfWindows,
     frequencyBinCount: spectrogram.frequencyBinCount,
     data: spectrogram.data,
-  }
+  };
 
   const spectrogramSerialized = bson.serialize(spectrogramBsonObj);
 

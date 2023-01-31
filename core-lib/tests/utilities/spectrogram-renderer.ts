@@ -7,8 +7,8 @@ import {
   CanvasRenderFunction,
   drawPartitionDividers,
 } from "./canvas-chart-base";
-import { SpectrogramData } from "../../src/fingerprint/types";
 import { computePartitionRanges } from "../../src/utilities/audio";
+import { SpectrogramData } from "../../src/spectrogram/types";
 
 // Reference: https://stackoverflow.com/a/57397987
 
@@ -158,6 +158,8 @@ const renderCanvas: CanvasRenderFunction<
   // Get extrema
   const maxVal = d3.max(spectrogramData.data)!;
   const minVal = d3.min(spectrogramData.data)!;
+
+  // TODO: remove
   console.log(">>> minVal", minVal, "maxVal", maxVal);
 
   // Compute the tick size of the xAxis
