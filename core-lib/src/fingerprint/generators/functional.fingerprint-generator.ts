@@ -11,7 +11,7 @@ export const generateFingerprint: FingerprintGeneratorFunction = async (
   options = {}
 ) => {
   const defaultOptions: FingerprintGeneratorOptions = {
-    FFTSize: config.FFT_SIZE,
+    FFTSize: config.SPECTROGRAM_FFT_SIZE,
     partitionAmount: config.FINGERPRINT_PARTITION_AMOUNT,
     partitionCurve: config.FINGERPRINT_PARTITION_CURVE,
   };

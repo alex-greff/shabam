@@ -112,9 +112,9 @@ export async function computeSpectrogramData(
   assert(isBrowser);
 
   const defaultOptions: ComputeSpectrogramDataOptions = {
-    windowDuration: config.WINDOW_DURATION,
-    FFTSize: config.FFT_SIZE,
-    windowSmoothing: config.WINDOW_SMOOTHING,
+    windowDuration: config.SPECTROGRAM_WINDOW_DURATION,
+    FFTSize: config.SPECTROGRAM_FFT_SIZE,
+    windowSmoothing: config.SPECTROGRAM_WINDOW_SMOOTHING,
   };
 
   const optionsNormalized: ComputeSpectrogramDataOptions = {

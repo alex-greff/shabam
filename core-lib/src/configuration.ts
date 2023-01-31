@@ -1,31 +1,51 @@
+import { type WindowFunction } from "../build/Release/core_lib_native.node";
 // TODO: this config system isn't great, there should be an explicit API for
 // configuring them globally
 // Also I should have a separation for each feature (fingerprint, search, etc)
 
 class Configuration {
+  // ---------------------------------
+  // --- Input Audio Configuration ---
+  // ---------------------------------
+
+  /**
+   * Target sample rate of the input audio (kHz).
+   */
+  INPUT_TARGET_SAMPLE_RATE: number = 16000;
+
+  // ---------------------------------
+  // --- Spectrogram Configuration ---
+  // ---------------------------------
+
   /**
    * Sample size of the FFT.
    */
-  FFT_SIZE: number = 1024;
+  SPECTROGRAM_FFT_SIZE: number = 2048;
 
   /**
-   * Target sample rate of the spectrogram (kHz).
+   * The windowing function to use when computing the spectrogram.
    */
-  TARGET_SAMPLE_RATE: number = 16000; // TODO: put back in
-  // TARGET_SAMPLE_RATE: number = 44100; // TODO: remove
+  SPECTROGRAM_WINDOW_FUNCTION: WindowFunction = "blackman-harris";
 
   // TODO: this should be removed
   /**
    * Duration of the spectrogram/fingerprint window (seconds).
+   * Note: the window size (sample rate * window duration) should be less than
+   * the configured FFT size.
    */
-  WINDOW_DURATION: number = 0.05;
+  SPECTROGRAM_WINDOW_DURATION: number = 0.1;
 
+  // TODO: eventually remove this
   /**
    * Smoothing used when analyzing the frequency for the spectrogram
    * (browser only)
    * Range: [0, 1]
    */
-  WINDOW_SMOOTHING: number = 0.8;
+  SPECTROGRAM_WINDOW_SMOOTHING: number = 0.8;
+
+  // ---------------------------------
+  // --- Fingerprint Configuration ---
+  // ---------------------------------
 
   /**
    * Number of partitions in the fingerprints.
@@ -63,8 +83,9 @@ class Configuration {
    */
   FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER: number = 1;
 
-
+  // ---------------------
   // --- Search Config ---
+  // ---------------------
 
   /**
    * The size of the target zone.
@@ -81,10 +102,9 @@ class Configuration {
    */
   SEARCH_EVERY_N_COUPLES: number = 5000;
 
-  
   /**
    * Dictates how picky the selection cutoff is when comparing the total hit
-   * numbers of potential tracks. 
+   * numbers of potential tracks.
    * 0 = every potential track is selected
    * 1 = only clips who have all their target zones match
    * Range: [0, 1]

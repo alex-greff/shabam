@@ -23,42 +23,38 @@ function durationToSampleNum(duration: number, sampleRate: number) {
  */
 export async function computeSpectrogramData(
   audio: WavFileData,
-  sampleRate = config.TARGET_SAMPLE_RATE,
   options: Partial<ComputeSpectrogramDataOptions> = {}
 ): Promise<SpectrogramData> {
   assert(isNode);
 
   const defaultOptions: ComputeSpectrogramDataOptions = {
-    windowDuration: config.WINDOW_DURATION,
-    FFTSize: config.FFT_SIZE,
-    windowSmoothing: config.WINDOW_SMOOTHING,
+    windowDuration: config.SPECTROGRAM_WINDOW_DURATION,
+    FFTSize: config.SPECTROGRAM_FFT_SIZE,
+    windowFunction: config.SPECTROGRAM_WINDOW_FUNCTION,
+    // NOTE: unused
+    windowSmoothing: config.SPECTROGRAM_WINDOW_SMOOTHING,
   };
 
   const optionsNormalized: ComputeSpectrogramDataOptions = {
     ...defaultOptions,
     ...options,
   };
-  const { FFTSize, windowDuration, windowSmoothing } = optionsNormalized;
+  const { FFTSize, windowDuration, windowFunction } = optionsNormalized;
 
   // --- Native version ---
 
   const audioData = audio.channelData;
 
-  const FFT_SIZE = 2048;
-  const WINDOW_DURATION = 0.1; // seconds
-  const windowSize = durationToSampleNum(WINDOW_DURATION, sampleRate);
+  const windowSize = durationToSampleNum(windowDuration, audio.sampleRate);
   const hopSize =
     (windowSize / 2) % 2 === 0 ? windowSize / 2 + 1 : windowSize / 2;
 
-  // TODO: remove
-  console.log(">>> windowSize", windowSize, "FFT_SIZE", FFT_SIZE, "hopSize", hopSize, "audioData.length", audioData.length)
-
   const spectrogram = new CoreLibNative.Spectrogram(
     audioData,
-    "blackman-harris",
+    windowFunction,
     windowSize,
     hopSize,
-    FFT_SIZE,
+    FFTSize
   );
 
   spectrogram.compute();

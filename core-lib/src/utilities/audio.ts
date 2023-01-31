@@ -34,7 +34,7 @@ function getBoundaryIndex(
  */
 export function computePartitionRanges(
   partitionAmount = config.FINGERPRINT_PARTITION_AMOUNT,
-  FFTSize = config.FFT_SIZE,
+  FFTSize = config.SPECTROGRAM_FFT_SIZE,
   partitionCurve = config.FINGERPRINT_PARTITION_CURVE
 ): PartitionRanges {
   if (FFTSize / 2 <= 0)

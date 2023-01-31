@@ -30,11 +30,11 @@ export async function loadWavFileFromPath(
   const resampledAudio = WaveResampler.resample(
     fileData.channelData,
     fileData.sampleRate,
-    config.TARGET_SAMPLE_RATE
+    config.INPUT_TARGET_SAMPLE_RATE
   );
   const resampledChannelData = new Float32Array(resampledAudio);
   const resampledFileData: WavFileData = {
-    sampleRate: config.TARGET_SAMPLE_RATE,
+    sampleRate: config.INPUT_TARGET_SAMPLE_RATE,
     channelData: resampledChannelData
   };
 

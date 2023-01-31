@@ -1,3 +1,5 @@
+import { type WindowFunction } from "../../build/Release/core_lib_native.node";
+
 export interface SpectrogramData {
   /** The number of windows in the spectrogram (x-axis) */
   numberOfWindows: number;
@@ -12,6 +14,11 @@ export interface ComputeSpectrogramDataOptions {
   windowDuration: number;
   /** The number of samples in the FFT window */
   FFTSize: number;
+  /**
+   * The window function to use.
+   * Only used in Node.js environments.
+   */
+  windowFunction: WindowFunction;
   /** 
    * The smoothing value for the Blackman windowing function used internally
    * by the WebAudio API. 
