@@ -2,7 +2,6 @@
 #define SHABAM_CORE_LIB_SPECTROGRAM_WRAPPER
 
 #include "spectrogram.hpp"
-#include <liquid/liquid.h>
 #include <napi.h>
 
 class SpectrogramWrapper : public Napi::ObjectWrap<SpectrogramWrapper> {

@@ -45,7 +45,7 @@ private:
    * If hop_size > window_size then an unmeasured sample gap of
    * hop_size - window_size exists between adjacent windows (not recommended).
    *
-   * In general it is recommended that hop_size ~= window_size / 2
+   * In general it is recommended that hop_size <= window_size / 2
    */
   size_t hop_size;
 

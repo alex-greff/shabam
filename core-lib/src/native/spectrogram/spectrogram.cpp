@@ -1,4 +1,5 @@
 #include "spectrogram.hpp"
+#include <algorithm>
 #include <iostream>
 #include <liquid/liquid.h>
 #include <math.h>
@@ -70,14 +71,6 @@ void Spectrogram::Compute() {
       floor((double)(this->samples_length - window_size) / (double)hop_size);
   size_t num_buckets = floor(this->FFT_size / 2);
 
-  // TODO: remove
-  std::cout << ">>> C++: num_windows " << num_windows << " num_buckets "
-            << num_buckets << " samples_length " << this->samples_length
-            << " window_size " << window_size << " hop_size " << hop_size
-            << " FFT_size " << this->FFT_size << "\n";
-  std::cout << "window_size " << window_size << " padded_window_size "
-            << padded_window_size << "\n";
-
   // Setup spectrogram result
   float *spectrogram_result = new float[num_buckets * num_windows];
 
@@ -122,7 +115,11 @@ void Spectrogram::Compute() {
     // Note: fft_result has a length of FFT_size but half of it is just mirrored
     // so we can just take the first half as our FFT window
     for (size_t bucket_idx = 0; bucket_idx < num_buckets; bucket_idx++) {
-      spectrogram_result_bucket[bucket_idx] = fft_result[bucket_idx].real;
+      // Convert to decibels
+      // Reference:
+      // https://github.com/mmende/spectro/blob/08f6846a329f66de4dca5d56e3e1265191ed73b8/spectro.worker.js#L107
+      spectrogram_result_bucket[bucket_idx] =
+          20.0 * log10(std::abs(fft_result[bucket_idx].real));
     }
 
     // Cleanup

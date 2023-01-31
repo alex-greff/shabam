@@ -1,6 +1,4 @@
 #include "spectrogram_wrapper.hpp"
-#include <liquid/liquid.h>
-#include <math.h>
 
 using namespace Napi;
 
