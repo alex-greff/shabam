@@ -8,6 +8,8 @@
         "./src/native/greeting.cpp",
         "./src/native/spectrogram/spectrogram.cpp",
         "./src/native/spectrogram/spectrogram_wrapper.cpp",
+        "./src/native/fingerprint/fingerprint.cpp",
+        "./src/native/fingerprint/fingerprint_wrapper.cpp",
         "./src/index.cpp"
       ],
       "libraries": [

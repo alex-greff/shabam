@@ -2,6 +2,7 @@
 #include <string>
 #include "native/greeting.hpp"
 #include "native/spectrogram/spectrogram_wrapper.hpp"
+#include "native/fingerprint/fingerprint_wrapper.hpp"
 
 Napi::String greetHello(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -20,6 +21,11 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(
     Napi::String::New(env, "Spectrogram"),
     SpectrogramWrapper::GetClass(env)
+  );
+
+  exports.Set(
+    Napi::String::New(env, "Fingerprint"),
+    FingerprintWrapper::GetClass(env)
   );
 
   return exports;

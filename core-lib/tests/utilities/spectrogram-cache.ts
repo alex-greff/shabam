@@ -3,6 +3,8 @@ import * as bson from "bson";
 import path from "path";
 import { SpectrogramData } from "../../src/spectrogram/types";
 
+// TODO: need to make a better cache system
+
 export async function loadSpectrogramFromCache(
   fileName: string,
   dataDir: string
@@ -43,13 +45,14 @@ export async function saveSpectrogramToCache(
   interface BsonSpectrogramDataIn {
     numberOfWindows: number;
     frequencyBinCount: number;
-    data: Float32Array;
+    data: Buffer;
   }
 
   const spectrogramBsonObj: BsonSpectrogramDataIn = {
     numberOfWindows: spectrogram.numberOfWindows,
     frequencyBinCount: spectrogram.frequencyBinCount,
-    data: spectrogram.data,
+    // data: spectrogram.data,
+    data: Buffer.from(spectrogram.data),
   };
 
   const spectrogramSerialized = bson.serialize(spectrogramBsonObj);

@@ -48,7 +48,9 @@ class Configuration {
   // ---------------------------------
 
   /**
-   * Number of partitions in the fingerprints.
+   * Number of partitions in the fingerprints. Higher values result in steeper
+   * curves.
+   * 
    * Range: [1, infinity)
    */
   FINGERPRINT_PARTITION_AMOUNT: number = 50;

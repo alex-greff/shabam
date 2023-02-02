@@ -60,17 +60,19 @@ function renderCanvas(
 
   const samples = waveFileData.channelData;
 
-  const minSampleVal = d3.min(samples)!;
-  const maxSampleVal = d3.max(samples)!;
+  // TODO: remove
+  // const minSampleVal = d3.min(samples)!;
+  // const maxSampleVal = d3.max(samples)!;
 
-  // Samples must be between -1 and 1
-  assert(minSampleVal >= -1 && minSampleVal <= 1);
-  assert(maxSampleVal >= -1 && maxSampleVal <= 1);
+  // // Samples must be between -1 and 1
+  // assert(minSampleVal >= -1 && minSampleVal <= 1);
+  // assert(maxSampleVal >= -1 && maxSampleVal <= 1);
 
   let prevX = 0;
   let prevY = 0;
   for (let i = 0; i < samples.length; i++) {
-    const sampleVal = samples[i];
+    // Clamp between [-1, 1]
+    const sampleVal = Math.max(-1, Math.min(1, samples[i]));
 
     const x = ((i + 1) / samples.length) * canvasWidth;
     const y = (sampleVal + 1) * 0.5 * canvasHeight;

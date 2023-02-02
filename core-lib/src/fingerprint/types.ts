@@ -1,5 +1,8 @@
 import { SpectrogramData } from "../spectrogram/types";
 
+// TODO: remove this?
+//  as it's been replaced with the typings from core-lib native
+
 export type PartitionRanges = [number, number][];
 
 export interface Fingerprint {

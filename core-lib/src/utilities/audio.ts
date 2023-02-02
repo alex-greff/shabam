@@ -11,7 +11,7 @@ function getBoundaryIndex(
   totalBins: number,
   partitionCurve: number
 ) {
-  // Equation: y = b/(c-1)(c^(x/a)-1)
+  // Equation: y = (b/(c-1))(c^(x/a)-1)
   //   where:
   //     a = number of partitions
   //     b = number of bins (FFT_size / 2)

@@ -1,20 +1,11 @@
 #include "spectrogram.hpp"
+#include "../windowing.hpp"
 #include <algorithm>
 #include <iostream>
 #include <liquid/liquid.h>
 #include <math.h>
 #include <stdexcept>
 #include <string.h>
-#include <unordered_map>
-
-// Supported window function mappings
-std::unordered_map<std::string, window_function> window_functions = {
-    {"hamming", liquid_hamming},
-    {"hann", liquid_hann},
-    {"blackman-harris", liquid_blackmanharris},
-    {"blackman-harris-7", liquid_blackmanharris7},
-    {"flat-top", liquid_flattop},
-};
 
 Spectrogram::Spectrogram(float *samples, size_t samples_length,
                          size_t window_size, size_t hop_size, size_t FFT_size,
@@ -22,23 +13,30 @@ Spectrogram::Spectrogram(float *samples, size_t samples_length,
   if (samples == nullptr)
     throw std::invalid_argument("samples must not be nullptr.");
 
+  if (samples_length == 0)
+    throw std::invalid_argument("samples_length must not be non-zero.");
+
+  if (hop_size == 0)
+    throw std::invalid_argument("hop_size must not be non-zero.");
+
   if (hop_size % 2 != 1)
     throw std::invalid_argument("hop_size must be an odd number.");
+
+  if (FFT_size == 0)
+    throw std::invalid_argument("FFT_size must not be non-zero.");
 
   if (FFT_size < window_size)
     throw std::invalid_argument(
         "FFT_size must be greater than or equal to window_size.");
 
-  if (window_functions.find(window_func_name) == window_functions.end()) {
-    throw std::invalid_argument(
-        "window_func_name must be a valid window function name.");
-  }
-
   // Reference:
   // https://www.educative.io/answers/how-to-check-if-a-number-is-a-power-of-2-in-cpp
-  if (ceil(log2f32(FFT_size)) != floor(log2f32(FFT_size))) {
+  if (ceil(log2f32(FFT_size)) != floor(log2f32(FFT_size)))
     throw std::invalid_argument("FFT_size must be a power of 2.");
-  }
+
+  if (window_functions.find(window_func_name) == window_functions.end())
+    throw std::invalid_argument(
+        "window_func_name must be a valid window function name.");
 
   this->samples = samples;
   this->samples_length = samples_length;

@@ -1,11 +1,10 @@
 #ifndef SHABAM_CORE_LIB_SPECTROGRAM
 #define SHABAM_CORE_LIB_SPECTROGRAM
 
+#include "../windowing.hpp"
 #include <liquid/liquid.h>
 #include <stdlib.h>
 #include <string>
-
-typedef float (*window_function)(uint32_t i, uint32_t wlen);
 
 /**
  * Computes the spectrogram of a given signal using the Short Time Fourier

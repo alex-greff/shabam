@@ -21,5 +21,43 @@ declare module "*core_lib_native.node" {
     getSpectrogram(): SpectrogramData;
   }
 
+  type PartitionRanges = [number, number][];
+
+  interface FingerprintData {
+    /** The number of windows in the fingerprint (x-axis) */
+    numberOfWindows: number;
+    /** The number of partitions in the fingerprint (y-axis) */
+    numberOfPartitions: number;
+    /** The number of frequency bins that the fingerprint was generated from. */
+    frequencyBinCount: number;
+    /** The fingerprint tuple data. Format: [window, partition][] */
+    data: Uint32Array;
+    /** The associated partition ranges of the fingerprint */
+    partitionRanges: PartitionRanges;
+  }
+
+  class Fingerprint {
+    constructor(
+      partitionCurveTension: number,
+      partitionCount: number,
+      standardDeviationMultiplier: number,
+      slidingWindowWidth: number,
+      slidingWindowHeight: number,
+      slidingWindowFuncName: WindowFunction,
+      spectrogram: Float32Array,
+      spectrogramNumBuckets: number,
+      spectrogramNumWindows: number
+    );
+
+    compute(): void;
+    getFingerprint(): FingerprintData;
+
+    static computePartitionRanges(
+      partitionCount: number,
+      partitionCurveTension: number,
+      spectrogramNumBuckets: number,
+    ): PartitionRanges;
+  }
+
   function greetHello(): string;
 }
