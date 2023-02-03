@@ -11,14 +11,13 @@ FingerprintWrapper::FingerprintWrapper(const Napi::CallbackInfo &info)
   // - standardDeviationMultiplier: number (float)
   // - slidingWindowWidth: number (int)
   // - slidingWindowHeight: number (int)
-  // - slidingWindowFuncName: string
   // - spectrogram: Float32Array
   // - spectrogramNumBuckets: number (int, power of 2)
   // - spectrogramNumWindows: number (int)
 
   Napi::Env env = info.Env();
 
-  if (info.Length() != 9) {
+  if (info.Length() != 8) {
     Napi::TypeError::New(env, "Wrong number of arguments")
         .ThrowAsJavaScriptException();
     return;
@@ -58,27 +57,20 @@ FingerprintWrapper::FingerprintWrapper(const Napi::CallbackInfo &info)
     return;
   }
 
-  if (!info[5].IsString()) {
-    Napi::TypeError::New(env,
-                         "slidingWindowFuncName argument needs to be a string.")
-        .ThrowAsJavaScriptException();
-    return;
-  }
-
-  if (!info[6].IsTypedArray()) {
+  if (!info[5].IsTypedArray()) {
     Napi::TypeError::New(env, "spectrogram argument needs to be a typed array.")
         .ThrowAsJavaScriptException();
     return;
   }
 
-  if (!info[7].IsNumber()) {
+  if (!info[6].IsNumber()) {
     Napi::TypeError::New(
         env, "spectrogramNumBuckets argument needs to be an integer.")
         .ThrowAsJavaScriptException();
     return;
   }
 
-  if (!info[8].IsNumber()) {
+  if (!info[7].IsNumber()) {
     Napi::TypeError::New(
         env, "spectrogramNumWindows argument needs to be an integer.")
         .ThrowAsJavaScriptException();
@@ -90,12 +82,11 @@ FingerprintWrapper::FingerprintWrapper(const Napi::CallbackInfo &info)
   float standard_deviation_multiplier = info[2].As<Napi::Number>().FloatValue();
   size_t sliding_window_width = info[3].As<Napi::Number>().Int32Value();
   size_t sliding_window_height = info[4].As<Napi::Number>().Int32Value();
-  Napi::String sliding_window_func_name = info[5].As<Napi::String>();
 
-  auto spectrogram_typed_arr = info[6].As<Napi::TypedArrayOf<float>>();
+  auto spectrogram_typed_arr = info[5].As<Napi::TypedArrayOf<float>>();
   size_t spectrogram_length = spectrogram_typed_arr.ElementLength();
-  size_t spectrogram_num_buckets = info[7].As<Napi::Number>().Int32Value();
-  size_t spectrogram_num_windows = info[8].As<Napi::Number>().Int32Value();
+  size_t spectrogram_num_buckets = info[6].As<Napi::Number>().Int32Value();
+  size_t spectrogram_num_windows = info[7].As<Napi::Number>().Int32Value();
   assert(spectrogram_length =
              spectrogram_num_buckets * spectrogram_num_windows);
   float *spectrogram = new float[spectrogram_length];
@@ -103,11 +94,11 @@ FingerprintWrapper::FingerprintWrapper(const Napi::CallbackInfo &info)
          spectrogram_length * sizeof(float));
   this->spectrogram = spectrogram;
 
-  this->fingerprint = new Fingerprint(
-      spectrogram, spectrogram_length, spectrogram_num_buckets,
-      spectrogram_num_windows, standard_deviation_multiplier,
-      partition_curve_tension, partition_count, sliding_window_width,
-      sliding_window_height, sliding_window_func_name);
+  this->fingerprint =
+      new Fingerprint(spectrogram, spectrogram_length, spectrogram_num_buckets,
+                      spectrogram_num_windows, standard_deviation_multiplier,
+                      partition_curve_tension, partition_count,
+                      sliding_window_width, sliding_window_height);
 }
 
 FingerprintWrapper::~FingerprintWrapper() {

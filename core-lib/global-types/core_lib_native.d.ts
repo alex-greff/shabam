@@ -27,7 +27,6 @@ declare module "*core_lib_native.node" {
       standardDeviationMultiplier: number,
       slidingWindowWidth: number,
       slidingWindowHeight: number,
-      slidingWindowFuncName: WindowFunction,
       spectrogram: Float32Array,
       spectrogramNumBuckets: number,
       spectrogramNumWindows: number

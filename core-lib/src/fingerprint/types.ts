@@ -44,12 +44,6 @@ export interface FingerprintConfig {
   slidingWindowHeight: number;
 
   /**
-   * The windowing function used to calculate the weightings in the sliding
-   * window.
-   */
-  slidingWindowFuncName: WindowFunction;
-
-  /**
    * How much of the standard deviation is added to the fingerprint cell
    * acceptance threshold value.
    * In general, larger values make the fingerprint cell filtering more

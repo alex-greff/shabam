@@ -19,7 +19,6 @@ export function computeFingerprintData(
     standardDeviationMultiplier,
     slidingWindowHeight,
     slidingWindowWidth,
-    slidingWindowFuncName,
   } = optionsNormalized;
 
   const fingerprint = new CoreLibNative.Fingerprint(
@@ -28,7 +27,6 @@ export function computeFingerprintData(
     standardDeviationMultiplier,
     slidingWindowWidth,
     slidingWindowHeight,
-    slidingWindowFuncName,
     spectrogramData.data,
     spectrogramData.numBuckets,
     spectrogramData.numWindows

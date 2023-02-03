@@ -104,73 +104,73 @@ async function computeFingerprint(
   let timerStart = 0,
     timerEnd = 0;
 
-  // // --- Valor song ---
-  // // const valorFileName = "valor_clip_30sec.wav";
-  // // const valorFileName = "valor_clip_1min.wav";
-  // const valorFileName = "valor.wav";
-  // const valorTrackId = 1;
-  // const valorFingerprint = await computeFingerprint(valorFileName, "Valor");
-  // // process.stdout.write(`Computing Valor records table... `);
-  // // timerStart = performance.now();
-  // // const valorRecordsTable = new TrackRecordsTable(
-  // //   valorFingerprint,
-  // //   valorTrackId
-  // // );
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // // process.stdout.write("Storing Valor records... ");
-  // // timerStart = performance.now();
-  // // await engine.storeRecords(valorRecordsTable, true);
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-
-  // // --- Frigid song ---
-  // const frigidFileName = "frigid.wav";
-  // const frigidTrackId = 2;
-  // const frigidFingerprint = await computeFingerprint(frigidFileName, "Frigid");
-  // // process.stdout.write(`Computing Frigid records table... `);
-  // // timerStart = performance.now();
-  // // const frigidRecordsTable = new TrackRecordsTable(
-  // //   frigidFingerprint,
-  // //   frigidTrackId
-  // // );
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // // process.stdout.write("Storing Frigid records... ");
-  // // timerStart = performance.now();
-  // // await engine.storeRecords(frigidRecordsTable, true);
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-
-  // // --- Valor 30 second sample ---
-  // const valor30sSampleFileName = "valor_clip_30sec.wav";
-  // const valor30sSampleFingerprint = await computeFingerprint(
-  //   valor30sSampleFileName,
-  //   "Valor Sample"
-  // );
-  // // process.stdout.write(`Computing Valor Sample records table... `);
-  // // timerStart = performance.now();
-  // // const valorSampleRecordsTable = new RecordsTable(valor30sSampleFingerprint);
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // // process.stdout.write("Searching records with Valor Sample... ");
-  // // timerStart = performance.now();
-  // // const matches = await engine.searchRecords(valorSampleRecordsTable);
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // // console.log(matches); // TODO: remove
-
-  // // --- Valor 2 second sample ---
-  // const valor2sSampleFileName = "valor_clip_2sec.wav";
-  // const valor2sSampleFingerprint = await computeFingerprint(
-  //   valor2sSampleFileName,
-  //   "Valor Sample"
-  // );
-  // process.stdout.write(`Computing Valor Sample records table... `);
+  // --- Valor song ---
+  // const valorFileName = "valor_clip_30sec.wav";
+  // const valorFileName = "valor_clip_1min.wav";
+  const valorFileName = "valor.wav";
+  const valorTrackId = 1;
+  const valorFingerprint = await computeFingerprint(valorFileName, "Valor");
+  // process.stdout.write(`Computing Valor records table... `);
   // timerStart = performance.now();
-  // const valor2sSampleRecordsTable = new RecordsTable(valor2sSampleFingerprint);
+  // const valorRecordsTable = new TrackRecordsTable(
+  //   valorFingerprint,
+  //   valorTrackId
+  // );
   // timerEnd = performance.now();
   // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // process.stdout.write("Storing Valor records... ");
+  // timerStart = performance.now();
+  // await engine.storeRecords(valorRecordsTable, true);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+
+  // --- Frigid song ---
+  const frigidFileName = "frigid.wav";
+  const frigidTrackId = 2;
+  const frigidFingerprint = await computeFingerprint(frigidFileName, "Frigid");
+  // process.stdout.write(`Computing Frigid records table... `);
+  // timerStart = performance.now();
+  // const frigidRecordsTable = new TrackRecordsTable(
+  //   frigidFingerprint,
+  //   frigidTrackId
+  // );
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // process.stdout.write("Storing Frigid records... ");
+  // timerStart = performance.now();
+  // await engine.storeRecords(frigidRecordsTable, true);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+
+  // --- Valor 30 second sample ---
+  const valor30sSampleFileName = "valor_clip_30sec.wav";
+  const valor30sSampleFingerprint = await computeFingerprint(
+    valor30sSampleFileName,
+    "Valor Sample"
+  );
+  // process.stdout.write(`Computing Valor Sample records table... `);
+  // timerStart = performance.now();
+  // const valorSampleRecordsTable = new RecordsTable(valor30sSampleFingerprint);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // process.stdout.write("Searching records with Valor Sample... ");
+  // timerStart = performance.now();
+  // const matches = await engine.searchRecords(valorSampleRecordsTable);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // console.log(matches); // TODO: remove
+
+  // --- Valor 2 second sample ---
+  const valor2sSampleFileName = "valor_clip_2sec.wav";
+  const valor2sSampleFingerprint = await computeFingerprint(
+    valor2sSampleFileName,
+    "Valor Sample"
+  );
+  process.stdout.write(`Computing Valor Sample records table... `);
+  timerStart = performance.now();
+  const valor2sSampleRecordsTable = new RecordsTable(valor2sSampleFingerprint);
+  timerEnd = performance.now();
+  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   // --- Sine test ---
   const sineTestSampleFileName = "sine_test.wav";
@@ -186,17 +186,17 @@ async function computeFingerprint(
   timerEnd = performance.now();
   process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
-  // // --- Sub test ---
-  // const subTestSampleFileName = "sub_test.wav";
-  // const subTestSampleFingerprint = await computeFingerprint(
-  //   subTestSampleFileName,
-  //   "Sub Test"
-  // );
-  // process.stdout.write(`Computing Sub Text records table... `);
-  // timerStart = performance.now();
-  // const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
-  // timerEnd = performance.now();
-  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // --- Sub test ---
+  const subTestSampleFileName = "sub_test.wav";
+  const subTestSampleFingerprint = await computeFingerprint(
+    subTestSampleFileName,
+    "Sub Test"
+  );
+  process.stdout.write(`Computing Sub Text records table... `);
+  timerStart = performance.now();
+  const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
+  timerEnd = performance.now();
+  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   console.log("Finished!"); // TODO: remove
 })();

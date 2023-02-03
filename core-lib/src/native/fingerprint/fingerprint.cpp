@@ -1,9 +1,11 @@
 #include "fingerprint.hpp"
 #include "../utils.hpp"
-#include "../windowing.hpp"
+#include <iostream>
 #include <limits>
 #include <stdexcept>
 #include <string.h>
+
+#define DO_CLAMP_WARNING
 
 Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
                          size_t spectrogram_num_buckets,
@@ -11,8 +13,7 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
                          float standard_deviation_multiplier,
                          float partition_curve_tension, size_t partition_count,
                          size_t sliding_window_width,
-                         size_t sliding_window_height,
-                         std::string sliding_window_func_name) {
+                         size_t sliding_window_height) {
   if (spectrogram == nullptr)
     throw std::invalid_argument("spectrogram must not be nullptr.");
 
@@ -38,13 +39,20 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
   if (sliding_window_width == 0)
     throw std::invalid_argument("sliding_window_width must non-zero.");
 
-  if (spectrogram_num_windows % 2 == 1 &&
-      sliding_window_width > spectrogram_num_windows)
-    throw std::invalid_argument(
-        "sliding_window_width must be in range [1, spectrogram_num_windows].");
-  else if (sliding_window_width > spectrogram_num_windows - 1)
-    throw std::invalid_argument("sliding_window_width must be in range [1, "
-                                "spectrogram_num_windows - 1].");
+  // Sliding window width is larger than the number of windows in the
+  // spectrogram, clamp the sliding window width to the number of windows
+  if (sliding_window_width > spectrogram_num_windows) {
+    size_t clamp_value = spectrogram_num_windows % 2 == 0
+                             ? spectrogram_num_windows - 1
+                             : spectrogram_num_windows;
+#ifdef DO_CLAMP_WARNING
+    std::cout << "Warning: sliding_window_width (" << sliding_window_width
+              << ") is larger than spectrogram_num_windows ("
+              << spectrogram_num_windows
+              << "), clamping sliding_window_width to" << clamp_value << "\n";
+#endif
+    sliding_window_width = clamp_value;
+  }
 
   if (sliding_window_height == 0)
     throw std::invalid_argument("sliding_window_height must non-zero.");
@@ -55,10 +63,6 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
   else if (sliding_window_height > partition_count - 1)
     throw std::invalid_argument(
         "sliding_window_width must be in range [1, partition_count - 1].");
-
-  if (window_functions.find(sliding_window_func_name) == window_functions.end())
-    throw std::invalid_argument(
-        "sliding_window_func_name must be a valid window function name.");
 
   this->spectrogram = spectrogram;
   this->spectrogram_length = spectrogram_length;
@@ -72,7 +76,6 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
 
   this->sliding_window_width = sliding_window_width;
   this->sliding_window_height = sliding_window_height;
-  this->sliding_window_func = window_functions[sliding_window_func_name];
 }
 
 Fingerprint::~Fingerprint() {
@@ -122,7 +125,6 @@ void Fingerprint::Compute() {
   size_t slider_width = this->sliding_window_width;
   size_t slider_height = this->sliding_window_height;
   size_t slider_size = slider_width * slider_height;
-  window_function slider_window_func = this->sliding_window_func;
 
   size_t slider_width_half = std::floor(slider_width / 2.0);
   size_t slider_height_half = std::floor(slider_height / 2.0);
@@ -167,26 +169,27 @@ void Fingerprint::Compute() {
       //                   |-------------------|           (shifted slider (-2))
 
       // TODO: factor out into function
+      // TODO: might need this later
+      // // +value => slider window is overflowing left
+      // // -value => slider window is overflowing right
+      // int32_t slider_width_shift = 0;
+      // // The slider window is overflowing the left
+      // // Note: we do not do `curr_window - slider_width_half < 0` here
+      // because
+      // // we are dealing with unsigned values here so negatives can screw it
+      // up if (curr_window < slider_width_half)
+      //   slider_width_shift = slider_width_half - curr_window;
+      // // The slider width is overflowing the right
+      // else if (curr_window + slider_width_half >= num_windows)
+      //   slider_width_shift = num_windows - curr_window + slider_width_half;
 
-      // +value => slider window is overflowing left
-      // -value => slider window is overflowing right
-      int32_t slider_width_shift = 0;
-      // The slider window is overflowing the left
-      // Note: we do not do `curr_window - slider_width_half < 0` here because
-      // we are dealing with unsigned values here so negatives can screw it up
-      if (curr_window < slider_width_half)
-        slider_width_shift = slider_width_half - curr_window;
-      // The slider width is overflowing the right
-      else if (curr_window + slider_width_half >= num_windows)
-        slider_width_shift = num_windows - curr_window + slider_width_half;
-
-      // Same kind of calculations for the height slider
-      int32_t slider_height_shift = 0;
-      if (curr_partition < slider_height_half)
-        slider_height_shift = slider_height_half - curr_partition;
-      else if (curr_partition + slider_height_half >= num_partitions)
-        slider_height_shift =
-            num_partitions - curr_partition + slider_height_half;
+      // // Same kind of calculations for the height slider
+      // int32_t slider_height_shift = 0;
+      // if (curr_partition < slider_height_half)
+      //   slider_height_shift = slider_height_half - curr_partition;
+      // else if (curr_partition + slider_height_half >= num_partitions)
+      //   slider_height_shift =
+      //       num_partitions - curr_partition + slider_height_half;
 
       // inclusive
       size_t slider_x_start_idx =
@@ -202,28 +205,13 @@ void Fingerprint::Compute() {
       size_t slider_y_end_idx =
           MIN(curr_partition + slider_height_half, num_partitions);
 
-      // The effective slider dimensions when using the window function
-      size_t slider_window_width =
-          2 * (slider_width_half + std::abs(slider_width_shift)) + 1;
-      size_t slider_window_height =
-          2 * (slider_height_half + std::abs(slider_height_shift)) + 1;
-
       // Compute the mean value of the slider, weighted by the
       // windowing function
       float slider_mean = 0.0;
       for (size_t sx = slider_x_start_idx; sx < slider_x_end_idx; sx++) {
         for (size_t sy = slider_y_start_idx; sy < slider_y_end_idx; sy++) {
-          float weight_value_x = slider_window_func(
-              curr_window - slider_width_shift, slider_window_width);
-          float weight_value_y = slider_window_func(
-              curr_partition - slider_height_shift, slider_window_height);
-
-          float combined_weight_value = (weight_value_x + weight_value_y) / 2.0;
-
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
-          // TODO: decide if we keep the combined_weight_value weighting
-          // slider_mean += curr_cell_value * combined_weight_value;
           slider_mean += curr_cell_value;
         }
       }
@@ -234,18 +222,8 @@ void Fingerprint::Compute() {
       float slider_variance = 0.0;
       for (size_t sx = slider_x_start_idx; sx < slider_x_end_idx; sx++) {
         for (size_t sy = slider_y_start_idx; sy < slider_y_end_idx; sy++) {
-          float weight_value_x = slider_window_func(
-              curr_window - slider_width_shift, slider_window_width);
-          float weight_value_y = slider_window_func(
-              curr_partition - slider_height_shift, slider_window_height);
-
-          float combined_weight_value = (weight_value_x + weight_value_y) / 2.0;
-
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
-          // TODO: decide if we keep the combined_weight_value weighting
-          // slider_variance += std::pow(
-          //     (curr_cell_value * combined_weight_value) - slider_mean, 2);
           slider_variance += std::pow(curr_cell_value - slider_mean, 2);
         }
       }

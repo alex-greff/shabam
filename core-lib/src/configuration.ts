@@ -67,7 +67,6 @@ class Configuration {
     partitionCurve: 50.0,
     slidingWindowWidth: 21,
     slidingWindowHeight: 5,
-    slidingWindowFuncName: "blackman-harris",
     standardDeviationMultiplier: 1,
   };
 

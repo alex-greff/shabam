@@ -34,8 +34,7 @@ public:
               size_t spectrogram_num_buckets, size_t spectrogram_num_windows,
               float standard_deviation_multiplier,
               float partition_curve_tension, size_t partition_count,
-              size_t sliding_window_width, size_t sliding_window_height,
-              std::string sliding_window_func_name);
+              size_t sliding_window_width, size_t sliding_window_height);
 
   ~Fingerprint();
 
@@ -83,12 +82,6 @@ public:
    * Range: [1, partition_count or partition_count - 1], whichever is odd
    */
   size_t sliding_window_height;
-
-  /**
-   * The windowing function to use to calculate the mean weightings of the
-   * cells.
-   */
-  window_function sliding_window_func;
 
   // --- Spectrogram Info ---
 
