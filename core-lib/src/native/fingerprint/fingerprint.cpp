@@ -222,7 +222,9 @@ void Fingerprint::Compute() {
 
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
-          slider_mean += curr_cell_value * combined_weight_value;
+          // TODO: decide if we keep the combined_weight_value weighting
+          // slider_mean += curr_cell_value * combined_weight_value;
+          slider_mean += curr_cell_value;
         }
       }
 
@@ -241,8 +243,10 @@ void Fingerprint::Compute() {
 
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
-          slider_variance += std::pow(
-              (curr_cell_value * combined_weight_value) - slider_mean, 2);
+          // TODO: decide if we keep the combined_weight_value weighting
+          // slider_variance += std::pow(
+          //     (curr_cell_value * combined_weight_value) - slider_mean, 2);
+          slider_variance += std::pow(curr_cell_value - slider_mean, 2);
         }
       }
       slider_variance = slider_variance / slider_size;

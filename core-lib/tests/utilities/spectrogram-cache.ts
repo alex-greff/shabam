@@ -26,8 +26,8 @@ export async function loadSpectrogramFromCache(
     const data = new Float32Array(Object.values(cache.data));
 
     return {
-      numberOfWindows: cache.numberOfWindows,
-      frequencyBinCount: cache.frequencyBinCount,
+      numWindows: cache.numberOfWindows,
+      numBuckets: cache.frequencyBinCount,
       data,
     };
   } catch (err) {
@@ -49,8 +49,8 @@ export async function saveSpectrogramToCache(
   }
 
   const spectrogramBsonObj: BsonSpectrogramDataIn = {
-    numberOfWindows: spectrogram.numberOfWindows,
-    frequencyBinCount: spectrogram.frequencyBinCount,
+    numberOfWindows: spectrogram.numWindows,
+    frequencyBinCount: spectrogram.numBuckets,
     // data: spectrogram.data,
     data: Buffer.from(spectrogram.data),
   };

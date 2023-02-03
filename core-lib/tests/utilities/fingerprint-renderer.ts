@@ -1,4 +1,4 @@
-import { Fingerprint } from "../../src/fingerprint/types";
+import { FingerprintData } from "../../src/fingerprint/types";
 import {
   CanvasGetScaleFunction,
   CanvasRenderFunction,
@@ -32,7 +32,7 @@ const AUX_DATA: FingerprintChartAuxData = {
 };
 
 export async function renderFingerprint(
-  fingerprint: Fingerprint,
+  fingerprint: FingerprintData,
   outputFileName: string,
   dataDir: string,
   width = DEFAULT_WIDTH,
@@ -66,19 +66,19 @@ export async function renderFingerprint(
   await fs.promises.writeFile(path.join(dataDir, outputFileName), buf);
 }
 
-const getAxisScales: CanvasGetScaleFunction<Fingerprint, number> = (
+const getAxisScales: CanvasGetScaleFunction<FingerprintData, number> = (
   fingerprintData,
   canvasWidth,
   canvasHeight
 ) => {
   const xScale = d3
     .scaleLinear()
-    .domain([0, fingerprintData.numberOfWindows])
+    .domain([0, fingerprintData.numWindows])
     .range([0, canvasWidth]);
 
   const yScale = d3
     .scaleLog()
-    .domain([1, fingerprintData.frequencyBinCount + 1])
+    .domain([1, fingerprintData.numBuckets + 1])
     .range([canvasHeight, 0])
     .base(2);
 
@@ -89,7 +89,7 @@ const getAxisScales: CanvasGetScaleFunction<Fingerprint, number> = (
 };
 
 const renderCanvas: CanvasRenderFunction<
-  Fingerprint,
+  FingerprintData,
   FingerprintChartAuxData
 > = (
   canvas,
@@ -121,7 +121,7 @@ const renderCanvas: CanvasRenderFunction<
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // Compute the tick size of the axises
-  const xAxisTickSize = canvasWidth / fingerprintData.numberOfWindows;
+  const xAxisTickSize = canvasWidth / fingerprintData.numWindows;
 
   const pointData = fingerprintData.data;
   const numPoints = pointData.length / 2;

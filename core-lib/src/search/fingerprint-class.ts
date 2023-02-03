@@ -1,4 +1,4 @@
-import { Fingerprint } from "../fingerprint/types";
+import { FingerprintData } from "../fingerprint/types";
 
 export interface FingerprintCell {
   partition: number;
@@ -17,10 +17,10 @@ export class FingerprintClass implements Iterable<FingerprintCell> {
     private data: Uint32Array
   ) {}
 
-  static fromFingerprintInterface(fingerprint: Fingerprint): FingerprintClass {
+  static fromFingerprintInterface(fingerprint: FingerprintData): FingerprintClass {
     return new FingerprintClass(
-      fingerprint.numberOfWindows,
-      fingerprint.numberOfPartitions,
+      fingerprint.numWindows,
+      fingerprint.numPartitions,
       fingerprint.data
     );
   }

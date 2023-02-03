@@ -2,27 +2,28 @@ import { type WindowFunction } from "../../build/Release/core_lib_native.node";
 
 export interface SpectrogramData {
   /** The number of windows in the spectrogram (x-axis) */
-  numberOfWindows: number;
+  numWindows: number;
   /** The number of frequency bins in the spectrogram (y-axis) */
-  frequencyBinCount: number;
+  numBuckets: number;
   /** The spectrogram data */
   data: Float32Array;
 }
 
-export interface ComputeSpectrogramDataOptions {
-  /** The durations (seconds) of the window */
-  windowDuration: number;
-  /** The number of samples in the FFT window */
-  FFTSize: number;
+export interface SpectrogramConfig {
   /**
-   * The window function to use.
-   * Only used in Node.js environments.
+   * Sample size of the FFT.
+   */
+  FFTSize: number;
+
+  /**
+   * The windowing function to use when computing the spectrogram.
    */
   windowFunction: WindowFunction;
-  /** 
-   * The smoothing value for the Blackman windowing function used internally
-   * by the WebAudio API. 
-   * Only used in the browser, ignored on Node.js environments.
+
+  /**
+   * Duration of the spectrogram/fingerprint window (seconds).
+   * Note: the window size (sample rate * window duration) should be less than
+   * the configured FFT size.
    */
-  windowSmoothing: number;
+  windowDuration: number;
 }

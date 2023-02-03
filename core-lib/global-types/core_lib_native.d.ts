@@ -1,12 +1,11 @@
 // Typescript declarations for the native extension for the core library
 declare module "*core_lib_native.node" {
-  type WindowFunction = "hamming" | "hann" | "blackman-harris" | "blackman-harris-7" | "flat-top";
-
-  interface SpectrogramData {
-    data: Float32Array;
-    numBuckets: number;
-    numWindows: number;
-  }
+  type WindowFunction =
+    | "hamming"
+    | "hann"
+    | "blackman-harris"
+    | "blackman-harris-7"
+    | "flat-top";
 
   class Spectrogram {
     constructor(
@@ -18,22 +17,7 @@ declare module "*core_lib_native.node" {
     );
 
     compute(): void;
-    getSpectrogram(): SpectrogramData;
-  }
-
-  type PartitionRanges = [number, number][];
-
-  interface FingerprintData {
-    /** The number of windows in the fingerprint (x-axis) */
-    numberOfWindows: number;
-    /** The number of partitions in the fingerprint (y-axis) */
-    numberOfPartitions: number;
-    /** The number of frequency bins that the fingerprint was generated from. */
-    frequencyBinCount: number;
-    /** The fingerprint tuple data. Format: [window, partition][] */
-    data: Uint32Array;
-    /** The associated partition ranges of the fingerprint */
-    partitionRanges: PartitionRanges;
+    getSpectrogram(): import("../src/spectrogram/types").SpectrogramData;
   }
 
   class Fingerprint {
@@ -50,13 +34,13 @@ declare module "*core_lib_native.node" {
     );
 
     compute(): void;
-    getFingerprint(): FingerprintData;
+    getFingerprint(): import("../src/fingerprint/types").FingerprintData;
 
     static computePartitionRanges(
       partitionCount: number,
       partitionCurveTension: number,
-      spectrogramNumBuckets: number,
-    ): PartitionRanges;
+      spectrogramNumBuckets: number
+    ): import("../src/fingerprint/types").PartitionRanges;
   }
 
   function greetHello(): string;

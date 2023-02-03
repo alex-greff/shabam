@@ -163,9 +163,9 @@ Napi::Value FingerprintWrapper::GetFingerprint(const Napi::CallbackInfo &info) {
     fingerprint_data_typed_arr[i] = fingerprint_data[i];
   }
 
-  ret.Set("numberOfWindows", fingerprint->spectrogram_num_windows);
-  ret.Set("numberOfPartitions", fingerprint->partition_count);
-  ret.Set("frequencyBinCount", fingerprint->spectrogram_num_buckets);
+  ret.Set("numWindows", fingerprint->spectrogram_num_windows);
+  ret.Set("numPartitions", fingerprint->partition_count);
+  ret.Set("numBuckets", fingerprint->spectrogram_num_buckets);
   ret.Set("data", fingerprint_data_typed_arr);
   ret.Set("partitionRanges", partition_ranges_array);
 

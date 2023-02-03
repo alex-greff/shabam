@@ -1,33 +1,68 @@
 import { SpectrogramData } from "../spectrogram/types";
-
-// TODO: remove this?
-//  as it's been replaced with the typings from core-lib native
+import { type WindowFunction } from "../../build/Release/core_lib_native.node";
 
 export type PartitionRanges = [number, number][];
 
-export interface Fingerprint {
+export interface FingerprintData {
   /** The number of windows in the fingerprint (x-axis) */
-  numberOfWindows: number;
+  numWindows: number;
   /** The number of partitions in the fingerprint (y-axis) */
-  numberOfPartitions: number;
+  numPartitions: number;
   /** The number of frequency bins that the fingerprint was generated from. */
-  frequencyBinCount: number;
+  numBuckets: number;
+  /** The partition ranges used to compute the fingerprint. */
+  partitionRanges: PartitionRanges;
   /** The fingerprint tuple data. Format: [window, partition][] */
   data: Uint32Array;
-  /** The associated partition ranges of the fingerprint */
-  partitionRanges: PartitionRanges;
 }
 
-export interface FingerprintGeneratorOptions {
-  /** The number of partitions used when computing the fingerprint. */
+export interface FingerprintConfig {
+  /**
+   * Number of partitions in the fingerprints. Higher values result in steeper
+   * curves.
+   * 
+   * Range: [1, infinity)
+   */
   partitionAmount: number;
-  /** The size of the FFT window. */
-  FFTSize: number;
-  /** The curve that the partition ranges are calculated on. */
+
+  /**
+   * Curve used to calculate partitions.
+   * Range: (1, infinity)
+   */
   partitionCurve: number;
+
+  /**
+   * Number of windows on each side of the slider
+   * TOTAL_SLIDER_WIDTH = 2 * FINGERPRINT_SLIDER_WIDTH + 1
+   */
+  slidingWindowWidth: number;
+
+  /**
+   * Number of windows above and below the slider
+   * TOTAL_SLIDER_HEIGHT = 2 * FINGERPRINT_SLIDER_HEIGHT + 1
+   */
+  slidingWindowHeight: number;
+
+  /**
+   * The windowing function used to calculate the weightings in the sliding
+   * window.
+   */
+  slidingWindowFuncName: WindowFunction;
+
+  /**
+   * How much of the standard deviation is added to the fingerprint cell
+   * acceptance threshold value.
+   * In general, larger values make the fingerprint cell filtering more
+   * sensitive.
+   * <0: the standard deviation is subtracted from the mean
+   * 0: no weight (only the mean is used)
+   * 1: entire standard deviation is added
+   * >1: more than the entire standard deviation is added
+   */
+  standardDeviationMultiplier: number;
 }
 
 export type FingerprintGeneratorFunction = (
   spectrogramData: SpectrogramData,
-  options?: Partial<FingerprintGeneratorOptions>
-) => Promise<Fingerprint>;
+  options?: Partial<FingerprintConfig>
+) => Promise<FingerprintData>;

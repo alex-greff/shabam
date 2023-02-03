@@ -14,6 +14,8 @@ export async function loadWavFileFromPath(
 ): Promise<WavFileData> {
   const audioFileBuf = await fs.promises.readFile(path);
 
+  const targetSampleRate = config.loaderConfig.inputTargetSampleRate;
+
   const context = new AudioContext();
   const fileData = await new Promise<WavFileData>((resolve) => {
     context.decodeAudioData(audioFileBuf, (audioBuffer: AudioBuffer) => {
@@ -30,12 +32,12 @@ export async function loadWavFileFromPath(
   const resampledAudio = WaveResampler.resample(
     fileData.channelData,
     fileData.sampleRate,
-    config.INPUT_TARGET_SAMPLE_RATE
+    targetSampleRate
   );
   const resampledChannelData = new Float32Array(resampledAudio);
   const resampledFileData: WavFileData = {
-    sampleRate: config.INPUT_TARGET_SAMPLE_RATE,
-    channelData: resampledChannelData
+    sampleRate: targetSampleRate,
+    channelData: resampledChannelData,
   };
 
   return resampledFileData;

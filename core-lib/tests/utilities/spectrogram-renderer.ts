@@ -7,14 +7,16 @@ import {
   CanvasRenderFunction,
   drawPartitionDividers,
 } from "./canvas-chart-base";
-import { computePartitionRanges } from "../../src/utilities/audio";
 import { SpectrogramData } from "../../src/spectrogram/types";
+import { PartitionRanges } from "../../src";
+import { computePartitionRanges } from "../../src/fingerprint/fingerprint";
 
 // Reference: https://stackoverflow.com/a/57397987
 
 interface SpectrogramChartAuxData {
   colorScalePallet: string[];
   renderPartitionDividers: boolean;
+  partitionRanges?: PartitionRanges;
   partitionDividerColors?: [string, string];
   backgroundColor: string;
 }
@@ -30,10 +32,8 @@ const AUX_DATA: SpectrogramChartAuxData = {
     "rgba(255, 255, 255, 1)",
   ],
   renderPartitionDividers: true,
-  partitionDividerColors: [
-    "rgba(80, 80, 80, 0.2)",
-    "rgba(100, 100, 100, 0.2)",
-  ],
+  partitionRanges: computePartitionRanges(),
+  partitionDividerColors: ["rgba(80, 80, 80, 0.2)", "rgba(100, 100, 100, 0.2)"],
   backgroundColor: "black",
 };
 
@@ -83,12 +83,12 @@ const getAxisScales: CanvasGetScaleFunction<SpectrogramData, number> = (
 ) => {
   const xScale = d3
     .scaleLinear()
-    .domain([0, spectrogramData.numberOfWindows])
+    .domain([0, spectrogramData.numWindows])
     .range([0, canvasWidth]);
 
   const yScale = d3
     .scaleLog()
-    .domain([1, spectrogramData.frequencyBinCount + 1])
+    .domain([1, spectrogramData.numBuckets + 1])
     .range([canvasHeight, 0])
     .base(2);
 
@@ -109,11 +109,14 @@ function generateColorScale(pallet: string[], maxVal: number, minVal: number) {
   const domainMax = maxVal * NOISE_CEILING_MULTIPLIER;
   const domainMin = maxVal * NOISE_FLOOR_MULTIPLIER;
 
-  const domainScale = d3.scaleLinear<number>().domain([0, 1]).range([domainMin, domainMax]);
+  const domainScale = d3
+    .scaleLinear<number>()
+    .domain([0, 1])
+    .range([domainMin, domainMax]);
   const domainArray = pallet.map((_, idx) => {
     const percentage = idx / (pallet.length - 1);
     return domainScale(percentage);
-  }) 
+  });
 
   const colorScale = d3.scaleLinear<string>().domain(domainArray).range(pallet);
 
@@ -134,6 +137,7 @@ const renderCanvas: CanvasRenderFunction<
   {
     colorScalePallet,
     renderPartitionDividers,
+    partitionRanges,
     partitionDividerColors,
     backgroundColor,
   }
@@ -163,7 +167,7 @@ const renderCanvas: CanvasRenderFunction<
   console.log(">>> minVal", minVal, "maxVal", maxVal);
 
   // Compute the tick size of the xAxis
-  const xAxisTickSize = canvasWidth / spectrogramData.numberOfWindows;
+  const xAxisTickSize = canvasWidth / spectrogramData.numWindows;
 
   // Generate color scale from pallet
   const colorScale = generateColorScale(colorScalePallet, maxVal, minVal);
@@ -172,15 +176,20 @@ const renderCanvas: CanvasRenderFunction<
   if (renderPartitionDividers) {
     if (!partitionDividerColors)
       throw "Partition divider colors must be defined.";
+    if (!partitionRanges) throw "Partition ranges must be defined.";
 
-    const partitions = computePartitionRanges();
-    drawPartitionDividers(context, yScale, partitions, partitionDividerColors);
+    drawPartitionDividers(
+      context,
+      yScale,
+      partitionRanges,
+      partitionDividerColors
+    );
   }
 
   // Draw each cell on the canvas
-  for (let window = 0; window < spectrogramData.numberOfWindows; window++) {
-    for (let bin = 0; bin < spectrogramData.frequencyBinCount; bin++) {
-      const cellIdx = window * spectrogramData.frequencyBinCount + bin;
+  for (let window = 0; window < spectrogramData.numWindows; window++) {
+    for (let bin = 0; bin < spectrogramData.numBuckets; bin++) {
+      const cellIdx = window * spectrogramData.numBuckets + bin;
       const cellValue = spectrogramData.data[cellIdx];
 
       // Don't plot 0 values
