@@ -67,7 +67,7 @@ class Configuration {
     partitionCurve: 50.0,
     slidingWindowWidth: 21,
     slidingWindowHeight: 5,
-    standardDeviationMultiplier: 1,
+    standardDeviationMultiplier: 2.3,
   };
 
   // TODO: remove

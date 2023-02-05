@@ -49,7 +49,7 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
     std::cout << "Warning: sliding_window_width (" << sliding_window_width
               << ") is larger than spectrogram_num_windows ("
               << spectrogram_num_windows
-              << "), clamping sliding_window_width to" << clamp_value << "\n";
+              << "), clamping sliding_window_width to " << clamp_value << "\n";
 #endif
     sliding_window_width = clamp_value;
   }
@@ -146,22 +146,30 @@ void Fingerprint::Compute() {
       // simply shift it enough to still fit within the range.
       //
       // Ex 1: fitting slider
-      // slider_width = 5
+      // slider_width = 5, num_windows = 9
       //   |   |   |   |   |   |   |   |   |   |
       //   0   1   2   3   4   5   6   7   8   9
       //                         ^
       //               |-------------------|     (fitting slider)
       //
-      // Ex 2: overflowing left side
-      // slider_width = 5
+      // Ex 2: overflowing left side at 1
+      // slider_width = 5, num_windows = 9
       //        |   |   |   |   |   |   |   |   |   |
       //        0   1   2   3   4   5   6   7   8   9
-      //             ^
+      //              ^
       //    |-------------------|       (centered slider)
       //        |-------------------|   (shifted slider (+1))
+      // 
+      // Ex 3: overflowing left side at 0
+      // slider_width = 5, num_windows = 9
+      //         |   |   |   |   |   |   |   |   |   |
+      //         0   1   2   3   4   5   6   7   8   9
+      //           ^
+      // |-------------------|           (centered slider)
+      //         |-------------------|   (shifted slider (+2))
       //
-      // Ex 3: overflowing right side
-      // slider_width = 5
+      // Ex 4: overflowing right side
+      // slider_width = 5, num_windows = 9
       //   |   |   |   |   |   |   |   |   |   |
       //   0   1   2   3   4   5   6   7   8   9
       //                                     ^
@@ -169,41 +177,39 @@ void Fingerprint::Compute() {
       //                   |-------------------|           (shifted slider (-2))
 
       // TODO: factor out into function
-      // TODO: might need this later
-      // // +value => slider window is overflowing left
-      // // -value => slider window is overflowing right
-      // int32_t slider_width_shift = 0;
-      // // The slider window is overflowing the left
-      // // Note: we do not do `curr_window - slider_width_half < 0` here
-      // because
-      // // we are dealing with unsigned values here so negatives can screw it
-      // up if (curr_window < slider_width_half)
-      //   slider_width_shift = slider_width_half - curr_window;
-      // // The slider width is overflowing the right
-      // else if (curr_window + slider_width_half >= num_windows)
-      //   slider_width_shift = num_windows - curr_window + slider_width_half;
+      // +value => slider window is overflowing left
+      // -value => slider window is overflowing right
+      int32_t slider_width_shift = 0;
+      // The slider window is overflowing the left
+      // Note: we do not do `curr_window - slider_width_half < 0` here because
+      // we are dealing with unsigned values here so negatives can screw it up
+      if (curr_window < slider_width_half)
+        slider_width_shift = slider_width_half - curr_window;
+      // The slider width is overflowing the right
+      else if (curr_window + slider_width_half >= num_windows)
+        slider_width_shift = (num_windows - 1) - curr_window - slider_width_half;
 
-      // // Same kind of calculations for the height slider
-      // int32_t slider_height_shift = 0;
-      // if (curr_partition < slider_height_half)
-      //   slider_height_shift = slider_height_half - curr_partition;
-      // else if (curr_partition + slider_height_half >= num_partitions)
-      //   slider_height_shift =
-      //       num_partitions - curr_partition + slider_height_half;
+      // Same kind of calculations for the height slider
+      int32_t slider_height_shift = 0;
+      if (curr_partition < slider_height_half)
+        slider_height_shift = slider_height_half - curr_partition;
+      else if (curr_partition + slider_height_half >= num_partitions)
+        slider_height_shift =
+            (num_partitions - 1) - curr_partition - slider_height_half;
 
       // inclusive
       size_t slider_x_start_idx =
-          MAX((size_t)0, (size_t)(curr_window - slider_width_half));
+          curr_window - slider_width_half + slider_width_shift;
       // exclusive
       size_t slider_x_end_idx =
-          MIN(curr_window + slider_width_half, num_windows);
+          curr_window + slider_width_half + slider_width_shift;
 
       // inclusive
       size_t slider_y_start_idx =
-          MAX((size_t)0, (size_t)(curr_partition - slider_height_half));
+          curr_partition - slider_height_half + slider_height_shift;
       // exclusive
       size_t slider_y_end_idx =
-          MIN(curr_partition + slider_height_half, num_partitions);
+          curr_partition + slider_height_half + slider_height_shift;
 
       // Compute the mean value of the slider, weighted by the
       // windowing function
