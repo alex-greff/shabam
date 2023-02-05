@@ -175,6 +175,21 @@ async function computeFingerprint(
   // timerEnd = performance.now();
   // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
+  
+  // --- Sub test ---
+  console.log()
+  const subTestSampleFileName = "sub_test.wav";
+  const subTestSampleFingerprint = await computeFingerprint(
+    subTestSampleFileName,
+    "Sub Test"
+  );
+  // process.stdout.write(`Computing Sub Text records table... `);
+  // timerStart = performance.now();
+  // const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+
+
   // --- Sine test ---
   console.log()
   const sineTestSampleFileName = "sine_test.wav";
@@ -187,19 +202,6 @@ async function computeFingerprint(
   // const sineTestSampleRecordsTable = new RecordsTable(
   //   sineTestSampleFingerprint
   // );
-  // timerEnd = performance.now();
-  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-
-  // --- Sub test ---
-  console.log()
-  const subTestSampleFileName = "sub_test.wav";
-  const subTestSampleFingerprint = await computeFingerprint(
-    subTestSampleFileName,
-    "Sub Test"
-  );
-  // process.stdout.write(`Computing Sub Text records table... `);
-  // timerStart = performance.now();
-  // const subeTestSampleRecordsTable = new RecordsTable(subTestSampleFingerprint);
   // timerEnd = performance.now();
   // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 

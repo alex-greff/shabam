@@ -154,9 +154,10 @@ const renderCanvas: CanvasRenderFunction<
     const partitionRange = fingerprintData.partitionRanges[partition];
     const partitionStart = partitionRange[0];
     const partitionEnd = partitionRange[1];
-    const partitionMid = (partitionEnd - partitionStart) / 2 + partitionStart;
 
-    const y = yScale(partitionMid)!;
+    // Don't know why I'm adding +1 here but I did it in drawPartitionDividers
+    // a long time ago and it works :shrug:
+    const y = (yScale(partitionStart + 1)! + yScale(partitionEnd + 1)!) / 2;
 
     drawCell(context, x, y, POINT_RADIUS, selectionColor);
   }
