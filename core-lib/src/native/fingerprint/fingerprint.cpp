@@ -116,11 +116,6 @@ void Fingerprint::Compute() {
       for (size_t sample_idx = bucket_start_idx; sample_idx < bucket_end_idx;
            sample_idx++) {
         float curr_val = spectrogram[sample_idx];
-        // // TODO: remove
-        // if (curr_window == 0 && sample_idx >= 0 && sample_idx < 30) {
-        //   std::cout << ">>> sample_idx=" << sample_idx << " value=" <<
-        //   curr_val << "\n";
-        // }
         max_val = std::max(max_val, curr_val);
       }
 
@@ -227,22 +222,11 @@ void Fingerprint::Compute() {
         for (size_t sy = slider_y_start_idx; sy < slider_y_end_idx; sy++) {
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
-          // // TODO: remove
-          // if (curr_window == 0 && curr_partition == 15) {
-          //   std::cout << ">>> =" << curr_partition << " slider_mean=" <<
-          //   slider_mean << "\n";
-          // }
           slider_mean += curr_cell_value;
         }
       }
 
       slider_mean = slider_mean / slider_size;
-
-      // // TODO: remove
-      // if (curr_window == 0) {
-      //   std::cout << ">>> curr_partition=" << curr_partition << "
-      //   slider_mean=" << slider_mean << "\n";
-      // }
 
       // Compute the variance of the slider, weighted by the windowing function
       float slider_variance = 0.0;
@@ -264,16 +248,6 @@ void Fingerprint::Compute() {
       float standard_deviation_multiplier = this->standard_deviation_multiplier;
       float threshold_value = slider_mean + slider_standard_deviation *
                                                 standard_deviation_multiplier;
-
-      // // TODO: remove
-      // if (curr_window == 0) {
-      //   std::cout << "curr_partition=" << curr_partition
-      //             << " cell_value=" << cell_value
-      //             << " slider_mean=" << slider_mean
-      //             << " slider_standard_deviation=" <<
-      //             slider_standard_deviation
-      //             << " threshold_value=" << threshold_value << "\n";
-      // }
 
       bool passes = cell_value > threshold_value;
       if (passes) {
