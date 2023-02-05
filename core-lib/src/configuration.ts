@@ -66,8 +66,10 @@ class Configuration {
     partitionAmount: 50,
     partitionCurve: 50.0,
     slidingWindowWidth: 21,
-    slidingWindowHeight: 5,
-    standardDeviationMultiplier: 2.3,
+    // slidingWindowHeight: 5,
+    slidingWindowHeight: 10,
+    // slidingWindowHeight: 0, // Use whole height
+    standardDeviationMultiplier: 2,
   };
 
   // TODO: remove

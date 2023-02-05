@@ -54,15 +54,17 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
     sliding_window_width = clamp_value;
   }
 
-  if (sliding_window_height == 0)
-    throw std::invalid_argument("sliding_window_height must non-zero.");
-
-  if (partition_count % 2 == 1 && sliding_window_height > partition_count)
-    throw std::invalid_argument(
-        "sliding_window_width must be in range [1, partition_count].");
-  else if (sliding_window_height > partition_count - 1)
-    throw std::invalid_argument(
-        "sliding_window_width must be in range [1, partition_count - 1].");
+  if (sliding_window_height == 0) {
+    sliding_window_height =
+        partition_count % 2 == 0 ? partition_count - 1 : partition_count;
+  } else {
+    if (partition_count % 2 == 1 && sliding_window_height > partition_count)
+      throw std::invalid_argument(
+          "sliding_window_height must be in range [1, partition_count].");
+    else if (sliding_window_height > partition_count - 1)
+      throw std::invalid_argument(
+          "sliding_window_height must be in range [1, partition_count - 1].");
+  }
 
   this->spectrogram = spectrogram;
   this->spectrogram_length = spectrogram_length;
@@ -114,11 +116,17 @@ void Fingerprint::Compute() {
       for (size_t sample_idx = bucket_start_idx; sample_idx < bucket_end_idx;
            sample_idx++) {
         float curr_val = spectrogram[sample_idx];
+        // // TODO: remove
+        // if (curr_window == 0 && sample_idx >= 0 && sample_idx < 30) {
+        //   std::cout << ">>> sample_idx=" << sample_idx << " value=" <<
+        //   curr_val << "\n";
+        // }
         max_val = std::max(max_val, curr_val);
       }
 
       size_t cell_idx = curr_window * num_partitions + curr_partition;
-      max_val_cell_data[cell_idx] = max_val;
+      // Floor at 0
+      max_val_cell_data[cell_idx] = std::max(0.0f, max_val);
     }
   }
 
@@ -159,7 +167,7 @@ void Fingerprint::Compute() {
       //              ^
       //    |-------------------|       (centered slider)
       //        |-------------------|   (shifted slider (+1))
-      // 
+      //
       // Ex 3: overflowing left side at 0
       // slider_width = 5, num_windows = 9
       //         |   |   |   |   |   |   |   |   |   |
@@ -187,7 +195,8 @@ void Fingerprint::Compute() {
         slider_width_shift = slider_width_half - curr_window;
       // The slider width is overflowing the right
       else if (curr_window + slider_width_half >= num_windows)
-        slider_width_shift = (num_windows - 1) - curr_window - slider_width_half;
+        slider_width_shift =
+            (num_windows - 1) - curr_window - slider_width_half;
 
       // Same kind of calculations for the height slider
       int32_t slider_height_shift = 0;
@@ -218,11 +227,22 @@ void Fingerprint::Compute() {
         for (size_t sy = slider_y_start_idx; sy < slider_y_end_idx; sy++) {
           size_t curr_cell_idx = sx * num_partitions + sy;
           float curr_cell_value = max_val_cell_data[curr_cell_idx];
+          // // TODO: remove
+          // if (curr_window == 0 && curr_partition == 15) {
+          //   std::cout << ">>> =" << curr_partition << " slider_mean=" <<
+          //   slider_mean << "\n";
+          // }
           slider_mean += curr_cell_value;
         }
       }
 
       slider_mean = slider_mean / slider_size;
+
+      // // TODO: remove
+      // if (curr_window == 0) {
+      //   std::cout << ">>> curr_partition=" << curr_partition << "
+      //   slider_mean=" << slider_mean << "\n";
+      // }
 
       // Compute the variance of the slider, weighted by the windowing function
       float slider_variance = 0.0;
@@ -242,9 +262,18 @@ void Fingerprint::Compute() {
       size_t cell_idx = curr_window * num_partitions + curr_partition;
       float cell_value = max_val_cell_data[cell_idx];
       float standard_deviation_multiplier = this->standard_deviation_multiplier;
-      float threshold_value =
-          MAX(0, slider_mean +
-                     slider_standard_deviation * standard_deviation_multiplier);
+      float threshold_value = slider_mean + slider_standard_deviation *
+                                                standard_deviation_multiplier;
+
+      // // TODO: remove
+      // if (curr_window == 0) {
+      //   std::cout << "curr_partition=" << curr_partition
+      //             << " cell_value=" << cell_value
+      //             << " slider_mean=" << slider_mean
+      //             << " slider_standard_deviation=" <<
+      //             slider_standard_deviation
+      //             << " threshold_value=" << threshold_value << "\n";
+      // }
 
       bool passes = cell_value > threshold_value;
       if (passes) {

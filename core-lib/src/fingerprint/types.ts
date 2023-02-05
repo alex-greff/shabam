@@ -18,28 +18,30 @@ export interface FingerprintData {
 
 export interface FingerprintConfig {
   /**
-   * Number of partitions in the fingerprints. Higher values result in steeper
-   * curves.
+   * Number of partitions in the fingerprints. 
    * 
    * Range: [1, infinity)
    */
   partitionAmount: number;
 
   /**
-   * Curve used to calculate partitions.
+   * Curve used to calculate partitions. Higher values result in steeper curves.
    * Range: (1, infinity)
    */
   partitionCurve: number;
 
   /**
-   * Number of windows on each side of the slider
-   * TOTAL_SLIDER_WIDTH = 2 * FINGERPRINT_SLIDER_WIDTH + 1
+   * Number of windows on each side of the slider. Must be an odd number.
    */
   slidingWindowWidth: number;
 
   /**
-   * Number of windows above and below the slider
-   * TOTAL_SLIDER_HEIGHT = 2 * FINGERPRINT_SLIDER_HEIGHT + 1
+   * Number of windows above and below the slider. Must be an odd number.
+   * 
+   * Range: [0, partitionAmount], if partitionAmount is odd
+   *        [0, partitionAmount), if partitionAmount is event
+   * 
+   * Note: if set to 0 then the entire window height is used.
    */
   slidingWindowHeight: number;
 
