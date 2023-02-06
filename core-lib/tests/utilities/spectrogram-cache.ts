@@ -1,9 +1,14 @@
 import * as fs from "fs";
-import * as bson from "bson";
 import path from "path";
 import { SpectrogramData } from "../../src/spectrogram/types";
 
 // TODO: need to make a better cache system
+
+interface SerializableSpectrogramData {
+  numBuckets: number;
+  numWindows: number;
+  data: string;
+}
 
 export async function loadSpectrogramFromCache(
   fileName: string,
@@ -12,23 +17,20 @@ export async function loadSpectrogramFromCache(
   const cacheFileName = `${fileName}.cache.bson`;
 
   try {
-    const cacheFileBuff = await fs.promises.readFile(
-      path.join(dataDir, cacheFileName)
+    const spectrogramJsonStr = await fs.promises.readFile(
+      path.join(dataDir, cacheFileName),
+      "utf8"
     );
 
-    interface BsonSpectrogramData {
-      numberOfWindows: number;
-      frequencyBinCount: number;
-      data: Record<number, number>;
-    }
-
-    const cache = bson.deserialize(cacheFileBuff) as BsonSpectrogramData;
-    const data = new Float32Array(Object.values(cache.data));
+    const spectrogramSerializable: SerializableSpectrogramData =
+      JSON.parse(spectrogramJsonStr);
 
     return {
-      numWindows: cache.numberOfWindows,
-      numBuckets: cache.frequencyBinCount,
-      data,
+      numBuckets: spectrogramSerializable.numBuckets,
+      numWindows: spectrogramSerializable.numWindows,
+      data: new Float32Array(
+        Buffer.from(spectrogramSerializable.data, "base64")
+      ),
     };
   } catch (err) {
     return null;
@@ -42,23 +44,16 @@ export async function saveSpectrogramToCache(
 ) {
   const cacheFileName = `${fileName}.cache.bson`;
 
-  interface BsonSpectrogramDataIn {
-    numberOfWindows: number;
-    frequencyBinCount: number;
-    data: Buffer;
-  }
-
-  const spectrogramBsonObj: BsonSpectrogramDataIn = {
-    numberOfWindows: spectrogram.numWindows,
-    frequencyBinCount: spectrogram.numBuckets,
-    // data: spectrogram.data,
-    data: Buffer.from(spectrogram.data),
+  const spectrogramSerializable: SerializableSpectrogramData = {
+    numBuckets: spectrogram.numBuckets,
+    numWindows: spectrogram.numWindows,
+    data: Buffer.from(spectrogram.data.buffer).toString("base64"),
   };
 
-  const spectrogramSerialized = bson.serialize(spectrogramBsonObj);
+  const spectrogramJsonStr = JSON.stringify(spectrogramSerializable);
 
   await fs.promises.writeFile(
     path.join(dataDir, cacheFileName),
-    spectrogramSerialized
+    spectrogramJsonStr
   );
 }
