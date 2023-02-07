@@ -11,6 +11,20 @@ typedef struct RecordsSearchMatch {
 
 class RecordsEngine {
 protected:
+  /**
+   * The number of points in a target zone.
+   */
+  size_t target_zone_size;
+
+  /**
+   * Dictates how picky the selection cutoff is when comparing the total hit
+   * numbers of potential tracks.
+   * 0 = every potential track is selected
+   * 1 = only clips who have all their target zones match
+   * Range: [0, 1]
+   */
+  float search_selection_coefficient;
+
   static uint64_t EncodeAddress(uint16_t anchor_frequency,
                                 uint16_t point_frequency, uint32_t delta);
   static std::tuple<uint16_t, uint16_t, uint32_t>
@@ -20,7 +34,7 @@ protected:
   static std::tuple<uint32_t, uint32_t> DecodeCouple(uint64_t couple);
 
 public:
-  RecordsEngine();
+  RecordsEngine(size_t target_zone_size, float search_selection_coefficient);
   ~RecordsEngine();
 
   // --- Records Result ---
@@ -35,9 +49,8 @@ public:
    */
   size_t matches_length;
 
-  virtual void StoreRecords(record_t *records, size_t num_records,
-                            uint32_t track_id);
-  virtual void SearchRecords(record_t *clip_records, size_t num_clip_records);
+  virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id);
+  virtual void SearchRecords(RecordsTable &clip_records_table);
   virtual void ClearRecords(uint32_t track_id);
 };
 

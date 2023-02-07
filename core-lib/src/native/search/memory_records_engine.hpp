@@ -16,11 +16,12 @@ private:
       track_id_to_data_table_entries;
 
 public:
-  MemoryRecordsEngine();
+  MemoryRecordsEngine(size_t target_zone_size,
+                      float search_selection_coefficient);
   ~MemoryRecordsEngine();
 
-  void StoreRecords(record_t *records, size_t num_records, uint32_t track_id);
-  void SearchRecords(record_t *clip_records, size_t num_clip_records);
+  void StoreRecords(RecordsTable &records_table, uint32_t track_id);
+  void SearchRecords(RecordsTable &clip_records_table);
   void ClearRecords(uint32_t track_id);
 };
 

@@ -3,8 +3,10 @@
 #include <limits.h>
 #include <stdint.h>
 
-RecordsEngine::RecordsEngine() {
-  // Do nothing for now
+RecordsEngine::RecordsEngine(size_t target_zone_size,
+                             float search_selection_coefficient) {
+  this->target_zone_size = target_zone_size;
+  this->search_selection_coefficient = search_selection_coefficient;
 }
 
 RecordsEngine::~RecordsEngine() {
