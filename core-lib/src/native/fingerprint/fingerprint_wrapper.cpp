@@ -1,8 +1,6 @@
 #include "fingerprint_wrapper.hpp"
 #include <assert.h>
 
-using namespace Napi;
-
 FingerprintWrapper::FingerprintWrapper(const Napi::CallbackInfo &info)
     : ObjectWrap(info) {
   // Expected arguments:
@@ -120,7 +118,7 @@ void FingerprintWrapper::Compute(const Napi::CallbackInfo &info) {
 
 Napi::Value FingerprintWrapper::GetFingerprint(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  Napi::Object ret = Object::New(env);
+  Napi::Object ret = Napi::Object::New(env);
 
   if (info.Length() != 0) {
     Napi::TypeError::New(env, "No arguments expected.")
@@ -163,6 +161,165 @@ Napi::Value FingerprintWrapper::GetFingerprint(const Napi::CallbackInfo &info) {
   return ret;
 }
 
+Napi::Value
+FingerprintWrapper::ComputePartitionRanges(const Napi::CallbackInfo &info) {
+  // Expected arguments
+  // - partitionCount: number (int)
+  // - partitionCurveTension: number (float)
+  // - spectrogramNumBuckets: number (int)
+
+  Napi::Env env = info.Env();
+
+  if (info.Length() != 3) {
+    Napi::TypeError::New(env, "Wrong number of arguments")
+        .ThrowAsJavaScriptException();
+    return Napi::Array::New(env);
+  }
+
+  if (!info[0].IsNumber()) {
+    Napi::TypeError::New(env, "partitionCount argument needs to be an integer.")
+        .ThrowAsJavaScriptException();
+    return Napi::Array::New(env);
+  }
+
+  if (!info[1].IsNumber()) {
+    Napi::TypeError::New(env,
+                         "partitionCurveTension argument needs to be a float.")
+        .ThrowAsJavaScriptException();
+    return Napi::Array::New(env);
+  }
+
+  if (!info[2].IsNumber()) {
+    Napi::TypeError::New(
+        env, "spectrogramNumBuckets argument needs to be an integer.")
+        .ThrowAsJavaScriptException();
+    return Napi::Array::New(env);
+  }
+
+  size_t partition_count = info[0].As<Napi::Number>().Int32Value();
+  float partition_curve_tension = info[1].As<Napi::Number>().FloatValue();
+  size_t spectrogram_num_buckets = info[2].As<Napi::Number>().Int32Value();
+
+  // Construct the partition range array of tuples
+  uint32_t *partitions = new uint32_t[partition_count + 1];
+  Fingerprint::ComputePartitionRanges(partitions, partition_count,
+                                      partition_curve_tension,
+                                      spectrogram_num_buckets);
+  Napi::Array partition_ranges_array = Napi::Array::New(env);
+  for (size_t p = 0; p < partition_count; p++) {
+    Napi::Array partition_tuple = Napi::Array::New(env);
+    partition_tuple[(uint32_t)0] = Napi::Number::New(env, partitions[p]);
+    partition_tuple[(uint32_t)1] = Napi::Number::New(env, partitions[p + 1]);
+    partition_ranges_array[p] = partition_tuple;
+  }
+  delete partitions;
+
+  return partition_ranges_array;
+}
+
+void FingerprintWrapper::GetFingerprintData(
+    Napi::Env env, Napi::Value &value, fingerprint_data_t &fingerprint_data) {
+  if (!value.IsObject()) {
+    Napi::TypeError::New(env, "Input value must be an object.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  Napi::Object obj = value.As<Napi::Object>();
+
+  if (!obj.Has("numWindows")) {
+    Napi::TypeError::New(env, "Missing `numWindows` property.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+  if (!obj.Has("numPartitions")) {
+    Napi::TypeError::New(env, "Missing `numPartitions` property.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+  if (!obj.Has("numBuckets")) {
+    Napi::TypeError::New(env, "Missing `numBuckets` property.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+  if (!obj.Has("partitionRanges")) {
+    Napi::TypeError::New(env, "Missing `partitionRanges` property.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+  if (!obj.Has("data")) {
+    Napi::TypeError::New(env, "Missing `data` property.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  size_t num_windows = obj.Get("numWindows").As<Napi::Number>().Int32Value();
+  size_t num_partitions =
+      obj.Get("numPartitions").As<Napi::Number>().Int32Value();
+  size_t num_buckets = obj.Get("numBuckets").As<Napi::Number>().Int32Value();
+
+  Napi::Array partitions_arr = obj.Get("partitionRanges").As<Napi::Array>();
+  Napi::Uint32Array data_typed_arr = obj.Get("data").As<Napi::Uint32Array>();
+
+  if (partitions_arr.Length() != num_partitions) {
+    Napi::TypeError::New(env,
+                         "`partitionRanges` must be of length `numPartitions`.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  uint32_t *partitions = new uint32_t[num_partitions + 1];
+  for (size_t i = 0; i < num_partitions; i++) {
+    Napi::Value curr_value = partitions_arr.Get(i);
+    if (!curr_value.IsArray()) {
+      Napi::TypeError::New(env, "Each item in `partitionRanges` must be a "
+                                "tuple of type [number, number].")
+          .ThrowAsJavaScriptException();
+      return;
+    }
+
+    Napi::Array curr_value_arr = curr_value.As<Napi::Array>();
+    if (curr_value_arr.Length() != 2) {
+      Napi::TypeError::New(env, "Each item in `partitionRanges` must be a "
+                                "tuple of type [number, number].")
+          .ThrowAsJavaScriptException();
+      return;
+    }
+
+    Napi::Value left_value = curr_value_arr.Get((uint32_t)0);
+    Napi::Value right_value = curr_value_arr.Get(1);
+
+    if (!left_value.IsNumber() || !right_value.IsNumber()) {
+      Napi::TypeError::New(env, "Each item in `partitionRanges` must be a "
+                                "tuple of type [number, number].")
+          .ThrowAsJavaScriptException();
+      return;
+    }
+
+    size_t range_start = left_value.As<Napi::Number>().Int32Value();
+    size_t range_end = right_value.As<Napi::Number>().Int32Value();
+
+    partitions[i] = range_start;
+    if (i == (num_partitions - 1)) {
+      partitions[i + 1] = range_end;
+    }
+  }
+
+  size_t fingerprint_length = data_typed_arr.ElementLength();
+  uint32_t *fingerprint = new uint32_t[fingerprint_length];
+  // TODO: look into using memcpy or something here
+  for (size_t i = 0; i < fingerprint_length; i++) {
+    fingerprint[i] = data_typed_arr[i];
+  }
+
+  fingerprint_data.num_windows = num_windows;
+  fingerprint_data.num_partitions = num_partitions;
+  fingerprint_data.num_buckets = num_buckets;
+  fingerprint_data.partitions = partitions;
+  fingerprint_data.fingerprint = fingerprint;
+  fingerprint_data.fingerprint_length = fingerprint_length;
+}
+
 Napi::Function FingerprintWrapper::GetClass(Napi::Env env) {
   Napi::Function func =
       DefineClass(env, "Fingerprint",
@@ -173,5 +330,8 @@ Napi::Function FingerprintWrapper::GetClass(Napi::Env env) {
                    FingerprintWrapper::StaticMethod(
                        "computePartitionRanges",
                        &FingerprintWrapper::ComputePartitionRanges)});
+  Napi::FunctionReference *constructor = new Napi::FunctionReference();
+  *constructor = Napi::Persistent(func);
+  env.SetInstanceData<Napi::FunctionReference>(constructor);
   return func;
 }

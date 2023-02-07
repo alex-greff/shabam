@@ -29,6 +29,7 @@ public:
   SpectrogramWrapper(const Napi::CallbackInfo &info);
   ~SpectrogramWrapper();
   static Napi::Function GetClass(Napi::Env env);
+  
   void Compute(const Napi::CallbackInfo &info);
   Napi::Value GetSpectrogram(const Napi::CallbackInfo &info);
 };

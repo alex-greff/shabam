@@ -1,7 +1,5 @@
 #include "spectrogram_wrapper.hpp"
 
-using namespace Napi;
-
 SpectrogramWrapper::SpectrogramWrapper(const Napi::CallbackInfo &info)
     : ObjectWrap(info) {
   // Expected arguments:
@@ -83,7 +81,7 @@ void SpectrogramWrapper::Compute(const Napi::CallbackInfo &info) {
 
 Napi::Value SpectrogramWrapper::GetSpectrogram(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  Napi::Object ret = Object::New(env);
+  Napi::Object ret = Napi::Object::New(env);
 
   if (info.Length() != 0) {
     Napi::TypeError::New(env, "No arguments expected.")
@@ -121,5 +119,8 @@ Napi::Function SpectrogramWrapper::GetClass(Napi::Env env) {
                        "compute", &SpectrogramWrapper::Compute),
                    SpectrogramWrapper::InstanceMethod(
                        "getSpectrogram", &SpectrogramWrapper::GetSpectrogram)});
+  Napi::FunctionReference *constructor = new Napi::FunctionReference();
+  *constructor = Napi::Persistent(func);
+  env.SetInstanceData<Napi::FunctionReference>(constructor);
   return func;
 }

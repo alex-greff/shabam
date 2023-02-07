@@ -104,25 +104,25 @@ async function computeFingerprint(
   let timerStart = 0,
     timerEnd = 0;
 
-  // --- Valor song ---
-  // const valorFileName = "valor_clip_30sec.wav";
-  // const valorFileName = "valor_clip_1min.wav";
-  const valorFileName = "valor.wav";
-  const valorTrackId = 1;
-  const valorFingerprint = await computeFingerprint(valorFileName, "Valor");
-  process.stdout.write(`Computing Valor records table... `);
-  timerStart = performance.now();
-  // const valorRecordsTable = new TrackRecordsTable(
-  //   valorFingerprint,
-  //   valorTrackId
-  // );
-  // timerEnd = performance.now();
-  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // process.stdout.write("Storing Valor records... ");
+  // // --- Valor song ---
+  // // const valorFileName = "valor_clip_30sec.wav";
+  // // const valorFileName = "valor_clip_1min.wav";
+  // const valorFileName = "valor.wav";
+  // const valorTrackId = 1;
+  // const valorFingerprint = await computeFingerprint(valorFileName, "Valor");
+  // process.stdout.write(`Computing Valor records table... `);
   // timerStart = performance.now();
-  // await engine.storeRecords(valorRecordsTable, true);
-  // timerEnd = performance.now();
-  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // // const valorRecordsTable = new TrackRecordsTable(
+  // //   valorFingerprint,
+  // //   valorTrackId
+  // // );
+  // // timerEnd = performance.now();
+  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // // process.stdout.write("Storing Valor records... ");
+  // // timerStart = performance.now();
+  // // await engine.storeRecords(valorRecordsTable, true);
+  // // timerEnd = performance.now();
+  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   // // --- Frigid song ---
   // console.log()
@@ -190,20 +190,20 @@ async function computeFingerprint(
   // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
 
-  // // --- Sine test ---
-  // console.log()
-  // const sineTestSampleFileName = "sine_test.wav";
-  // const sineTestSampleFingerprint = await computeFingerprint(
-  //   sineTestSampleFileName,
-  //   "Sine Test"
+  // --- Sine test ---
+  console.log()
+  const sineTestSampleFileName = "sine_test.wav";
+  const sineTestSampleFingerprint = await computeFingerprint(
+    sineTestSampleFileName,
+    "Sine Test"
+  );
+  // process.stdout.write(`Computing Sine Text records table... `);
+  // timerStart = performance.now();
+  // const sineTestSampleRecordsTable = new RecordsTable(
+  //   sineTestSampleFingerprint
   // );
-  // // process.stdout.write(`Computing Sine Text records table... `);
-  // // timerStart = performance.now();
-  // // const sineTestSampleRecordsTable = new RecordsTable(
-  // //   sineTestSampleFingerprint
-  // // );
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   console.log("Finished!"); // TODO: remove
 })();

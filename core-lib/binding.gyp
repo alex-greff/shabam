@@ -11,6 +11,7 @@
         "./src/native/fingerprint/fingerprint.cpp",
         "./src/native/fingerprint/fingerprint_wrapper.cpp",
         "./src/native/search/records_table.cpp",
+        "./src/native/search/records_table_wrapper.cpp",
         "./src/native/search/records_engine.cpp",
         "./src/native/search/memory_records_engine.cpp",
         "./src/index.cpp"

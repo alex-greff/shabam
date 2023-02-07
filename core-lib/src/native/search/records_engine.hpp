@@ -51,7 +51,7 @@ public:
 
   virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id);
   virtual void SearchRecords(RecordsTable &clip_records_table);
-  virtual void ClearRecords(uint32_t track_id);
+  virtual void ClearAllRecords();
 };
 
 #endif

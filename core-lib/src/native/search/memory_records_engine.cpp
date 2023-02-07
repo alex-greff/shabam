@@ -194,7 +194,7 @@ void MemoryRecordsEngine::SearchRecords(RecordsTable &clip_records_table) {
   // TODO: implement time coherency filtering
 }
 
-void MemoryRecordsEngine::ClearRecords(uint32_t track_id) {
+void MemoryRecordsEngine::ClearAllRecords() {
   this->data_table.clear();
   this->track_id_to_data_table_entries.clear();
 }

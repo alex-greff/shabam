@@ -22,7 +22,7 @@ public:
 
   void StoreRecords(RecordsTable &records_table, uint32_t track_id);
   void SearchRecords(RecordsTable &clip_records_table);
-  void ClearRecords(uint32_t track_id);
+  void ClearAllRecords();
 };
 
 #endif

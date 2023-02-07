@@ -6,6 +6,17 @@
 #include <stdlib.h>
 #include <string>
 
+typedef struct FingerprintData {
+  size_t num_windows;
+  size_t num_partitions;
+  size_t num_buckets;
+  uint32_t *partitions;
+  uint32_t *fingerprint;
+  size_t fingerprint_length;
+} fingerprint_data_t;
+
+void free_fingerprint_data(fingerprint_data_t *fingerprint_data);
+
 class Fingerprint {
 private:
   /**
@@ -15,19 +26,7 @@ private:
   static inline uint32_t GetBoundaryIndex(size_t partition_idx,
                                           size_t total_partitions,
                                           size_t total_bins,
-                                          size_t partition_curve) {
-    // Equation: y = (b/(c-1))(c^(x/a)-1)
-    //   where:
-    //     a = number of partitions
-    //     b = number of bins (FFT_size / 2)
-    //     c = tension on the curve
-
-    return (uint32_t)std::floor(
-        (((double)total_bins) / (((double)partition_curve) - 1.0)) *
-        (std::pow(partition_curve,
-                  ((double)partition_idx) / ((double)total_partitions)) -
-         1.0));
-  }
+                                          size_t partition_curve);
 
 public:
   Fingerprint(float *spectrogram, size_t spectrogram_length,
@@ -151,14 +150,15 @@ public:
   static void ComputePartitionRanges(uint32_t *partitions,
                                      size_t partition_count,
                                      size_t partition_curve_tension,
-                                     size_t spectrogram_num_buckets) {
-    for (size_t partition_idx = 0; partition_idx < partition_count + 1;
-         partition_idx++) {
-      partitions[partition_idx] =
-          GetBoundaryIndex(partition_idx, partition_count,
-                           spectrogram_num_buckets, partition_curve_tension);
-    }
-  }
+                                     size_t spectrogram_num_buckets);
+
+  /**
+   * Returns a struct with the bare bones fingerprint data.
+   *
+   * Note: the `partitions` and `fingerprint` arrays must be freed by the
+   * caller.
+   */
+  void ToFingerprintData(fingerprint_data_t &fingerprint_data);
 };
 
 #endif

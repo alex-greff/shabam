@@ -1,0 +1,103 @@
+#include "records_table_wrapper.hpp"
+#include "../fingerprint/fingerprint_wrapper.hpp"
+// TODO: remove
+#include <iostream>
+
+RecordsTableWrapper::RecordsTableWrapper(const Napi::CallbackInfo &info)
+    : ObjectWrap(info) {
+  // Expected arguments:
+  // - fingerprint: Fingerprint
+  // - targetZoneSize: number
+
+  Napi::Env env = info.Env();
+
+  if (info.Length() != 2) {
+    Napi::TypeError::New(env, "Wrong number of arguments")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  if (!info[1].IsNumber()) {
+    Napi::TypeError::New(env, "targetZoneSize argument needs to be an integer.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  // TODO: remove
+  // std::cout << ">>> info[0].Type() " << info[0].Type() << std::endl;
+
+  fingerprint_data_t *fingerprint_data = new fingerprint_data_t;
+  auto fingerprint_value = info[0];
+  FingerprintWrapper::GetFingerprintData(env, fingerprint_value,
+                                         *fingerprint_data);
+  this->fingerprint_data = fingerprint_data;
+
+  size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
+
+  this->records_table = new RecordsTable(*fingerprint_data, target_zone_size);
+}
+
+RecordsTableWrapper::~RecordsTableWrapper() {
+  free_fingerprint_data(this->fingerprint_data);
+  delete this->fingerprint_data;
+  delete this->records_table;
+}
+
+void RecordsTableWrapper::Compute(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  if (info.Length() != 0) {
+    Napi::TypeError::New(env, "No arguments expected.")
+        .ThrowAsJavaScriptException();
+    return;
+  }
+
+  this->records_table->Compute();
+}
+
+Napi::Value
+RecordsTableWrapper::GetRecordsTable(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+  Napi::Object ret = Napi::Object::New(env);
+
+  if (info.Length() != 0) {
+    Napi::TypeError::New(env, "No arguments expected.")
+        .ThrowAsJavaScriptException();
+    return ret;
+  }
+
+  RecordsTable *records_table = this->records_table;
+  record_t *records = records_table->records;
+  size_t num_records = records_table->num_records;
+
+  if (records_table == nullptr) {
+    Napi::TypeError::New(env, "Records table has not been computed yet.")
+        .ThrowAsJavaScriptException();
+    return ret;
+  }
+
+  Napi::Array records_table_arr = Napi::Array::New(env, num_records);
+  for (size_t i = 0; i < num_records; i++) {
+    record_t *curr_record = &records[i];
+
+    Napi::Object curr_obj = Napi::Object::New(env);
+    curr_obj.Set("anchorFrequency", curr_record->anchor_frequency);
+    curr_obj.Set("pointFrequency", curr_record->point_frequency);
+    curr_obj.Set("delta", curr_record->delta);
+    curr_obj.Set("anchorAbsoluteTime", curr_record->anchor_absolute_time);
+
+    records_table_arr[i] = curr_obj;
+  }
+
+  return records_table_arr;
+}
+
+Napi::Function RecordsTableWrapper::GetClass(Napi::Env env) {
+  Napi::Function func = DefineClass(
+      env, "RecordsTable",
+      {RecordsTableWrapper::InstanceMethod("compute",
+                                           &RecordsTableWrapper::Compute),
+       RecordsTableWrapper::InstanceMethod(
+           "getRecordsTable", &RecordsTableWrapper::GetRecordsTable)});
+  return func;
+}

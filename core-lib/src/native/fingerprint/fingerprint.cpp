@@ -7,6 +7,13 @@
 
 #define DO_CLAMP_WARNING
 
+void free_fingerprint_data(fingerprint_data_t *fingerprint_data) {
+  if (fingerprint_data->partitions != nullptr)
+    delete fingerprint_data->partitions;
+  if (fingerprint_data->fingerprint != nullptr)
+    delete fingerprint_data->fingerprint;
+};
+
 Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
                          size_t spectrogram_num_buckets,
                          size_t spectrogram_num_windows,
@@ -281,7 +288,7 @@ void Fingerprint::Compute() {
   }
 
   // Clear existing fingerprint, if any
-  if (this->fingerprint != nullptr) 
+  if (this->fingerprint != nullptr)
     delete this->fingerprint;
 
   this->fingerprint = fingerprint;
@@ -289,4 +296,47 @@ void Fingerprint::Compute() {
 
   // Cleanup
   delete passed_cells;
+}
+
+uint32_t Fingerprint::GetBoundaryIndex(size_t partition_idx,
+                                       size_t total_partitions,
+                                       size_t total_bins,
+                                       size_t partition_curve) {
+  // Equation: y = (b/(c-1))(c^(x/a)-1)
+  //   where:
+  //     a = number of partitions
+  //     b = number of bins (FFT_size / 2)
+  //     c = tension on the curve
+
+  return (uint32_t)std::floor(
+      (((double)total_bins) / (((double)partition_curve) - 1.0)) *
+      (std::pow(partition_curve,
+                ((double)partition_idx) / ((double)total_partitions)) -
+       1.0));
+}
+
+void Fingerprint::ComputePartitionRanges(uint32_t *partitions,
+                                         size_t partition_count,
+                                         size_t partition_curve_tension,
+                                         size_t spectrogram_num_buckets) {
+  for (size_t partition_idx = 0; partition_idx < partition_count + 1;
+       partition_idx++) {
+    partitions[partition_idx] =
+        GetBoundaryIndex(partition_idx, partition_count,
+                         spectrogram_num_buckets, partition_curve_tension);
+  }
+}
+
+void Fingerprint::ToFingerprintData(fingerprint_data_t &fingerprint_data) {
+  fingerprint_data.num_windows = this->spectrogram_num_windows;
+  fingerprint_data.num_partitions = this->partition_count;
+  fingerprint_data.num_buckets = this->spectrogram_num_buckets;
+  uint32_t *partitions = new uint32_t[partition_count + 1];
+  Fingerprint::ComputePartitionRanges(partitions, this->partition_count,
+                                      this->partition_curve_tension,
+                                      this->spectrogram_num_buckets);
+  fingerprint_data.partitions = partitions;
+  uint32_t *fingerprint = new uint32_t[this->fingerprint_length];
+  memcpy(fingerprint, this->fingerprint,
+         this->fingerprint_length * sizeof(uint32_t));
 }

@@ -42,5 +42,44 @@ declare module "*core_lib_native.node" {
     ): import("../src/fingerprint/types").PartitionRanges;
   }
 
+  interface Record {
+    anchorFrequency: number;
+    pointFrequency: number;
+    delta: number;
+    anchorAbsoluteTime: number;
+  }
+
+  class RecordsTable {
+    constructor(fingerprint: Fingerprint, targetZoneSize: number);
+
+    static encodeAddress(
+      anchorFrequency: number,
+      pointFrequency: number,
+      delta: number
+    ): bigint;
+    static decodeAddress(address: bigint): [number, number, number];
+    static encodeCouple(absoluteTime: number, trackId: number): bigint;
+    static decodeCouple(couple: bigint): [number, number];
+
+    compute(): void;
+
+    getRecordsTable(): Record[];
+  }
+
+  interface RecordsSearchMatch {
+    trackId: number;
+    similarity: number;
+  }
+
+  abstract class RecordsEngine {
+    constructor(targetZoneSize: number, searchSelectionCoefficient: number);
+
+    storeRecords(recordsTable: RecordsTable, trackId: number): void;
+    searchRecords(clipRecordsTable: RecordsTable): void;
+    clearAllRecords(): void;
+
+    getSearchMatches(): RecordsSearchMatch[];
+  }
+
   function greetHello(): string;
 }
