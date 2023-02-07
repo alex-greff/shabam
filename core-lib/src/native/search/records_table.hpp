@@ -4,12 +4,12 @@
 #include "../fingerprint/fingerprint.hpp"
 
 /** A single record. */
-struct record_t {
+typedef struct Record {
   uint32_t anchor_frequency;
   uint32_t point_frequency;
   uint32_t delta;
   uint32_t anchor_absolute_time;
-};
+} record_t;
 
 /**
  * Computes the records tables from a given fingerprint.
