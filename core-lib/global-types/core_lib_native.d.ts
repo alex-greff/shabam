@@ -50,7 +50,10 @@ declare module "*core_lib_native.node" {
   }
 
   class RecordsTable {
-    constructor(fingerprint: Fingerprint, targetZoneSize: number);
+    constructor(
+      fingerprint_data: import("../src/fingerprint/types").FingerprintData,
+      targetZoneSize: number
+    );
 
     static encodeAddress(
       anchorFrequency: number,
