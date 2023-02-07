@@ -185,6 +185,9 @@ void MemoryRecordsEngine::SearchRecords(RecordsTable &clip_records_table) {
     curr_match->similarity = total_num_tz_hits;
     _curr_match_idx++;
   }
+  // Clear existing result, if any
+  if (this->matches != nullptr)
+    delete this->matches;
   this->matches = _matches;
   this->matches_length = _num_matches;
 

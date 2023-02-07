@@ -280,6 +280,10 @@ void Fingerprint::Compute() {
     }
   }
 
+  // Clear existing fingerprint, if any
+  if (this->fingerprint != nullptr) 
+    delete this->fingerprint;
+
   this->fingerprint = fingerprint;
   this->fingerprint_length = num_passed_cells * 2;
 

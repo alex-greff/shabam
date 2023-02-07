@@ -72,6 +72,10 @@ void Spectrogram::Compute() {
   // Setup spectrogram result
   float *spectrogram_result = new float[num_buckets * num_windows];
 
+  // Clear existing spectrogram result, if any
+  if (this->spectrogram_result != nullptr)
+    delete this->spectrogram_result;
+
   this->spectrogram_result = spectrogram_result;
   this->spectrogram_result_length = num_buckets * num_windows;
   this->spectrogram_result_num_buckets = num_buckets;
