@@ -1,8 +1,12 @@
 #include "memory_records_engine.hpp"
 
-MemoryRecordsEngine::MemoryRecordsEngine() : RecordsEngine::RecordsEngine();
+MemoryRecordsEngine::MemoryRecordsEngine() : RecordsEngine::RecordsEngine() {
+  // Do nothing
+}
 
-MemoryRecordsEngine::~MemoryRecordsEngine() : RecordsEngine::~RecordsEngine();
+MemoryRecordsEngine::~MemoryRecordsEngine() {
+  // Do nothing
+}
 
 void MemoryRecordsEngine::StoreRecords(record_t *records, size_t num_records,
                                        uint32_t track_id) {
