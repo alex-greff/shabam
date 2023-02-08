@@ -85,6 +85,9 @@ Fingerprint::Fingerprint(float *spectrogram, size_t spectrogram_length,
 
   this->sliding_window_width = sliding_window_width;
   this->sliding_window_height = sliding_window_height;
+
+  this->fingerprint = nullptr;
+  this->fingerprint_length = 0;
 }
 
 Fingerprint::~Fingerprint() {

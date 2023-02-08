@@ -8,7 +8,8 @@ MemoryRecordsEngine::MemoryRecordsEngine(size_t target_zone_size,
                                          float search_selection_coefficient)
     : RecordsEngine::RecordsEngine(target_zone_size,
                                    search_selection_coefficient) {
-  // Do nothing
+  this->matches = nullptr;
+  this->matches_length = 0;
 }
 
 MemoryRecordsEngine::~MemoryRecordsEngine() {

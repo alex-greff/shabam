@@ -1,9 +1,9 @@
 #include "records_table.hpp"
 #include <stdexcept>
 
-RecordsTable::RecordsTable(fingerprint_data_t &fingerprint_data,
+RecordsTable::RecordsTable(Fingerprint &fingerprint,
                            size_t target_zone_size)
-    : fingerprint_data(fingerprint_data) {
+    : fingerprint(fingerprint) {
   this->target_zone_size = target_zone_size;
 
   this->records = nullptr;
@@ -16,7 +16,7 @@ RecordsTable::~RecordsTable() {
 }
 
 void RecordsTable::Compute() {
-  if (this->fingerprint_data.fingerprint == nullptr)
+  if (this->fingerprint.fingerprint == nullptr)
     throw std::domain_error("Fingerprint must be computed.");
 
   // Initialize the records array
@@ -30,11 +30,11 @@ void RecordsTable::Compute() {
   // target zone. This avoids any possibilities of having time deltas of 0
   // since the anchor point is guaranteed to be in a different window than
   // all the points in the target zone
-  size_t anchor_point_offset = this->fingerprint_data.num_partitions;
+  size_t anchor_point_offset = this->fingerprint.partition_count;
 
   size_t fingerprint_cell_length =
-      this->fingerprint_data.fingerprint_length / 2;
-  uint32_t *fingerprint_data = this->fingerprint_data.fingerprint;
+      this->fingerprint.fingerprint_length / 2;
+  uint32_t *fingerprint_data = this->fingerprint.fingerprint;
 
   size_t curr_record_idx = 0;
 
@@ -110,5 +110,5 @@ size_t RecordsTable::GetNumTargetZones() {
 
   // Here's the implementation (simplified for efficiency):
   return this->target_zone_size *
-         (this->fingerprint_data.num_partitions - this->target_zone_size - 1);
+         (this->fingerprint.partition_count - this->target_zone_size - 1);
 }

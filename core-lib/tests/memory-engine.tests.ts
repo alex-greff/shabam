@@ -16,17 +16,18 @@ import { DATA_DIR } from "./utilities/constants";
 import { renderSpectrogram } from "./utilities/spectrogram-renderer";
 import { renderFingerprint } from "./utilities/fingerprint-renderer";
 import { renderTimeDomain } from "./utilities/time-domain-renderer";
-import { computeFingerprintData } from "../src/fingerprint/fingerprint";
+import { computeFingerprint } from "../src/fingerprint/fingerprint";
+import { config } from "../src";
 
 // TODO: remove
 console.log("exports", CoreLibNative);
 console.log(CoreLibNative.greetHello());
 
-async function computeFingerprint(
+async function _computeAndGetFingerprint(
   fileName: string,
   displayName: string,
   debugPrint = true
-): Promise<FingerprintClass> {
+): Promise<CoreLibNative.Fingerprint> {
   let timerStart = 0,
     timerEnd = 0;
 
@@ -86,7 +87,7 @@ async function computeFingerprint(
   timerStart = performance.now();
   // TODO: remove
   // const fingerprint = await generateFingerprint(spectrogram);
-  const fingerprint = await computeFingerprintData(spectrogram);
+  const [fingerprint, fingerprintData] = await computeFingerprint(spectrogram);
   timerEnd = performance.now();
   if (debugPrint) {
     process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
@@ -94,9 +95,9 @@ async function computeFingerprint(
   }
 
   // --- Render Fingerprint ---
-  await renderFingerprint(fingerprint, `${fileName}.fingerprint.png`, DATA_DIR);
+  await renderFingerprint(fingerprintData, `${fileName}.fingerprint.png`, DATA_DIR);
 
-  return FingerprintClass.fromFingerprintInterface(fingerprint);
+  return fingerprint;
 }
 
 (async function () {
@@ -109,7 +110,7 @@ async function computeFingerprint(
   // // const valorFileName = "valor_clip_1min.wav";
   // const valorFileName = "valor.wav";
   // const valorTrackId = 1;
-  // const valorFingerprint = await computeFingerprint(valorFileName, "Valor");
+  // const valorFingerprint = await _computeAndGetFingerprint(valorFileName, "Valor");
   // process.stdout.write(`Computing Valor records table... `);
   // timerStart = performance.now();
   // // const valorRecordsTable = new TrackRecordsTable(
@@ -127,7 +128,7 @@ async function computeFingerprint(
   // // --- Frigid song ---
   // console.log()
   // const frigidFileName = "frigid.wav";
-  // const frigidFingerprint = await computeFingerprint(frigidFileName, "Frigid");
+  // const frigidFingerprint = await _computeAndGetFingerprint(frigidFileName, "Frigid");
   // // const frigidTrackId = 2;
   // // process.stdout.write(`Computing Frigid records table... `);
   // // timerStart = performance.now();
@@ -146,7 +147,7 @@ async function computeFingerprint(
   // // --- Valor 30 second sample ---
   // console.log()
   // const valor30sSampleFileName = "valor_clip_30sec.wav";
-  // const valor30sSampleFingerprint = await computeFingerprint(
+  // const valor30sSampleFingerprint = await _computeAndGetFingerprint(
   //   valor30sSampleFileName,
   //   "Valor Sample (30s)"
   // );
@@ -165,7 +166,7 @@ async function computeFingerprint(
   // // --- Valor 2 second sample ---
   // console.log()
   // const valor2sSampleFileName = "valor_clip_2sec.wav";
-  // const valor2sSampleFingerprint = await computeFingerprint(
+  // const valor2sSampleFingerprint = await _computeAndGetFingerprint(
   //   valor2sSampleFileName,
   //   "Valor Sample (2s)"
   // );
@@ -179,7 +180,7 @@ async function computeFingerprint(
   // // --- Sub test ---
   // console.log()
   // const subTestSampleFileName = "sub_test.wav";
-  // const subTestSampleFingerprint = await computeFingerprint(
+  // const subTestSampleFingerprint = await _computeAndGetFingerprint(
   //   subTestSampleFileName,
   //   "Sub Test"
   // );
@@ -193,10 +194,13 @@ async function computeFingerprint(
   // --- Sine test ---
   console.log()
   const sineTestSampleFileName = "sine_test.wav";
-  const sineTestSampleFingerprint = await computeFingerprint(
+  const sineTestSampleFingerprint = await _computeAndGetFingerprint(
     sineTestSampleFileName,
     "Sine Test"
   );
+  const sineTextRecordsTable = new CoreLibNative.RecordsTable(sineTestSampleFingerprint, config.TARGET_ZONE_SIZE);
+  console.log(">>> sineTextRecordsTable", sineTextRecordsTable);
+
   // process.stdout.write(`Computing Sine Text records table... `);
   // timerStart = performance.now();
   // const sineTestSampleRecordsTable = new RecordsTable(

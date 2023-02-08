@@ -16,7 +16,7 @@ typedef struct Record {
 */
 class RecordsTable {
 private:
-  fingerprint_data_t &fingerprint_data;
+  Fingerprint &fingerprint;
 
   /**
    * The number of points in a target zone.
@@ -24,7 +24,7 @@ private:
   size_t target_zone_size;
 
 public:
-  RecordsTable(fingerprint_data_t &fingerprint_data, size_t target_zone_size);
+  RecordsTable(Fingerprint &fingerprint, size_t target_zone_size);
   ~RecordsTable();
 
   /**

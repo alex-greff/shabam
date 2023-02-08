@@ -23,25 +23,28 @@ RecordsTableWrapper::RecordsTableWrapper(const Napi::CallbackInfo &info)
     return;
   }
 
+  Napi::Object fingerprint_obj = info[0].ToObject();
+  FingerprintWrapper *fingerprint = FingerprintWrapper::Unwrap(fingerprint_obj);
+  size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
+  this->records_table =
+      new RecordsTable(*fingerprint->fingerprint, target_zone_size);
+
   // TODO: remove
   // std::cout << ">>> info[0].Type() " << info[0].Type() << std::endl;
 
-  fingerprint_data_t *fingerprint_data = new fingerprint_data_t;
-  auto fingerprint_value = info[0];
-  FingerprintWrapper::GetFingerprintData(env, fingerprint_value,
-                                         *fingerprint_data);
-  this->fingerprint_data = fingerprint_data;
+  // fingerprint_data_t *fingerprint_data = new fingerprint_data_t;
+  // auto fingerprint_value = info[0];
+  // FingerprintWrapper::GetFingerprintData(env, fingerprint_value,
+  //                                        *fingerprint_data);
+  // this->fingerprint_data = fingerprint_data;
 
-  size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
+  // size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
 
-  this->records_table = new RecordsTable(*fingerprint_data, target_zone_size);
+  // this->records_table = new RecordsTable(*fingerprint_data,
+  // target_zone_size);
 }
 
-RecordsTableWrapper::~RecordsTableWrapper() {
-  free_fingerprint_data(this->fingerprint_data);
-  delete this->fingerprint_data;
-  delete this->records_table;
-}
+RecordsTableWrapper::~RecordsTableWrapper() { delete this->records_table; }
 
 void RecordsTableWrapper::Compute(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();

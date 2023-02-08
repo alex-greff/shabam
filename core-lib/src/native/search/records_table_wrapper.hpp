@@ -7,13 +7,8 @@
 class RecordsTableWrapper : public Napi::ObjectWrap<RecordsTableWrapper> {
 private:
   /**
-   * Reference to the fingerprint data used.
-  */
-  fingerprint_data_t *fingerprint_data;
-
-  /**
    * Records table instance tied to wrapper instance.
-  */
+   */
   RecordsTable *records_table;
 
 public:

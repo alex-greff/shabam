@@ -5,10 +5,10 @@ import { FingerprintData, FingerprintConfig, PartitionRanges } from "./types";
 import { config } from "../configuration";
 import CoreLibNative from "../../build/Release/core_lib_native.node";
 
-export function computeFingerprintData(
+export function computeFingerprint(
   spectrogramData: SpectrogramData,
   options: Partial<FingerprintConfig> = {}
-): FingerprintData {
+): [CoreLibNative.Fingerprint, FingerprintData] {
   assert(isNode);
 
   const defaultOptions: FingerprintConfig = config.fingerprintConfig;
@@ -35,7 +35,7 @@ export function computeFingerprintData(
   fingerprint.compute();
   const fingerprintResult = fingerprint.getFingerprint();
 
-  return fingerprintResult;
+  return [fingerprint, fingerprintResult];
 }
 
 export function computePartitionRanges(
