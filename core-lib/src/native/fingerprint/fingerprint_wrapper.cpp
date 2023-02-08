@@ -118,12 +118,11 @@ void FingerprintWrapper::Compute(const Napi::CallbackInfo &info) {
 
 Napi::Value FingerprintWrapper::GetFingerprint(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  Napi::Object ret = Napi::Object::New(env);
 
   if (info.Length() != 0) {
     Napi::TypeError::New(env, "No arguments expected.")
         .ThrowAsJavaScriptException();
-    return ret;
+    return Napi::Value();
   }
 
   Fingerprint *fingerprint = this->fingerprint;
@@ -152,6 +151,7 @@ Napi::Value FingerprintWrapper::GetFingerprint(const Napi::CallbackInfo &info) {
     fingerprint_data_typed_arr[i] = fingerprint_data[i];
   }
 
+  Napi::Object ret = Napi::Object::New(env);
   ret.Set("numWindows", fingerprint->spectrogram_num_windows);
   ret.Set("numPartitions", fingerprint->partition_count);
   ret.Set("numBuckets", fingerprint->spectrogram_num_buckets);

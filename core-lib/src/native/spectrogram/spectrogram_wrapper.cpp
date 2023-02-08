@@ -81,12 +81,11 @@ void SpectrogramWrapper::Compute(const Napi::CallbackInfo &info) {
 
 Napi::Value SpectrogramWrapper::GetSpectrogram(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  Napi::Object ret = Napi::Object::New(env);
 
   if (info.Length() != 0) {
     Napi::TypeError::New(env, "No arguments expected.")
         .ThrowAsJavaScriptException();
-    return ret;
+    return Napi::Value();
   }
 
   Spectrogram *spectrogram = this->spectrogram;
@@ -95,7 +94,7 @@ Napi::Value SpectrogramWrapper::GetSpectrogram(const Napi::CallbackInfo &info) {
   if (spectrogram_data == nullptr) {
     Napi::TypeError::New(env, "Spectrogram has not been computed yet.")
         .ThrowAsJavaScriptException();
-    return ret;
+    return Napi::Value();
   }
 
   Napi::Float32Array spectrogram_data_typed_arr =
@@ -105,6 +104,7 @@ Napi::Value SpectrogramWrapper::GetSpectrogram(const Napi::CallbackInfo &info) {
     spectrogram_data_typed_arr[i] = spectrogram_data[i];
   }
 
+  Napi::Object ret = Napi::Object::New(env);
   ret.Set("data", spectrogram_data_typed_arr);
   ret.Set("numBuckets", spectrogram->spectrogram_result_num_buckets);
   ret.Set("numWindows", spectrogram->spectrogram_result_num_windows);

@@ -10,7 +10,7 @@ typedef struct RecordsSearchMatch {
 } records_search_match_t;
 
 class RecordsEngine {
-protected:
+public:
   /**
    * The number of points in a target zone.
    */
@@ -33,7 +33,6 @@ protected:
   static uint64_t EncodeCouple(uint32_t absolute_time, uint32_t track_id);
   static std::tuple<uint32_t, uint32_t> DecodeCouple(uint64_t couple);
 
-public:
   RecordsEngine(size_t target_zone_size, float search_selection_coefficient);
   ~RecordsEngine();
 

@@ -61,12 +61,11 @@ void RecordsTableWrapper::Compute(const Napi::CallbackInfo &info) {
 Napi::Value
 RecordsTableWrapper::GetRecordsTable(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  Napi::Object ret = Napi::Object::New(env);
 
   if (info.Length() != 0) {
     Napi::TypeError::New(env, "No arguments expected.")
         .ThrowAsJavaScriptException();
-    return ret;
+    return Napi::Value();
   }
 
   RecordsTable *records_table = this->records_table;
@@ -76,7 +75,7 @@ RecordsTableWrapper::GetRecordsTable(const Napi::CallbackInfo &info) {
   if (records_table == nullptr) {
     Napi::TypeError::New(env, "Records table has not been computed yet.")
         .ThrowAsJavaScriptException();
-    return ret;
+    return Napi::Value();
   }
 
   Napi::Array records_table_arr = Napi::Array::New(env, num_records);
