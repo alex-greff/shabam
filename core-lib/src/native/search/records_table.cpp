@@ -1,8 +1,11 @@
 #include "records_table.hpp"
+#include <assert.h>
+#include <iostream>
 #include <stdexcept>
 
-RecordsTable::RecordsTable(Fingerprint &fingerprint,
-                           size_t target_zone_size)
+#define RECORDS_TABLE_DO_SANITY_ASSERTIONS
+
+RecordsTable::RecordsTable(Fingerprint &fingerprint, size_t target_zone_size)
     : fingerprint(fingerprint) {
   this->target_zone_size = target_zone_size;
 
@@ -19,12 +22,14 @@ void RecordsTable::Compute() {
   if (this->fingerprint.fingerprint == nullptr)
     throw std::domain_error("Fingerprint must be computed.");
 
+  size_t target_zone_size = this->target_zone_size;
+
   // Initialize the records array
-  size_t records_length = this->GetNumTargetZones();
+  size_t num_target_zones = this->GetNumTargetZones();
+  size_t records_length = num_target_zones * target_zone_size;
   record_t *records = new record_t[records_length];
   this->records = records;
-
-  size_t target_zone_size = this->target_zone_size;
+  this->num_records = records_length;
 
   // The number of points between the anchor point and the first node of its
   // target zone. This avoids any possibilities of having time deltas of 0
@@ -32,8 +37,7 @@ void RecordsTable::Compute() {
   // all the points in the target zone
   size_t anchor_point_offset = this->fingerprint.partition_count;
 
-  size_t fingerprint_cell_length =
-      this->fingerprint.fingerprint_length / 2;
+  size_t fingerprint_cell_length = this->fingerprint.fingerprint_length / 2;
   uint32_t *fingerprint_data = this->fingerprint.fingerprint;
 
   size_t curr_record_idx = 0;
@@ -51,8 +55,12 @@ void RecordsTable::Compute() {
     bool can_fit_full_target_zone =
         (anchor_cell_idx + anchor_point_offset + target_zone_size - 1) <
         fingerprint_cell_length;
-    if (!can_fit_full_target_zone)
+    if (!can_fit_full_target_zone) {
+#ifdef RECORDS_TABLE_DO_SANITY_ASSERTIONS
+      assert(anchor_cell_idx == num_target_zones);
+#endif
       break;
+    }
 
     // Generate address records for all target zones
     for (size_t zone = 0; zone < target_zone_size; zone++) {
@@ -71,6 +79,10 @@ void RecordsTable::Compute() {
       curr_record_idx++;
     }
   }
+
+#ifdef RECORDS_TABLE_DO_SANITY_ASSERTIONS
+  assert(curr_record_idx == records_length);
+#endif
 }
 
 size_t RecordsTable::GetNumTargetZones() {
@@ -102,13 +114,23 @@ size_t RecordsTable::GetNumTargetZones() {
   // By inspection (and some confirmation) we get:
   //   numDeadPoints = ANCHOR_POINT_OFFSET
   //   numPartialPoints = TARGET_ZONE_SIZE - 1
-  //   numFullPoints = fingerprintLength - numDeadPoints - numPartialPoints
+  //   numFullPoints = fingerprintNumPoints - numDeadPoints - numPartialPoints
+  //
+  // where,
+  //   ANCHOR_POINT_OFFSET = fingerprintNumPartitions
+  //
   //
   // So we know that the number of target zones produced will just be the
   // number of full points
   //   numTargetZones = numFullPoints
+  //                  = fingerprintNumPoints - ANCHOR_POINT_OFFSET
+  //                                                - (TARGET_ZONE_SIZE - 1)
+  //                  = fingerprintNumPoints - ANCHOR_POINT_OFFSET
+  //                                                - TARGET_ZONE_SIZE + 1
+  //                  = fingerprintNumPoints - fingerprintNumPartitions
+  //                                                 - TARGET_ZONE_SIZE + 1
 
   // Here's the implementation (simplified for efficiency):
-  return this->target_zone_size *
-         (this->fingerprint.partition_count - this->target_zone_size - 1);
+  return (this->fingerprint.fingerprint_length / 2) -
+         this->fingerprint.partition_count - this->target_zone_size + 1;
 }

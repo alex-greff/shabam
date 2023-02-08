@@ -199,6 +199,7 @@ async function _computeAndGetFingerprint(
     "Sine Test"
   );
   const sineTextRecordsTable = new CoreLibNative.RecordsTable(sineTestSampleFingerprint, config.TARGET_ZONE_SIZE);
+  sineTextRecordsTable.compute();
   console.log(">>> sineTextRecordsTable", sineTextRecordsTable);
 
   // process.stdout.write(`Computing Sine Text records table... `);
