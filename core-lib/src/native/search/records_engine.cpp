@@ -26,7 +26,7 @@ uint64_t RecordsEngine::EncodeAddress(uint16_t anchor_frequency,
   uint64_t encoded = (uint64_t)anchor_frequency;
   encoded = encoded << 16LL; // Make space for point_frequency
   encoded = encoded | ((uint64_t)point_frequency); // Add point_frequency
-  encoded = encoded << 16LL;                       // Make space for delta
+  encoded = encoded << 32LL;                       // Make space for delta
   encoded = encoded | ((uint64_t)delta);           // Add delta
 
   return encoded;

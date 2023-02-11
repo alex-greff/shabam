@@ -27,6 +27,4 @@ public:
   virtual ~RecordsEngineWrapperInstance(){};
 };
 
-// Napi::Value SetupRecordsEngineExports(Napi::Env, Napi::Object);
-
 #endif

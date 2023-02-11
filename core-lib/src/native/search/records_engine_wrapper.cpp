@@ -1,10 +1,6 @@
 #include "records_engine_wrapper.hpp"
 #include "records_engine.hpp"
-#include <string> // TODO: remove
 #include <iostream>
-
-using namespace std::string_literals; // TODO: remove
-using namespace Napi;                 // TODO: remove
 
 template <class T>
 RecordsEngineWrapper<T>::RecordsEngineWrapper(const Napi::CallbackInfo &info)
@@ -53,13 +49,15 @@ RecordsEngineWrapper<C>::EncodeAddress(const Napi::CallbackInfo &info) {
   uint32_t delta = info[2].As<Napi::Number>().Uint32Value();
 
   if (anchor_frequency_32bit > UINT16_MAX) {
-    Napi::TypeError::New(env, "anchorFrequency is too big.")
+    Napi::TypeError::New(
+        env, "anchorFrequency is too big or a negative value was provided.")
         .ThrowAsJavaScriptException();
     return Napi::Value();
   }
 
   if (point_frequency_32bit > UINT16_MAX) {
-    Napi::TypeError::New(env, "pointFrequency is too big.")
+    Napi::TypeError::New(
+        env, "pointFrequency is too big or a negative value was provided.")
         .ThrowAsJavaScriptException();
     return Napi::Value();
   }
@@ -211,16 +209,7 @@ Napi::Function RecordsEngineWrapper<T>::GetClass(Napi::Env env) {
       });
 }
 
-// Napi::Value SetupRecordsEngineExports(Napi::Env env, Napi::Object exports) {
-//   Napi::Function RecordsEngineWrapperBase =
-//       RecordsEngineWrapperInstance::GetClass(env);
-
-//   exports.Set("RecordsEngine", RecordsEngineWrapperBase);
-
-//   return exports;
-// }
-
-// NOTE: do NOT delete this function even if your life depends on it. 
+// NOTE: do NOT delete this function even if your life depends on it.
 // Deleting this function will cause the build to break. My best guess is that
 // using these classes here stops the compiler from removing the symbols for
 // these classes... even though they're used elsewhere in the library.

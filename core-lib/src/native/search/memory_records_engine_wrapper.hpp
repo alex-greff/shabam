@@ -17,7 +17,4 @@ public:
   virtual void ClearAllRecords(const Napi::CallbackInfo &info);
 };
 
-// TODO: remove
-// void MemoryRecordsEngineWrapperDoNotDelete(Napi::Env env);
-
 #endif

@@ -16,6 +16,7 @@
     "build:native": "node-gyp configure && node-gyp build",
     "test:memory-engine": "node --loader ts-node/esm --experimental-specifier-resolution=node ./tests/memory-engine.tests.ts",
     "test:native-spectrogram": "node --loader ts-node/esm --experimental-specifier-resolution=node ./tests/native-spectrogram.tests.ts",
+    "test:encoding": "node --loader ts-node/esm --experimental-specifier-resolution=node ./tests/encoding.tests.ts",
     "test:temp": "node --loader ts-node/esm --experimental-specifier-resolution=node ./tests/temp.tests.ts",
     "test:clear-cache": "rm ./tests/data/*.cache.bson"
   },
