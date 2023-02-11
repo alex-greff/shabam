@@ -1,8 +1,20 @@
 #include "records_engine_wrapper.hpp"
+#include "records_engine.hpp"
+#include <string> // TODO: remove
 #include <iostream>
 
+using namespace std::string_literals; // TODO: remove
+using namespace Napi;                 // TODO: remove
+
+template <class T>
+RecordsEngineWrapper<T>::RecordsEngineWrapper(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<T>(info) {
+  // Do nothing
+}
+
+template <class C>
 Napi::Value
-RecordsEngineWrapper::EncodeAddress(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper<C>::EncodeAddress(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - anchorFrequency: uint16_t (number)
   // - pointFrequency: uint16_t (number)
@@ -61,8 +73,9 @@ RecordsEngineWrapper::EncodeAddress(const Napi::CallbackInfo &info) {
   return Napi::BigInt::New(env, address);
 }
 
+template <class C>
 Napi::Value
-RecordsEngineWrapper::DecodeAddress(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper<C>::DecodeAddress(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - address: uint64_t (bigint)
   // Returns: tuple of
@@ -105,7 +118,9 @@ RecordsEngineWrapper::DecodeAddress(const Napi::CallbackInfo &info) {
   return ret;
 }
 
-Napi::Value RecordsEngineWrapper::EncodeCouple(const Napi::CallbackInfo &info) {
+template <class C>
+Napi::Value
+RecordsEngineWrapper<C>::EncodeCouple(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - absoluteTime: uint32_t (number)
   // - trackId: uint32_t (number)
@@ -139,7 +154,9 @@ Napi::Value RecordsEngineWrapper::EncodeCouple(const Napi::CallbackInfo &info) {
   return Napi::BigInt::New(env, couple);
 }
 
-Napi::Value RecordsEngineWrapper::DecodeCouple(const Napi::CallbackInfo &info) {
+template <class C>
+Napi::Value
+RecordsEngineWrapper<C>::DecodeCouple(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - couple: uint64_t (bigint)
   // Returns: tuple of
@@ -176,4 +193,37 @@ Napi::Value RecordsEngineWrapper::DecodeCouple(const Napi::CallbackInfo &info) {
   ret[1] = Napi::Number::New(env, track_id);
 
   return ret;
+}
+
+template <class T>
+Napi::Function RecordsEngineWrapper<T>::GetClass(Napi::Env env) {
+  return DefineClass(
+      env, "RecordsEngine",
+      {
+          StaticMethod("encodeAddress", &RecordsEngineWrapper::EncodeAddress),
+          StaticMethod("decodeAddress", &RecordsEngineWrapper::DecodeAddress),
+          StaticMethod("encodeCouple", &RecordsEngineWrapper::EncodeCouple),
+          StaticMethod("decodeCouple", &RecordsEngineWrapper::DecodeCouple),
+          InstanceMethod("storeRecords", &RecordsEngineWrapper::StoreRecords),
+          InstanceMethod("searchRecords", &RecordsEngineWrapper::SearchRecords),
+          InstanceMethod("clearAllRecords",
+                         &RecordsEngineWrapper::ClearAllRecords),
+      });
+}
+
+// Napi::Value SetupRecordsEngineExports(Napi::Env env, Napi::Object exports) {
+//   Napi::Function RecordsEngineWrapperBase =
+//       RecordsEngineWrapperInstance::GetClass(env);
+
+//   exports.Set("RecordsEngine", RecordsEngineWrapperBase);
+
+//   return exports;
+// }
+
+// NOTE: do NOT delete this function even if your life depends on it. 
+// Deleting this function will cause the build to break. My best guess is that
+// using these classes here stops the compiler from removing the symbols for
+// these classes... even though they're used elsewhere in the library.
+void RecordsEngineWrapperDoNotDelete(Napi::Env env) {
+  RecordsEngineWrapperInstance::GetClass(env);
 }

@@ -2,8 +2,10 @@
   "targets": [
     {
       "target_name": "core_lib_native",
-      "cflags!": [ "-fno-exceptions" ],
-      "cflags_cc!": [ "-fno-exceptions" ],
+      # "cflags!": [ "-fno-exceptions", "-fpermissive" ],
+      # "cflags_cc!": [ "-fno-exceptions", "-fpermissive" ],
+      "cflags": [ "-fno-exceptions", "-fexceptions", "-fpermissive" ],
+      "cflags_cc": [ "-fno-exceptions", "-fexceptions", "-fpermissive" ],
       "sources": [
         "./src/native/greeting.cpp",
         "./src/native/spectrogram/spectrogram.cpp",
@@ -14,7 +16,10 @@
         "./src/native/search/records_table_wrapper.cpp",
         "./src/native/search/records_engine.cpp",
         "./src/native/search/records_engine_wrapper.cpp",
+        # "./src/native/search/records_engine_exports_setup.hpp",
         # "./src/native/search/memory_records_engine.cpp",
+        "./src/native/search/memory_records_engine_wrapper.cpp",
+        "./src/native/temp/cc_inheritance.cpp",
         "./src/index.cpp"
       ],
       "libraries": [
