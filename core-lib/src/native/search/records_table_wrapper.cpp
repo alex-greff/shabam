@@ -1,7 +1,5 @@
 #include "records_table_wrapper.hpp"
 #include "../fingerprint/fingerprint_wrapper.hpp"
-// TODO: remove
-#include <iostream>
 
 RecordsTableWrapper::RecordsTableWrapper(const Napi::CallbackInfo &info)
     : ObjectWrap(info) {
@@ -12,7 +10,7 @@ RecordsTableWrapper::RecordsTableWrapper(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
 
   if (info.Length() != 2) {
-    Napi::TypeError::New(env, "Wrong number of arguments")
+    Napi::TypeError::New(env, "Wrong number of arguments.")
         .ThrowAsJavaScriptException();
     return;
   }
@@ -28,20 +26,6 @@ RecordsTableWrapper::RecordsTableWrapper(const Napi::CallbackInfo &info)
   size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
   this->records_table =
       new RecordsTable(*fingerprint->fingerprint, target_zone_size);
-
-  // TODO: remove
-  // std::cout << ">>> info[0].Type() " << info[0].Type() << std::endl;
-
-  // fingerprint_data_t *fingerprint_data = new fingerprint_data_t;
-  // auto fingerprint_value = info[0];
-  // FingerprintWrapper::GetFingerprintData(env, fingerprint_value,
-  //                                        *fingerprint_data);
-  // this->fingerprint_data = fingerprint_data;
-
-  // size_t target_zone_size = info[1].As<Napi::Number>().Int32Value();
-
-  // this->records_table = new RecordsTable(*fingerprint_data,
-  // target_zone_size);
 }
 
 RecordsTableWrapper::~RecordsTableWrapper() { delete this->records_table; }
