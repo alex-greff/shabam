@@ -16,8 +16,7 @@
         "./src/native/search/records_table_wrapper.cpp",
         "./src/native/search/records_engine.cpp",
         "./src/native/search/records_engine_wrapper.cpp",
-        # "./src/native/search/records_engine_exports_setup.hpp",
-        # "./src/native/search/memory_records_engine.cpp",
+        "./src/native/search/memory_records_engine.cpp",
         "./src/native/search/memory_records_engine_wrapper.cpp",
         "./src/native/temp/cc_inheritance.cpp",
         "./src/index.cpp"

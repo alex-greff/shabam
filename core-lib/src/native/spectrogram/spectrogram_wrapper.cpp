@@ -12,7 +12,7 @@ SpectrogramWrapper::SpectrogramWrapper(const Napi::CallbackInfo &info)
   Napi::Env env = info.Env();
 
   if (info.Length() != 5) {
-    Napi::TypeError::New(env, "Wrong number of arguments")
+    Napi::TypeError::New(env, "Wrong number of arguments.")
         .ThrowAsJavaScriptException();
     return;
   }

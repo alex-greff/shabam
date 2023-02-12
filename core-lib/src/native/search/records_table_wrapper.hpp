@@ -5,12 +5,6 @@
 #include <napi.h>
 
 class RecordsTableWrapper : public Napi::ObjectWrap<RecordsTableWrapper> {
-private:
-  /**
-   * Records table instance tied to wrapper instance.
-   */
-  RecordsTable *records_table;
-
 public:
   /**
    * Constructs a records table object.
@@ -21,6 +15,11 @@ public:
   RecordsTableWrapper(const Napi::CallbackInfo &info);
   ~RecordsTableWrapper();
   static Napi::Function GetClass(Napi::Env env);
+
+  /**
+   * Records table instance tied to wrapper instance.
+   */
+  RecordsTable *records_table;
 
   void Compute(const Napi::CallbackInfo &info);
   Napi::Value GetRecordsTable(const Napi::CallbackInfo &info);

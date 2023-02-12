@@ -1,7 +1,7 @@
 #ifndef SHABAM_CORE_LIB_MEMORY_RECORDS_ENGINE
 #define SHABAM_CORE_LIB_MEMORY_RECORDS_ENGINE
 
-#include "./records_engine.hpp"
+#include "records_engine.hpp"
 #include <tuple>
 #include <unordered_map>
 #include <vector>
@@ -18,7 +18,7 @@ private:
 public:
   MemoryRecordsEngine(size_t target_zone_size,
                       float search_selection_coefficient);
-  ~MemoryRecordsEngine();
+  virtual ~MemoryRecordsEngine();
 
   void StoreRecords(RecordsTable &records_table, uint32_t track_id);
   void SearchRecords(RecordsTable &clip_records_table);
