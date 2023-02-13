@@ -3,7 +3,7 @@
 
 #include <napi.h>
 
-template <class T> class RecordsEngineWrapper : public Napi::ObjectWrap<T> {
+class RecordsEngineWrapper : public Napi::ObjectWrap<RecordsEngineWrapper> {
 public:
   RecordsEngineWrapper(const Napi::CallbackInfo &info);
   virtual ~RecordsEngineWrapper(){};
@@ -15,16 +15,9 @@ public:
   static Napi::Value EncodeCouple(const Napi::CallbackInfo &info);
   static Napi::Value DecodeCouple(const Napi::CallbackInfo &info);
 
-  virtual void StoreRecords(const Napi::CallbackInfo &info);
-  virtual void SearchRecords(const Napi::CallbackInfo &info);
-  virtual void ClearAllRecords(const Napi::CallbackInfo &info);
-};
-
-class RecordsEngineWrapperInstance
-    : public RecordsEngineWrapper<RecordsEngineWrapperInstance> {
-public:
-  using RecordsEngineWrapper::RecordsEngineWrapper;
-  virtual ~RecordsEngineWrapperInstance(){};
+  virtual void StoreRecords(const Napi::CallbackInfo &info) {};
+  virtual void SearchRecords(const Napi::CallbackInfo &info) {};
+  virtual void ClearAllRecords(const Napi::CallbackInfo &info) {};
 };
 
 #endif

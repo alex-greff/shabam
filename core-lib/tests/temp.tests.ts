@@ -32,5 +32,8 @@ console.log("exports", CoreLibNative);
   m.storeRecords();
   m.searchRecords();
   m.clearAllRecords();
-  console.log("m instanceof MemoryRecordsEngineMVE", m instanceof CoreLibNativeAny.MemoryRecordsEngineMVE);
+  console.log(
+    "m instanceof MemoryRecordsEngineMVE",
+    m instanceof CoreLibNativeAny.MemoryRecordsEngineMVE
+  );
 })();

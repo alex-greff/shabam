@@ -14,12 +14,14 @@
         "./src/native/fingerprint/fingerprint_wrapper.cpp",
         "./src/native/search/records_table.cpp",
         "./src/native/search/records_table_wrapper.cpp",
-        # "./src/native/search/records_engine.cpp",
-        # "./src/native/search/records_engine_wrapper.cpp",
-        # "./src/native/search/memory_records_engine.cpp",
-        # "./src/native/search/memory_records_engine_wrapper.cpp",
-        "./src/native/temp_mve/records_engine_wrapper_mve.cpp", # TODO: remove
-        "./src/native/temp_mve/memory_records_engine_wrapper_mve.cpp", # TODO: remove
+        "./src/native/search/records_engine.cpp",
+        "./src/native/search/records_engine_wrapper.cpp",
+        "./src/native/search/memory_records_engine.cpp",
+        "./src/native/search/memory_records_engine_wrapper.cpp",
+        # TODO: remove
+        # "./src/native/temp_mve/records_engine_wrapper_mve.cpp", 
+        # "./src/native/temp_mve/memory_records_engine_wrapper_mve.cpp", 
+        # TODO: remove
         "./src/native/temp/cc_inheritance.cpp",
         "./src/index.cpp"
       ],

@@ -109,6 +109,10 @@ async function _computeAndGetFingerprint(
     config.searchConfig.targetZoneSize,
     config.searchConfig.searchSelectionCoefficient
   );
+  console.log(
+    "engine instanceof CoreLibNative.RecordsEngine",
+    engine instanceof CoreLibNative.RecordsEngine
+  );
   // const engine = new MemoryRecordsEngine();
   let timerStart = 0,
     timerEnd = 0;

@@ -51,9 +51,9 @@ public:
    */
   size_t matches_length;
 
-  virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id){};
-  virtual void SearchRecords(RecordsTable &clip_records_table){};
-  virtual void ClearAllRecords(){};
+  virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id) {};
+  virtual void SearchRecords(RecordsTable &clip_records_table) {};
+  virtual void ClearAllRecords() {};
 };
 
 #endif

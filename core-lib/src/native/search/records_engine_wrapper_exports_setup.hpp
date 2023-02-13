@@ -1,14 +1,14 @@
-#ifndef SHABAM_RECORDS_ENGINE_EXPORTS_SETUP
-#define SHABAM_RECORDS_ENGINE_EXPORTS_SETUP
+#ifndef SHABAM_RECORDS_ENGINE_WRAPPER_EXPORTS_SETUP
+#define SHABAM_RECORDS_ENGINE_WRAPPER_EXPORTS_SETUP
 
 #include "memory_records_engine_wrapper.hpp"
 #include "records_engine_wrapper.hpp"
 #include <napi.h>
 
-inline Napi::Value SetupRecordsEngineExports(Napi::Env env,
+inline Napi::Value SetupRecordsEngineWrapperExports(Napi::Env env,
                                              Napi::Object exports) {
   Napi::Function RecordsEngineWrapperBaseClass =
-      RecordsEngineWrapperInstance::GetClass(env);
+      RecordsEngineWrapper::GetClass(env);
   Napi::Function MemoryRecordsEngineWrapperClass =
       MemoryRecordsEngineWrapper::GetClass(env);
 

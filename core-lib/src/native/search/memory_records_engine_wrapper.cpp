@@ -1,9 +1,11 @@
 #include "memory_records_engine_wrapper.hpp"
 #include "records_table_wrapper.hpp"
 
+
 MemoryRecordsEngineWrapper::MemoryRecordsEngineWrapper(
     const Napi::CallbackInfo &info)
-    : RecordsEngineWrapper(info) {
+    : ObjectWrap(info) {
+  // : RecordsEngineWrapper(info) { // TODO: remove
   // Input parameters:
   // - targetZoneSize: number (int)
   // - searchSelectionCoefficient: number (float)
@@ -35,6 +37,7 @@ MemoryRecordsEngineWrapper::MemoryRecordsEngineWrapper(
   this->records_engine =
       new MemoryRecordsEngine(target_zone_size, search_selection_coefficient);
 }
+
 
 void MemoryRecordsEngineWrapper::StoreRecords(const Napi::CallbackInfo &info) {
   // Input parameters:

@@ -2,15 +2,13 @@
 #include "records_engine.hpp"
 #include <iostream>
 
-template <class T>
-RecordsEngineWrapper<T>::RecordsEngineWrapper(const Napi::CallbackInfo &info)
-    : Napi::ObjectWrap<T>(info) {
+RecordsEngineWrapper::RecordsEngineWrapper(const Napi::CallbackInfo &info)
+    : ObjectWrap(info) {
   // Do nothing
 }
 
-template <class C>
 Napi::Value
-RecordsEngineWrapper<C>::EncodeAddress(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper::EncodeAddress(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - anchorFrequency: uint16_t (number)
   // - pointFrequency: uint16_t (number)
@@ -71,9 +69,8 @@ RecordsEngineWrapper<C>::EncodeAddress(const Napi::CallbackInfo &info) {
   return Napi::BigInt::New(env, address);
 }
 
-template <class C>
 Napi::Value
-RecordsEngineWrapper<C>::DecodeAddress(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper::DecodeAddress(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - address: uint64_t (bigint)
   // Returns: tuple of
@@ -116,9 +113,8 @@ RecordsEngineWrapper<C>::DecodeAddress(const Napi::CallbackInfo &info) {
   return ret;
 }
 
-template <class C>
 Napi::Value
-RecordsEngineWrapper<C>::EncodeCouple(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper::EncodeCouple(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - absoluteTime: uint32_t (number)
   // - trackId: uint32_t (number)
@@ -152,9 +148,8 @@ RecordsEngineWrapper<C>::EncodeCouple(const Napi::CallbackInfo &info) {
   return Napi::BigInt::New(env, couple);
 }
 
-template <class C>
 Napi::Value
-RecordsEngineWrapper<C>::DecodeCouple(const Napi::CallbackInfo &info) {
+RecordsEngineWrapper::DecodeCouple(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - couple: uint64_t (bigint)
   // Returns: tuple of
@@ -193,8 +188,7 @@ RecordsEngineWrapper<C>::DecodeCouple(const Napi::CallbackInfo &info) {
   return ret;
 }
 
-template <class T>
-Napi::Function RecordsEngineWrapper<T>::GetClass(Napi::Env env) {
+Napi::Function RecordsEngineWrapper::GetClass(Napi::Env env) {
   return DefineClass(
       env, "RecordsEngine",
       {
@@ -214,5 +208,5 @@ Napi::Function RecordsEngineWrapper<T>::GetClass(Napi::Env env) {
 // using these classes here stops the compiler from removing the symbols for
 // these classes... even though they're used elsewhere in the library.
 void RecordsEngineWrapperDoNotDelete(Napi::Env env) {
-  RecordsEngineWrapperInstance::GetClass(env);
+  RecordsEngineWrapper::GetClass(env);
 }
