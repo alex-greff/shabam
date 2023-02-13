@@ -7,7 +7,8 @@ import { RecordsTable, TrackRecordsTable } from "../src/search/records-table";
 import path from "path";
 import { performance } from "perf_hooks";
 import { RecordsEngine } from "../src/search/engine";
-import CoreLibNative from "../build/Release/core_lib_native.node";
+// import CoreLibNative from "../build/Release/core_lib_native.node";
+import CoreLibNative from "../src/native";
 import {
   loadSpectrogramFromCache,
   saveSpectrogramToCache,
@@ -77,7 +78,6 @@ async function _computeAndGetFingerprint(
     // console.log(spectrogram); // TODO: remove
   }
 
-
   // --- Render Spectrogram ---
   await renderSpectrogram(spectrogram, `${fileName}.spectrogram.png`, DATA_DIR);
 
@@ -95,35 +95,52 @@ async function _computeAndGetFingerprint(
   }
 
   // --- Render Fingerprint ---
-  await renderFingerprint(fingerprintData, `${fileName}.fingerprint.png`, DATA_DIR);
+  await renderFingerprint(
+    fingerprintData,
+    `${fileName}.fingerprint.png`,
+    DATA_DIR
+  );
 
   return fingerprint;
 }
 
 (async function () {
-  const engine = new MemoryRecordsEngine();
+  const engine = new CoreLibNative.MemoryRecordsEngine(
+    config.searchConfig.targetZoneSize,
+    config.searchConfig.searchSelectionCoefficient
+  );
+  // const engine = new MemoryRecordsEngine();
   let timerStart = 0,
     timerEnd = 0;
 
-  // // --- Valor song ---
-  // // const valorFileName = "valor_clip_30sec.wav";
-  // // const valorFileName = "valor_clip_1min.wav";
-  // const valorFileName = "valor.wav";
-  // const valorTrackId = 1;
-  // const valorFingerprint = await _computeAndGetFingerprint(valorFileName, "Valor");
-  // process.stdout.write(`Computing Valor records table... `);
-  // timerStart = performance.now();
-  // // const valorRecordsTable = new TrackRecordsTable(
-  // //   valorFingerprint,
-  // //   valorTrackId
-  // // );
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
-  // // process.stdout.write("Storing Valor records... ");
-  // // timerStart = performance.now();
-  // // await engine.storeRecords(valorRecordsTable, true);
-  // // timerEnd = performance.now();
-  // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // --- Valor song ---
+  // const valorFileName = "valor_clip_30sec.wav";
+  // const valorFileName = "valor_clip_1min.wav";
+  const valorFileName = "valor.wav";
+  const valorTrackId = 1;
+  const valorFingerprint = await _computeAndGetFingerprint(
+    valorFileName,
+    "Valor"
+  );
+  process.stdout.write(`Computing Valor records table... `);
+  const valorRecordsTable = new CoreLibNative.RecordsTable(
+    valorFingerprint,
+    config.searchConfig.targetZoneSize
+  );
+  timerStart = performance.now();
+  valorRecordsTable.compute();
+  timerEnd = performance.now();
+  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // const valorRecordsTable = new TrackRecordsTable(
+  //   valorFingerprint,
+  //   valorTrackId
+  // );
+
+  process.stdout.write("Storing Valor records... ");
+  timerStart = performance.now();
+  await engine.storeRecords(valorRecordsTable, valorTrackId);
+  timerEnd = performance.now();
+  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   // // --- Frigid song ---
   // console.log()
@@ -176,7 +193,6 @@ async function _computeAndGetFingerprint(
   // // timerEnd = performance.now();
   // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
-  
   // // --- Sub test ---
   // console.log()
   // const subTestSampleFileName = "sub_test.wav";
@@ -190,15 +206,17 @@ async function _computeAndGetFingerprint(
   // // timerEnd = performance.now();
   // // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
-
   // --- Sine test ---
-  console.log()
+  console.log();
   const sineTestSampleFileName = "sine_test.wav";
   const sineTestSampleFingerprint = await _computeAndGetFingerprint(
     sineTestSampleFileName,
     "Sine Test"
   );
-  const sineTextRecordsTable = new CoreLibNative.RecordsTable(sineTestSampleFingerprint, config.TARGET_ZONE_SIZE);
+  const sineTextRecordsTable = new CoreLibNative.RecordsTable(
+    sineTestSampleFingerprint,
+    config.TARGET_ZONE_SIZE
+  );
   sineTextRecordsTable.compute();
   console.log(">>> sineTextRecordsTable", sineTextRecordsTable);
 

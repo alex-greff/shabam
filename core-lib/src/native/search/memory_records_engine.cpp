@@ -12,10 +12,6 @@ MemoryRecordsEngine::MemoryRecordsEngine(size_t target_zone_size,
   this->matches_length = 0;
 }
 
-MemoryRecordsEngine::~MemoryRecordsEngine() {
-  // Do nothing
-}
-
 void MemoryRecordsEngine::StoreRecords(RecordsTable &records_table,
                                        uint32_t track_id) {
   record_t *records = records_table.records;

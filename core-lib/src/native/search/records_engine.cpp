@@ -9,11 +9,6 @@ RecordsEngine::RecordsEngine(size_t target_zone_size,
   this->search_selection_coefficient = search_selection_coefficient;
 }
 
-RecordsEngine::~RecordsEngine() {
-  if (this->matches != nullptr)
-    delete this->matches;
-}
-
 uint64_t RecordsEngine::EncodeAddress(uint16_t anchor_frequency,
                                       uint16_t point_frequency,
                                       uint32_t delta) {

@@ -34,7 +34,10 @@ public:
   static std::tuple<uint32_t, uint32_t> DecodeCouple(uint64_t couple);
 
   RecordsEngine(size_t target_zone_size, float search_selection_coefficient);
-  virtual ~RecordsEngine();
+  virtual ~RecordsEngine() {
+    if (this->matches != nullptr)
+      delete this->matches;
+  }
 
   // --- Records Result ---
 
@@ -48,9 +51,9 @@ public:
    */
   size_t matches_length;
 
-  virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id) {};
-  virtual void SearchRecords(RecordsTable &clip_records_table) {};
-  virtual void ClearAllRecords() {};
+  virtual void StoreRecords(RecordsTable &records_table, uint32_t track_id){};
+  virtual void SearchRecords(RecordsTable &clip_records_table){};
+  virtual void ClearAllRecords(){};
 };
 
 #endif

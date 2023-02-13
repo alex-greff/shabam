@@ -50,10 +50,7 @@ declare module "*core_lib_native.node" {
   }
 
   class RecordsTable {
-    constructor(
-      fingerprint: Fingerprint,
-      targetZoneSize: number
-    );
+    constructor(fingerprint: Fingerprint, targetZoneSize: number);
 
     compute(): void;
 
@@ -83,6 +80,8 @@ declare module "*core_lib_native.node" {
 
     getSearchMatches(): RecordsSearchMatch[];
   }
+
+  class MemoryRecordsEngine extends RecordsEngine {}
 
   function greetHello(): string;
 }

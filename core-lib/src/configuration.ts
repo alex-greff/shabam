@@ -2,6 +2,7 @@ import { type WindowFunction } from "../build/Release/core_lib_native.node";
 import { LoaderConfig } from "./loader/types";
 import { FingerprintConfig } from "./fingerprint/types";
 import { SpectrogramConfig } from "./spectrogram/types";
+import { SearchConfig } from "./search/types";
 // TODO: this config system isn't great, there should be an explicit API for
 // configuring them globally
 // Also I should have a separation for each feature (fingerprint, search, etc)
@@ -115,6 +116,13 @@ class Configuration {
   // ---------------------
   // --- Search Config ---
   // ---------------------
+
+  searchConfig: SearchConfig = {
+    targetZoneSize: 5,
+    searchSelectionCoefficient: 0.8
+  };
+
+  // TODO: remove
 
   /**
    * The size of the target zone.

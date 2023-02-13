@@ -11,13 +11,15 @@ protected:
   MemoryRecordsEngine *records_engine;
 public:
   MemoryRecordsEngineWrapper(const Napi::CallbackInfo &info);
-  virtual ~MemoryRecordsEngineWrapper();
+  virtual ~MemoryRecordsEngineWrapper() {
+    delete this->records_engine;
+  }
 
   static Napi::Function GetClass(Napi::Env env);
 
-  virtual void StoreRecords(const Napi::CallbackInfo &info);
-  virtual void SearchRecords(const Napi::CallbackInfo &info);
-  virtual void ClearAllRecords(const Napi::CallbackInfo &info);
+  void StoreRecords(const Napi::CallbackInfo &info);
+  void SearchRecords(const Napi::CallbackInfo &info);
+  void ClearAllRecords(const Napi::CallbackInfo &info);
 };
 
 #endif

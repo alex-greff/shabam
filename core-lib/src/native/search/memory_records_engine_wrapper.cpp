@@ -36,10 +36,6 @@ MemoryRecordsEngineWrapper::MemoryRecordsEngineWrapper(
       new MemoryRecordsEngine(target_zone_size, search_selection_coefficient);
 }
 
-MemoryRecordsEngineWrapper::~MemoryRecordsEngineWrapper() {
-  delete this->records_engine;
-}
-
 void MemoryRecordsEngineWrapper::StoreRecords(const Napi::CallbackInfo &info) {
   // Input parameters:
   // - recordsTable: RecordsTable

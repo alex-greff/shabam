@@ -18,7 +18,7 @@ private:
 public:
   MemoryRecordsEngine(size_t target_zone_size,
                       float search_selection_coefficient);
-  virtual ~MemoryRecordsEngine();
+  virtual ~MemoryRecordsEngine() {}
 
   void StoreRecords(RecordsTable &records_table, uint32_t track_id);
   void SearchRecords(RecordsTable &clip_records_table);
