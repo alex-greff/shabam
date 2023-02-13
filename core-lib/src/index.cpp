@@ -1,10 +1,13 @@
 #include "native/fingerprint/fingerprint_wrapper.hpp"
 #include "native/greeting.hpp"
-#include "native/search/memory_records_engine_wrapper.hpp"
-#include "native/search/records_engine_exports_setup.hpp"
-#include "native/search/records_engine_wrapper.hpp"
+// #include "native/search/memory_records_engine_wrapper.hpp"
+// #include "native/search/records_engine_exports_setup.hpp"
+// #include "native/search/records_engine_wrapper.hpp"
 #include "native/search/records_table_wrapper.hpp"
 #include "native/spectrogram/spectrogram_wrapper.hpp"
+// #include "native/temp_mve/records_engine_wrapper_mve_exports_setup.hpp"
+#include "native/temp_mve/records_engine_wrapper_mve.hpp"
+#include "native/temp_mve/memory_records_engine_wrapper_mve.hpp"
 #include "native/temp/cc_inheritance.hpp"
 #include "native/temp/cc_inheritance_exports_setup.hpp"
 #include <napi.h>
@@ -27,9 +30,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
   exports.Set("RecordsTable", RecordsTableWrapper::GetClass(env));
 
-  SetupRecordsEngineExports(env, exports);
+  // SetupRecordsEngineExports(env, exports);
 
   SetupCCInheritance(env, exports);
+
+  // SetupRecordsEngineMVEExports(env, exports);
+
+  exports.Set("RecordsEngineMVE", RecordsEngineWrapperMVEInstance::GetClass(env));
+  exports.Set("MemoryRecordsEngineMVE", MemoryRecordsEngineWrapperMVE::GetClass(env));
 
   return exports;
 }

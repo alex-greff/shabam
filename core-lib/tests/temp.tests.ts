@@ -2,8 +2,11 @@ import { loadSpectrogramFromCache } from "./utilities/spectrogram-cache";
 import { renderSpectrogram } from "./utilities/spectrogram-renderer";
 import { DATA_DIR } from "./utilities/constants";
 import { assert } from "tsafe";
-import { RecordsTable } from "../../build/Release/core_lib_native.node";
-import CoreLibNative from "../build/Release/core_lib_native.node";
+// import { RecordsTable } from "../../build/Release/core_lib_native.node";
+// import CoreLibNative from "../build/Release/core_lib_native.node";
+import CoreLibNative from "../src/native";
+
+const CoreLibNativeAny = CoreLibNative as any;
 
 console.log("exports", CoreLibNative);
 
@@ -16,8 +19,18 @@ console.log("exports", CoreLibNative);
   // await renderSpectrogram(spectrogram, "test.png", DATA_DIR);
   // console.log("Done!");
 
-  const encoded = CoreLibNative.RecordsEngine.encodeAddress(1, 2, 3);
-  console.log(">>> encoded", encoded);
-  const [anchorFreq, pointFreq, delta] = CoreLibNative.RecordsEngine.decodeAddress(encoded);
-  console.log(`>>> decoded: (${anchorFreq}, ${pointFreq}, ${delta})`);
+  // const encoded = CoreLibNative.RecordsEngine.encodeAddress(1, 2, 3);
+  // console.log(">>> encoded", encoded);
+  // const [anchorFreq, pointFreq, delta] = CoreLibNative.RecordsEngine.decodeAddress(encoded);
+  // console.log(`>>> decoded: (${anchorFreq}, ${pointFreq}, ${delta})`);
+
+  const r = new CoreLibNativeAny.RecordsEngineMVE();
+  const m = new CoreLibNativeAny.MemoryRecordsEngineMVE();
+  r.storeRecords();
+  r.searchRecords();
+  r.clearAllRecords();
+  m.storeRecords();
+  m.searchRecords();
+  m.clearAllRecords();
+  console.log("m instanceof MemoryRecordsEngineMVE", m instanceof CoreLibNativeAny.MemoryRecordsEngineMVE);
 })();

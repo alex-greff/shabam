@@ -15,9 +15,9 @@ public:
   static Napi::Value EncodeCouple(const Napi::CallbackInfo &info);
   static Napi::Value DecodeCouple(const Napi::CallbackInfo &info);
 
-  virtual void StoreRecords(const Napi::CallbackInfo &info) {};
-  virtual void SearchRecords(const Napi::CallbackInfo &info) {};
-  virtual void ClearAllRecords(const Napi::CallbackInfo &info) {};
+  virtual void StoreRecords(const Napi::CallbackInfo &info);
+  virtual void SearchRecords(const Napi::CallbackInfo &info);
+  virtual void ClearAllRecords(const Napi::CallbackInfo &info);
 };
 
 class RecordsEngineWrapperInstance

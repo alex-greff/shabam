@@ -131,16 +131,17 @@ async function _computeAndGetFingerprint(
   valorRecordsTable.compute();
   timerEnd = performance.now();
   process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // TODO: remove
   // const valorRecordsTable = new TrackRecordsTable(
   //   valorFingerprint,
   //   valorTrackId
   // );
 
-  process.stdout.write("Storing Valor records... ");
-  timerStart = performance.now();
-  await engine.storeRecords(valorRecordsTable, valorTrackId);
-  timerEnd = performance.now();
-  process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
+  // process.stdout.write("Storing Valor records... ");
+  // timerStart = performance.now();
+  // await engine.storeRecords(valorRecordsTable, valorTrackId);
+  // timerEnd = performance.now();
+  // process.stdout.write(`done (${(timerEnd - timerStart) / 1000}s)\n`);
 
   // // --- Frigid song ---
   // console.log()

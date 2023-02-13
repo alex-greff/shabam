@@ -17,9 +17,9 @@ public:
 
   static Napi::Function GetClass(Napi::Env env);
 
-  void StoreRecords(const Napi::CallbackInfo &info);
-  void SearchRecords(const Napi::CallbackInfo &info);
-  void ClearAllRecords(const Napi::CallbackInfo &info);
+  virtual void StoreRecords(const Napi::CallbackInfo &info);
+  virtual void SearchRecords(const Napi::CallbackInfo &info);
+  virtual void ClearAllRecords(const Napi::CallbackInfo &info);
 };
 
 #endif
