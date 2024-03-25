@@ -1,9 +1,0 @@
-export declare const FFT_SIZE = 1024;
-export declare const TARGET_SAMPLE_RATE = 16000;
-export declare const WINDOW_DURATION = 0.05;
-export declare const WINDOW_SMOOTHING = 0.8;
-export declare const FINGERPRINT_PARTITION_AMOUNT = 10;
-export declare const FINGERPRINT_PARTITION_CURVE = 50;
-export declare const FINGERPRINT_SLIDER_WIDTH = 20;
-export declare const FINGERPRINT_SLIDER_HEIGHT = 2;
-export declare const FINGERPRINT_STANDARD_DEVIATION_MULTIPLIER = 1;

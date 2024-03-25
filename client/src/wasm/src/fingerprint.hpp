@@ -1,7 +1,0 @@
-#ifndef FP_MAIN
-#define FP_MAIN
-
-extern bool FP_GLOBAL_SETTINGS_INITIALIZED;
-extern struct FINGERPRINT_GLOBAL_SETTINGS FP_GLOBAL_SETTINGS;
-
-#endif

@@ -1,8 +1,0 @@
-schema: ${SCHEMA_URL}
-documents: ./src/**/*.graphql
-generates:
-  ./src/graphql-request.g.ts:
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-graphql-request

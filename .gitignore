@@ -4,7 +4,6 @@ dist
 build
 temp
 build_temp
-client-old/wasm/
 
 # local env files
 .env.local
