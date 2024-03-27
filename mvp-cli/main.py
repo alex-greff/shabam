@@ -29,7 +29,7 @@ def generate_yaxis_formmatter(sample_rate: int, num_bins: int):
   max_freq = sample_rate / 2 # Nyquist theorem
   def yaxis_formatter(x: float, pos):
     curr_freq = int((x / num_bins) * max_freq)
-    return numerize.numerize(curr_freq, 2)
+    return numerize.numerize(curr_freq, 1)
   return yaxis_formatter
 
 @app.command()
