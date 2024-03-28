@@ -2,6 +2,7 @@ import typer
 import os.path
 from scipy.io import wavfile
 from scipy import signal
+from scipy.signal import windows
 import numpy as np
 import numpy.typing as npt
 from pathlib import Path
@@ -44,6 +45,16 @@ def add(track_filepath: str):
   Sxx: npt.NDArray = Sxx[:-1, :]
 
   print(f"Sxx.shape {Sxx.shape}") # TODO: remove
+
+  # g_std = 12  # standard deviation for Gaussian window in samples
+  # # win = windows.gaussian(20, std=g_std, sym=True)  # symmetric Gaussian wind.
+  # win = windows.tukey(1024)
+  # SFT = signal.ShortTimeFFT(win, hop=256, fs=1/sample_rate, mfft=config.FFT_SIZE, scale_to='psd')
+  # Sxx = SFT.spectrogram(data_mono)  # calculate absolute square of STFT
+
+  # print(f"win {win}")
+  # print(f"data_mono.shape {data_mono.shape}") # TODO: remove
+  # print(f"Sxx.shape {Sxx.shape}") # TODO: remove
 
   visualization.graph_spectrogram(
     Sxx,
