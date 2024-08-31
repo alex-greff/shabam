@@ -8,7 +8,11 @@ import numpy.typing as npt
 from pathlib import Path
 import modules.initialization as initialization
 import modules.visualization as visualization
+from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE
 import modules.config as config
+from colorama import init as init_colorama
+
+init_colorama()
 
 app = typer.Typer()
 
@@ -29,30 +33,38 @@ def add(track_filepath: str):
   num_samples = len(data_mono)
   duration = num_samples / sample_rate # seconds 
 
-  if config.DEBUG:
-    print(f"Audio file ({track_filepath}) stats:")
-    print(f"  sample rate: {sample_rate}Hz")
-    print(f"  number of samples: {num_samples}")
-    print(f"  duration: {duration}s")
-
   # Save mono wav file
+  mono_filepath = f"{config.DEBUG_DIR}/{track_title}_mono.wav"
   if config.DEBUG:
-    wavfile.write(f"{config.DEBUG_DIR}/{track_title}_mono.wav", sample_rate, data_mono.astype(np.int16))
+    wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
 
   ds_data = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
   ds_sample_rate = int(sample_rate / config.DOWNSAMPLE_FACTOR)
 
   # Save downsampled wav file
+  ds_filepath = f"{config.DEBUG_DIR}/{track_title}_ds.wav"
   if config.DEBUG:
-    wavfile.write(f"{config.DEBUG_DIR}/{track_title}_ds.wav", ds_sample_rate, ds_data.astype(np.int16))
+    wavfile.write(ds_filepath, ds_sample_rate, ds_data.astype(np.int16))
 
+  timedomain_filepath=f"{config.DEBUG_DIR}/{track_title}_timedomain.png"
   if config.DEBUG:
     visualization.graph_timedomain(
       duration,
       data_mono,
       ds_data,
-      f"{config.DEBUG_DIR}/{track_title}_timedomain.png"
+      timedomain_filepath
     )
+
+    BULLET
+
+  if config.DEBUG:
+    print(f"{HEAD_STYLE}Audio file stats:")
+    print(f"  {BULLET}{NORMAL_STYLE} Mono audio filepath: {DIM_STYLE}{mono_filepath}")
+    print(f"  {BULLET}{NORMAL_STYLE} Downsampled audio filepath: {DIM_STYLE}{ds_filepath}")
+    print(f"  {BULLET}{NORMAL_STYLE} Timedomain filepath: {DIM_STYLE}{timedomain_filepath}")
+    print(f"  {BULLET}{NORMAL_STYLE} Sample rate: {BOLD_STYLE}{sample_rate:,}Hz")
+    print(f"  {BULLET}{NORMAL_STYLE} Number of samples: {BOLD_STYLE}{num_samples:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s")
 
   _, _, Sxx = signal.spectrogram(data_mono, sample_rate, nfft=config.FFT_SIZE)
   Sxx: npt.NDArray = Sxx[:-1, :]
@@ -67,44 +79,42 @@ def add(track_filepath: str):
   # print(f"data_mono.shape {data_mono.shape}") # TODO: remove
   # print(f"Sxx.shape {Sxx.shape}") # TODO: remove
 
-  spectrogram_file = f"{config.DEBUG_DIR}/{track_title}_mono_freqdomain.png"
-
+  spectrogram_filepath = f"{config.DEBUG_DIR}/{track_title}_mono_freqdomain.png"
   if config.DEBUG:
     visualization.graph_spectrogram(
       Sxx,
       sample_rate,
       duration,
-      spectrogram_file
+      spectrogram_filepath
     )
 
   if config.DEBUG:
-    print("\nFull sampled spectrogram stats:")
-    print(f"  Visualization: {spectrogram_file}")
-    print(f"  Sample rate: {sample_rate}Hz")
-    print(f"  FFT size: {config.FFT_SIZE}")
-    print(f"  number of bins (y axis): {Sxx.shape[0]}")
-    print(f"  number of windows (x axis): {Sxx.shape[1]}")
+    print(f"\n{HEAD_STYLE}Full sampled spectrogram stats:")
+    print(f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_filepath}")
+    print(f"  {BULLET}{NORMAL_STYLE} Sample rate: {BOLD_STYLE}{sample_rate:,}Hz")
+    print(f"  {BULLET}{NORMAL_STYLE} FFT size: {BOLD_STYLE}{config.FFT_SIZE:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Number of bins (y axis): {BOLD_STYLE}{Sxx.shape[0]:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx.shape[1]:,}")
 
   _, _, Sxx_ds = signal.spectrogram(ds_data, ds_sample_rate, nfft=config.FFT_SIZE)
   Sxx_ds: npt.NDArray = Sxx_ds[:-1, :]
 
-  spectrogram_ds_file = f"{config.DEBUG_DIR}/{track_title}_ds_freqdomain.png"
-
+  spectrogram_ds_filepath = f"{config.DEBUG_DIR}/{track_title}_ds_freqdomain.png"
   if config.DEBUG:
     visualization.graph_spectrogram(
       Sxx_ds,
       ds_sample_rate,
       duration,
-      spectrogram_ds_file
+      spectrogram_ds_filepath
     )
 
   if config.DEBUG:
-    print("\nDownsampled spectrogram stats:")
-    print(f"  Visualization: {spectrogram_ds_file}")
-    print(f"  Sample rate: {ds_sample_rate}Hz")
-    print(f"  FFT size: {config.FFT_SIZE}")
-    print(f"  number of bins (y axis): {Sxx_ds.shape[0]}")
-    print(f"  number of windows (x axis): {Sxx_ds.shape[1]}")
+    print(f"\n{HEAD_STYLE}Downsampled spectrogram stats:")
+    print(f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_ds_filepath}")
+    print(f"  {BULLET}{NORMAL_STYLE} Sample rate: {BOLD_STYLE}{ds_sample_rate:,}Hz")
+    print(f"  {BULLET}{NORMAL_STYLE} FFT size: {BOLD_STYLE}{config.FFT_SIZE:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Number of bins (y axis): {BOLD_STYLE}{Sxx_ds.shape[0]:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx_ds.shape[1]:,}")
 
 
 @app.command()
