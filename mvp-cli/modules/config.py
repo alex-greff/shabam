@@ -1,4 +1,7 @@
+# Output
 DATA_DIR = "data"
+
+# Preprocessing
 DOWNSAMPLE_FACTOR = 4
 FFT_SIZE = 4096 # 2**12
 
