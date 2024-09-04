@@ -53,7 +53,8 @@ def add(track_filepath: str):
       duration,
       data_mono,
       ds_data,
-      timedomain_filepath
+      timedomain_filepath,
+      f"{track_title} Time Domain"
     )
 
   if config.DEBUG:
@@ -84,7 +85,8 @@ def add(track_filepath: str):
       Sxx,
       sample_rate,
       duration,
-      spectrogram_filepath
+      spectrogram_filepath,
+      f"{track_title} Mono Frequency Domain",
     )
 
   if config.DEBUG:
@@ -107,6 +109,7 @@ def add(track_filepath: str):
       ds_sample_rate,
       duration,
       spectrogram_ds_filepath,
+      f"{track_title} Downsampled Frequency Domain",
       partition_ranges
     )
 
@@ -123,7 +126,14 @@ def add(track_filepath: str):
 
   fingerprint_filepath = f"{config.DEBUG_DIR}/{track_title}_fp.png"
   if config.DEBUG:
-    visualization.graph_fingerprint(fp, ds_sample_rate, duration, fingerprint_filepath, partition_ranges)
+    visualization.graph_fingerprint(
+      fp,
+      ds_sample_rate,
+      duration,
+      fingerprint_filepath,
+      f"{track_title} Fingerprint",
+      partition_ranges
+    )
 
 @app.command()
 def search(recording_filepath: str):

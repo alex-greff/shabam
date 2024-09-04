@@ -25,6 +25,7 @@ def graph_timedomain(
     data: npt.NDArray,
     data_ds: npt.NDArray,
     save_path: str,
+    title: str
 ):
   num_samples = len(data)
   num_samples_ds = len(data_ds)
@@ -34,6 +35,7 @@ def graph_timedomain(
   x = np.linspace(0, duration, num_samples, endpoint=False)
   ds_x = np.linspace(0, duration, num_samples_ds, endpoint=False)
   plt.plot(x, data, ',', ds_x, data_ds, ',')
+  plt.title(title)
   plt.xlabel('Time (s)')
   plt.legend(['data', 'downsampled'], loc='best')
   plt.savefig(save_path)
@@ -43,6 +45,7 @@ def graph_spectrogram(
     sample_rate: int,
     duration: float,
     save_path: str,
+    title: str,
     partition_ranges: Optional[List[fingerprint.PartitionRange]] = None,
 ):
   num_bins, num_windows = spectrogram_data.shape
@@ -54,6 +57,7 @@ def graph_spectrogram(
   plt.pcolormesh(spectrogram_data, shading='flat')
   plt.yscale("symlog")
   # plt.yscale("linear")
+  plt.title(title)
   plt.ylabel('Frequency (Hz)')
   plt.xlabel('Time (s)')
   ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_bins))
@@ -72,6 +76,7 @@ def graph_fingerprint(
     sample_rate: int,
     duration: float,
     save_path: str,
+    title: str,
     partition_ranges: Optional[List[fingerprint.PartitionRange]] = None,
 ):
   num_windows, num_partitions = fingerprint_data.shape
@@ -92,6 +97,7 @@ def graph_fingerprint(
 
   plt.yscale("symlog")
   # plt.yscale("linear")
+  plt.title(title)
   plt.ylabel('Frequency (Hz)')
   plt.xlabel('Time (s)')
   ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_partitions))
