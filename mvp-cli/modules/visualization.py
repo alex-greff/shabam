@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from numerize import numerize
 import numpy as np
 import numpy.typing as npt
+import modules.fingerprint as fingerprint
 
 def _generate_xaxis_formatter(num_windows: int, duration: float):
   def xaxis_formatter(x: float, pos):
@@ -41,7 +42,7 @@ def graph_spectrogram(
     sample_rate: int,
     duration: float,
     save_path: str,
-    partition_ranges: Optional[List[Tuple[int, int]]] = None,
+    partition_ranges: Optional[List[fingerprint.PartitionRange]] = None,
 ):
   num_bins = spectrogram_data.shape[0]
   num_windows = spectrogram_data.shape[1]
