@@ -1,5 +1,4 @@
 from typing import List, Tuple
-# import modules.config as config
 from math import floor
 
 # note: num_bins = FFT_SIZE / 2
@@ -16,5 +15,5 @@ def _get_partition_range(a: int, b: int, c: int, x: int) -> Tuple[int, int]:
 
   return (f(x), f(x+1)-1)
 
-def _get_partition_ranges(a: int, b: int, c: int) -> List[Tuple[int, int]]:
+def get_partition_ranges(a: int, b: int, c: int) -> List[Tuple[int, int]]:
   return [_get_partition_range(a, b, c, x) for x in range(a)]

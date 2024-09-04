@@ -1,4 +1,5 @@
 
+from typing import List, Optional, Tuple
 import matplotlib.pyplot as plt
 from numerize import numerize
 import numpy as np
@@ -39,12 +40,14 @@ def graph_spectrogram(
     spectrogram_data: npt.NDArray,
     sample_rate: int,
     duration: float,
-    save_path: str
+    save_path: str,
+    partition_ranges: Optional[List[Tuple[int, int]]] = None,
 ):
   num_bins = spectrogram_data.shape[0]
   num_windows = spectrogram_data.shape[1]
 
   plt.clf()
+
   # Plot spectrogram of mono signal
   ax = plt.subplot()
   plt.pcolormesh(spectrogram_data, shading='flat')
@@ -54,4 +57,11 @@ def graph_spectrogram(
   plt.xlabel('Time (s)')
   ax.yaxis.set_major_formatter(_generate_yaxis_formmatter(sample_rate, num_bins))
   ax.xaxis.set_major_formatter(_generate_xaxis_formatter(num_windows, duration))
+
+  # Plot partition ranges, if provided
+  if partition_ranges is not None:
+    for idx, (start, end) in enumerate(partition_ranges):
+      color = 'gray' if idx % 2 == 1 else 'darkgray'
+      plt.fill_between([0, num_windows], y1=start, y2=end+1, color=color, alpha=0.2, linewidth=0)
+
   plt.savefig(save_path)

@@ -2,6 +2,10 @@ DATA_DIR = "data"
 DOWNSAMPLE_FACTOR = 4
 FFT_SIZE = 4096 # 2**12
 
+# Partition ranges
+NUM_PARTITIONS = 30
+PARTITION_TENSION = 10
+
 # Debug
 DEBUG = True
 DEBUG_DIR = "debug"

@@ -8,6 +8,7 @@ import numpy.typing as npt
 from pathlib import Path
 import modules.initialization as initialization
 import modules.visualization as visualization
+import modules.fingerprint as fingerprint
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE
 import modules.config as config
 from colorama import init as init_colorama
@@ -99,13 +100,16 @@ def add(track_filepath: str):
   _, _, Sxx_ds = signal.spectrogram(ds_data, ds_sample_rate, nfft=config.FFT_SIZE)
   Sxx_ds: npt.NDArray = Sxx_ds[:-1, :]
 
+  partition_ranges = fingerprint.get_partition_ranges(config.NUM_PARTITIONS, config.FFT_SIZE / 2, config.PARTITION_TENSION)
+
   spectrogram_ds_filepath = f"{config.DEBUG_DIR}/{track_title}_ds_freqdomain.png"
   if config.DEBUG:
     visualization.graph_spectrogram(
       Sxx_ds,
       ds_sample_rate,
       duration,
-      spectrogram_ds_filepath
+      spectrogram_ds_filepath,
+      partition_ranges
     )
 
   if config.DEBUG:
@@ -115,6 +119,7 @@ def add(track_filepath: str):
     print(f"  {BULLET}{NORMAL_STYLE} FFT size: {BOLD_STYLE}{config.FFT_SIZE:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Number of bins (y axis): {BOLD_STYLE}{Sxx_ds.shape[0]:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx_ds.shape[1]:,}")
+    print(f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
 
 
 @app.command()
