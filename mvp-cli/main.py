@@ -4,7 +4,7 @@ from scipy.io import wavfile
 from scipy import signal
 from scipy.signal import windows
 import numpy as np
-import numpy.typing as npt
+import nptyping as npt
 from pathlib import Path
 import modules.initialization as initialization
 import modules.visualization as visualization
@@ -55,8 +55,6 @@ def add(track_filepath: str):
       ds_data,
       timedomain_filepath
     )
-
-    BULLET
 
   if config.DEBUG:
     print(f"{HEAD_STYLE}Audio file stats:")
@@ -120,7 +118,12 @@ def add(track_filepath: str):
     print(f"  {BULLET}{NORMAL_STYLE} Number of bins (y axis): {BOLD_STYLE}{Sxx_ds.shape[0]:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx_ds.shape[1]:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
+  
+  fp = fingerprint.compute_fingerprint(Sxx_ds.T, partition_ranges)
 
+  fingerprint_filepath = f"{config.DEBUG_DIR}/{track_title}_fp.png"
+  if config.DEBUG:
+    visualization.graph_fingerprint(fp, ds_sample_rate, duration, fingerprint_filepath, partition_ranges)
 
 @app.command()
 def search(recording_filepath: str):

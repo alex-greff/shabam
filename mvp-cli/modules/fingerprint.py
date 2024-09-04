@@ -1,5 +1,8 @@
 from typing import List, Tuple
 from math import floor
+import nptyping as npt
+import numpy as np
+import modules.config as config
 
 PartitionRange = Tuple[int, int]
 
@@ -31,3 +34,156 @@ def get_partition_ranges(a: int, b: int, c: int) -> List[PartitionRange]:
     c: partition curve tension
   """
   return [_get_partition_range(a, b, c, x) for x in range(a)]
+
+def get_slider_boundaries(
+    curr_window: int,
+    curr_partition: int,
+    num_windows: int,
+    num_partitions: int,
+    slider_width: int, 
+    slider_height: int
+) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+  # Determine the slider range
+  # When we near the edge of a slider range (either at the front or end
+  # of the array), the slider with not fit around the centerpoint equally
+  # on both sides. In these cases, we still keep the same slider size but
+  # simply shift it enough to still fit within the range.
+  #
+  # Ex 1: fitting slider
+  # slider_width = 5, num_windows = 9
+  #   |   |   |   |   |   |   |   |   |   |
+  #   0   1   2   3   4   5   6   7   8   9
+  #                         ^
+  #               |-------------------|     (fitting slider)
+  #
+  # Ex 2: overflowing left side at 1
+  # slider_width = 5, num_windows = 9
+  #        |   |   |   |   |   |   |   |   |   |
+  #        0   1   2   3   4   5   6   7   8   9
+  #              ^
+  #    |-------------------|       (centered slider)
+  #        |-------------------|   (shifted slider (+1))
+  #
+  # Ex 3: overflowing left side at 0
+  # slider_width = 5, num_windows = 9
+  #         |   |   |   |   |   |   |   |   |   |
+  #         0   1   2   3   4   5   6   7   8   9
+  #           ^
+  # |-------------------|           (centered slider)
+  #         |-------------------|   (shifted slider (+2))
+  #
+  # Ex 4: overflowing right side
+  # slider_width = 5, num_windows = 9
+  #   |   |   |   |   |   |   |   |   |   |
+  #   0   1   2   3   4   5   6   7   8   9
+  #                                     ^
+  #                           |-------------------|   (centered slider)
+  #                   |-------------------|           (shifted slider (-2))
+
+  slider_width_half = slider_width // 2
+  slider_height_half = slider_height // 2
+
+  # print(">>> curr_window", curr_window, "curr_partition", curr_partition)
+
+  slider_width_shift = 0
+  # The slider window is overflowing the left
+  if curr_window - slider_width_half < 0:
+    slider_width_shift = slider_width_half - curr_window
+  # The slider width is overflowing the right
+  elif curr_window + slider_width_half >= num_windows:
+    slider_width_shift = (num_windows - 1) - curr_window - slider_width_half
+
+  # Same kind of calculations for the height slider
+  slider_height_shift = 0
+  if curr_partition - slider_height_half < 0:
+    slider_height_shift = slider_height_half - curr_partition
+  elif curr_partition + slider_height_half >= num_partitions:
+    slider_height_shift = (num_partitions - 1) - curr_partition - slider_height_half
+
+  # inclusive
+  slider_x_start_idx = curr_window - slider_width_half + slider_width_shift
+  # inclusive
+  slider_x_end_idx = curr_window + slider_width_half + slider_width_shift
+
+  # inclusive
+  slider_y_start_idx = curr_partition - slider_height_half + slider_height_shift
+  # inclusive
+  slider_y_end_idx = curr_partition + slider_height_half + slider_height_shift
+
+  # if curr_window > 100 and curr_window < 200:
+  # if slider_x_start_idx != 507:
+  #   print(">>>", slider_x_start_idx, curr_window, slider_width_half, slider_width_shift)
+
+  return ((slider_x_start_idx, slider_y_start_idx), (slider_x_end_idx, slider_y_end_idx))
+
+
+def compute_fingerprint(
+    data: npt.NDArray, partition_ranges: List[PartitionRange]
+) -> npt.NDArray:
+  """
+  Params:
+    data: NDArray shape (num windows, num bins)
+  """
+  num_partitions = len(partition_ranges)
+  num_windows, num_bins  = data.shape
+
+  # Compute the cell data by finding the strongest frequency of each cell in
+  # the spectrogram
+  strongest_cells = np.zeros([num_windows, num_partitions])
+  for curr_window in range(num_windows):
+    for curr_partition in range(num_partitions):
+      partition_start_idx, partition_end_idx = partition_ranges[curr_partition]
+      
+      max_freq_val = -np.inf
+      # +1 since end index is inclusive
+      for curr_partition_idx in range(partition_start_idx, partition_end_idx + 1):
+        curr_freq_value = data[curr_window][curr_partition_idx]
+
+        if curr_freq_value > max_freq_val:
+          max_freq_val = curr_freq_value
+
+      strongest_cells[curr_window][curr_partition] = max_freq_val
+
+  # Compute the fingerprint data
+  passed_cells: npt.NDArray = np.zeros([num_windows, num_partitions], dtype='bool')
+  num_passed_cells = 0
+  for curr_window in range(num_windows):
+    for curr_partition in range(num_partitions):
+      slider_width = config.SLIDER_WIDTH
+      # Use all partitions if slider height is zero or negative
+      slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
+      slider_size = slider_width * slider_height
+
+      slider_start_idxs, slider_end_idxs = get_slider_boundaries(curr_window, curr_partition, num_windows, num_partitions, slider_width, slider_height)
+      slider_x_start_idx, slider_y_start_idx = slider_start_idxs
+      slider_x_end_idx, slider_y_end_idx = slider_end_idxs
+
+      # TODO: integrate window function
+
+      # Compute the mean value of the slider, weighted by the windowing function
+      slider_mean = 0
+      for sx in range(slider_x_start_idx, slider_x_end_idx + 1):
+        for sy in range(slider_y_start_idx, slider_y_end_idx + 1):
+          slider_mean += strongest_cells[sx][sy]
+      slider_mean = slider_mean / slider_size
+
+      # Compute the variance of the slider, weighted by the window function
+      slider_variance = 0
+      for sx in range(slider_x_start_idx, slider_x_end_idx + 1):
+        for sy in range(slider_y_start_idx, slider_y_end_idx + 1):
+          slider_variance += np.power(strongest_cells[sx][sy] - slider_mean, 2)
+      slider_variance = slider_variance / slider_size
+
+      # Compute the standard deviation of the slider
+      slider_standard_deviation = np.sqrt(slider_variance)
+
+      # Determine if the current cell passes
+      cell_value = strongest_cells[curr_window][curr_partition]
+      threshold_value = slider_mean + slider_standard_deviation * config.STANDARD_DEVIATION_MULTIPLIER
+
+      passes = cell_value > threshold_value
+      if passes:
+        passed_cells[curr_window][curr_partition] = True
+        num_passed_cells += 1
+
+  return passed_cells
