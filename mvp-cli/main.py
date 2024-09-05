@@ -129,6 +129,7 @@ def add(track_filepath: str):
     visualization.graph_fingerprint(
       fp,
       ds_sample_rate,
+      Sxx_ds.shape[0],
       duration,
       fingerprint_filepath,
       f"{track_title} Fingerprint",

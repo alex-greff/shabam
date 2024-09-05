@@ -74,6 +74,7 @@ def graph_spectrogram(
 def graph_fingerprint(
     fingerprint_data: npt.NDArray,
     sample_rate: int,
+    num_bins: int,
     duration: float,
     save_path: str,
     title: str,
@@ -91,7 +92,13 @@ def graph_fingerprint(
     for y in range(num_partitions):
       passes = fingerprint_data[x][y]
       if passes:
-        plt.plot(x, y + 0.5, '*c', linewidth=2, markersize=2)
+        start_idx, end_idx = partition_ranges[y]
+        partition_midpoint = (end_idx - start_idx) / 2 + start_idx
+
+        # Map to the same scale that the spectrogram mapping uses so the scales
+        # are the same
+        mapped_y = partition_midpoint
+        plt.plot(x, mapped_y, '*c', linewidth=2, markersize=2)
 
   plt.margins(0,0)
 
@@ -100,13 +107,14 @@ def graph_fingerprint(
   plt.title(title)
   plt.ylabel('Frequency (Hz)')
   plt.xlabel('Time (s)')
-  ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_partitions))
+  # ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_partitions))
+  ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_bins))
   ax.xaxis.set_major_formatter(_generate_xaxis_formatter(num_windows, duration))
 
   # Plot partition ranges, if provided
   if partition_ranges is not None:
-    for idx in range(num_partitions):
+    for idx, (start, end) in enumerate(partition_ranges):
       color = 'gray' if idx % 2 == 1 else 'darkgray'
-      plt.fill_between([0, num_windows], y1=idx, y2=idx+1, color=color, alpha=0.2, linewidth=0)
+      plt.fill_between([0, num_windows], y1=start, y2=end+1, color=color, alpha=0.2, linewidth=0)
 
   plt.savefig(save_path)
