@@ -6,6 +6,8 @@ import numpy as np
 import nptyping as npt
 import modules.fingerprint as fingerprint
 
+_default_figsize = (12, 8)
+
 def _generate_xaxis_formatter(num_windows: int, duration: float):
   def xaxis_formatter(x: float, pos):
     curr_time = round(x/num_windows*duration, 2)
@@ -31,6 +33,7 @@ def graph_timedomain(
   num_samples_ds = len(data_ds)
 
   plt.clf()
+  plt.figure(figsize=_default_figsize)
 
   x = np.linspace(0, duration, num_samples, endpoint=False)
   ds_x = np.linspace(0, duration, num_samples_ds, endpoint=False)
@@ -51,6 +54,7 @@ def graph_spectrogram(
   num_bins, num_windows = spectrogram_data.shape
 
   plt.clf()
+  plt.figure(figsize=_default_figsize)
 
   # Plot spectrogram of mono signal
   ax = plt.subplot()
@@ -83,6 +87,7 @@ def graph_fingerprint(
   num_windows, num_partitions = fingerprint_data.shape
 
   plt.clf()
+  plt.figure(figsize=_default_figsize)
 
   ax = plt.subplot()
   ax.set_facecolor('dimgrey')
