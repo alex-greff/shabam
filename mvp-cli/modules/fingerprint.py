@@ -1,3 +1,5 @@
+"""Module for computing fingerprints."""
+
 from typing import List, Tuple
 from math import floor
 import nptyping as npt
@@ -6,7 +8,9 @@ import modules.config as config
 
 PartitionRange = Tuple[int, int]
 
-# note: num_bins = FFT_SIZE / 2
+# NOTE: num_bins = FFT_SIZE / 2
+
+
 def _get_partition_range(a: int, b: int, c: int, x: int) -> PartitionRange:
   """
   Given the params for the desired frequency partitioning, and index of desired
@@ -23,6 +27,7 @@ def _get_partition_range(a: int, b: int, c: int, x: int) -> PartitionRange:
 
   return (f(x), f(x+1)-1)
 
+
 def get_partition_ranges(a: int, b: int, c: int) -> List[PartitionRange]:
   """
   Given the params for the desired partitioning, returns a list of tuples
@@ -35,12 +40,13 @@ def get_partition_ranges(a: int, b: int, c: int) -> List[PartitionRange]:
   """
   return [_get_partition_range(a, b, c, x) for x in range(a)]
 
+
 def get_slider_boundaries(
     curr_window: int,
     curr_partition: int,
     num_windows: int,
     num_partitions: int,
-    slider_width: int, 
+    slider_width: int,
     slider_height: int
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
   # Determine the slider range
@@ -83,8 +89,6 @@ def get_slider_boundaries(
   slider_width_half = slider_width // 2
   slider_height_half = slider_height // 2
 
-  # print(">>> curr_window", curr_window, "curr_partition", curr_partition)
-
   slider_width_shift = 0
   # The slider window is overflowing the left
   if curr_window - slider_width_half < 0:
@@ -98,7 +102,8 @@ def get_slider_boundaries(
   if curr_partition - slider_height_half < 0:
     slider_height_shift = slider_height_half - curr_partition
   elif curr_partition + slider_height_half >= num_partitions:
-    slider_height_shift = (num_partitions - 1) - curr_partition - slider_height_half
+    slider_height_shift = (num_partitions - 1) - \
+        curr_partition - slider_height_half
 
   # inclusive
   slider_x_start_idx = curr_window - slider_width_half + slider_width_shift
@@ -109,10 +114,6 @@ def get_slider_boundaries(
   slider_y_start_idx = curr_partition - slider_height_half + slider_height_shift
   # inclusive
   slider_y_end_idx = curr_partition + slider_height_half + slider_height_shift
-
-  # if curr_window > 100 and curr_window < 200:
-  # if slider_x_start_idx != 507:
-  #   print(">>>", slider_x_start_idx, curr_window, slider_width_half, slider_width_shift)
 
   return ((slider_x_start_idx, slider_y_start_idx), (slider_x_end_idx, slider_y_end_idx))
 
@@ -125,7 +126,7 @@ def compute_fingerprint(
     data: NDArray shape (num windows, num bins)
   """
   num_partitions = len(partition_ranges)
-  num_windows, num_bins  = data.shape
+  num_windows, num_bins = data.shape
 
   # Compute the cell data by finding the strongest frequency of each cell in
   # the spectrogram
@@ -133,7 +134,7 @@ def compute_fingerprint(
   for curr_window in range(num_windows):
     for curr_partition in range(num_partitions):
       partition_start_idx, partition_end_idx = partition_ranges[curr_partition]
-      
+
       max_freq_val = -np.inf
       # +1 since end index is inclusive
       for curr_partition_idx in range(partition_start_idx, partition_end_idx + 1):
@@ -145,7 +146,8 @@ def compute_fingerprint(
       strongest_cells[curr_window][curr_partition] = max_freq_val
 
   # Compute the fingerprint data
-  passed_cells: npt.NDArray = np.zeros([num_windows, num_partitions], dtype='bool')
+  passed_cells: npt.NDArray = np.zeros(
+      [num_windows, num_partitions], dtype='bool')
   num_passed_cells = 0
   for curr_window in range(num_windows):
     for curr_partition in range(num_partitions):
@@ -154,7 +156,8 @@ def compute_fingerprint(
       slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
       slider_size = slider_width * slider_height
 
-      slider_start_idxs, slider_end_idxs = get_slider_boundaries(curr_window, curr_partition, num_windows, num_partitions, slider_width, slider_height)
+      slider_start_idxs, slider_end_idxs = get_slider_boundaries(
+          curr_window, curr_partition, num_windows, num_partitions, slider_width, slider_height)
       slider_x_start_idx, slider_y_start_idx = slider_start_idxs
       slider_x_end_idx, slider_y_end_idx = slider_end_idxs
 
@@ -179,7 +182,8 @@ def compute_fingerprint(
 
       # Determine if the current cell passes
       cell_value = strongest_cells[curr_window][curr_partition]
-      threshold_value = slider_mean + slider_standard_deviation * config.STANDARD_DEVIATION_MULTIPLIER
+      threshold_value = slider_mean + slider_standard_deviation * \
+          config.STANDARD_DEVIATION_MULTIPLIER
 
       passes = cell_value > threshold_value
       if passes:

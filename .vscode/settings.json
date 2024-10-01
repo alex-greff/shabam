@@ -1,0 +1,12 @@
+{
+  "editor.formatOnSave": true,
+  "pylint.args": [
+    "--indent-string='  '"
+  ],
+  "autopep8.args": [
+    "--indent-size=2"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+}

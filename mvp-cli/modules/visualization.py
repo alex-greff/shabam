@@ -1,5 +1,5 @@
-
-from typing import List, Optional, Tuple
+"""Module for storing visualization helpers."""
+from typing import List, Optional
 import matplotlib.pyplot as plt
 from numerize import numerize
 import numpy as np
@@ -8,19 +8,22 @@ import modules.fingerprint as fingerprint
 
 _default_figsize = (12, 8)
 
+
 def _generate_xaxis_formatter(num_windows: int, duration: float):
   def xaxis_formatter(x: float, pos):
     curr_time = round(x/num_windows*duration, 2)
     return str(curr_time)
   return xaxis_formatter
 
+
 def _generate_yaxis_formatter(sample_rate: int, num_bins: int):
-  max_freq = sample_rate / 2 # Nyquist theorem
+  max_freq = sample_rate / 2  # Nyquist theorem
+
   def yaxis_formatter(x: float, pos):
-    # print(">>> x", x, num_bins)
     curr_freq = int((x / num_bins) * max_freq)
     return numerize.numerize(curr_freq, 1)
   return yaxis_formatter
+
 
 def graph_timedomain(
     duration: float,
@@ -43,6 +46,7 @@ def graph_timedomain(
   plt.legend(['data', 'downsampled'], loc='best')
   plt.savefig(save_path)
 
+
 def graph_spectrogram(
     spectrogram_data: npt.NDArray,
     sample_rate: int,
@@ -64,16 +68,20 @@ def graph_spectrogram(
   plt.title(title)
   plt.ylabel('Frequency (Hz)')
   plt.xlabel('Time (s)')
-  ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_bins))
-  ax.xaxis.set_major_formatter(_generate_xaxis_formatter(num_windows, duration))
+  ax.yaxis.set_major_formatter(
+      _generate_yaxis_formatter(sample_rate, num_bins))
+  ax.xaxis.set_major_formatter(
+      _generate_xaxis_formatter(num_windows, duration))
 
   # Plot partition ranges, if provided
   if partition_ranges is not None:
     for idx, (start, end) in enumerate(partition_ranges):
       color = 'gray' if idx % 2 == 1 else 'darkgray'
-      plt.fill_between([0, num_windows], y1=start, y2=end+1, color=color, alpha=0.2, linewidth=0)
+      plt.fill_between([0, num_windows], y1=start, y2=end+1,
+                       color=color, alpha=0.2, linewidth=0)
 
   plt.savefig(save_path)
+
 
 def graph_fingerprint(
     fingerprint_data: npt.NDArray,
@@ -105,7 +113,7 @@ def graph_fingerprint(
         mapped_y = partition_midpoint
         plt.plot(x, mapped_y, '*c', linewidth=2, markersize=2)
 
-  plt.margins(0,0)
+  plt.margins(0, 0)
 
   plt.yscale("symlog")
   # plt.yscale("linear")
@@ -113,13 +121,16 @@ def graph_fingerprint(
   plt.ylabel('Frequency (Hz)')
   plt.xlabel('Time (s)')
   # ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_partitions))
-  ax.yaxis.set_major_formatter(_generate_yaxis_formatter(sample_rate, num_bins))
-  ax.xaxis.set_major_formatter(_generate_xaxis_formatter(num_windows, duration))
+  ax.yaxis.set_major_formatter(
+      _generate_yaxis_formatter(sample_rate, num_bins))
+  ax.xaxis.set_major_formatter(
+      _generate_xaxis_formatter(num_windows, duration))
 
   # Plot partition ranges, if provided
   if partition_ranges is not None:
     for idx, (start, end) in enumerate(partition_ranges):
       color = 'gray' if idx % 2 == 1 else 'darkgray'
-      plt.fill_between([0, num_windows], y1=start, y2=end+1, color=color, alpha=0.2, linewidth=0)
+      plt.fill_between([0, num_windows], y1=start, y2=end+1,
+                       color=color, alpha=0.2, linewidth=0)
 
   plt.savefig(save_path)
