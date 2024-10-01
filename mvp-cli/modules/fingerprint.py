@@ -5,6 +5,7 @@ from math import floor
 import nptyping as npt
 import numpy as np
 import modules.config as config
+from scipy.signal import windows
 
 PartitionRange = Tuple[int, int]
 
@@ -145,29 +146,36 @@ def compute_fingerprint(
 
       strongest_cells[curr_window][curr_partition] = max_freq_val
 
+  slider_width = config.SLIDER_WIDTH
+  # Use all partitions if slider height is zero or negative
+  slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
+  slider_size = slider_width * slider_height
+
+  window = windows.get_window(config.WINDOW_FUNCTION_CONFIG, slider_width)
+  assert len(window) == slider_width  # for sanity
+
   # Compute the fingerprint data
   passed_cells: npt.NDArray = np.zeros(
       [num_windows, num_partitions], dtype='bool')
   num_passed_cells = 0
+
   for curr_window in range(num_windows):
     for curr_partition in range(num_partitions):
-      slider_width = config.SLIDER_WIDTH
-      # Use all partitions if slider height is zero or negative
-      slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
-      slider_size = slider_width * slider_height
-
       slider_start_idxs, slider_end_idxs = get_slider_boundaries(
           curr_window, curr_partition, num_windows, num_partitions, slider_width, slider_height)
       slider_x_start_idx, slider_y_start_idx = slider_start_idxs
       slider_x_end_idx, slider_y_end_idx = slider_end_idxs
 
-      # TODO: integrate window function
-
       # Compute the mean value of the slider, weighted by the windowing function
       slider_mean = 0
       for sx in range(slider_x_start_idx, slider_x_end_idx + 1):
+        # The center point of the window fn array is where the curr_window
+        # value is located, thus we need to calculate the offset of sx from that
+        slider_x_offset = curr_window - sx
+        curr_window_fn_val = window[slider_x_offset]
+
         for sy in range(slider_y_start_idx, slider_y_end_idx + 1):
-          slider_mean += strongest_cells[sx][sy]
+          slider_mean += curr_window_fn_val * strongest_cells[sx][sy]
       slider_mean = slider_mean / slider_size
 
       # Compute the variance of the slider, weighted by the window function
