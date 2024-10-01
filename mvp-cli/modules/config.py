@@ -22,7 +22,9 @@ SLIDER_HEIGHT = 1  # 0 = use whole height
 # WINDOW_FUNCTION_CONFIG = "hann"
 WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 
-STANDARD_DEVIATION_MULTIPLIER = 2
+# Multiplier put on the standard deviation value when checking threshold value
+# lower = less sensitive, higher = more sensitive
+STANDARD_DEVIATION_MULTIPLIER = 3.4
 
 # Debug
 DEBUG = True
