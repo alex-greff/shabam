@@ -48,73 +48,81 @@ def get_slider_boundaries(
     num_windows: int,
     num_partitions: int,
     slider_width: int,
-    slider_height: int
+    slider_height: int,
+    use_all_partitions=False
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-  # Determine the slider range
-  # When we near the edge of a slider range (either at the front or end
-  # of the array), the slider with not fit around the centerpoint equally
-  # on both sides. In these cases, we still keep the same slider size but
-  # simply shift it enough to still fit within the range.
-  #
-  # Ex 1: fitting slider
-  # slider_width = 5, num_windows = 9
-  #   |   |   |   |   |   |   |   |   |   |
-  #   0   1   2   3   4   5   6   7   8   9
-  #                         ^
-  #               |-------------------|     (fitting slider)
-  #
-  # Ex 2: overflowing left side at 1
-  # slider_width = 5, num_windows = 9
-  #        |   |   |   |   |   |   |   |   |   |
-  #        0   1   2   3   4   5   6   7   8   9
-  #              ^
-  #    |-------------------|       (centered slider)
-  #        |-------------------|   (shifted slider (+1))
-  #
-  # Ex 3: overflowing left side at 0
-  # slider_width = 5, num_windows = 9
-  #         |   |   |   |   |   |   |   |   |   |
-  #         0   1   2   3   4   5   6   7   8   9
-  #           ^
-  # |-------------------|           (centered slider)
-  #         |-------------------|   (shifted slider (+2))
-  #
-  # Ex 4: overflowing right side
-  # slider_width = 5, num_windows = 9
-  #   |   |   |   |   |   |   |   |   |   |
-  #   0   1   2   3   4   5   6   7   8   9
-  #                                     ^
-  #                           |-------------------|   (centered slider)
-  #                   |-------------------|           (shifted slider (-2))
+  '''
+  Determine the slider range
+  When we near the edge of a slider range (either at the front or end
+  of the array), the slider with not fit around the centerpoint equally
+  on both sides. In these cases, we still keep the same slider size but
+  simply shift it enough to still fit within the range.
+
+  Ex 1: fitting slider
+  slider_width = 5, num_windows = 9
+    |   |   |   |   |   |   |   |   |   |
+    0   1   2   3   4   5   6   7   8   9
+                          ^
+                |-------------------|     (fitting slider)
+
+  Ex 2: overflowing left side at 1
+  slider_width = 5, num_windows = 9
+         |   |   |   |   |   |   |   |   |   |
+         0   1   2   3   4   5   6   7   8   9
+               ^
+     |-------------------|       (centered slider)
+         |-------------------|   (shifted slider (+1))
+
+  Ex 3: overflowing left side at 0
+  slider_width = 5, num_windows = 9
+          |   |   |   |   |   |   |   |   |   |
+          0   1   2   3   4   5   6   7   8   9
+            ^
+  |-------------------|           (centered slider)
+          |-------------------|   (shifted slider (+2))
+
+  Ex 4: overflowing right side
+  slider_width = 5, num_windows = 9
+    |   |   |   |   |   |   |   |   |   |
+    0   1   2   3   4   5   6   7   8   9
+                                      ^
+                            |-------------------|   (centered slider)
+                    |-------------------|           (shifted slider (-2))
+  '''
 
   slider_width_half = slider_width // 2
   slider_height_half = slider_height // 2
 
-  slider_width_shift = 0
+  slider_width_shift_start = 0
+  slider_width_shift_end = 0
   # The slider window is overflowing the left
   if curr_window - slider_width_half < 0:
-    slider_width_shift = slider_width_half - curr_window
+    slider_width_shift_start = slider_width_half - curr_window
   # The slider width is overflowing the right
-  elif curr_window + slider_width_half >= num_windows:
-    slider_width_shift = (num_windows - 1) - curr_window - slider_width_half
+  if curr_window + slider_width_half >= num_windows:
+    slider_width_shift_end = (num_windows - 1) - \
+        curr_window - slider_width_half
 
   # Same kind of calculations for the height slider
-  slider_height_shift = 0
+  slider_height_shift_start = 0
+  slider_height_shift_end = 0
   if curr_partition - slider_height_half < 0:
-    slider_height_shift = slider_height_half - curr_partition
+    slider_height_shift_start = slider_height_half - curr_partition
   elif curr_partition + slider_height_half >= num_partitions:
-    slider_height_shift = (num_partitions - 1) - \
+    slider_height_shift_end = (num_partitions - 1) - \
         curr_partition - slider_height_half
 
   # inclusive
-  slider_x_start_idx = curr_window - slider_width_half + slider_width_shift
+  slider_x_start_idx = curr_window - slider_width_half + slider_width_shift_start
   # inclusive
-  slider_x_end_idx = curr_window + slider_width_half + slider_width_shift
+  slider_x_end_idx = curr_window + slider_width_half + slider_width_shift_end
 
   # inclusive
-  slider_y_start_idx = curr_partition - slider_height_half + slider_height_shift
+  slider_y_start_idx = curr_partition - \
+      slider_height_half + slider_height_shift_start if not use_all_partitions else 0
   # inclusive
-  slider_y_end_idx = curr_partition + slider_height_half + slider_height_shift
+  slider_y_end_idx = curr_partition + slider_height_half + \
+      slider_height_shift_end if not use_all_partitions else num_partitions - 1
 
   return ((slider_x_start_idx, slider_y_start_idx), (slider_x_end_idx, slider_y_end_idx))
 
@@ -147,7 +155,7 @@ def compute_fingerprint(
       strongest_cells[curr_window][curr_partition] = max_freq_val
 
   slider_width = config.SLIDER_WIDTH
-  # Use all partitions if slider height is zero or negative
+  assert slider_width % 2 == 1, "Error: slider width must be an odd number"
   slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
   slider_size = slider_width * slider_height
 
@@ -162,7 +170,8 @@ def compute_fingerprint(
   for curr_window in range(num_windows):
     for curr_partition in range(num_partitions):
       slider_start_idxs, slider_end_idxs = get_slider_boundaries(
-          curr_window, curr_partition, num_windows, num_partitions, slider_width, slider_height)
+          curr_window, curr_partition, num_windows, num_partitions, slider_width,
+          slider_height, config.SLIDER_HEIGHT <= 0)
       slider_x_start_idx, slider_y_start_idx = slider_start_idxs
       slider_x_end_idx, slider_y_end_idx = slider_end_idxs
 

@@ -11,8 +11,10 @@ FFT_SIZE = 4096  # 2**12
 NUM_PARTITIONS = 30
 PARTITION_TENSION = 10
 
-SLIDER_WIDTH = 21  # should always be an odd number
-SLIDER_HEIGHT = 1  # 0 = use whole height
+# NOTE: should always be an odd number due to the window function
+SLIDER_WIDTH = 21
+# NOTE: set to 0 or less to use the whole height
+SLIDER_HEIGHT = -1
 
 # The config for the get_window's window parameter
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.windows.get_window.html#scipy.signal.windows.get_window
@@ -27,5 +29,6 @@ WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 STANDARD_DEVIATION_MULTIPLIER = 3.4
 
 # Debug
-DEBUG = True
-DEBUG_DIR = "debug"
+VERBOSE = True
+VERBOSE_DIR = "debug"
+DEBUGGER = False

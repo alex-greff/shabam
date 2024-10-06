@@ -2,16 +2,24 @@ import typer
 import os.path
 from scipy.io import wavfile
 from scipy import signal
-from scipy.signal import windows
 import numpy as np
 import nptyping as npt
 from pathlib import Path
 import modules.initialization as initialization
 import modules.visualization as visualization
 import modules.fingerprint as fingerprint
-from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE
+from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
 from colorama import init as init_colorama
+
+if config.DEBUGGER:
+  # Source: https://stackoverflow.com/a/70433884
+  import debugpy
+  # 5678 is the default attach port in the VS Code debug configurations.
+  # Unless a host and port are specified, host defaults to 127.0.0.1
+  debugpy.listen(5678)
+  print(f"{DEBUG_STYLE}Waiting for debugger attach")
+  debugpy.wait_for_client()
 
 init_colorama()
 
@@ -36,20 +44,20 @@ def add(track_filepath: str):
   duration = num_samples / sample_rate  # seconds
 
   # Save mono wav file
-  mono_filepath = f"{config.DEBUG_DIR}/{track_title}_mono.wav"
-  if config.DEBUG:
+  mono_filepath = f"{config.VERBOSE_DIR}/{track_title}_mono.wav"
+  if config.VERBOSE:
     wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
 
   ds_data = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
   ds_sample_rate = int(sample_rate / config.DOWNSAMPLE_FACTOR)
 
   # Save downsampled wav file
-  ds_filepath = f"{config.DEBUG_DIR}/{track_title}_ds.wav"
-  if config.DEBUG:
+  ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds.wav"
+  if config.VERBOSE:
     wavfile.write(ds_filepath, ds_sample_rate, ds_data.astype(np.int16))
 
-  timedomain_filepath = f"{config.DEBUG_DIR}/{track_title}_timedomain.png"
-  if config.DEBUG:
+  timedomain_filepath = f"{config.VERBOSE_DIR}/{track_title}_timedomain.png"
+  if config.VERBOSE:
     visualization.graph_timedomain(
         duration,
         data_mono,
@@ -58,7 +66,7 @@ def add(track_filepath: str):
         f"{track_title} Time Domain"
     )
 
-  if config.DEBUG:
+  if config.VERBOSE:
     print(f"{HEAD_STYLE}Audio file stats:")
     print(f"  {BULLET}{NORMAL_STYLE} Mono audio filepath: {DIM_STYLE}{mono_filepath}")
     print(
@@ -82,8 +90,8 @@ def add(track_filepath: str):
   # print(f"data_mono.shape {data_mono.shape}") # TODO: remove
   # print(f"Sxx.shape {Sxx.shape}") # TODO: remove
 
-  spectrogram_filepath = f"{config.DEBUG_DIR}/{track_title}_mono_freqdomain.png"
-  if config.DEBUG:
+  spectrogram_filepath = f"{config.VERBOSE_DIR}/{track_title}_mono_freqdomain.png"
+  if config.VERBOSE:
     visualization.graph_spectrogram(
         Sxx,
         sample_rate,
@@ -92,7 +100,7 @@ def add(track_filepath: str):
         f"{track_title} Mono Frequency Domain",
     )
 
-  if config.DEBUG:
+  if config.VERBOSE:
     print(f"\n{HEAD_STYLE}Full sampled spectrogram stats:")
     print(
         f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_filepath}")
@@ -110,8 +118,8 @@ def add(track_filepath: str):
   partition_ranges = fingerprint.get_partition_ranges(
       config.NUM_PARTITIONS, config.FFT_SIZE / 2, config.PARTITION_TENSION)
 
-  spectrogram_ds_filepath = f"{config.DEBUG_DIR}/{track_title}_ds_freqdomain.png"
-  if config.DEBUG:
+  spectrogram_ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds_freqdomain.png"
+  if config.VERBOSE:
     visualization.graph_spectrogram(
         Sxx_ds,
         ds_sample_rate,
@@ -121,7 +129,7 @@ def add(track_filepath: str):
         partition_ranges
     )
 
-  if config.DEBUG:
+  if config.VERBOSE:
     print(f"\n{HEAD_STYLE}Downsampled spectrogram stats:")
     print(
         f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_ds_filepath}")
@@ -136,8 +144,8 @@ def add(track_filepath: str):
 
   fp = fingerprint.compute_fingerprint(Sxx_ds.T, partition_ranges)
 
-  fingerprint_filepath = f"{config.DEBUG_DIR}/{track_title}_fp.png"
-  if config.DEBUG:
+  fingerprint_filepath = f"{config.VERBOSE_DIR}/{track_title}_fp.png"
+  if config.VERBOSE:
     visualization.graph_fingerprint(
         fp,
         ds_sample_rate,
