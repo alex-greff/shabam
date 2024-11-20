@@ -42,7 +42,7 @@ function _checkAddressPool(addressPool: Pool, addressNum: number) {
  * 
  * @param {Number} addressNum The number of the address database.
  * @param {String} queryText The query text.
- * @param  {...String} params The list of parameters.
+ * @param  {...Any} params The list of parameters.
  */
 exports.query = (addressNum: number, queryText: string, ...params: any): Promise<QueryResult<any>> => {
     const addressPool = addressPools[addressNum];

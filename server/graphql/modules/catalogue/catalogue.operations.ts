@@ -38,9 +38,9 @@ export default {
         const { windowAmount, partitionAmount } = fingerprintInfo;
 
         // TODO: implement
-        const fingerprintRes = await fingerprint;
+        // const fingerprintRes = await fingerprint;
 
-        const { filename, mimetype, createReadStream } = await fingerprint;
+        const { filename, mimetype, createReadStream }: UploadFile = await fingerprint;
 
         const fingerprintBuffer = await FingerprintUtilities.getFingerprintBuffer(createReadStream);
         let fingerprintData = FingerprintUtilities.getFingerprintData(fingerprintBuffer);
@@ -94,7 +94,7 @@ export default {
         const { title, artists, coverImage, releaseDate } = trackData; // TODO: get signal data
         const { email } = context.userData;
 
-        // TODO: remote
+        // TODO: remove
         // const fingerprintData = await workers.fingerprintWorker.generateFingerprint({}); // TODO: pass in signal data
         // const fingerprintData = { "something": "foo" };
 

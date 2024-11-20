@@ -1,14 +1,8 @@
-import { UserAccount, Token } from "../../../types";
+import { UserAccount, Token } from "../../../index";
 import UserOperations from "./user.operations";
+import * as Utilities from "../../../utilities";
 import injectUserData from "../../middleware/userData";
 import permit from "../../middleware/permission";
-import * as Utilities from "../../../utilities";
-
-// const UserOperations = require("./user.operations");
-// const Utilities = require("../../../utilities");
-
-// const injectUserData = require("../../middleware/userData");
-// const permit = require("../../middleware/permission");
 
 export default {
     Query: {

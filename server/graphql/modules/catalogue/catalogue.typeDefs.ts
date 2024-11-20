@@ -56,7 +56,7 @@ export default gql`
 
     type Mutation {
         """Add a new track to the catalogue."""
-        addTrack(trackData: TrackAddInputData): Track!
+        addTrack(fingerprint: Upload!, trackData: TrackAddInputData!): Track!
         # addTrack(fingerprint: Upload!, trackData: TrackAddInputData): Track! # TODO: use this addTrack
         """Edit an existing track in the catalogue."""
         editTrack(trackID: Int!, updatedTrackData: TrackEditInputData): Track!
