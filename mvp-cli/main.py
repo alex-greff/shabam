@@ -11,6 +11,7 @@ import modules.fingerprint as fingerprint
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
 from colorama import init as init_colorama
+import modules.metrics as metrics
 
 if config.DEBUGGER:
   # Source: https://stackoverflow.com/a/70433884
@@ -32,6 +33,8 @@ app = typer.Typer()
 
 @app.command()
 def add(track_filepath: str):
+  metrics.start("audio_load", "Loading audio file")
+
   if not os.path.isfile(track_filepath):
     print(f"File '{track_filepath}' is not a file")
     exit(1)
@@ -39,17 +42,23 @@ def add(track_filepath: str):
   track_title = Path(track_filepath).stem
 
   sample_rate, data = wavfile.read(track_filepath)
+  metrics.end("audio_load")
+
+  metrics.start("mono_compute", "Computing mono data")
   data_mono = data.mean(axis=1)
   num_samples = len(data_mono)
   duration = num_samples / sample_rate  # seconds
+  metrics.end("mono_compute")
 
   # Save mono wav file
   mono_filepath = f"{config.VERBOSE_DIR}/{track_title}_mono.wav"
   if config.VERBOSE:
     wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
 
+  metrics.start("downsample_compute", "Downsampling audio data")
   ds_data = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
   ds_sample_rate = int(sample_rate / config.DOWNSAMPLE_FACTOR)
+  metrics.end("downsample_compute")
 
   # Save downsampled wav file
   ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds.wav"
@@ -77,8 +86,10 @@ def add(track_filepath: str):
     print(f"  {BULLET}{NORMAL_STYLE} Number of samples: {BOLD_STYLE}{num_samples:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s")
 
+  metrics.start("spectrogram_compute", "Computing full spectrogram")
   _, _, Sxx = signal.spectrogram(data_mono, sample_rate, nfft=config.FFT_SIZE)
   Sxx: npt.NDArray = Sxx[:-1, :]
+  metrics.end("spectrogram_compute")
 
   # g_std = 12  # standard deviation for Gaussian window in samples
   # # win = windows.gaussian(20, std=g_std, sym=True)  # symmetric Gaussian wind.
@@ -111,12 +122,16 @@ def add(track_filepath: str):
     print(
         f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx.shape[1]:,}")
 
+  metrics.start("ds_spectrogram_compute", "Computing downsampled spectrogram")
   _, _, Sxx_ds = signal.spectrogram(
       ds_data, ds_sample_rate, nfft=config.FFT_SIZE)
   Sxx_ds: npt.NDArray = Sxx_ds[:-1, :]
+  metrics.end("ds_spectrogram_compute")
 
+  metrics.start("partition_ranges_compute", "Computing partition ranges")
   partition_ranges = fingerprint.get_partition_ranges(
       config.NUM_PARTITIONS, config.FFT_SIZE / 2, config.PARTITION_TENSION)
+  metrics.end("partition_ranges_compute")
 
   spectrogram_ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds_freqdomain.png"
   if config.VERBOSE:
@@ -142,7 +157,9 @@ def add(track_filepath: str):
     print(
         f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
 
+  metrics.start("fingerprint_compute", "Computing fingerprint")
   fp = fingerprint.compute_fingerprint(Sxx_ds.T, partition_ranges)
+  metrics.end("fingerprint_compute")
 
   fingerprint_filepath = f"{config.VERBOSE_DIR}/{track_title}_fp.png"
   if config.VERBOSE:

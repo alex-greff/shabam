@@ -29,6 +29,7 @@ WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 STANDARD_DEVIATION_MULTIPLIER = 3.4
 
 # Debug
-VERBOSE = True
+VERBOSE = False
 VERBOSE_DIR = "debug"
+SHOW_METRICS = True
 DEBUGGER = False

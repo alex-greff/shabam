@@ -8,3 +8,4 @@ DIM_STYLE = f"{Style.RESET_ALL}{Style.DIM}{Fore.WHITE}"
 DEBUG_STYLE = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.RED}"
 
 BULLET = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.CYAN}•{Style.RESET_ALL}"
+CARET = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.RED}›{Style.RESET_ALL}"
