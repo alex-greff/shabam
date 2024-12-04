@@ -1,5 +1,5 @@
 """Module for displaying performance metrics of the code."""
-from typing import Dict
+from typing import Dict, Optional
 import time
 from modules.formatting import BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, CARET
 import modules.config as config
@@ -24,12 +24,13 @@ def start(name: str, message: str):
   _metrics_start_map[name] = time.time()
 
 
-def end(name: str):
+def end(name: str, suffix: Optional[str] = None):
   """
   Ends a metric, printing out "done!" and the time the metric took to complete.
 
   Params:
     name: the name of the metric to end
+    suffix: an optional suffix string to print out
   """
   if not config.SHOW_METRICS:
     return
@@ -42,4 +43,7 @@ def end(name: str):
 
   del _metrics_start_map[name]
 
-  print(f" {BOLD_STYLE}done! {DIM_STYLE}({round(end_time - start_time, 4)}s)\n")
+  total_time = round(end_time - start_time, 4)
+  suffix_str = f"{NORMAL_STYLE}({suffix})" if suffix is not None else ""
+
+  print(f" {BOLD_STYLE}done! {suffix_str} {DIM_STYLE}({total_time}s)\n")

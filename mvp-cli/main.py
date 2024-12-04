@@ -1,3 +1,4 @@
+from typing import Optional
 import typer
 import os.path
 from scipy.io import wavfile
@@ -8,10 +9,12 @@ from pathlib import Path
 import modules.initialization as initialization
 import modules.visualization as visualization
 import modules.fingerprint as fingerprint
+import modules.metrics as metrics
+import modules.cache as cache
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
 from colorama import init as init_colorama
-import modules.metrics as metrics
+from typing_extensions import Annotated
 
 if config.DEBUGGER:
   # Source: https://stackoverflow.com/a/70433884
@@ -32,7 +35,16 @@ app = typer.Typer()
 
 
 @app.command()
-def add(track_filepath: str):
+def add(
+    track_id: Annotated[str, typer.Argument(help="The identifier of the track")],
+    track_filepath: Annotated[str, typer.Argument(
+        help="Path to the track's wav file")],
+    use_cache: Annotated[bool, typer.Argument(
+        help="Load cached data, if it exists")] = False
+):
+  """
+  Adds a track to the database.
+  """
   metrics.start("audio_load", "Loading audio file")
 
   if not os.path.isfile(track_filepath):
@@ -157,9 +169,16 @@ def add(track_filepath: str):
     print(
         f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
 
+  fp_cached: Optional[npt.NDArray] = cache.load(
+      f"{track_id}.fp") if use_cache else None
   metrics.start("fingerprint_compute", "Computing fingerprint")
-  fp = fingerprint.compute_fingerprint(Sxx_ds.T, partition_ranges)
-  metrics.end("fingerprint_compute")
+  fp = fp_cached if fp_cached is not None else fingerprint.compute_fingerprint(
+      Sxx_ds.T, partition_ranges)
+  metrics.end("fingerprint_compute",
+              suffix="cached" if fp_cached is not None else None)
+
+  if fp_cached is None:
+    cache.save(f"{track_id}.fp", fp)
 
   fingerprint_filepath = f"{config.VERBOSE_DIR}/{track_title}_fp.png"
   if config.VERBOSE:
@@ -172,6 +191,8 @@ def add(track_filepath: str):
         f"{track_title} Fingerprint",
         partition_ranges
     )
+
+  # TODO: compute records
 
 
 @app.command()
