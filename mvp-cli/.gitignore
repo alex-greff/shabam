@@ -2,3 +2,4 @@ data
 debug
 audio
 __pycache__
+.pytest_cache

@@ -4,7 +4,7 @@ MVP CLI project for testing the basic search algorithm.
 
 ## Setup
 
-Create venv `python -m venv .venv` and activate venv
+In the `mvp-cli` folder, create venv `python -m venv .venv` and activate venv
 * Linux/Mac: `source .venv/bin/activate`
 * Windows: `source .venv/Scripts/activate`
 Or use the vscode Python extension.
@@ -26,3 +26,7 @@ Then write to requirements.txt with `pip freeze > requirements.txt`
 In `config.py` set `DEBUGGER = True` then run the command as normal. When it
 indicates that it's waiting for the debugger, start the
 `Python Debugger: Remote Attach` debug configuration.
+
+### Testing
+
+Run `pytest` to run all the tests.
