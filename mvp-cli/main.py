@@ -39,7 +39,7 @@ def add(
     track_id: Annotated[str, typer.Argument(help="The identifier of the track")],
     track_filepath: Annotated[str, typer.Argument(
         help="Path to the track's wav file")],
-    use_cache: Annotated[bool, typer.Argument(
+    use_cache: Annotated[bool, typer.Option(
         help="Load cached data, if it exists")] = False
 ):
   """
