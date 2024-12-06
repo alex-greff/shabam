@@ -6,15 +6,12 @@ from scipy import signal
 import numpy as np
 import nptyping as npt
 from pathlib import Path
-import modules.initialization as initialization
-import modules.visualization as visualization
-import modules.fingerprint as fingerprint
-import modules.metrics as metrics
-import modules.cache as cache
+from modules import initialization, visualization, fingerprint, metrics, cache, records
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
 from colorama import init as init_colorama
 from typing_extensions import Annotated
+import pprint
 
 if config.DEBUGGER:
   # Source: https://stackoverflow.com/a/70433884
@@ -36,7 +33,7 @@ app = typer.Typer()
 
 @app.command()
 def add(
-    track_id: Annotated[str, typer.Argument(help="The identifier of the track")],
+    track_id: Annotated[int, typer.Argument(help="The identifier of the track")],
     track_filepath: Annotated[str, typer.Argument(
         help="Path to the track's wav file")],
     use_cache: Annotated[bool, typer.Option(
@@ -45,6 +42,11 @@ def add(
   """
   Adds a track to the database.
   """
+
+  # ---------------------------
+  # --- Audio preprocessing ---
+  # ---------------------------
+
   metrics.start("audio_load", "Loading audio file")
 
   if not os.path.isfile(track_filepath):
@@ -97,6 +99,10 @@ def add(
     print(f"  {BULLET}{NORMAL_STYLE} Sample rate: {BOLD_STYLE}{sample_rate:,}Hz")
     print(f"  {BULLET}{NORMAL_STYLE} Number of samples: {BOLD_STYLE}{num_samples:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s")
+
+  # -------------------------------
+  # --- Compute the spectrogram ---
+  # -------------------------------
 
   metrics.start("spectrogram_compute", "Computing full spectrogram")
   _, _, Sxx = signal.spectrogram(data_mono, sample_rate, nfft=config.FFT_SIZE)
@@ -169,12 +175,16 @@ def add(
     print(
         f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
 
+  # -------------------------------
+  # --- Compute the fingerprint ---
+  # -------------------------------
+
   fp_cached: Optional[npt.NDArray] = cache.load(
       f"{track_id}.fp") if use_cache else None
-  metrics.start("fingerprint_compute", "Computing fingerprint")
+  metrics.start("fp_compute", "Computing fingerprint")
   fp = fp_cached if fp_cached is not None else fingerprint.compute_fingerprint(
       Sxx_ds.T, partition_ranges)
-  metrics.end("fingerprint_compute",
+  metrics.end("fp_compute",
               suffix="cached" if fp_cached is not None else None)
 
   if fp_cached is None:
@@ -192,7 +202,39 @@ def add(
         partition_ranges
     )
 
-  # TODO: compute records
+  # -------------------------------
+  # --- Flatten the fingerprint ---
+  # -------------------------------
+
+  fp_flat_cached: Optional[npt.NDArray] = cache.load(
+      f"{track_id}.fp_flat") if use_cache and fp_cached is not None else None
+  metrics.start("fp_flatten", "Flattening fingerprint")
+  fp_flat = fp_flat_cached if fp_flat_cached is not None else fingerprint.to_flat_fingerprint(
+      fp)
+  metrics.end("fp_flatten",
+              suffix="cached" if fp_flat_cached is not None else None)
+
+  if fp_flat_cached is None:
+    cache.save(f"{track_id}.fp_flat", fp_flat)
+
+  # ---------------------------------
+  # --- Compute the records table ---
+  # ---------------------------------
+
+  rt_cached: Optional[records.RecordsTableEncoded] = cache.load(
+      f"{track_id}.rt", is_numpy=False) if use_cache and fp_flat_cached is not None else None
+  metrics.start("rt_compute", "Computing records table")
+  rt = rt_cached if rt_cached is not None else records.compute_records_table(
+      fp_flat, track_id)
+  metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
+
+  if rt_cached is None:
+    cache.save(f"{track_id}.rt", rt, is_numpy=False)
+
+  rt_decoded = records.to_decoded_records_table(rt)
+  # TODO: remove
+  print("Records table:")
+  pprint.pp(rt_decoded)
 
 
 @app.command()

@@ -1,8 +1,13 @@
 """Module for handling track records."""
 
-from typing import Tuple
+from typing import Dict, Tuple
 import numpy as np
 import nptyping as npt
+from modules import config
+
+RecordsTableEncoded = Dict[npt.UInt32, npt.UInt64]
+RecordsTableDecoded = Dict[Tuple[npt.UInt16,
+                                 npt.UInt16, npt.UInt16], Tuple[npt.UInt32, npt.UInt32]]
 
 
 class AddressInvalidParameterException(Exception):
@@ -67,7 +72,7 @@ def decode_address(
   Params:
     `address`: the unsigned 32-bit integer address representation
   Returns:
-    A tuple of (`anchor_freq`, `point_freq`, `delta`)
+    A tuple of `(anchor_freq, point_freq, delta)`
 
     where,
       `anchor_freq`: the anchor frequency value (maximum value 511)
@@ -135,7 +140,7 @@ def decode_couple(couple: npt.UInt64) -> Tuple[npt.UInt32, npt.UInt32]:
   Params:
     `couple`: the unsigned 64-bit integer couple representation
   Returns:
-    A tuple of (`abs_time`, `track_id`)
+    A tuple of `(abs_time, track_id)`
 
     where,
       `abs_time`: the absolute time position (maximum value `UInt32.max`)
@@ -155,3 +160,67 @@ def decode_couple(couple: npt.UInt64) -> Tuple[npt.UInt32, npt.UInt32]:
   track_id = np.uint32(np.bitwise_and(couple, TRACK_ID_MASK))
 
   return (abs_time, track_id)
+
+
+def compute_records_table(
+    fp_flat: npt.NDArray,
+    track_id: npt.UInt32
+) -> RecordsTableEncoded:
+  """
+  Computes the encoded records table with the given flat fingerprint array.
+
+  Params:
+    `fp_flat`: A 1D array of tuples (window index, partition index) fingerprint points
+    `track_id`: the identifier of the associated track
+  Returns:
+    A records table dictionary mapping the encoded address integers to their
+    corresponding encoded couple integer
+  """
+  records_table: RecordsTableEncoded = dict()
+
+  for anchor_idx, anchor_entry in enumerate(fp_flat):
+    anchor_entry: Tuple[int, int] = anchor_entry
+    anchor_window, anchor_partition = anchor_entry
+
+    couple = encode_couple(np.uint32(anchor_window), track_id)
+
+    for point_offset in range(1, config.TARGET_ZONE_SIZE + 1):
+      # Nothing after this offset will be able to form a full target zone for
+      # this anchor so just break out of the offset loop early
+      point_index = anchor_idx + point_offset
+      if point_index >= fp_flat.shape[0]:
+        break
+
+      point_entry: Tuple[int, int] = fp_flat[anchor_idx + point_offset]
+      point_window, point_partition = point_entry
+
+      delta = point_window - anchor_window
+
+      address = encode_address(np.uint16(anchor_partition), np.uint16(
+          point_partition), np.uint16(delta))
+
+      records_table[address] = couple
+
+  return records_table
+
+
+def to_decoded_records_table(rt: RecordsTableEncoded) -> RecordsTableDecoded:
+  """
+  Converts the given encoded records table to its decoded version.
+
+  Params:
+    `rt`: the encoded records table
+  Returns:
+    A records table dictionary mapping the decoded address
+    `(anchor_freq, point_freq, delta)` tuples to their
+    corresponding decoded couple `(abs_time, track_id)` tuples
+  """
+  rt_decoded: RecordsTableDecoded = dict()
+
+  for address, couple in rt.items():
+    anchor_freq, point_freq, delta = decode_address(address)
+    abs_time, track_id = decode_couple(couple)
+
+    rt_decoded[(anchor_freq, point_freq, delta)] = (abs_time, track_id)
+
+  return rt_decoded

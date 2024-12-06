@@ -28,8 +28,10 @@ WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 # lower = less sensitive, higher = more sensitive
 STANDARD_DEVIATION_MULTIPLIER = 3.4
 
+TARGET_ZONE_SIZE = 4
+
 # Debug
 VERBOSE = False
 VERBOSE_DIR = "debug"
 SHOW_METRICS = True
-DEBUGGER = False
+DEBUGGER = True

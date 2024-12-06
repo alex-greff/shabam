@@ -252,3 +252,19 @@ def compute_fingerprint(
         num_passed_cells += 1
 
   return passed_cells
+
+
+def to_flat_fingerprint(fp: npt.NDArray) -> npt.NDArray:
+  """
+  Converts a given window x partition fingerprint 2D matrix to a flat
+  1D array of tuples (window index, partition index) marking the position of
+  each hit in the fingerprint 2D matrix.
+
+  Params:
+    `fp`: the window x partition fingerprint 2D matrix
+  Returns:
+    A 1D array of tuples (window index, partition index)
+  """
+
+  fp_flat = np.argwhere(fp > 0)
+  return fp_flat
