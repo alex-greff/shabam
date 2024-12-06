@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional, Union
 import typer
 import os.path
 from scipy.io import wavfile
@@ -6,7 +6,7 @@ from scipy import signal
 import numpy as np
 import nptyping as npt
 from pathlib import Path
-from modules import initialization, visualization, fingerprint, metrics, cache, records
+from modules import initialization, visualization, fingerprint, metrics, cache, records, search
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
 from colorama import init as init_colorama
@@ -31,62 +31,50 @@ app = typer.Typer()
 # window: x axis of spectrogram and fingerprint
 
 
-@app.command()
-def add(
-    track_id: Annotated[int, typer.Argument(help="The identifier of the track")],
-    track_filepath: Annotated[str, typer.Argument(
-        help="Path to the track's wav file")],
-    use_cache: Annotated[bool, typer.Option(
-        help="Load cached data, if it exists")] = False
+def _preprocess_audio(
+    audio_filepath: str,
+    title: str,
+    verbose_dir: str
 ):
-  """
-  Adds a track to the database.
-  """
-
-  # ---------------------------
-  # --- Audio preprocessing ---
-  # ---------------------------
-
   metrics.start("audio_load", "Loading audio file")
 
-  if not os.path.isfile(track_filepath):
-    print(f"File '{track_filepath}' is not a file")
+  if not os.path.isfile(audio_filepath):
+    print(f"File '{audio_filepath}' is not a file")
     exit(1)
 
-  track_title = Path(track_filepath).stem
-
-  sample_rate, data = wavfile.read(track_filepath)
+  sample_rate, data = wavfile.read(audio_filepath)
+  sample_rate: int = sample_rate
   metrics.end("audio_load")
 
   metrics.start("mono_compute", "Computing mono data")
-  data_mono = data.mean(axis=1)
+  data_mono: npt.NDArray = data.mean(axis=1)
   num_samples = len(data_mono)
   duration = num_samples / sample_rate  # seconds
   metrics.end("mono_compute")
 
   # Save mono wav file
-  mono_filepath = f"{config.VERBOSE_DIR}/{track_title}_mono.wav"
+  mono_filepath = f"{verbose_dir}/{title}_mono.wav"
   if config.VERBOSE:
     wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
 
   metrics.start("downsample_compute", "Downsampling audio data")
-  ds_data = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
+  ds_data: npt.NDArray = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
   ds_sample_rate = int(sample_rate / config.DOWNSAMPLE_FACTOR)
   metrics.end("downsample_compute")
 
   # Save downsampled wav file
-  ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds.wav"
+  ds_filepath = f"{verbose_dir}/{title}_ds.wav"
   if config.VERBOSE:
     wavfile.write(ds_filepath, ds_sample_rate, ds_data.astype(np.int16))
 
-  timedomain_filepath = f"{config.VERBOSE_DIR}/{track_title}_timedomain.png"
+  timedomain_filepath = f"{verbose_dir}/{title}_timedomain.png"
   if config.VERBOSE:
     visualization.graph_timedomain(
         duration,
         data_mono,
         ds_data,
         timedomain_filepath,
-        f"{track_title} Time Domain"
+        f"{title} Time Domain"
     )
 
   if config.VERBOSE:
@@ -100,33 +88,31 @@ def add(
     print(f"  {BULLET}{NORMAL_STYLE} Number of samples: {BOLD_STYLE}{num_samples:,}")
     print(f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s")
 
-  # -------------------------------
-  # --- Compute the spectrogram ---
-  # -------------------------------
+  return data_mono, sample_rate, duration, ds_data, ds_sample_rate
 
+
+def _process_spectrogram(
+    title: str,
+    verbose_dir: str,
+    data_mono: npt.NDArray,
+    sample_rate: int,
+    duration: float,
+    ds_data: npt.NDArray,
+    ds_sample_rate: int
+):
   metrics.start("spectrogram_compute", "Computing full spectrogram")
   _, _, Sxx = signal.spectrogram(data_mono, sample_rate, nfft=config.FFT_SIZE)
   Sxx: npt.NDArray = Sxx[:-1, :]
   metrics.end("spectrogram_compute")
 
-  # g_std = 12  # standard deviation for Gaussian window in samples
-  # # win = windows.gaussian(20, std=g_std, sym=True)  # symmetric Gaussian wind.
-  # win = windows.tukey(1024)
-  # SFT = signal.ShortTimeFFT(win, hop=256, fs=1/sample_rate, mfft=config.FFT_SIZE, scale_to='psd')
-  # Sxx = SFT.spectrogram(data_mono)  # calculate absolute square of STFT
-
-  # print(f"win {win}")
-  # print(f"data_mono.shape {data_mono.shape}") # TODO: remove
-  # print(f"Sxx.shape {Sxx.shape}") # TODO: remove
-
-  spectrogram_filepath = f"{config.VERBOSE_DIR}/{track_title}_mono_freqdomain.png"
+  spectrogram_filepath = f"{verbose_dir}/{title}_mono_freqdomain.png"
   if config.VERBOSE:
     visualization.graph_spectrogram(
         Sxx,
         sample_rate,
         duration,
         spectrogram_filepath,
-        f"{track_title} Mono Frequency Domain",
+        f"{title} Mono Frequency Domain",
     )
 
   if config.VERBOSE:
@@ -151,14 +137,14 @@ def add(
       config.NUM_PARTITIONS, config.FFT_SIZE / 2, config.PARTITION_TENSION)
   metrics.end("partition_ranges_compute")
 
-  spectrogram_ds_filepath = f"{config.VERBOSE_DIR}/{track_title}_ds_freqdomain.png"
+  spectrogram_ds_filepath = f"{verbose_dir}/{title}_ds_freqdomain.png"
   if config.VERBOSE:
     visualization.graph_spectrogram(
         Sxx_ds,
         ds_sample_rate,
         duration,
         spectrogram_ds_filepath,
-        f"{track_title} Downsampled Frequency Domain",
+        f"{title} Downsampled Frequency Domain",
         partition_ranges
     )
 
@@ -175,12 +161,23 @@ def add(
     print(
         f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
 
-  # -------------------------------
-  # --- Compute the fingerprint ---
-  # -------------------------------
+  return Sxx_ds, partition_ranges
 
+
+def _process_fingerprint(
+    audio_id: int,
+    title: str,
+    verbose_dir: str,
+    use_cache: bool,
+    cache_category: cache.CacheCategory,
+    Sxx_ds: npt.NDArray,
+    partition_ranges: List[fingerprint.PartitionRange],
+    ds_sample_rate: int,
+    duration: float,
+):
+  # --- Compute the fingerprint ---
   fp_cached: Optional[npt.NDArray] = cache.load(
-      f"{track_id}.fp") if use_cache else None
+      f"{audio_id}.fp", cache_category) if use_cache else None
   metrics.start("fp_compute", "Computing fingerprint")
   fp = fp_cached if fp_cached is not None else fingerprint.compute_fingerprint(
       Sxx_ds.T, partition_ranges)
@@ -188,9 +185,9 @@ def add(
               suffix="cached" if fp_cached is not None else None)
 
   if fp_cached is None:
-    cache.save(f"{track_id}.fp", fp)
+    cache.save(f"{audio_id}.fp", cache_category, fp)
 
-  fingerprint_filepath = f"{config.VERBOSE_DIR}/{track_title}_fp.png"
+  fingerprint_filepath = f"{verbose_dir}/{title}_fp.png"
   if config.VERBOSE:
     visualization.graph_fingerprint(
         fp,
@@ -198,16 +195,13 @@ def add(
         Sxx_ds.shape[0],
         duration,
         fingerprint_filepath,
-        f"{track_title} Fingerprint",
+        f"{title} Fingerprint",
         partition_ranges
     )
 
-  # -------------------------------
-  # --- Flatten the fingerprint ---
-  # -------------------------------
-
+  # --- Compute the flattened fingerprint ---
   fp_flat_cached: Optional[npt.NDArray] = cache.load(
-      f"{track_id}.fp_flat") if use_cache and fp_cached is not None else None
+      f"{audio_id}.fp_flat", cache_category) if use_cache and fp_cached is not None else None
   metrics.start("fp_flatten", "Flattening fingerprint")
   fp_flat = fp_flat_cached if fp_flat_cached is not None else fingerprint.to_flat_fingerprint(
       fp)
@@ -215,31 +209,168 @@ def add(
               suffix="cached" if fp_flat_cached is not None else None)
 
   if fp_flat_cached is None:
-    cache.save(f"{track_id}.fp_flat", fp_flat)
+    cache.save(f"{audio_id}.fp_flat", cache_category, fp_flat)
+
+  return fp_flat, fp_flat_cached
+
+
+def _process_records_table(
+    audio_id: Union[int, str],
+    use_cache: bool,
+    cache_category: cache.CacheCategory,
+    fp_flat: npt.NDArray,
+    fp_flat_cached: Union[npt.NDArray, None]
+):
+  rt_cached: Optional[records.RecordsTableEncoded] = (cache.load(
+      f"{audio_id}.rt", cache_category, is_numpy=False)
+      if use_cache and fp_flat_cached is not None else None)
+  metrics.start("rt_compute", "Computing records table")
+  rt = rt_cached if rt_cached is not None else records.compute_records_table(
+      fp_flat, audio_id)
+  metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
+
+  if rt_cached is None:
+    cache.save(f"{audio_id}.rt", cache_category, rt, is_numpy=False)
+
+  return rt
+
+
+@app.command()
+def add(
+    track_id: Annotated[int, typer.Argument(help="The identifier of the track")],
+    track_filepath: Annotated[str, typer.Argument(
+        help="Path to the track's wav file")],
+    use_cache: Annotated[bool, typer.Option(
+        help="Load cached data, if it exists")] = False
+):
+  """
+  Adds a track to the database.
+  """
+
+  # ---------------------------
+  # --- Audio preprocessing ---
+  # ---------------------------
+
+  track_title = Path(track_filepath).stem
+
+  data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
+      audio_filepath=track_filepath,
+      title=track_title,
+      verbose_dir=config.VERBOSE_TRACK_DIR)
+
+  # -------------------------------
+  # --- Compute the spectrogram ---
+  # -------------------------------
+
+  Sxx_ds, partition_ranges = _process_spectrogram(
+      title=track_title,
+      verbose_dir=config.VERBOSE_TRACK_DIR,
+      data_mono=data_mono,
+      sample_rate=sample_rate,
+      duration=duration,
+      ds_data=ds_data,
+      ds_sample_rate=ds_sample_rate
+  )
+
+  # -------------------------------
+  # --- Compute the fingerprint ---
+  # -------------------------------
+
+  fp_flat, fp_flat_cached = _process_fingerprint(
+      audio_id=track_id,
+      title=track_title,
+      verbose_dir=config.VERBOSE_TRACK_DIR,
+      use_cache=use_cache,
+      cache_category="track",
+      Sxx_ds=Sxx_ds,
+      partition_ranges=partition_ranges,
+      ds_sample_rate=ds_sample_rate,
+      duration=duration
+  )
 
   # ---------------------------------
   # --- Compute the records table ---
   # ---------------------------------
 
-  rt_cached: Optional[records.RecordsTableEncoded] = cache.load(
-      f"{track_id}.rt", is_numpy=False) if use_cache and fp_flat_cached is not None else None
-  metrics.start("rt_compute", "Computing records table")
-  rt = rt_cached if rt_cached is not None else records.compute_records_table(
-      fp_flat, track_id)
-  metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
+  rt = _process_records_table(
+      audio_id=track_id,
+      use_cache=use_cache,
+      cache_category="track",
+      fp_flat=fp_flat,
+      fp_flat_cached=fp_flat_cached
+  )
 
-  if rt_cached is None:
-    cache.save(f"{track_id}.rt", rt, is_numpy=False)
-
-  rt_decoded = records.to_decoded_records_table(rt)
   # TODO: remove
-  print("Records table:")
-  pprint.pp(rt_decoded)
+  # rt_decoded = records.to_decoded_records_table(rt)
+  # print("Records table:")
+  # pprint.pp(rt_decoded)
+
+  # search.search_track(rt)
 
 
-@app.command()
-def search(recording_filepath: str):
-  print(f"TODO: search track {recording_filepath}")
+@app.command("search")
+def search_cmd(
+    recording_filepath: Annotated[str, typer.Argument(
+        help="Path to the recording's wav file")],
+    clip_name: Annotated[str, typer.Argument(
+        help="The clip name, for debugging purposes")],
+    use_cache: Annotated[bool, typer.Option(
+        help="Load cached data, if it exists")] = False
+):
+  """
+  Searches for a track.
+  """
+
+  # ---------------------------
+  # --- Audio preprocessing ---
+  # ---------------------------
+
+  data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
+      audio_filepath=recording_filepath,
+      title=clip_name,
+      verbose_dir=config.VERBOSE_CLIP_DIR)
+
+  # -------------------------------
+  # --- Compute the spectrogram ---
+  # -------------------------------
+
+  Sxx_ds, partition_ranges = _process_spectrogram(
+      title=clip_name,
+      verbose_dir=config.VERBOSE_CLIP_DIR,
+      data_mono=data_mono,
+      sample_rate=sample_rate,
+      duration=duration,
+      ds_data=ds_data,
+      ds_sample_rate=ds_sample_rate
+  )
+
+  # -------------------------------
+  # --- Compute the fingerprint ---
+  # -------------------------------
+
+  fp_flat, fp_flat_cached = _process_fingerprint(
+      audio_id=clip_name,
+      title=clip_name,
+      verbose_dir=config.VERBOSE_TRACK_DIR,
+      use_cache=use_cache,
+      cache_category="clip",
+      Sxx_ds=Sxx_ds,
+      partition_ranges=partition_ranges,
+      ds_sample_rate=ds_sample_rate,
+      duration=duration
+  )
+
+  # ---------------------------------
+  # --- Compute the records table ---
+  # ---------------------------------
+
+  rt = _process_records_table(
+      audio_id=clip_name,
+      use_cache=use_cache,
+      cache_category="track",
+      fp_flat=fp_flat,
+      fp_flat_cached=fp_flat_cached
+  )
 
 
 if __name__ == "__main__":

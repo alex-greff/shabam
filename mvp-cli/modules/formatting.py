@@ -6,6 +6,7 @@ BOLD_STYLE = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.WHITE}"
 NORMAL_STYLE = f"{Style.RESET_ALL}{Style.NORMAL}{Fore.WHITE}"
 DIM_STYLE = f"{Style.RESET_ALL}{Style.DIM}{Fore.WHITE}"
 DEBUG_STYLE = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.RED}"
+WARNING_STYLE = f"{Style.RESET_ALL}{Style.DIM}{Fore.YELLOW}"
 
 BULLET = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.CYAN}•{Style.RESET_ALL}"
 CARET = f"{Style.RESET_ALL}{Style.BRIGHT}{Fore.RED}›{Style.RESET_ALL}"
