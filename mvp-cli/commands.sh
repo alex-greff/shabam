@@ -9,3 +9,6 @@ python main.py search audio/self_destruct_clip_2.wav --use-cache
 
 python main.py search audio/i_kissed_clip_1.wav --use-cache
 python main.py search audio/i_kissed_clip_2.wav --use-cache
+
+python main.py clear-cache --show-debug --no-track
+python main.py clear-cache --show-debug --no-clip

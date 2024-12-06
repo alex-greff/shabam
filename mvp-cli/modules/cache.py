@@ -2,9 +2,11 @@
 import os
 from typing import Any, Literal, Optional, Union
 import pickle
+import glob
+from pathlib import Path
 import numpy as np
 from modules import config
-from modules.formatting import WARNING_STYLE
+from modules.formatting import WARNING_STYLE, NORMAL_STYLE, BOLD_STYLE, CARET
 
 CacheCategory = Union[Literal["track"], Literal["clip"]]
 
@@ -67,3 +69,30 @@ def load(
   except Exception as e:
     print(f"{WARNING_STYLE}Warning: failed to load from cache key '{name}' {e}")
     return None
+
+
+def clear(
+    name: str,
+    category: CacheCategory,
+    is_numpy=True,
+    show_debug=False
+):
+  """
+  Clears the given cache item.
+
+  Params:
+    `name`: the name of the cache item to clear. Can be a glob pattern
+    `category`: the category of cache item that is being cleared
+    `is_numpy`: indicates if the intended data to clear is a numpy object (default: `True`)
+    `show_debug`: show the debug logs for each cache item deleted (default: `False`)
+  """
+  suffix = ".npy" if is_numpy else ".pkl"
+  cache_files = glob.glob(
+      f"{config.DATA_DIR}/{category}/{name}{suffix}")
+
+  for cache_filepath in cache_files:
+    if show_debug:
+      cache_name = Path(cache_filepath).stem
+      print(
+          f"{CARET} {NORMAL_STYLE}Clearing {category} cache item: {BOLD_STYLE}{cache_name}")
+    os.unlink(Path(cache_filepath))

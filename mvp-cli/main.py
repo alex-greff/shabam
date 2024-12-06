@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 import typer
 import os.path
 from scipy.io import wavfile
@@ -429,6 +429,48 @@ def search_cmd(
   # TODO: remove
   print("Target zone matches:")
   pprint.pp(tz_matches)
+
+
+@app.command()
+def clear_cache(
+    track: Annotated[bool, typer.Option(
+        help="Clear the track cache files")] = True,
+    clip: Annotated[bool, typer.Option(
+        help="Clear the clip cache files")] = True,
+    clear_fingerprint: Annotated[bool, typer.Option("--fingerprint / --no-fingerprint",
+                                                    help="Clear the fingerprint caches")] = True,
+    flat_fingerprint: Annotated[bool, typer.Option(
+        help="Clear the flattened fingerprint caches")] = True,
+    records_table: Annotated[bool, typer.Option(
+        help="Clear the records table caches")] = True,
+    show_debug: Annotated[bool, typer.Option(
+        help="Show the debug logs of the deleted cache items")] = False
+):
+  """
+  Clears the cache.
+  """
+  # List of (glob pattern, cache category, is_numpy flag)
+  clear_data: List[Tuple[str, cache.CacheCategory, bool]] = list()
+
+  if track:
+    if clear_fingerprint:
+      clear_data.append(("*.fp", "track", True))
+    if flat_fingerprint:
+      clear_data.append(("*.fp_flat", "track", True))
+    if records_table:
+      clear_data.append(("*.rt", "track", False))
+
+  if clip:
+    if clear_fingerprint:
+      clear_data.append(("*.fp", "clip", True))
+    if flat_fingerprint:
+      clear_data.append(("*.fp_flat", "clip", True))
+    if records_table:
+      clear_data.append(("*.rt", "clip", False))
+
+  for glob_pattern, category, is_numpy in clear_data:
+    cache.clear(glob_pattern, category,
+                is_numpy=is_numpy, show_debug=show_debug)
 
 
 if __name__ == "__main__":
