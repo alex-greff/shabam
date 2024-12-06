@@ -1,33 +1,56 @@
 """Module for caching computed numpy data."""
+import os
 from typing import Any, Optional
+import pickle
 import numpy as np
-import modules.config as config
+from modules import config
+from modules.formatting import DEBUG_STYLE
 
 
-def save(name: str, data: Any):
+def save(name: str, data: Any, is_numpy=True):
   """
   Saves an item to the cache.
 
   Params:
-    name: the name of the cache item
-    data: the data to save
+    `name`: the name of the cache item
+    `data`: the data to save
+    `is_numpy`: indicates of the data is a numpy object (default: `True`)
   """
-  cache_filepath = f"{config.DATA_DIR}/{name}.npy"
-  np.save(cache_filepath, data)
+  if is_numpy:
+    cache_filepath = f"{config.DATA_DIR}/{name}.npy"
+    np.save(cache_filepath, data)
+  else:
+    # Ensure cache file exists
+    cache_filepath = f"{config.DATA_DIR}/{name}.pkl"
+    if not os.path.exists(os.path.dirname(cache_filepath)):
+      os.mkdir(os.path.dirname(cache_filepath))
+
+    with open(cache_filepath, "wb") as f:
+      pickle.dump(data, f)
 
 
-def load(name: str) -> Optional[Any]:
+def load(name: str, is_numpy=True) -> Optional[Any]:
   """
   Loads an item from the cache, `None` is returned if no item is found.
 
   Params:
     `name`: the name of the cache item
+    `is_numpy`: indicates if the intended data to load is a numpy object (default: `True`)
   Returns:
     The cached data or `None` if nothing is found
   """
-  cache_filepath = f"{config.DATA_DIR}/{name}.npy"
   try:
-    return np.load(cache_filepath)
+    if is_numpy:
+      cache_filepath = f"{config.DATA_DIR}/{name}.npy"
+      return np.load(cache_filepath)
+    else:
+      cache_filepath = f"{config.DATA_DIR}/{name}.pkl"
+      if not os.path.exists(os.path.dirname(cache_filepath)):
+        return None
+
+      with open(cache_filepath, "rb") as f:
+        return pickle.load(f)
   # pylint: disable-next=broad-exception-caught
-  except Exception:
+  except Exception as e:
+    print(f"{DEBUG_STYLE}Warning: failed to load from cache key '{name}' {e}")
     return None
