@@ -20,7 +20,7 @@ def encode_address(
   Encodes an address into its unsigned 32-bit integer representation.
 
   Bit layout:
-  ```
+  ```txt
   |                    32-bit unsigned integer                    |
   |x x x x x x x x x|x x x x x x x x x|x x x x x x x x x x x x x x|
   |   anchor freq   |    point freq   |           delta           |
@@ -58,7 +58,7 @@ def decode_address(
 
   Bit layout:
 
-  ```
+  ```txt
   |                    32-bit unsigned integer                    |
   |x x x x x x x x x|x x x x x x x x x|x x x x x x x x x x x x x x|
   |   anchor freq   |    point freq   |           delta           |
@@ -67,7 +67,7 @@ def decode_address(
   Params:
     `address`: the unsigned 32-bit integer address representation
   Returns:
-    A tuple of [`anchor_freq`, `point_freq`, `delta`]
+    A tuple of (`anchor_freq`, `point_freq`, `delta`)
 
     where,
       `anchor_freq`: the anchor frequency value (maximum value 511)
@@ -101,7 +101,7 @@ def encode_couple(abs_time: npt.UInt32, track_id: npt.UInt32) -> npt.UInt64:
   Encodes a couple into its unsigned 64-bit integer representation.
 
   Bit layout:
-  ```
+  ```txt
   |                      64-bit unsigned integer                    |
   |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|
   |            absTime             |             trackId            |
@@ -126,7 +126,7 @@ def decode_couple(couple: npt.UInt64) -> Tuple[npt.UInt32, npt.UInt32]:
   parts.
 
   Bit layout:
-  ```
+  ```txt
   |                      64-bit unsigned integer                    |
   |xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx|
   |            absTime             |             trackId            |
@@ -135,7 +135,7 @@ def decode_couple(couple: npt.UInt64) -> Tuple[npt.UInt32, npt.UInt32]:
   Params:
     `couple`: the unsigned 64-bit integer couple representation
   Returns:
-    A tuple of [`abs_time`, `track_id`]
+    A tuple of (`abs_time`, `track_id`)
 
     where,
       `abs_time`: the absolute time position (maximum value `UInt32.max`)

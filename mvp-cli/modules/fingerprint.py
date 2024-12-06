@@ -18,10 +18,13 @@ def _get_partition_range(a: int, b: int, c: int, x: int) -> PartitionRange:
   partition, returns tuple of start and end point of the partition.
 
   Params:
-    a: number of partitions to divide frequency range into
-    b: number of bins (half of FFT size)
-    c: partition curve tension
-    x: the current partition number (zero-based)
+    `a`: number of partitions to divide frequency range into
+    `b`: number of bins (half of FFT size)
+    `c`: partition curve tension
+    `x`: the current partition number (zero-based)
+  Returns:
+    A tuple of (`start`, `end`) where `start` and `end` respectively are the
+    start and end indexes (inclusive) of the partition
   """
   def f(x):
     return floor((b/(c-1))*(c**(x/a) - 1))
@@ -35,14 +38,21 @@ def get_partition_ranges(a: int, b: int, c: int) -> List[PartitionRange]:
   of the start and end indexes (inclusive for both) for all the partition ranges.
 
   Params:
-    a: number of partitions to divide frequency range into
-    b: number of bins (half of FFT size)
-    c: partition curve tension
+    `a`: number of partitions to divide frequency range into
+    `b`: number of bins (half of FFT size)
+    `c`: partition curve tension
+  Returns:
+    A list of `PartitionRange` tuples
+
+    where,
+      `PartitionRange` is a tuple of (`start`, `end`) where `start` and `end`
+      respectively are the start and end indexes (inclusive) of the given
+      partition
   """
   return [_get_partition_range(a, b, c, x) for x in range(a)]
 
 
-def get_slider_boundaries(
+def _get_slider_boundaries(
     curr_window: int,
     curr_partition: int,
     num_windows: int,
@@ -52,19 +62,23 @@ def get_slider_boundaries(
     use_all_partitions=False
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
   '''
-  Determine the slider range
+  Determine the slider range.
+
   When we near the edge of a slider range (either at the front or end
   of the array), the slider with not fit around the centerpoint equally
   on both sides. In these cases, we still keep the same slider size but
   simply shift it enough to still fit within the range.
 
+  ```txt
   Ex 1: fitting slider
   slider_width = 5, num_windows = 9
     |   |   |   |   |   |   |   |   |   |
     0   1   2   3   4   5   6   7   8   9
                           ^
                 |-------------------|     (fitting slider)
+  ```
 
+  ```txt
   Ex 2: overflowing left side at 1
   slider_width = 5, num_windows = 9
          |   |   |   |   |   |   |   |   |   |
@@ -72,7 +86,9 @@ def get_slider_boundaries(
                ^
      |-------------------|       (centered slider)
          |-------------------|   (shifted slider (+1))
+  ```
 
+  ```txt
   Ex 3: overflowing left side at 0
   slider_width = 5, num_windows = 9
           |   |   |   |   |   |   |   |   |   |
@@ -80,7 +96,9 @@ def get_slider_boundaries(
             ^
   |-------------------|           (centered slider)
           |-------------------|   (shifted slider (+2))
+  ```
 
+  ```txt
   Ex 4: overflowing right side
   slider_width = 5, num_windows = 9
     |   |   |   |   |   |   |   |   |   |
@@ -88,6 +106,26 @@ def get_slider_boundaries(
                                       ^
                             |-------------------|   (centered slider)
                     |-------------------|           (shifted slider (-2))
+  ```
+
+  Params:
+    `curr_window`: the current window index used
+    `curr_partition`: the current partition index used
+    `num_windows`: the total number of windows used
+    `num_partitions`: the total number number of partitions used
+    `slider_width`: the width of the slider
+    `slider_height`: the height of the slider
+    `use_all_partitions`: if set to `True` the function will ignore the `slider_height`
+      param and use the all the partitions (default: `False`)
+  Returns:
+      A tuple ((`slider_x_start_idx`, `slider_y_start_idx`), (`slider_x_end_idx`, `slider_y_end_idx`))
+
+      where,
+        `slider_x_start_idx` and `slider_x_end_idx` are the adjusted start and
+        end indexes (inclusive) of the x (window) slider
+
+        `slider_y_start_idx` and `slider_y_end_idx` are the adjusted start and
+        end indexes (inclusive) of the y (partition) slider
   '''
 
   slider_width_half = slider_width // 2
@@ -131,8 +169,14 @@ def compute_fingerprint(
     data: npt.NDArray, partition_ranges: List[PartitionRange]
 ) -> npt.NDArray:
   """
+  Computes the fingerprint with the given audio spectrogram data and
+  partition ranges.
+
   Params:
-    data: NDArray shape (num windows, num bins)
+    `data`: NDArray of shape (num windows, num bins)
+    `partition_ranges`: the partition ranges
+  Returns:
+    An NDArray of shape (num windows, num partitions)
   """
   num_partitions = len(partition_ranges)
   num_windows, num_bins = data.shape
@@ -169,7 +213,7 @@ def compute_fingerprint(
 
   for curr_window in range(num_windows):
     for curr_partition in range(num_partitions):
-      slider_start_idxs, slider_end_idxs = get_slider_boundaries(
+      slider_start_idxs, slider_end_idxs = _get_slider_boundaries(
           curr_window, curr_partition, num_windows, num_partitions, slider_width,
           slider_height, config.SLIDER_HEIGHT <= 0)
       slider_x_start_idx, slider_y_start_idx = slider_start_idxs

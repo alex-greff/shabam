@@ -18,10 +18,12 @@ def save(name: str, data: Any):
 
 def load(name: str) -> Optional[Any]:
   """
-  Loads an item from the cache, None is returned if no item is found.
+  Loads an item from the cache, `None` is returned if no item is found.
 
   Params:
-    name: the name of the cache item
+    `name`: the name of the cache item
+  Returns:
+    The cached data or `None` if nothing is found
   """
   cache_filepath = f"{config.DATA_DIR}/{name}.npy"
   try:

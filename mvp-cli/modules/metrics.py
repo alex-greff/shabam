@@ -13,8 +13,8 @@ def start(name: str, message: str):
   Starts a metric, printing out the message indicating that it was started.
 
   Params:
-    name: the name of the metric to start
-    message: the message to print out after starting the metric
+    `name`: the name of the metric to start
+    `message`: the message to print out after starting the metric
   """
   if not config.SHOW_METRICS:
     return
@@ -29,8 +29,8 @@ def end(name: str, suffix: Optional[str] = None):
   Ends a metric, printing out "done!" and the time the metric took to complete.
 
   Params:
-    name: the name of the metric to end
-    suffix: an optional suffix string to print out
+    `name`: the name of the metric to end
+    `suffix`: an optional suffix string to print out
   """
   if not config.SHOW_METRICS:
     return
