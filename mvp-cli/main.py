@@ -393,7 +393,7 @@ def search_cmd(
   fp_flat, fp_flat_cached = _process_fingerprint(
       audio_id=clip_title,
       title=clip_title,
-      debug_dir=config.DEBUG_TRACK_DIR,
+      debug_dir=config.DEBUG_CLIP_DIR,
       use_cache=use_cache,
       cache_category="clip",
       Sxx_ds=Sxx_ds,
