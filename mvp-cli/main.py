@@ -423,10 +423,12 @@ def search_cmd(
   metrics.end("rtdb_construct")
 
   metrics.start("find_tz_matches", "Finding target zone matches")
-  tz_matches = search.find_target_zone_matches(rt, rtdb)
+  couple_matches, tz_matches = search.find_target_zone_matches(rt, rtdb)
   metrics.end("find_tz_matches")
 
   # TODO: remove
+  print("Couple matches:")
+  pprint.pp(couple_matches)
   print("Target zone matches:")
   pprint.pp(tz_matches)
 
