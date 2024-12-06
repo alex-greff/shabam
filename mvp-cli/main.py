@@ -221,12 +221,16 @@ def _process_records_table(
     fp_flat: npt.NDArray,
     fp_flat_cached: Union[npt.NDArray, None]
 ):
+  # If we give a string audio ID, then we're computing the clip records table
+  # and we don't care about the id part of the couple
+  audio_int_id = audio_id if isinstance(audio_id, int) else 0
+
   rt_cached: Optional[records.RecordsTableEncoded] = (cache.load(
       f"{audio_id}.rt", cache_category, is_numpy=False)
       if use_cache and fp_flat_cached is not None else None)
   metrics.start("rt_compute", "Computing records table")
   rt = rt_cached if rt_cached is not None else records.compute_records_table(
-      fp_flat, audio_id)
+      fp_flat, audio_int_id)
   metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
 
   if rt_cached is None:
@@ -256,7 +260,8 @@ def add(
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=track_filepath,
       title=track_title,
-      verbose_dir=config.VERBOSE_TRACK_DIR)
+      verbose_dir=config.VERBOSE_TRACK_DIR
+  )
 
   # -------------------------------
   # --- Compute the spectrogram ---
@@ -328,7 +333,8 @@ def search_cmd(
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=recording_filepath,
       title=clip_name,
-      verbose_dir=config.VERBOSE_CLIP_DIR)
+      verbose_dir=config.VERBOSE_CLIP_DIR
+  )
 
   # -------------------------------
   # --- Compute the spectrogram ---
