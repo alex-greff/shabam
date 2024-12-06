@@ -55,7 +55,9 @@ def _preprocess_audio(
   # Save mono wav file
   mono_filepath = f"{verbose_dir}/{title}_mono.wav"
   if config.VERBOSE:
+    metrics.start("write_mono_wav", "Writing mono .wav file")
     wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
+    metrics.end("write_mono_wav")
 
   metrics.start("downsample_compute", "Downsampling audio data")
   ds_data: npt.NDArray = signal.decimate(data_mono, config.DOWNSAMPLE_FACTOR)
@@ -65,10 +67,13 @@ def _preprocess_audio(
   # Save downsampled wav file
   ds_filepath = f"{verbose_dir}/{title}_ds.wav"
   if config.VERBOSE:
+    metrics.start("write_mono_wav", "Writing downsampled .wav file")
     wavfile.write(ds_filepath, ds_sample_rate, ds_data.astype(np.int16))
+    metrics.end("write_mono_wav")
 
   timedomain_filepath = f"{verbose_dir}/{title}_timedomain.png"
   if config.VERBOSE:
+    metrics.start("graph_timedomain", "Graphing timedomain data")
     visualization.graph_timedomain(
         duration,
         data_mono,
@@ -76,6 +81,7 @@ def _preprocess_audio(
         timedomain_filepath,
         f"{title} Time Domain"
     )
+    metrics.end("graph_timedomain")
 
   if config.VERBOSE:
     print(f"{HEAD_STYLE}Audio file stats:")
@@ -86,7 +92,8 @@ def _preprocess_audio(
         f"  {BULLET}{NORMAL_STYLE} Timedomain filepath: {DIM_STYLE}{timedomain_filepath}")
     print(f"  {BULLET}{NORMAL_STYLE} Sample rate: {BOLD_STYLE}{sample_rate:,}Hz")
     print(f"  {BULLET}{NORMAL_STYLE} Number of samples: {BOLD_STYLE}{num_samples:,}")
-    print(f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s")
+    print(
+        f"  {BULLET}{NORMAL_STYLE} Duration: {BOLD_STYLE}{round(duration, 2)}s", flush=True)
 
   return data_mono, sample_rate, duration, ds_data, ds_sample_rate
 
@@ -107,6 +114,7 @@ def _process_spectrogram(
 
   spectrogram_filepath = f"{verbose_dir}/{title}_mono_freqdomain.png"
   if config.VERBOSE:
+    metrics.start("graph_spectrogram", "Graphing mono spectrogram data")
     visualization.graph_spectrogram(
         Sxx,
         sample_rate,
@@ -114,6 +122,7 @@ def _process_spectrogram(
         spectrogram_filepath,
         f"{title} Mono Frequency Domain",
     )
+    metrics.end("graph_spectrogram")
 
   if config.VERBOSE:
     print(f"\n{HEAD_STYLE}Full sampled spectrogram stats:")
@@ -124,7 +133,7 @@ def _process_spectrogram(
     print(
         f"  {BULLET}{NORMAL_STYLE} Number of bins (y axis): {BOLD_STYLE}{Sxx.shape[0]:,}")
     print(
-        f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx.shape[1]:,}")
+        f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx.shape[1]:,}", flush=True)
 
   metrics.start("ds_spectrogram_compute", "Computing downsampled spectrogram")
   _, _, Sxx_ds = signal.spectrogram(
@@ -139,6 +148,8 @@ def _process_spectrogram(
 
   spectrogram_ds_filepath = f"{verbose_dir}/{title}_ds_freqdomain.png"
   if config.VERBOSE:
+    metrics.start("graph_ds_spectrogram",
+                  "Graphing downsampled spectrogram data")
     visualization.graph_spectrogram(
         Sxx_ds,
         ds_sample_rate,
@@ -147,6 +158,7 @@ def _process_spectrogram(
         f"{title} Downsampled Frequency Domain",
         partition_ranges
     )
+    metrics.end("graph_ds_spectrogram")
 
   if config.VERBOSE:
     print(f"\n{HEAD_STYLE}Downsampled spectrogram stats:")
@@ -159,7 +171,7 @@ def _process_spectrogram(
     print(
         f"  {BULLET}{NORMAL_STYLE} Number of windows (x axis): {BOLD_STYLE}{Sxx_ds.shape[1]:,}")
     print(
-        f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}")
+        f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}", flush=True)
 
   return Sxx_ds, partition_ranges
 
@@ -189,6 +201,7 @@ def _process_fingerprint(
 
   fingerprint_filepath = f"{verbose_dir}/{title}_fp.png"
   if config.VERBOSE:
+    metrics.start("graph_fingerprint", "Graphing fingerprint")
     visualization.graph_fingerprint(
         fp,
         ds_sample_rate,
@@ -198,6 +211,7 @@ def _process_fingerprint(
         f"{title} Fingerprint",
         partition_ranges
     )
+    metrics.end("graph_fingerprint")
 
   # --- Compute the flattened fingerprint ---
   fp_flat_cached: Optional[npt.NDArray] = cache.load(
@@ -251,11 +265,11 @@ def add(
   Adds a track to the database.
   """
 
+  track_title = Path(track_filepath).stem
+
   # ---------------------------
   # --- Audio preprocessing ---
   # ---------------------------
-
-  track_title = Path(track_filepath).stem
 
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=track_filepath,
@@ -317,8 +331,6 @@ def add(
 def search_cmd(
     recording_filepath: Annotated[str, typer.Argument(
         help="Path to the recording's wav file")],
-    clip_name: Annotated[str, typer.Argument(
-        help="The clip name, for debugging purposes")],
     use_cache: Annotated[bool, typer.Option(
         help="Load cached data, if it exists")] = False
 ):
@@ -326,13 +338,15 @@ def search_cmd(
   Searches for a track.
   """
 
+  clip_title = Path(recording_filepath).stem
+
   # ---------------------------
   # --- Audio preprocessing ---
   # ---------------------------
 
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=recording_filepath,
-      title=clip_name,
+      title=clip_title,
       verbose_dir=config.VERBOSE_CLIP_DIR
   )
 
@@ -341,7 +355,7 @@ def search_cmd(
   # -------------------------------
 
   Sxx_ds, partition_ranges = _process_spectrogram(
-      title=clip_name,
+      title=clip_title,
       verbose_dir=config.VERBOSE_CLIP_DIR,
       data_mono=data_mono,
       sample_rate=sample_rate,
@@ -355,8 +369,8 @@ def search_cmd(
   # -------------------------------
 
   fp_flat, fp_flat_cached = _process_fingerprint(
-      audio_id=clip_name,
-      title=clip_name,
+      audio_id=clip_title,
+      title=clip_title,
       verbose_dir=config.VERBOSE_TRACK_DIR,
       use_cache=use_cache,
       cache_category="clip",
@@ -371,12 +385,28 @@ def search_cmd(
   # ---------------------------------
 
   rt = _process_records_table(
-      audio_id=clip_name,
+      audio_id=clip_title,
       use_cache=use_cache,
-      cache_category="track",
+      cache_category="clip",
       fp_flat=fp_flat,
       fp_flat_cached=fp_flat_cached
   )
+
+  # ------------------------
+  # --- Search for track ---
+  # ------------------------
+
+  metrics.start("rtdb_construct", "Constructing records table database")
+  rtdb = search.construct_record_table_database()
+  metrics.end("rtdb_construct")
+
+  metrics.start("find_tz_matches", "Finding target zone matches")
+  tz_matches = search.find_target_zone_matches(rt, rtdb)
+  metrics.end("find_tz_matches")
+
+  # TODO: remove
+  print("Target zone matches:")
+  pprint.pp(tz_matches)
 
 
 if __name__ == "__main__":

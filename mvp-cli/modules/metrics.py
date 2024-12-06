@@ -19,7 +19,7 @@ def start(name: str, message: str):
   if not config.SHOW_METRICS:
     return
 
-  print(f"\n{CARET} {NORMAL_STYLE}{message}...", end='')
+  print(f"\n{CARET} {NORMAL_STYLE}{message}...", end='', flush=True)
 
   _metrics_start_map[name] = time.time()
 
@@ -46,4 +46,4 @@ def end(name: str, suffix: Optional[str] = None):
   total_time = round(end_time - start_time, 4)
   suffix_str = f"{NORMAL_STYLE}({suffix})" if suffix is not None else ""
 
-  print(f" {BOLD_STYLE}done! {suffix_str} {DIM_STYLE}({total_time}s)\n")
+  print(f" {BOLD_STYLE}done! {suffix_str} {DIM_STYLE}({total_time}s)\n", flush=True)
