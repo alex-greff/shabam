@@ -31,9 +31,15 @@ STANDARD_DEVIATION_MULTIPLIER = 3.4
 TARGET_ZONE_SIZE = 4
 
 # Debug
-VERBOSE = True
-VERBOSE_DIR = "debug"
-VERBOSE_TRACK_DIR = f"{VERBOSE_DIR}/track"
-VERBOSE_CLIP_DIR = f"{VERBOSE_DIR}/clip"
-SHOW_METRICS = True
+DEBUG_DIR = "debug"
+DEBUG_TRACK_DIR = f"{DEBUG_DIR}/track"
+DEBUG_CLIP_DIR = f"{DEBUG_DIR}/clip"
 DEBUGGER = False
+
+# --- Runtime set config ---
+# These values can be set during runtime. These config values should only be for
+# secondary functionality such as debugging and metrics.
+# We use this setup to avoid parameter drilling within dependent modules
+debug_output_data = False
+debug_show_stats = False
+debug_show_metrics = True

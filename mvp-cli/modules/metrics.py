@@ -16,7 +16,7 @@ def start(name: str, message: str):
     `name`: the name of the metric to start
     `message`: the message to print out after starting the metric
   """
-  if not config.SHOW_METRICS:
+  if not config.debug_show_metrics:
     return
 
   print(f"\n{CARET} {NORMAL_STYLE}{message}...", end='', flush=True)
@@ -32,7 +32,7 @@ def end(name: str, suffix: Optional[str] = None):
     `name`: the name of the metric to end
     `suffix`: an optional suffix string to print out
   """
-  if not config.SHOW_METRICS:
+  if not config.debug_show_metrics:
     return
 
   end_time = time.time()

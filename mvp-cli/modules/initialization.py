@@ -7,9 +7,9 @@ def setup_dirs():
   """
   Ensures the required directories are setup.
   """
-  Path(config.VERBOSE_DIR).mkdir(parents=True, exist_ok=True)
-  Path(f"{config.VERBOSE_DIR}/track").mkdir(parents=True, exist_ok=True)
-  Path(f"{config.VERBOSE_DIR}/clip").mkdir(parents=True, exist_ok=True)
+  Path(config.DEBUG_DIR).mkdir(parents=True, exist_ok=True)
+  Path(f"{config.DEBUG_DIR}/track").mkdir(parents=True, exist_ok=True)
+  Path(f"{config.DEBUG_DIR}/clip").mkdir(parents=True, exist_ok=True)
 
   Path(config.DATA_DIR).mkdir(parents=True, exist_ok=True)
   Path(f"{config.DATA_DIR}/track").mkdir(parents=True, exist_ok=True)

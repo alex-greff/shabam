@@ -34,7 +34,7 @@ app = typer.Typer()
 def _preprocess_audio(
     audio_filepath: str,
     title: str,
-    verbose_dir: str
+    debug_dir: str
 ):
   metrics.start("audio_load", "Loading audio file")
 
@@ -53,8 +53,8 @@ def _preprocess_audio(
   metrics.end("mono_compute")
 
   # Save mono wav file
-  mono_filepath = f"{verbose_dir}/{title}_mono.wav"
-  if config.VERBOSE:
+  mono_filepath = f"{debug_dir}/{title}_mono.wav"
+  if config.debug_output_data:
     metrics.start("write_mono_wav", "Writing mono .wav file")
     wavfile.write(mono_filepath, sample_rate, data_mono.astype(np.int16))
     metrics.end("write_mono_wav")
@@ -65,14 +65,14 @@ def _preprocess_audio(
   metrics.end("downsample_compute")
 
   # Save downsampled wav file
-  ds_filepath = f"{verbose_dir}/{title}_ds.wav"
-  if config.VERBOSE:
+  ds_filepath = f"{debug_dir}/{title}_ds.wav"
+  if config.debug_output_data:
     metrics.start("write_mono_wav", "Writing downsampled .wav file")
     wavfile.write(ds_filepath, ds_sample_rate, ds_data.astype(np.int16))
     metrics.end("write_mono_wav")
 
-  timedomain_filepath = f"{verbose_dir}/{title}_timedomain.png"
-  if config.VERBOSE:
+  timedomain_filepath = f"{debug_dir}/{title}_timedomain.png"
+  if config.debug_output_data:
     metrics.start("graph_timedomain", "Graphing timedomain data")
     visualization.graph_timedomain(
         duration,
@@ -83,7 +83,7 @@ def _preprocess_audio(
     )
     metrics.end("graph_timedomain")
 
-  if config.VERBOSE:
+  if config.debug_show_stats:
     print(f"{HEAD_STYLE}Audio file stats:")
     print(f"  {BULLET}{NORMAL_STYLE} Mono audio filepath: {DIM_STYLE}{mono_filepath}")
     print(
@@ -100,7 +100,7 @@ def _preprocess_audio(
 
 def _process_spectrogram(
     title: str,
-    verbose_dir: str,
+    debug_dir: str,
     data_mono: npt.NDArray,
     sample_rate: int,
     duration: float,
@@ -112,8 +112,8 @@ def _process_spectrogram(
   Sxx: npt.NDArray = Sxx[:-1, :]
   metrics.end("spectrogram_compute")
 
-  spectrogram_filepath = f"{verbose_dir}/{title}_mono_freqdomain.png"
-  if config.VERBOSE:
+  spectrogram_filepath = f"{debug_dir}/{title}_mono_freqdomain.png"
+  if config.debug_output_data:
     metrics.start("graph_spectrogram", "Graphing mono spectrogram data")
     visualization.graph_spectrogram(
         Sxx,
@@ -124,7 +124,7 @@ def _process_spectrogram(
     )
     metrics.end("graph_spectrogram")
 
-  if config.VERBOSE:
+  if config.debug_output_data:
     print(f"\n{HEAD_STYLE}Full sampled spectrogram stats:")
     print(
         f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_filepath}")
@@ -146,8 +146,8 @@ def _process_spectrogram(
       config.NUM_PARTITIONS, config.FFT_SIZE / 2, config.PARTITION_TENSION)
   metrics.end("partition_ranges_compute")
 
-  spectrogram_ds_filepath = f"{verbose_dir}/{title}_ds_freqdomain.png"
-  if config.VERBOSE:
+  spectrogram_ds_filepath = f"{debug_dir}/{title}_ds_freqdomain.png"
+  if config.debug_output_data:
     metrics.start("graph_ds_spectrogram",
                   "Graphing downsampled spectrogram data")
     visualization.graph_spectrogram(
@@ -160,7 +160,7 @@ def _process_spectrogram(
     )
     metrics.end("graph_ds_spectrogram")
 
-  if config.VERBOSE:
+  if config.debug_show_stats:
     print(f"\n{HEAD_STYLE}Downsampled spectrogram stats:")
     print(
         f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_ds_filepath}")
@@ -179,7 +179,7 @@ def _process_spectrogram(
 def _process_fingerprint(
     audio_id: int,
     title: str,
-    verbose_dir: str,
+    debug_dir: str,
     use_cache: bool,
     cache_category: cache.CacheCategory,
     Sxx_ds: npt.NDArray,
@@ -199,8 +199,8 @@ def _process_fingerprint(
   if fp_cached is None:
     cache.save(f"{audio_id}.fp", cache_category, fp)
 
-  fingerprint_filepath = f"{verbose_dir}/{title}_fp.png"
-  if config.VERBOSE:
+  fingerprint_filepath = f"{debug_dir}/{title}_fp.png"
+  if config.debug_output_data:
     metrics.start("graph_fingerprint", "Graphing fingerprint")
     visualization.graph_fingerprint(
         fp,
@@ -259,11 +259,22 @@ def add(
     track_filepath: Annotated[str, typer.Argument(
         help="Path to the track's wav file")],
     use_cache: Annotated[bool, typer.Option(
-        help="Load cached data, if it exists")] = False
+        help="Load cached data, if it exists")] = False,
+    debug_output_data: Annotated[bool, typer.Option(
+        help="Output debug files including processed audio and visualization graphs")] = False,
+    debug_show_stats: Annotated[bool, typer.Option(
+        help="Show stats about the processed data")] = False,
+    debug_show_metrics: Annotated[bool, typer.Option(
+        help="Show metrics about all the processing steps being run")] = True
 ):
   """
   Adds a track to the database.
   """
+
+  # Set runtime config values
+  config.debug_output_data = debug_output_data
+  config.debug_show_stats = debug_show_stats
+  config.debug_show_metrics = debug_show_metrics
 
   track_title = Path(track_filepath).stem
 
@@ -274,7 +285,7 @@ def add(
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=track_filepath,
       title=track_title,
-      verbose_dir=config.VERBOSE_TRACK_DIR
+      debug_dir=config.DEBUG_TRACK_DIR
   )
 
   # -------------------------------
@@ -283,7 +294,7 @@ def add(
 
   Sxx_ds, partition_ranges = _process_spectrogram(
       title=track_title,
-      verbose_dir=config.VERBOSE_TRACK_DIR,
+      debug_dir=config.DEBUG_TRACK_DIR,
       data_mono=data_mono,
       sample_rate=sample_rate,
       duration=duration,
@@ -298,7 +309,7 @@ def add(
   fp_flat, fp_flat_cached = _process_fingerprint(
       audio_id=track_id,
       title=track_title,
-      verbose_dir=config.VERBOSE_TRACK_DIR,
+      debug_dir=config.DEBUG_TRACK_DIR,
       use_cache=use_cache,
       cache_category="track",
       Sxx_ds=Sxx_ds,
@@ -332,11 +343,22 @@ def search_cmd(
     recording_filepath: Annotated[str, typer.Argument(
         help="Path to the recording's wav file")],
     use_cache: Annotated[bool, typer.Option(
-        help="Load cached data, if it exists")] = False
+        help="Load cached data, if it exists")] = False,
+    debug_output_data: Annotated[bool, typer.Option(
+        help="Output debug files including processed audio and visualization graphs")] = False,
+    debug_show_stats: Annotated[bool, typer.Option(
+        help="Show stats about the processed data")] = False,
+    debug_show_metrics: Annotated[bool, typer.Option(
+        help="Show metrics about all the processing steps being run")] = True
 ):
   """
   Searches for a track.
   """
+
+  # Set runtime config values
+  config.debug_output_data = debug_output_data
+  config.debug_show_stats = debug_show_stats
+  config.debug_show_metrics = debug_show_metrics
 
   clip_title = Path(recording_filepath).stem
 
@@ -347,7 +369,7 @@ def search_cmd(
   data_mono, sample_rate, duration, ds_data, ds_sample_rate = _preprocess_audio(
       audio_filepath=recording_filepath,
       title=clip_title,
-      verbose_dir=config.VERBOSE_CLIP_DIR
+      debug_dir=config.DEBUG_CLIP_DIR
   )
 
   # -------------------------------
@@ -356,7 +378,7 @@ def search_cmd(
 
   Sxx_ds, partition_ranges = _process_spectrogram(
       title=clip_title,
-      verbose_dir=config.VERBOSE_CLIP_DIR,
+      debug_dir=config.DEBUG_CLIP_DIR,
       data_mono=data_mono,
       sample_rate=sample_rate,
       duration=duration,
@@ -371,7 +393,7 @@ def search_cmd(
   fp_flat, fp_flat_cached = _process_fingerprint(
       audio_id=clip_title,
       title=clip_title,
-      verbose_dir=config.VERBOSE_TRACK_DIR,
+      debug_dir=config.DEBUG_TRACK_DIR,
       use_cache=use_cache,
       cache_category="clip",
       Sxx_ds=Sxx_ds,
