@@ -239,18 +239,23 @@ def _process_records_table(
   # and we don't care about the id part of the couple
   audio_int_id = audio_id if isinstance(audio_id, int) else 0
 
-  rt_cached: Optional[records.RecordsTableEncoded] = (cache.load(
-      f"{audio_id}.rt", cache_category, is_numpy=False)
+  cache_data: Optional[Tuple[records.RecordsTableEncoded, int]] = (
+      cache.load(f"{audio_id}.rt", cache_category, is_numpy=False)
       if use_cache and fp_flat_cached is not None else None)
+  rt_cached = cache_data[0] if cache_data is not None else None
+  rt_num_tz_cached = cache_data[1] if cache_data is not None else None
   metrics.start("rt_compute", "Computing records table")
-  rt = rt_cached if rt_cached is not None else records.compute_records_table(
-      fp_flat, audio_int_id)
+  rt, rt_num_tz = (
+      (rt_cached, rt_num_tz_cached)
+      if rt_cached is not None and rt_num_tz_cached is not None
+      else records.compute_records_table(fp_flat, audio_int_id))
   metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
 
   if rt_cached is None:
-    cache.save(f"{audio_id}.rt", cache_category, rt, is_numpy=False)
+    cache.save(f"{audio_id}.rt", cache_category,
+               (rt, rt_num_tz), is_numpy=False)
 
-  return rt
+  return rt, rt_num_tz
 
 
 @app.command()
@@ -322,7 +327,7 @@ def add(
   # --- Compute the records table ---
   # ---------------------------------
 
-  rt = _process_records_table(
+  rt, num_tz = _process_records_table(
       audio_id=track_id,
       use_cache=use_cache,
       cache_category="track",
@@ -406,7 +411,7 @@ def search_cmd(
   # --- Compute the records table ---
   # ---------------------------------
 
-  rt = _process_records_table(
+  rt, num_tz = _process_records_table(
       audio_id=clip_title,
       use_cache=use_cache,
       cache_category="clip",
@@ -423,10 +428,12 @@ def search_cmd(
   metrics.end("rtdb_construct")
 
   metrics.start("find_tz_matches", "Finding target zone matches")
-  couple_matches, tz_matches = search.find_target_zone_matches(rt, rtdb)
+  couple_matches, tz_matches = search.find_target_zone_matches(
+      rt, num_tz, rtdb)
   metrics.end("find_tz_matches")
 
   # TODO: remove
+  print("Number of target zones", num_tz)
   print("Couple matches:")
   pprint.pp(couple_matches)
   print("Target zone matches:")

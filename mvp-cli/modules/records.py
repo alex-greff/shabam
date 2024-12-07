@@ -165,7 +165,7 @@ def decode_couple(couple: npt.UInt64) -> Tuple[npt.UInt32, npt.UInt32]:
 def compute_records_table(
     fp_flat: npt.NDArray,
     track_id: npt.UInt32
-) -> RecordsTableEncoded:
+) -> Tuple[RecordsTableEncoded, int]:
   """
   Computes the encoded records table with the given flat fingerprint array.
 
@@ -173,10 +173,13 @@ def compute_records_table(
     `fp_flat`: A 1D array of tuples (window index, partition index) fingerprint points
     `track_id`: the identifier of the associated track
   Returns:
-    A records table dictionary mapping the encoded address integers to their
-    corresponding encoded couple integer
+    A tuple with a records table dictionary mapping the encoded address integers
+    to their corresponding encoded couple integer and the number of target zones
+    in the records table
   """
   records_table: RecordsTableEncoded = dict()
+
+  num_target_zones = 0
 
   for anchor_idx, anchor_entry in enumerate(fp_flat):
     anchor_entry: Tuple[int, int] = anchor_entry
@@ -184,13 +187,14 @@ def compute_records_table(
 
     couple = encode_couple(np.uint32(anchor_window), track_id)
 
-    for point_offset in range(1, config.TARGET_ZONE_SIZE + 1):
-      # Nothing after this offset will be able to form a full target zone for
-      # this anchor so just break out of the offset loop early
-      point_index = anchor_idx + point_offset
-      if point_index >= fp_flat.shape[0]:
-        break
+    # This target zone and all after it will not be able to fit every record in
+    # before running out of points, so stop early
+    if anchor_idx + config.TARGET_ZONE_SIZE >= fp_flat.shape[0]:
+      break
 
+    num_target_zones += 1
+
+    for point_offset in range(1, config.TARGET_ZONE_SIZE + 1):
       point_entry: Tuple[int, int] = fp_flat[anchor_idx + point_offset]
       point_window, point_partition = point_entry
 
@@ -201,7 +205,7 @@ def compute_records_table(
 
       records_table[address] = couple
 
-  return records_table
+  return records_table, num_target_zones
 
 
 def to_decoded_records_table(rt: RecordsTableEncoded) -> RecordsTableDecoded:

@@ -18,9 +18,10 @@ def construct_record_table_database() -> RecordsTableDatabase:
   for rt_file in computed_rt_files:
     rt_name = Path(rt_file).stem
 
-    rt: Optional[records.RecordsTableEncoded] = cache.load(
+    rt_cache: Optional[Tuple[records.RecordsTableEncoded, int]] = cache.load(
         rt_name, "track", is_numpy=False)
-    assert rt is not None
+    assert rt_cache is not None
+    rt, _ = rt_cache
 
     # Merge loaded record table into the record table database
     for address, couple in rt.items():
@@ -33,6 +34,7 @@ def construct_record_table_database() -> RecordsTableDatabase:
 
 def find_target_zone_matches(
     audio_clip_rt: records.RecordsTableEncoded,
+    audio_clip_num_target_zones: int,
     rtdb: RecordsTableDatabase
 ):
   # TODO: remove
