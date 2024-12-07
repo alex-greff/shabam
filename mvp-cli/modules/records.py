@@ -1,13 +1,13 @@
 """Module for handling track records."""
 
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 import numpy as np
 import nptyping as npt
 from modules import config
 
-RecordsTableEncoded = Dict[npt.UInt32, npt.UInt64]
-RecordsTableDecoded = Dict[Tuple[npt.UInt16,
-                                 npt.UInt16, npt.UInt16], Tuple[npt.UInt32, npt.UInt32]]
+RecordsTableEncoded = Dict[npt.UInt32, List[npt.UInt64]]
+RecordsTableDecoded = Dict[Tuple[npt.UInt16, npt.UInt16, npt.UInt16],
+                           List[Tuple[npt.UInt32, npt.UInt32]]]
 
 
 class AddressInvalidParameterException(Exception):
@@ -189,13 +189,14 @@ def compute_records_table(
 
     # This target zone and all after it will not be able to fit every record in
     # before running out of points, so stop early
-    if anchor_idx + config.TARGET_ZONE_SIZE >= fp_flat.shape[0]:
+    if anchor_idx + config.ANCHOR_OFFSET + config.TARGET_ZONE_SIZE >= fp_flat.shape[0]:
       break
 
     num_target_zones += 1
 
     for point_offset in range(1, config.TARGET_ZONE_SIZE + 1):
-      point_entry: Tuple[int, int] = fp_flat[anchor_idx + point_offset]
+      point_entry: Tuple[int, int] = fp_flat[anchor_idx +
+                                             config.ANCHOR_OFFSET + point_offset]
       point_window, point_partition = point_entry
 
       delta = point_window - anchor_window
@@ -203,7 +204,9 @@ def compute_records_table(
       address = encode_address(np.uint16(anchor_partition), np.uint16(
           point_partition), np.uint16(delta))
 
-      records_table[address] = couple
+      couples_list = records_table.get(address, list())
+      couples_list.append(couple)
+      records_table[address] = couples_list
 
   return records_table, num_target_zones
 
@@ -221,10 +224,14 @@ def to_decoded_records_table(rt: RecordsTableEncoded) -> RecordsTableDecoded:
   """
   rt_decoded: RecordsTableDecoded = dict()
 
-  for address, couple in rt.items():
+  for address, couples in rt.items():
     anchor_freq, point_freq, delta = decode_address(address)
-    abs_time, track_id = decode_couple(couple)
 
-    rt_decoded[(anchor_freq, point_freq, delta)] = (abs_time, track_id)
+    couples_decoded: List[Tuple[npt.UInt32, npt.UInt32]] = list()
+    for couple in couples:
+      abs_time, track_id = decode_couple(couple)
+      couples_decoded.append((abs_time, track_id))
+
+    rt_decoded[(anchor_freq, point_freq, delta)] = couples_decoded
 
   return rt_decoded
