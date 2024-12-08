@@ -18,6 +18,21 @@
           "remoteRoot": "."
         }
       ]
-    }
+    },
+    {
+      "name": "Pytest Debugger: All Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+    },
+    {
+      "name": "Pytest Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "${file}"
+      ],
+    },
   ]
 }
