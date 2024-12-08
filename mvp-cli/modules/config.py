@@ -35,6 +35,10 @@ STANDARD_DEVIATION_MULTIPLIER = 3.4
 
 TARGET_ZONE_SIZE = 4
 ANCHOR_OFFSET = 3
+# 0 = keep any track that has at least one matched target zone with the audio clip
+# 1 = only keep matched tracks that have at least the total number of
+#     target zones in the audio clip
+TZ_MATCH_TOLERANCE_COEFFICIENT = 0
 
 # --- Debug ---
 

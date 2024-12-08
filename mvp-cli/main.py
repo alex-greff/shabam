@@ -124,7 +124,7 @@ def _process_spectrogram(
     )
     metrics.end("graph_spectrogram")
 
-  if config.debug_output_data:
+  if config.debug_show_stats:
     print(f"\n{HEAD_STYLE}Full sampled spectrogram stats:")
     print(
         f"  {BULLET}{NORMAL_STYLE} Visualization: {DIM_STYLE}{spectrogram_filepath}")
@@ -432,12 +432,18 @@ def search_cmd(
       rt, num_tz, rtdb)
   metrics.end("find_tz_matches")
 
+  metrics.start("filter_tc", "Filtering tracks by time coherence")
+  tc_matches = search.perform_time_coherence_filtering(rt, tz_matches)
+  metrics.end("filter_tc")
+
   # TODO: remove
   print("Number of target zones", num_tz)
-  print("Couple matches:")
-  pprint.pp(couple_matches)
+  # print("Couple matches:")
+  # pprint.pp(couple_matches)
   print("Target zone matches:")
   pprint.pp(tz_matches)
+  print("Time coherent matches")
+  pprint.pp(tc_matches)
 
 
 @app.command()
