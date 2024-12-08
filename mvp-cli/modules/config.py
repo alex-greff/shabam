@@ -40,7 +40,9 @@ ANCHOR_OFFSET = 3
 
 # The tolerance coefficient used when determining which potential tracks to keep
 # based off how many target zones it matched to the clip
+# Calculation: >= TZ_MATCH_TOLERANCE_COEFFICIENT * audio_clip_num_tz
 # 0 = keep any track that has at least one matched target zone with the audio clip
+#     (effectively disables the filtering step)
 # 1 = only keep matched tracks that have at least the total number of
 #     target zones in the audio clip
 TZ_MATCH_TOLERANCE_COEFFICIENT = 0
@@ -48,6 +50,16 @@ TZ_MATCH_TOLERANCE_COEFFICIENT = 0
 # The number of possible deltas used before exiting the time coherence filtering
 # step out early to avoid computing an absurd number of possible deltas
 POSSIBLE_DELTA_COMPUTE_THRESHOLD = 10000
+
+# The tolerance coefficient used when determining which potential track to keep
+# based off how many records are time coherent with the clip.
+# Calculation: >= TC_MATCH_TOLERANCE_COEFFICIENT * audio_clip_num_records
+# NOTE: we normally want to keep this pretty low
+# 0 = keep any track that has at least one time coherent record
+#     (effectively disables the filtering step)
+# 1 = only keep matched tracks that have the total number of records in the clip
+#     time coherent
+TC_MATCH_TOLERANCE_COEFFICIENT = 0
 
 # --- Debug ---
 

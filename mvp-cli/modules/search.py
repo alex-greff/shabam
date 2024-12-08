@@ -94,11 +94,11 @@ def perform_time_coherence_filtering(
     audio_clip_rt: records.RecordsTableEncoded,
     tz_matches: Dict[npt.UInt32, int],
 ):
-  # Maps each track to the number of matching time coherent notes it has with
+  # Maps each track to the number of matching time coherent records it has with
   # the clip
-  tc_notes: Dict[npt.UInt32, int] = dict()
+  tc_matches: Dict[npt.UInt32, int] = dict()
 
-  for track_id, _ in tz_matches.items():
+  for track_id in tz_matches.keys():
     possible_deltas: Set[npt.Int64] = set()
 
     # Load the track's record table
@@ -161,6 +161,18 @@ def perform_time_coherence_filtering(
     assert most_respected_delta > -1 and most_respected_delta_value > -1
 
     # Record the number of time coherent notes for this track
-    tc_notes[track_id] = most_respected_delta_value
+    tc_matches[track_id] = most_respected_delta_value
 
-  return tc_notes, did_reduce_deltas
+  audio_clip_num_records = 0
+  for couples in audio_clip_rt.values():
+    audio_clip_num_records += len(couples)
+
+  print(">>> audio_clip_num_records", audio_clip_num_records)
+
+  # Filter out potential tracks that have less time coherent respecting records
+  # than the total number of records in the clip multiplied by a tolerance coefficient
+  tc_matches_filtered = {track_id: num_tc_records
+                         for track_id, num_tc_records in tc_matches.items()
+                         if num_tc_records >= config.TC_MATCH_TOLERANCE_COEFFICIENT * audio_clip_num_records}
+
+  return tc_matches_filtered, did_reduce_deltas
