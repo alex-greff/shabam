@@ -14,9 +14,14 @@ PARTITION_TENSION = 10
 
 # --- Fingerprint Generation ---
 
+# The width of the rolling slider, used when slicing the spectrogram into windows
+# and computing the slider width boundaries
 # NOTE: should always be an odd number due to the window function
+# lower = less frequency detail, higher = more frequency detail
 SLIDER_WIDTH = 21
+# The height of the rolling slider, used when computing the slider height boundaries
 # NOTE: set to 0 or less to use the whole height
+# lower = more localized analysis, higher = less localized analysis
 SLIDER_HEIGHT = 2
 
 # The config for the get_window's window parameter
@@ -29,7 +34,7 @@ WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 
 # Multiplier put on the standard deviation value when checking threshold value
 # lower = less sensitive, higher = more sensitive
-STANDARD_DEVIATION_MULTIPLIER = 3.3
+STANDARD_DEVIATION_MULTIPLIER = 4.5
 
 # ---- Record Generation ---
 
@@ -45,11 +50,12 @@ ANCHOR_OFFSET = 3
 #     (effectively disables the filtering step)
 # 1 = only keep matched tracks that have at least the total number of
 #     target zones in the audio clip
+# lower = filter less tracks, higher = filter out more tracks
 TZ_MATCH_TOLERANCE_COEFFICIENT = 0
 
 # The number of possible deltas used before exiting the time coherence filtering
 # step out early to avoid computing an absurd number of possible deltas
-POSSIBLE_DELTA_COMPUTE_THRESHOLD = 10000
+POSSIBLE_DELTA_COMPUTE_THRESHOLD = 1000
 
 # The tolerance coefficient used when determining which potential track to keep
 # based off how many records are time coherent with the clip.
@@ -59,6 +65,7 @@ POSSIBLE_DELTA_COMPUTE_THRESHOLD = 10000
 #     (effectively disables the filtering step)
 # 1 = only keep matched tracks that have the total number of records in the clip
 #     time coherent
+# lower = filter less tracks, higher = filter out more tracks
 TC_MATCH_TOLERANCE_COEFFICIENT = 0
 
 # --- Debug ---
