@@ -121,8 +121,8 @@ def process_spectrogram(
 
   Returns: a tuple of `(spectrogram_data, partition_ranges)`
     where,
-      `spectrogram_data` the NDArray of shape (frequencies, windows) containing the
-      frequency domain spectrogram analysis
+      `spectrogram_data` the NDArray of shape (windows, frequency bins) containing
+      the frequency domain spectrogram analysis
       `partition_ranges`: the partition ranges corresponding to the spectrogram
   """
   metrics.start("spectrogram_compute", "Computing full spectrogram")
@@ -191,7 +191,8 @@ def process_spectrogram(
     print(
         f"  {BULLET}{NORMAL_STYLE} Partition ranges: {BOLD_STYLE}{partition_ranges}", flush=True)
 
-  return Sxx_ds, partition_ranges
+  # Transpose so its of form (windows, bins) instead of (bins, windows)
+  return Sxx_ds.T, partition_ranges
 
 
 def process_fingerprint(
@@ -215,8 +216,8 @@ def process_fingerprint(
     `use_cache`: indicates to try loading the fingerprint from the cache
     `cache_category`: the category to try loading from the cache
       (either "track" or "clip")
-    `spectrogram_data`: the NDArray of shape (frequencies, windows) containing the
-      frequency domain spectrogram analysis
+    `spectrogram_data`: the NDArray of shape (windows, frequency bins) containing
+      the frequency domain spectrogram analysis
     `partition_ranges`: the partition ranges corresponding to the spectrogram
     `ds_sample_rate`: the sample rate of the downsampled audio
     `duration`: the duration of the audio in seconds
@@ -233,7 +234,7 @@ def process_fingerprint(
       f"{audio_id}.fp", cache_category) if use_cache else None
   metrics.start("fp_compute", "Computing fingerprint")
   fp = fp_cached if fp_cached is not None else fingerprint.compute_fingerprint(
-      spectrogram_data.T, partition_ranges)
+      spectrogram_data, partition_ranges)
   metrics.end("fp_compute",
               suffix="cached" if fp_cached is not None else None)
 
@@ -246,7 +247,7 @@ def process_fingerprint(
     visualization.graph_fingerprint(
         fp,
         ds_sample_rate,
-        spectrogram_data.shape[0],
+        spectrogram_data.shape[1],
         duration,
         fingerprint_filepath,
         f"{title} Fingerprint",
