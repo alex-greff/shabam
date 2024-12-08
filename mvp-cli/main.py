@@ -1,17 +1,18 @@
+"""CLI entry module"""
 from typing import List, Optional, Tuple, Union
-import typer
 import os.path
+from pathlib import Path
+import pprint
+import typer
 from scipy.io import wavfile
 from scipy import signal
 import numpy as np
 import nptyping as npt
-from pathlib import Path
+from colorama import init as init_colorama
+from typing_extensions import Annotated
 from modules import initialization, visualization, fingerprint, metrics, cache, records, search
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE, DEBUG_STYLE
 import modules.config as config
-from colorama import init as init_colorama
-from typing_extensions import Annotated
-import pprint
 
 if config.DEBUGGER:
   # Source: https://stackoverflow.com/a/70433884

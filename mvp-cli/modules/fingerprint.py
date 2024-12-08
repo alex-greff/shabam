@@ -4,8 +4,8 @@ from typing import List, Tuple
 from math import floor
 import nptyping as npt
 import numpy as np
-import modules.config as config
 from scipy.signal import windows
+import modules.config as config
 
 PartitionRange = Tuple[int, int]
 
@@ -52,6 +52,90 @@ def get_partition_ranges(a: int, b: int, c: int) -> List[PartitionRange]:
   return [_get_partition_range(a, b, c, x) for x in range(a)]
 
 
+def _get_slider_axis_boundaries(
+    slider_index: int,
+    slider_size: int,
+    axis_size: int,
+    use_all_of_axis=False,
+) -> Tuple[int, int]:
+  """
+  Determine the slider range for the given axis.
+
+  When we near the edge of a slider range (either at the front or end
+  of the array), the slider with not fit around the centerpoint equally
+  on both sides. In these cases, we still keep the same slider size but
+  simply shift it enough to still fit within the range. The only time the slider
+  will be shrunk is when the slider shifted slider does not fit the given axis
+  range.
+
+  ```txt
+  Ex 1: fitting slider
+  slider_width = 5, num_windows = 9
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+                      |---------^---------|      (fitting slider)
+  ```
+
+  ```txt
+  Ex 2: overflowing left side at 1
+  slider_width = 5, num_windows = 9
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+      |---------^---------|                      (centered slider)
+          |---------^---------|                  (shifted slider (+1))
+  ```
+
+  ```txt
+  Ex 3: overflowing left side at 0
+  slider_width = 5, num_windows = 9
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  |---------^---------|                          (centered slider)
+          |---------^---------|                  (shifted slider (+2))
+  ```
+
+  ```txt
+  Ex 4: overflowing right side
+  slider_width = 5, num_windows = 9
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+                                  |---------^---------|   (centered slider)
+                          |---------^---------|           (shifted slider (-2))
+
+  Params:
+    `slider_index`: the current slider index used
+    `slider_size`: the size of the slider
+    `axis_size`: the number of items in the axis
+    `use_all_of_axis`: if set to `True` the function will always return the entire
+      axis range
+  Returns:
+    A tuple `(slider_start_idx, slider_end_idx)`
+
+    where,
+      `slider_start_idx` and `slider_end_idx` are the adjusted start and end
+      indexes (both exclusive) of the slider
+  """
+  if use_all_of_axis:
+    return 0, axis_size - 1
+
+  # trim the left slider size to handle the even slider size case
+  slider_size_left = slider_size // 2 if slider_size % 2 == 1 else slider_size // 2 - 1
+  slider_size_right = slider_size // 2
+
+  slider_shift_start = 0
+  slider_shift_end = 0
+  # The slider is overflowing the left of the axis
+  if slider_index - slider_size_left < 0:
+    slider_shift_end = slider_size_left - slider_index
+  # The slider is overflowing the right of the axis
+  if slider_index + slider_size_right >= axis_size:
+    slider_shift_start = (axis_size - 1) - slider_index - slider_size_right
+
+  # both are inclusive indexes
+  slider_start_idx = max(slider_index - slider_size_left +
+                         slider_shift_start, 0)
+  slider_end_idx = min(slider_index + slider_size_right +
+                       slider_shift_end, axis_size - 1)
+
+  return slider_start_idx, slider_end_idx
+
+
 def _get_slider_boundaries(
     curr_window: int,
     curr_partition: int,
@@ -72,40 +156,32 @@ def _get_slider_boundaries(
   ```txt
   Ex 1: fitting slider
   slider_width = 5, num_windows = 9
-    |   |   |   |   |   |   |   |   |   |
-    0   1   2   3   4   5   6   7   8   9
-                          ^
-                |-------------------|     (fitting slider)
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+                      |---------^---------|      (fitting slider)
   ```
 
   ```txt
   Ex 2: overflowing left side at 1
   slider_width = 5, num_windows = 9
-         |   |   |   |   |   |   |   |   |   |
-         0   1   2   3   4   5   6   7   8   9
-               ^
-     |-------------------|       (centered slider)
-         |-------------------|   (shifted slider (+1))
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+      |---------^---------|                      (centered slider)
+          |---------^---------|                  (shifted slider (+1))
   ```
 
   ```txt
   Ex 3: overflowing left side at 0
   slider_width = 5, num_windows = 9
-          |   |   |   |   |   |   |   |   |   |
-          0   1   2   3   4   5   6   7   8   9
-            ^
-  |-------------------|           (centered slider)
-          |-------------------|   (shifted slider (+2))
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+  |---------^---------|                          (centered slider)
+          |---------^---------|                  (shifted slider (+2))
   ```
 
   ```txt
   Ex 4: overflowing right side
   slider_width = 5, num_windows = 9
-    |   |   |   |   |   |   |   |   |   |
-    0   1   2   3   4   5   6   7   8   9
-                                      ^
-                            |-------------------|   (centered slider)
-                    |-------------------|           (shifted slider (-2))
+          | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+                                  |---------^---------|   (centered slider)
+                          |---------^---------|           (shifted slider (-2))
   ```
 
   Params:
@@ -122,45 +198,17 @@ def _get_slider_boundaries(
 
       where,
         `slider_x_start_idx` and `slider_x_end_idx` are the adjusted start and
-        end indexes (inclusive) of the x (window) slider
+        end indexes (both inclusive) of the x (window) slider
 
         `slider_y_start_idx` and `slider_y_end_idx` are the adjusted start and
-        end indexes (inclusive) of the y (partition) slider
+        end indexes (both inclusive) of the y (partition) slider
   '''
 
-  slider_width_half = slider_width // 2
-  slider_height_half = slider_height // 2
+  slider_x_start_idx, slider_x_end_idx = _get_slider_axis_boundaries(
+      curr_window, slider_width, num_windows, False)
 
-  slider_width_shift_start = 0
-  slider_width_shift_end = 0
-  # The slider window is overflowing the left
-  if curr_window - slider_width_half < 0:
-    slider_width_shift_start = slider_width_half - curr_window
-  # The slider width is overflowing the right
-  if curr_window + slider_width_half >= num_windows:
-    slider_width_shift_end = (num_windows - 1) - \
-        curr_window - slider_width_half
-
-  # Same kind of calculations for the height slider
-  slider_height_shift_start = 0
-  slider_height_shift_end = 0
-  if curr_partition - slider_height_half < 0:
-    slider_height_shift_start = slider_height_half - curr_partition
-  elif curr_partition + slider_height_half >= num_partitions:
-    slider_height_shift_end = (num_partitions - 1) - \
-        curr_partition - slider_height_half
-
-  # inclusive
-  slider_x_start_idx = curr_window - slider_width_half + slider_width_shift_start
-  # inclusive
-  slider_x_end_idx = curr_window + slider_width_half + slider_width_shift_end
-
-  # inclusive
-  slider_y_start_idx = curr_partition - \
-      slider_height_half + slider_height_shift_start if not use_all_partitions else 0
-  # inclusive
-  slider_y_end_idx = curr_partition + slider_height_half + \
-      slider_height_shift_end if not use_all_partitions else num_partitions - 1
+  slider_y_start_idx, slider_y_end_idx = _get_slider_axis_boundaries(
+      curr_partition, slider_height, num_partitions, use_all_of_axis=use_all_partitions)
 
   return ((slider_x_start_idx, slider_y_start_idx), (slider_x_end_idx, slider_y_end_idx))
 
