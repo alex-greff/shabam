@@ -265,12 +265,16 @@ def add(
     track_filepath: Annotated[str, typer.Argument(
         help="Path to the track's wav file")],
     use_cache: Annotated[bool, typer.Option(
+        "--use-cache / --no-use-cache", "-c / -C",
         help="Load cached data, if it exists")] = False,
-    debug_output_data: Annotated[bool, typer.Option(
+    output_debug_files: Annotated[bool, typer.Option(
+        "--output-debug-files / --no-output-debug-files", "-f / -F",
         help="Output debug files including processed audio and visualization graphs")] = False,
-    debug_show_stats: Annotated[bool, typer.Option(
+    show_debug_stats: Annotated[bool, typer.Option(
+        "--show-debug-stats / --no-show-debug-stats", "-s / -S",
         help="Show stats about the processed data")] = False,
-    debug_show_metrics: Annotated[bool, typer.Option(
+    show_debug_metrics: Annotated[bool, typer.Option(
+        "--show-debug-metrics / --no-show-debug-metrics", "-m / -M",
         help="Show metrics about all the processing steps being run")] = True
 ):
   """
@@ -278,9 +282,9 @@ def add(
   """
 
   # Set runtime config values
-  config.debug_output_data = debug_output_data
-  config.debug_show_stats = debug_show_stats
-  config.debug_show_metrics = debug_show_metrics
+  config.debug_output_data = output_debug_files
+  config.debug_show_stats = show_debug_stats
+  config.debug_show_metrics = show_debug_metrics
 
   track_title = Path(track_filepath).stem
 
@@ -349,12 +353,16 @@ def search_cmd(
     recording_filepath: Annotated[str, typer.Argument(
         help="Path to the recording's wav file")],
     use_cache: Annotated[bool, typer.Option(
+        "--use-cache / --no-use-cache", "-c / -C",
         help="Load cached data, if it exists")] = False,
-    debug_output_data: Annotated[bool, typer.Option(
+    output_debug_files: Annotated[bool, typer.Option(
+        "--output-debug-files / --no-output-debug-files", "-f / -F",
         help="Output debug files including processed audio and visualization graphs")] = False,
-    debug_show_stats: Annotated[bool, typer.Option(
+    show_debug_stats: Annotated[bool, typer.Option(
+        "--show-debug-stats / --no-show-debug-stats", "-s / -S",
         help="Show stats about the processed data")] = False,
-    debug_show_metrics: Annotated[bool, typer.Option(
+    show_debug_metrics: Annotated[bool, typer.Option(
+        "--show-debug-metrics / --no-show-debug-metrics", "-m / -M",
         help="Show metrics about all the processing steps being run")] = True
 ):
   """
@@ -362,9 +370,9 @@ def search_cmd(
   """
 
   # Set runtime config values
-  config.debug_output_data = debug_output_data
-  config.debug_show_stats = debug_show_stats
-  config.debug_show_metrics = debug_show_metrics
+  config.debug_output_data = output_debug_files
+  config.debug_show_stats = show_debug_stats
+  config.debug_show_metrics = show_debug_metrics
 
   clip_title = Path(recording_filepath).stem
 
@@ -449,16 +457,22 @@ def search_cmd(
 @app.command()
 def clear_cache(
     track: Annotated[bool, typer.Option(
+        "--track / --no-track", "-t / -T",
         help="Clear the track cache files")] = True,
     clip: Annotated[bool, typer.Option(
+        "--clip / --no-clip", "-c / -C",
         help="Clear the clip cache files")] = True,
-    clear_fingerprint: Annotated[bool, typer.Option("--fingerprint / --no-fingerprint",
-                                                    help="Clear the fingerprint caches")] = True,
+    clear_fingerprint: Annotated[bool, typer.Option(
+        "--fingerprint / --no-fingerprint", "-p / -P",
+        help="Clear the fingerprint caches")] = True,
     flat_fingerprint: Annotated[bool, typer.Option(
+        "--flat-fingerprint / --no-flat-fingerprint", "-f / -F",
         help="Clear the flattened fingerprint caches")] = True,
     records_table: Annotated[bool, typer.Option(
+        "--records-table / --no-records-table", "-r / -R",
         help="Clear the records table caches")] = True,
     show_debug: Annotated[bool, typer.Option(
+        "--show-debug / --no-show-debug", "-d / -D",
         help="Show the debug logs of the deleted cache items")] = False
 ):
   """
