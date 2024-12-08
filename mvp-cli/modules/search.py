@@ -5,6 +5,8 @@ import nptyping as npt
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 from modules import records, config, cache
+from modules.formatting import WARNING_STYLE
+import itertools
 
 # Maps all couples that correspond to the address key
 RecordsTableDatabase = Dict[npt.UInt32, List[npt.UInt64]]
@@ -113,14 +115,24 @@ def perform_time_coherence_filtering(
         clip_abs_time, _ = records.decode_couple(clip_couple)
 
         for track_couple in track_couples:
-          track_abs_time, _ = records.decode_couple(track_couple)
+          track_abs_time, track_id = records.decode_couple(track_couple)
 
           delta = np.int64(track_abs_time) - np.int64(clip_abs_time)
           possible_deltas.add(delta)
 
-    # TODO: find delta that gives the maximum time coherent notes
+    # Slice down the possible deltas set if we surpassed the delta compute threshold
+    did_reduce_deltas = False
+    if len(possible_deltas) > config.POSSIBLE_DELTA_COMPUTE_THRESHOLD:
+      print(f"{WARNING_STYLE}\nWarning: delta compute threshold passed for track id {track_id}, only {config.POSSIBLE_DELTA_COMPUTE_THRESHOLD} of {len(possible_deltas)} possible deltas will be computed. Time coherence filtered results may be inaccurate.")
+
+      did_reduce_deltas = True
+      # Source: https://stackoverflow.com/a/40737853
+      possible_deltas = set(itertools.islice(
+          possible_deltas, config.POSSIBLE_DELTA_COMPUTE_THRESHOLD))
+
     # Maps for each delta, the number of notes that respect
     # abs time of note in track = abs time of note in clip + delta
+    # Find the delta that gives the maximum number of time coherent notes
     respected_delta_map: Dict[int, int] = dict()
     for delta in possible_deltas:
       for clip_address, clip_couples in audio_clip_rt.items():
@@ -151,4 +163,4 @@ def perform_time_coherence_filtering(
     # Record the number of time coherent notes for this track
     tc_notes[track_id] = most_respected_delta_value
 
-  return tc_notes
+  return tc_notes, did_reduce_deltas

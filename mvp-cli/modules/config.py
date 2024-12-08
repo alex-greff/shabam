@@ -17,7 +17,7 @@ PARTITION_TENSION = 10
 # NOTE: should always be an odd number due to the window function
 SLIDER_WIDTH = 21
 # NOTE: set to 0 or less to use the whole height
-SLIDER_HEIGHT = -1
+SLIDER_HEIGHT = 2
 
 # The config for the get_window's window parameter
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.windows.get_window.html#scipy.signal.windows.get_window
@@ -29,16 +29,25 @@ WINDOW_FUNCTION_CONFIG = "blackmanharris"  # recommended, has good freq response
 
 # Multiplier put on the standard deviation value when checking threshold value
 # lower = less sensitive, higher = more sensitive
-STANDARD_DEVIATION_MULTIPLIER = 3.4
+STANDARD_DEVIATION_MULTIPLIER = 3.3
 
 # ---- Record Generation ---
 
 TARGET_ZONE_SIZE = 4
 ANCHOR_OFFSET = 3
+
+# --- Result searching ---
+
+# The tolerance coefficient used when determining which potential tracks to keep
+# based off how many target zones it matched to the clip
 # 0 = keep any track that has at least one matched target zone with the audio clip
 # 1 = only keep matched tracks that have at least the total number of
 #     target zones in the audio clip
 TZ_MATCH_TOLERANCE_COEFFICIENT = 0
+
+# The number of possible deltas used before exiting the time coherence filtering
+# step out early to avoid computing an absurd number of possible deltas
+POSSIBLE_DELTA_COMPUTE_THRESHOLD = 10000
 
 # --- Debug ---
 

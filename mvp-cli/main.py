@@ -433,7 +433,8 @@ def search_cmd(
   metrics.end("find_tz_matches")
 
   metrics.start("filter_tc", "Filtering tracks by time coherence")
-  tc_matches = search.perform_time_coherence_filtering(rt, tz_matches)
+  tc_matches, did_reduce_delta = search.perform_time_coherence_filtering(
+      rt, tz_matches)
   metrics.end("filter_tc")
 
   # TODO: remove
