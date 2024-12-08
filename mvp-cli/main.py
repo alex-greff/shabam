@@ -428,19 +428,17 @@ def search_cmd(
   metrics.end("rtdb_construct")
 
   metrics.start("find_tz_matches", "Finding target zone matches")
-  couple_matches, tz_matches = search.find_target_zone_matches(
+  tz_matches = search.find_target_zone_matches(
       rt, num_tz, rtdb)
   metrics.end("find_tz_matches")
 
   metrics.start("filter_tc", "Filtering tracks by time coherence")
-  tc_matches, did_reduce_delta = search.perform_time_coherence_filtering(
-      rt, tz_matches)
+  tc_matches = search.perform_time_coherence_filtering(
+      rt, tz_matches.keys())
   metrics.end("filter_tc")
 
   # TODO: remove
   print("Number of target zones", num_tz)
-  # print("Couple matches:")
-  # pprint.pp(couple_matches)
   print("Target zone matches:")
   pprint.pp(tz_matches)
   print("Time coherent matches")

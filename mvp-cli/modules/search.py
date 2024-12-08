@@ -1,18 +1,23 @@
 """Module for managing the searching of tracks"""
 import glob
+import itertools
+from typing import Dict, List, Optional, Set, Tuple
+from pathlib import Path
 import numpy as np
 import nptyping as npt
-from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
 from modules import records, config, cache
 from modules.formatting import WARNING_STYLE
-import itertools
 
 # Maps all couples that correspond to the address key
 RecordsTableDatabase = Dict[npt.UInt32, List[npt.UInt64]]
 
 
 def construct_record_table_database() -> RecordsTableDatabase:
+  """
+  Constructs the records table database by loading all cached track record tables.
+
+  Returns: the records table database
+  """
   rtdb: RecordsTableDatabase = dict()
 
   computed_rt_files = glob.glob(f"{config.DATA_DIR}/track/*.rt.pkl")
@@ -38,7 +43,19 @@ def find_target_zone_matches(
     audio_clip_rt: records.RecordsTableEncoded,
     audio_clip_num_tz: int,
     rtdb: RecordsTableDatabase
-):
+) -> Dict[npt.UInt32, int]:
+  """
+  Finds all matching target zones in the audio clip with each track in the
+  records database. Filters the final result target zone map by the
+  `TZ_MATCH_TOLERANCE_COEFFICIENT` coefficient.
+
+  Params:
+    `audio_clip_rt`: the records table for the audio clip
+    `audio_clip_num_tz`: the number of target zones in the audio clip records table
+    `rtdb`: the record table database
+  Returns: a map of all matched track ids and the number of target zones in them
+    that match in the clip
+  """
   # Counts the number of times a couple of (absolute anchor time, track id)
   # has been matched by the audio clip's record table
   # TODO: should work in a system to account for multiple couples with the
@@ -56,11 +73,7 @@ def find_target_zone_matches(
   # in the records table database
   for clip_address, clip_couples in audio_clip_rt.items():
     # Each couple counts as an independent record match
-    for clip_couple in clip_couples:
-      clip_abs_time, _ = records.decode_couple(clip_couple)
-      # TODO: need to figure out what to do with the clip absolute time for
-      # time coherency checking
-
+    for _ in clip_couples:
       matched_couples = rtdb.get(clip_address, list())
 
       for matched_couple in matched_couples:
@@ -87,18 +100,29 @@ def find_target_zone_matches(
                          for track_id, num_tz_matches in tz_matches.items()
                          if num_tz_matches >= config.TZ_MATCH_TOLERANCE_COEFFICIENT * audio_clip_num_tz}
 
-  return couple_matches, tz_matches_filtered
+  return tz_matches_filtered
 
 
 def perform_time_coherence_filtering(
     audio_clip_rt: records.RecordsTableEncoded,
-    tz_matches: Dict[npt.UInt32, int],
-):
+    potential_track_ids: List[npt.UInt32],
+) -> Dict[npt.UInt32, int]:
+  """
+  Performs time coherence filtering on the potential tracks in the target zone
+  match map. Filters the final result time coherence respect map by the
+  `TC_MATCH_TOLERANCE_COEFFICIENT` coefficient.
+
+  Params:
+    `audio_clip_rt`: the records table for the audio clip
+    `potential_track_ids`: the potential track ids to perform the time coherence filtering
+  Returns: a map of matched track ids and the number of records in the clip that
+    respected the time coherence of the track records
+  """
   # Maps each track to the number of matching time coherent records it has with
   # the clip
   tc_matches: Dict[npt.UInt32, int] = dict()
 
-  for track_id in tz_matches.keys():
+  for track_id in potential_track_ids:
     possible_deltas: Set[npt.Int64] = set()
 
     # Load the track's record table
@@ -121,11 +145,9 @@ def perform_time_coherence_filtering(
           possible_deltas.add(delta)
 
     # Slice down the possible deltas set if we surpassed the delta compute threshold
-    did_reduce_deltas = False
     if len(possible_deltas) > config.POSSIBLE_DELTA_COMPUTE_THRESHOLD:
       print(f"{WARNING_STYLE}\nWarning: delta compute threshold passed for track id {track_id}, only {config.POSSIBLE_DELTA_COMPUTE_THRESHOLD} of {len(possible_deltas)} possible deltas will be computed. Time coherence filtered results may be inaccurate.")
 
-      did_reduce_deltas = True
       # Source: https://stackoverflow.com/a/40737853
       possible_deltas = set(itertools.islice(
           possible_deltas, config.POSSIBLE_DELTA_COMPUTE_THRESHOLD))
@@ -167,12 +189,10 @@ def perform_time_coherence_filtering(
   for couples in audio_clip_rt.values():
     audio_clip_num_records += len(couples)
 
-  print(">>> audio_clip_num_records", audio_clip_num_records)
-
   # Filter out potential tracks that have less time coherent respecting records
   # than the total number of records in the clip multiplied by a tolerance coefficient
   tc_matches_filtered = {track_id: num_tc_records
                          for track_id, num_tc_records in tc_matches.items()
                          if num_tc_records >= config.TC_MATCH_TOLERANCE_COEFFICIENT * audio_clip_num_records}
 
-  return tc_matches_filtered, did_reduce_deltas
+  return tc_matches_filtered
