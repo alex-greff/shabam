@@ -8,8 +8,16 @@ DATA_DIR = "data"
 DOWNSAMPLE_FACTOR = 4
 FFT_SIZE = 4096  # 2**12
 
-# Partition ranges
+# --- Partition Ranges ---
+
+# The number of partitions used
 NUM_PARTITIONS = 30
+
+# Tension of the partition range generation curve
+# https://www.desmos.com/calculator/ugsemeqxan
+# range: 1 < partition_tension < infinity
+# lower = less "tense", more partitions distributed lower in the frequency spectrum
+# higher = more "tense", less partitions distributed higher in the frequency spectrum
 PARTITION_TENSION = 10
 
 # --- Fingerprint Generation ---
@@ -23,6 +31,14 @@ SLIDER_WIDTH = 21
 # NOTE: set to 0 or less to use the whole height
 # lower = more localized analysis, higher = less localized analysis
 SLIDER_HEIGHT = 2
+
+# The step amount of the slider
+# SLIDER_STEP < SLIDER_WIDTH: slider ranges will overlap by SLIDER_WIDTH - SLIDER_STEP
+#   windows (this is is recommended to avoid spectral leakage)
+# SLIDER_STEP = SLIDER_WIDTH: no overlap and no gap between each slider
+# SLIDER_STEP > SLIDER_WIDTH: slider ranges will have a gap of SLIDER_WIDTH - SLIDER_STEP
+#   windows (this is not recommended at all and will cause frequencies to be ignored)
+SLIDER_STEP = 10
 
 # The config for the get_window's window parameter
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.windows.get_window.html#scipy.signal.windows.get_window
