@@ -104,13 +104,6 @@ def add(
       loaded_fp_from_cache=loaded_fp_from_cache,
   )
 
-  # TODO: remove
-  # rt_decoded = records.to_decoded_records_table(rt)
-  # print("Records table:")
-  # pprint.pp(rt_decoded)
-
-  # search.search_track(rt)
-
 
 @app.command("search")
 def search_cmd(

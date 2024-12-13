@@ -195,6 +195,9 @@ def process_spectrogram(
   return Sxx_ds.T, partition_ranges
 
 
+FingerprintCacheType = Optional[Tuple[npt.NDArray, int, int, int]]
+
+
 def process_fingerprint(
     audio_id: int,
     title: str,
@@ -230,8 +233,8 @@ def process_fingerprint(
     * A boolean indicating if we loaded the fingerprint from the cache
   """
   # --- Compute the fingerprint ---
-  fp_cache_item: Optional[Tuple[npt.NDArray, int, int, int]] = cache.load(
-      f"{audio_id}.fp", cache_category) if use_cache else None
+  fp_cache_item: FingerprintCacheType = (cache.load(
+      f"{audio_id}.fp", cache_category, is_numpy=False) if use_cache else None)
   fp_cached = fp_cache_item[0] if fp_cache_item is not None else None
   slider_w_cache = fp_cache_item[1] if fp_cache_item is not None else None
   slider_h_cache = fp_cache_item[2] if fp_cache_item is not None else None
@@ -244,10 +247,9 @@ def process_fingerprint(
   metrics.end("fp_compute",
               suffix="cached" if fp_cached is not None else None)
 
-  # TODO: fix caching
-  # if fp_cached is None:
-  #   cache.save(f"{audio_id}.fp", cache_category,
-  #              (fp, slider_w, slider_h, slider_s))
+  if fp_cached is None:
+    cache.save(f"{audio_id}.fp", cache_category,
+               (fp, slider_w, slider_h, slider_s), is_numpy=False)
 
   fingerprint_filepath = f"{debug_dir}/{title}_fp.png"
   if config.debug_output_data:
