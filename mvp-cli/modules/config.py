@@ -16,29 +16,36 @@ NUM_PARTITIONS = 30
 # Tension of the partition range generation curve
 # https://www.desmos.com/calculator/ugsemeqxan
 # range: 1 < partition_tension < infinity
-# lower = less "tense", more partitions distributed lower in the frequency spectrum
-# higher = more "tense", less partitions distributed higher in the frequency spectrum
-PARTITION_TENSION = 10
+# lower = less "tense", less partitions distributed lower in the frequency spectrum
+# higher = more "tense", more partitions distributed higher in the frequency spectrum
+PARTITION_TENSION = 150
 
 # --- Fingerprint Generation ---
 
+SLIDER_SIZE_MS = 7  # milliseconds
+SLIDER_SIZE_SAMP = 21
+SLIDER_STEP_MS = 100  # milliseconds
+SLIDER_STEP_SAMP = 1
+
+# TODO: remove
 # The width of the rolling slider, used when slicing the spectrogram into windows
 # and computing the slider width boundaries
 # NOTE: should always be an odd number due to the window function
 # lower = less frequency detail, higher = more frequency detail
-SLIDER_WIDTH = 21
+# SLIDER_WIDTH = 21
 # The height of the rolling slider, used when computing the slider height boundaries
 # NOTE: set to 0 or less to use the whole height
 # lower = more localized analysis, higher = less localized analysis
-SLIDER_HEIGHT = 2
+SLIDER_HEIGHT = 3
 
+# TODO: remove
 # The step amount of the slider
 # SLIDER_STEP < SLIDER_WIDTH: slider ranges will overlap by SLIDER_WIDTH - SLIDER_STEP
 #   windows (this is is recommended to avoid spectral leakage)
 # SLIDER_STEP = SLIDER_WIDTH: no overlap and no gap between each slider
 # SLIDER_STEP > SLIDER_WIDTH: slider ranges will have a gap of SLIDER_WIDTH - SLIDER_STEP
 #   windows (this is not recommended at all and will cause frequencies to be ignored)
-SLIDER_STEP = 10
+SLIDER_STEP_MS = 10
 
 # The config for the get_window's window parameter
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.windows.get_window.html#scipy.signal.windows.get_window

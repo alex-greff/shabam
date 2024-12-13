@@ -30,11 +30,11 @@ def preprocess_audio(
     `debug_dir`: the directory to save debug data
 
   Returns a tuple with the following items:
-    * The mono audio PCM data points (timedomain information)
-    * The sample rate of the mono audio
-    * The duration of the audio in seconds
-    * The downsampled audio PCM data points (timedomain information)
-    * The sample rate of the downsampled audio
+    * `data_mono`: mono audio PCM data points (timedomain information)
+    * `sample_rate`: sample rate of the mono audio
+    * `duration`: duration of the audio in seconds
+    * `ds_data`: downsampled audio PCM data points (timedomain information)
+    * `ds_sample_rate`: sample rate of the downsampled audio
   """
   metrics.start("audio_load", "Loading audio file")
 
@@ -230,16 +230,24 @@ def process_fingerprint(
     * A boolean indicating if we loaded the fingerprint from the cache
   """
   # --- Compute the fingerprint ---
-  fp_cached: Optional[npt.NDArray] = cache.load(
+  fp_cache_item: Optional[Tuple[npt.NDArray, int, int, int]] = cache.load(
       f"{audio_id}.fp", cache_category) if use_cache else None
+  fp_cached = fp_cache_item[0] if fp_cache_item is not None else None
+  slider_w_cache = fp_cache_item[1] if fp_cache_item is not None else None
+  slider_h_cache = fp_cache_item[2] if fp_cache_item is not None else None
+  slider_s_cache = fp_cache_item[3] if fp_cache_item is not None else None
   metrics.start("fp_compute", "Computing fingerprint")
-  fp = fp_cached if fp_cached is not None else fingerprint.compute_fingerprint(
-      spectrogram_data, partition_ranges)
+  fp, slider_w, slider_h, slider_s = ((fp_cached, slider_w_cache, slider_h_cache, slider_s_cache)
+                                      if fp_cache_item is not None
+                                      else fingerprint.compute_fingerprint(
+                                          spectrogram_data, partition_ranges, ds_sample_rate))
   metrics.end("fp_compute",
               suffix="cached" if fp_cached is not None else None)
 
-  if fp_cached is None:
-    cache.save(f"{audio_id}.fp", cache_category, fp)
+  # TODO: fix caching
+  # if fp_cached is None:
+  #   cache.save(f"{audio_id}.fp", cache_category,
+  #              (fp, slider_w, slider_h, slider_s))
 
   fingerprint_filepath = f"{debug_dir}/{title}_fp.png"
   if config.debug_output_data:
@@ -254,6 +262,13 @@ def process_fingerprint(
         partition_ranges
     )
     metrics.end("graph_fingerprint")
+
+  if config.debug_show_stats:
+    print(f"\n{HEAD_STYLE}Fingerprint stats:")
+    print(
+        f"  {BULLET}{NORMAL_STYLE} Slider with: {BOLD_STYLE}{slider_w:,} {NORMAL_STYLE}sample(s)")
+    print(f"  {BULLET}{NORMAL_STYLE} Slider height: {BOLD_STYLE}{slider_h:,} {NORMAL_STYLE}partition(s)")
+    print(f"  {BULLET}{NORMAL_STYLE} Slider step: {BOLD_STYLE}{slider_s:,} {NORMAL_STYLE}sample(s)", flush=True)
 
   # --- Compute the flattened fingerprint ---
   fp_flat_cached: Optional[npt.NDArray] = cache.load(
