@@ -366,12 +366,6 @@ def search_match(
     * A mapping of all potential track ids and the number of matching time
       coherent records in the audio clip
   """
-
-  # TODO: remove
-  # metrics.start("rtdb_construct", "Constructing records table database")
-  # rtdb = search.construct_record_table_database()
-  # metrics.end("rtdb_construct")
-
   metrics.start("find_tz_matches", "Finding target zone matches")
   tz_matches = search.find_target_zone_matches(
       rt, rt_num_tz)

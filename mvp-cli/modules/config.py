@@ -46,7 +46,7 @@ SLIDER_HEIGHT = 3
 # SLIDER_STEP = SLIDER_WIDTH: no overlap and no gap between each slider
 # SLIDER_STEP > SLIDER_WIDTH: slider ranges will have a gap of SLIDER_WIDTH - SLIDER_STEP
 #   windows (this is not recommended at all and will cause frequencies to be ignored)
-SLIDER_STEP_MS = 10
+# SLIDER_STEP_MS = 10
 
 # The config for the get_window's window parameter
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.windows.get_window.html#scipy.signal.windows.get_window

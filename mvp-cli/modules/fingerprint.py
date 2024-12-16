@@ -287,9 +287,6 @@ def compute_fingerprint(
                  if config.SLIDER_STEP_SAMP is None else config.SLIDER_STEP_SAMP)  # samples
   assert slider_step is not None
 
-  # TODO: remove
-  # slider_width = config.SLIDER_WIDTH
-  # assert slider_width % 2 == 1, "Error: slider width must be an odd number"
   slider_height = config.SLIDER_HEIGHT if config.SLIDER_HEIGHT > 0 else num_partitions
   slider_size = slider_width * slider_height
 
@@ -305,10 +302,6 @@ def compute_fingerprint(
   passed_cells: npt.NDArray = np.zeros(
       [num_sliders, num_partitions], dtype='bool')
   num_passed_cells = 0
-
-  # TODO: remove
-  print(">>> slider_width", slider_width,
-        ds_sample_rate, num_sliders, num_windows)
 
   for slider_idx in range(num_sliders):
     curr_window = slider_idx * slider_step
