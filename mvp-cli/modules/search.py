@@ -5,44 +5,44 @@ from typing import Dict, List, Optional, Set, Tuple
 from pathlib import Path
 import numpy as np
 import nptyping as npt
-from modules import records, config, cache
+from modules import records, config, cache, storage
 from modules.formatting import WARNING_STYLE
 
 # Maps all couples that correspond to the address key
 RecordsTableDatabase = Dict[npt.UInt32, List[npt.UInt64]]
 
 
-def construct_record_table_database() -> RecordsTableDatabase:
-  """
-  Constructs the records table database by loading all cached track record tables.
+# TODO: remove
+# def construct_record_table_database() -> RecordsTableDatabase:
+#   """
+#   Constructs the records table database by loading all cached track record tables.
 
-  Returns: the records table database
-  """
-  rtdb: RecordsTableDatabase = dict()
+#   Returns: the records table database
+#   """
+#   rtdb: RecordsTableDatabase = dict()
 
-  computed_rt_files = glob.glob(f"{config.DATA_DIR}/track/*.rt.pkl")
+#   computed_rt_files = glob.glob(f"{config.DATA_DIR}/track/*.rt.pkl")
 
-  for rt_file in computed_rt_files:
-    rt_name = Path(rt_file).stem
+#   for rt_file in computed_rt_files:
+#     rt_name = Path(rt_file).stem
 
-    rt_cache: Optional[Tuple[records.RecordsTableEncoded, int]] = cache.load(
-        rt_name, "track", is_numpy=False)
-    assert rt_cache is not None
-    rt, _ = rt_cache
+#     rt_cache: Optional[Tuple[records.RecordsTableEncoded, int]] = cache.load(
+#         rt_name, "track", is_numpy=False)
+#     assert rt_cache is not None
+#     rt, _ = rt_cache
 
-    # Merge loaded record table into the record table database
-    for address, couples in rt.items():
-      merged_couples = rtdb.get(address, list())
-      merged_couples.extend(couples)
-      rtdb[address] = merged_couples
+#     # Merge loaded record table into the record table database
+#     for address, couples in rt.items():
+#       merged_couples = rtdb.get(address, list())
+#       merged_couples.extend(couples)
+#       rtdb[address] = merged_couples
 
-  return rtdb
+#   return rtdb
 
 
 def find_target_zone_matches(
     audio_clip_rt: records.RecordsTableEncoded,
     audio_clip_num_tz: int,
-    rtdb: RecordsTableDatabase
 ) -> Dict[npt.UInt32, int]:
   """
   Finds all matching target zones in the audio clip with each track in the
@@ -52,34 +52,38 @@ def find_target_zone_matches(
   Params:
     `audio_clip_rt`: the records table for the audio clip
     `audio_clip_num_tz`: the number of target zones in the audio clip records table
-    `rtdb`: the record table database
   Returns: a map of all matched track ids and the number of target zones in them
     that match in the clip
   """
+  storage_engine = storage.get_storage_engine()
+
   # Counts the number of times a couple of (absolute anchor time, track id)
   # has been matched by the audio clip's record table
   # TODO: should work in a system to account for multiple couples with the
   # same absolute time (i.e. the anchor point is at the same time), maybe keep
   # track of the number of same value couples encountered and use it as a
   # divisor? (it'll still be an approximation but it'll be a closer one)
-  couple_matches: Dict[npt.UInt64, int] = dict()
+  couple_matches = storage_engine.count_couples_matches(audio_clip_rt)
 
-  # unique_matched_couples: Dict[npt.Uin]
+  # TODO: remove
+  # couple_matches: Dict[npt.UInt64, int] = dict()
 
-  clip_tz_total_count = len(audio_clip_rt)
-  assert clip_tz_total_count > 0
+  # # unique_matched_couples: Dict[npt.Uin]
 
-  # Go through each record and count how many matches they have with records
-  # in the records table database
-  for clip_address, clip_couples in audio_clip_rt.items():
-    # Each couple counts as an independent record match
-    for _ in clip_couples:
-      matched_couples = rtdb.get(clip_address, list())
+  # clip_tz_total_count = len(audio_clip_rt)
+  # assert clip_tz_total_count > 0
 
-      for matched_couple in matched_couples:
-        couple_match_count = couple_matches.get(matched_couple, 0)
-        couple_match_count += 1
-        couple_matches[matched_couple] = couple_match_count
+  # # Go through each record and count how many matches they have with records
+  # # in the records table database
+  # for clip_address, clip_couples in audio_clip_rt.items():
+  #   # Each couple counts as an independent record match
+  #   for _ in clip_couples:
+  #     matched_couples = rtdb.get(clip_address, list())
+
+  #     for matched_couple in matched_couples:
+  #       couple_match_count = couple_matches.get(matched_couple, 0)
+  #       couple_match_count += 1
+  #       couple_matches[matched_couple] = couple_match_count
 
   # Count the number of target zones matched for each track id
   tz_matches: Dict[npt.UInt32, int] = dict()
@@ -118,6 +122,8 @@ def perform_time_coherence_filtering(
   Returns: a map of matched track ids and the number of records in the clip that
     respected the time coherence of the track records
   """
+  storage_engine = storage.get_storage_engine()
+
   # Maps each track to the number of matching time coherent records it has with
   # the clip
   tc_matches: Dict[npt.UInt32, int] = dict()
@@ -125,15 +131,21 @@ def perform_time_coherence_filtering(
   for track_id in potential_track_ids:
     possible_deltas: Set[npt.Int64] = set()
 
+    # TODO: remove
     # Load the track's record table
-    rt_name = f"{track_id}.rt"
-    rt_cache: Optional[Tuple[records.RecordsTableEncoded, int]] = cache.load(
-        rt_name, "track", is_numpy=False)
-    assert rt_cache is not None
-    rt, _ = rt_cache
+    # rt_name = f"{track_id}.rt"
+    # rt_cache: Optional[Tuple[records.RecordsTableEncoded, int]] = cache.load(
+    #     rt_name, "track", is_numpy=False)
+    # assert rt_cache is not None
+    # rt, _ = rt_cache
+
+    rt = storage_engine.get_records_table(track_id)
 
     for clip_address, clip_couples in audio_clip_rt.items():
       track_couples = rt.get(clip_address, list())
+      # TODO: remove
+      # track_couples = storage_engine.find_matching_couples(
+      #     clip_address, track_id_filter={track_id})
 
       for clip_couple in clip_couples:
         clip_abs_time, _ = records.decode_couple(clip_couple)
@@ -159,6 +171,9 @@ def perform_time_coherence_filtering(
     for delta in possible_deltas:
       for clip_address, clip_couples in audio_clip_rt.items():
         track_couples = rt.get(clip_address, list())
+        # TODO: remove
+        # track_couples = storage_engine.find_matching_couples(
+        #     clip_address, track_id_filter={track_id})
 
         for clip_couple in clip_couples:
           clip_abs_time, _ = records.decode_couple(clip_couple)

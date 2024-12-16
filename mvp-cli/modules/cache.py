@@ -27,13 +27,13 @@ def save(
     `is_numpy`: indicates of the data is a numpy object (default: `True`)
   """
   if is_numpy:
-    cache_filepath = f"{config.DATA_DIR}/{category}/{name}.npy"
+    cache_filepath = f"{config.CACHE_DIR}/{category}/{name}.npy"
     np.save(cache_filepath, data)
   else:
     # Ensure cache file exists
-    cache_filepath = f"{config.DATA_DIR}/{category}/{name}.pkl"
+    cache_filepath = f"{config.CACHE_DIR}/{category}/{name}.pkl"
     if not os.path.exists(os.path.dirname(cache_filepath)):
-      os.mkdir(os.path.dirname(cache_filepath))
+      os.makedirs(os.path.dirname(cache_filepath), exist_ok=True)
 
     with open(cache_filepath, "wb") as f:
       pickle.dump(data, f)
@@ -56,11 +56,11 @@ def load(
   """
   try:
     if is_numpy:
-      cache_filepath = f"{config.DATA_DIR}/{category}/{name}.npy"
+      cache_filepath = f"{config.CACHE_DIR}/{category}/{name}.npy"
       return np.load(cache_filepath)
     else:
-      cache_filepath = f"{config.DATA_DIR}/{category}/{name}.pkl"
-      if not os.path.exists(os.path.dirname(cache_filepath)):
+      cache_filepath = f"{config.CACHE_DIR}/{category}/{name}.pkl"
+      if not os.path.isfile(cache_filepath):
         return None
 
       with open(cache_filepath, "rb") as f:
@@ -88,7 +88,7 @@ def clear(
   """
   suffix = ".npy" if is_numpy else ".pkl"
   cache_files = glob.glob(
-      f"{config.DATA_DIR}/{category}/{name}{suffix}")
+      f"{config.CACHE_DIR}/{category}/{name}{suffix}")
 
   for cache_filepath in cache_files:
     if show_debug:

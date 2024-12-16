@@ -5,7 +5,7 @@ from scipy.io import wavfile
 from scipy import signal
 import numpy as np
 import nptyping as npt
-from modules import visualization, fingerprint, metrics, cache, records, search
+from modules import visualization, fingerprint, metrics, cache, records, search, storage
 from modules.formatting import BULLET, HEAD_STYLE, BOLD_STYLE, NORMAL_STYLE, DIM_STYLE
 import modules.config as config
 
@@ -294,7 +294,8 @@ def process_records_table(
     use_cache: bool,
     cache_category: cache.CacheCategory,
     fp_flat: npt.NDArray,
-    loaded_fp_from_cache: bool
+    loaded_fp_from_cache: bool,
+    is_track: bool,
 ) -> Tuple[records.RecordsTableEncoded, int]:
   """
   Computes the records table from the given fingerprint.
@@ -308,6 +309,8 @@ def process_records_table(
     `loaded_fp_from_cache`: a flag indicating if the given fingerprint was loaded
       from the cache or computed (this is to figure out if we should attempt to
       load the records table from cache or recompute it)
+    `is_track`: a flag indicating if the records table is a track. If so, then
+      the track records table will be stored.
 
   Returns: a tuple of
     * the computed records table
@@ -328,6 +331,11 @@ def process_records_table(
       if rt_cached is not None and rt_num_tz_cached is not None
       else records.compute_records_table(fp_flat, audio_int_id))
   metrics.end("rt_compute", suffix="cached" if rt_cached is not None else None)
+
+  # Store the records table if we processed a track
+  if is_track:
+    storage_engine = storage.get_storage_engine()
+    storage_engine.store_records_table(audio_id, rt)
 
   if rt_cached is None:
     cache.save(f"{audio_id}.rt", cache_category,
@@ -359,13 +367,14 @@ def search_match(
       coherent records in the audio clip
   """
 
-  metrics.start("rtdb_construct", "Constructing records table database")
-  rtdb = search.construct_record_table_database()
-  metrics.end("rtdb_construct")
+  # TODO: remove
+  # metrics.start("rtdb_construct", "Constructing records table database")
+  # rtdb = search.construct_record_table_database()
+  # metrics.end("rtdb_construct")
 
   metrics.start("find_tz_matches", "Finding target zone matches")
   tz_matches = search.find_target_zone_matches(
-      rt, rt_num_tz, rtdb)
+      rt, rt_num_tz)
   metrics.end("find_tz_matches")
 
   metrics.start("filter_tc", "Filtering tracks by time coherence")

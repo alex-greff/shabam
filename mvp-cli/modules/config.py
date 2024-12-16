@@ -2,6 +2,7 @@
 
 # Output
 DATA_DIR = "data"
+CACHE_DIR = f"{DATA_DIR}/cache"
 
 # --- Preprocessing ---
 
@@ -91,12 +92,19 @@ POSSIBLE_DELTA_COMPUTE_THRESHOLD = 1000
 # lower = filter less tracks, higher = filter out more tracks
 TC_MATCH_TOLERANCE_COEFFICIENT = 0
 
+# --- Storage ---
+
+# The storage engine to use
+# Options: "pickle" or "sqlite"
+STORAGE_ENGINE = "pickle"
+
 # --- Debug ---
 
 DEBUG_DIR = "debug"
 DEBUG_TRACK_DIR = f"{DEBUG_DIR}/track"
 DEBUG_CLIP_DIR = f"{DEBUG_DIR}/clip"
 DEBUGGER = False
+
 
 # --- Runtime set config ---
 

@@ -102,6 +102,7 @@ def add(
       cache_category="track",
       fp_flat=fp_flat,
       loaded_fp_from_cache=loaded_fp_from_cache,
+      is_track=True,
   )
 
 
@@ -182,7 +183,8 @@ def search_cmd(
       use_cache=use_cache,
       cache_category="clip",
       fp_flat=fp_flat,
-      loaded_fp_from_cache=loaded_fp_from_cache
+      loaded_fp_from_cache=loaded_fp_from_cache,
+      is_track=False,
   )
 
   # ------------------------
