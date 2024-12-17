@@ -1,0 +1,22 @@
+{
+  "name": "core-lib",
+  "context": "..",
+  "dockerFile": "../Dockerfile.dev",
+  "runArgs": [
+    "--privileged"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "naumovs.color-highlight",
+        "wayou.vscode-todo-highlight",
+        "ms-vscode.cpptools-extension-pack",
+        "jeff-hykin.better-cpp-syntax",
+        "simonsiefke.svg-preview"
+      ]
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/core-lib,type=bind,consistency=delegated",
+  "workspaceFolder": "/core-lib"
+}

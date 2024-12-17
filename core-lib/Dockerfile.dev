@@ -1,0 +1,11 @@
+FROM ubuntu:25.04
+
+WORKDIR /core-lib
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
+  apt-get install -y curl build-essential cmake
+
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
