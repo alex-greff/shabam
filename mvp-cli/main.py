@@ -248,6 +248,8 @@ def clear_cache(
     cache.clear(glob_pattern, category,
                 is_numpy=is_numpy, show_debug=show_debug)
 
+  # TODO: add support for clearing rtdb folder
+
 
 if __name__ == "__main__":
   initialization.setup_dirs()
