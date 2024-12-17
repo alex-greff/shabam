@@ -4,7 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/lib/Catch2/src"
+                "${workspaceFolder}/external/Catch2/src",
+                "${workspaceFolder}/external/Catch2/src/catch2",
+                "${workspaceFolder}/external/CLI11/include",
+                "${workspaceFolder}/external/single-file"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
