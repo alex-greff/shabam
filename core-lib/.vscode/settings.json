@@ -1,8 +1,4 @@
 {
-  "C_Cpp.default.includePath": [
-    "${workspaceFolder}/**",
-    "${workspaceFolder}/external/Catch2/src",
-  ],
   "files.associations": {
     "gulpfile": "javascript",
     "*.ddl": "sql",

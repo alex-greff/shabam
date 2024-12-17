@@ -3,7 +3,7 @@ project(shabam_corelib)
 
 option(USE_CLI11_FULL "Use CLI11 full installation over single file" ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EXTERNAL_DIR external)
