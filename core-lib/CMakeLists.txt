@@ -7,19 +7,19 @@ option(USE_CLI11_FULL "Use CLI11 full installation over single file" ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(EXTERNAL_DIR external)
+set(EXTERNAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
 set(SINGLE_FILE_DIR ${EXTERNAL_DIR}/single-file)
 
 set(SHABAM_SOURCES src/cli.cpp)
 set(TESTS_SOURCES src/test.cpp)
 
-# Catch2 installation
+# --- Catch2 installation ---
 # Source: https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md#top
 add_subdirectory(${EXTERNAL_DIR}/Catch2)
 add_executable(tests ${TESTS_SOURCES})
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
-
+# --- CLI11 installation ---
 if(USE_CLI11_FULL)
   # CLI11 full edition installation (recommended)
   # Source: https://cliutils.github.io/CLI11/book/chapters/installation.html
@@ -40,15 +40,16 @@ endif(USE_CLI11_FULL)
 
 unset(USE_CLI11_FULL CACHE)
 
-# Install liquid-dsp
+# --- liquid-dsp installation ---
 # Sources:
 # - https://github.com/jgaeddert/liquid-dsp/pull/40#issuecomment-2262089630
 # - https://liquidsdr.org/doc/installation/
+set(LIQUID_DIR ${EXTERNAL_DIR}/liquid-dsp)
 ExternalProject_Add(liquid-dsp-project
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp
+    SOURCE_DIR ${LIQUID_DIR}
     BUILD_IN_SOURCE TRUE
-    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp/bootstrap.sh
-        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp/configure
+    CONFIGURE_COMMAND ${LIQUID_DIR}/bootstrap.sh
+        COMMAND ${LIQUID_DIR}/configure
             --prefix=${CMAKE_BINARY_DIR}/liquid-dsp
             --enable-fftoverride
             CFLAGS=${CMAKE_C_FLAGS}
@@ -56,26 +57,26 @@ ExternalProject_Add(liquid-dsp-project
             CXXFLAGS=${CMAKE_CXX_FLAGS}
             LDFLAGS=${CMAKE_EXE_LINKER_FLAGS}
     INSTALL_COMMAND ""
-    BUILD_BYPRODUCTS ${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp/libliquid.a
+    BUILD_BYPRODUCTS ${LIQUID_DIR}/libliquid.a
     BUILD_ALWAYS TRUE
 )
 add_library(liquid-dsp STATIC IMPORTED GLOBAL)
 add_dependencies(liquid-dsp liquid-dsp-project)
 set_target_properties(liquid-dsp PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp/libliquid.a
+    IMPORTED_LOCATION ${LIQUID_DIR}/libliquid.a
 )
 target_include_directories(liquid-dsp INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/liquid-dsp/include>
-    $<INSTALL_INTERFACE:${CMAKE_BINARY_DIR}/liquid-dsp/include/liquid>
+    $<BUILD_INTERFACE:${LIQUID_DIR}/include>
+    $<INSTALL_INTERFACE:${LIQUID_DIR}/include/liquid>
 )
 target_link_libraries(liquid-dsp INTERFACE m)
 # Include liquid-dsp headers
-target_include_directories(shabam PRIVATE ${EXTERNAL_DIR}/liquid-dsp/include)
-target_include_directories(tests PRIVATE ${EXTERNAL_DIR}/liquid-dsp/include)
+target_include_directories(shabam PRIVATE ${LIQUID_DIR}/include)
+target_include_directories(tests PRIVATE ${LIQUID_DIR}/include)
 # Suppress compiler warnings from liquid-dsp
 # Source: https://stackoverflow.com/a/53981293
-target_include_directories(shabam SYSTEM PRIVATE ${EXTERNAL_DIR}/liquid-dsp/include)
-target_include_directories(shabam SYSTEM PRIVATE ${EXTERNAL_DIR}/liquid-dsp/include)
+target_include_directories(shabam SYSTEM PRIVATE ${LIQUID_DIR}/include)
+target_include_directories(shabam SYSTEM PRIVATE ${LIQUID_DIR}/include)
 
 add_dependencies(shabam liquid-dsp)
 add_dependencies(tests liquid-dsp)
