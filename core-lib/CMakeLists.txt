@@ -13,10 +13,12 @@ set(SINGLE_FILE_DIR ${EXTERNAL_DIR}/single-file)
 set(SHABAM_SOURCES src/cli.cpp)
 set(TESTS_SOURCES src/test.cpp)
 
+add_executable(shabam ${SHABAM_SOURCES})
+add_executable(tests ${TESTS_SOURCES})
+
 # --- Catch2 installation ---
 # Source: https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md#top
 add_subdirectory(${EXTERNAL_DIR}/Catch2)
-add_executable(tests ${TESTS_SOURCES})
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 # --- CLI11 installation ---
@@ -24,7 +26,6 @@ if(USE_CLI11_FULL)
   # CLI11 full edition installation (recommended)
   # Source: https://cliutils.github.io/CLI11/book/chapters/installation.html
   set(CLI11_PRECOMPILED ON)
-  add_executable(shabam ${SHABAM_SOURCES})
   target_link_libraries(shabam INTERFACE CLI11:CLI11)
   target_include_directories(shabam PRIVATE ${EXTERNAL_DIR}/CLI11/include)
   target_compile_definitions(shabam PRIVATE USE_CLI11_FULL=1)
@@ -33,7 +34,9 @@ else()
   # Sources:
   # - https://cliutils.github.io/CLI11/book/chapters/installation.html
   # - https://stackoverflow.com/a/13703725
-  add_executable(shabam ${SHABAM_SOURCES} ${SINGLE_FILE_DIR}/CLI11.hpp)
+  # Add another source after the executable declaration
+  # Source: https://stackoverflow.com/a/34533415
+  target_sources(shabam PRIVATE ${SINGLE_FILE_DIR}/CLI11.hpp)
   target_include_directories(shabam PRIVATE ${SINGLE_FILE_DIR})
   target_compile_definitions(shabam PRIVATE USE_CLI11_FULL=0)
 endif(USE_CLI11_FULL)
