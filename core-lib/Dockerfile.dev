@@ -1,15 +1,14 @@
-FROM ubuntu:25.04
+FROM ubuntu:22.04
 
 WORKDIR /core-lib
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# fftw3 and autotools-dev as deps of liquid-dsp
+# General dependencies
 RUN apt-get update && \
   apt-get install -y curl build-essential cmake
 
-RUN apt-get install -y automake 
-# TODO: install fftw3
-
+# liquid-dsp dependencies
+RUN apt-get install -y automake libfftw3-dev
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
