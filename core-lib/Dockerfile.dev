@@ -4,8 +4,12 @@ WORKDIR /core-lib
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# fftw3 and autotools-dev as deps of liquid-dsp
 RUN apt-get update && \
   apt-get install -y curl build-essential cmake
+
+RUN apt-get install -y automake 
+# TODO: install fftw3
 
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]

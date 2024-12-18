@@ -4,3 +4,6 @@
 [submodule "core-lib/lib/CLI11"]
 	path = core-lib/external/CLI11
 	url = git@github.com:CLIUtils/CLI11.git
+[submodule "core-lib/external/liquid-dsp"]
+	path = core-lib/external/liquid-dsp
+	url = git@github.com:jgaeddert/liquid-dsp.git
