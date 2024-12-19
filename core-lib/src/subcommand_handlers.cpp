@@ -3,6 +3,7 @@
 #include "preprocessing.hpp"
 #include <iostream>
 #include <string>
+#include <termcolor/termcolor.hpp>
 #include <tuple>
 
 namespace shabam {
@@ -19,8 +20,9 @@ void add_handler(std::string file, std::string name, std::string config_path) {
 
   // TODO: keep implementing
 
-  std::cout << "sample_rate: " << sample_rate
-            << " ds_sample_rate: " << ds_sample_rate << std::endl;
+  std::cout << termcolor::red << "sample_rate: " << sample_rate
+            << " ds_sample_rate: " << ds_sample_rate << termcolor::reset
+            << std::endl;
 }
 
 void search_handler(std::string file, std::string config_path) {

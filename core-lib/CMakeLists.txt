@@ -105,3 +105,9 @@ add_library(tomlplusplus INTERFACE)
 target_include_directories(tomlplusplus INTERFACE ${EXTERNAL_DIR}/tomlplusplus/include)
 target_link_libraries(${SHABAM_CLI_TARGET} PRIVATE tomlplusplus)
 target_link_libraries(${SHABAM_TESTS_TARGET} PRIVATE tomlplusplus)
+
+# --- termcolor installation ---
+add_library(termcolor INTERFACE)
+target_include_directories(termcolor INTERFACE ${EXTERNAL_DIR}/termcolor/include)
+target_link_libraries(${SHABAM_CLI_TARGET} PRIVATE termcolor)
+target_link_libraries(${SHABAM_TESTS_TARGET} PRIVATE termcolor)

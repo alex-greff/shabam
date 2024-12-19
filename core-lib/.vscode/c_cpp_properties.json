@@ -10,6 +10,7 @@
                 "${workspaceFolder}/external/liquid-dsp/include",
                 "${workspaceFolder}/external/AudioFile",
                 "${workspaceFolder}/external/tomlplusplus/include",
+                "${workspaceFolder}/external/termcolor/include",
                 "${workspaceFolder}/external/single-file"
             ],
             "defines": [

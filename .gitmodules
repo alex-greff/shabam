@@ -13,3 +13,6 @@
 [submodule "core-lib/external/tomlplusplus"]
 	path = core-lib/external/tomlplusplus
 	url = git@github.com:marzer/tomlplusplus.git
+[submodule "core-lib/external/termcolor"]
+	path = core-lib/external/termcolor
+	url = git@github.com:ikalnytskyi/termcolor.git
