@@ -4,7 +4,7 @@ project(shabam_corelib)
 
 option(USE_CLI11_FULL "Use CLI11 full installation over single file" ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(EXTERNAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
@@ -13,12 +13,15 @@ set(SINGLE_FILE_DIR ${EXTERNAL_DIR}/single-file)
 set(SHABAM_CLI_TARGET shabam-cli)
 set(SHABAM_TESTS_TARGET shabam-tests)
 
-set(COMMON_SOURCES src/subcommand_handlers.cpp src/preprocessing.cpp)
+set(COMMON_SOURCES src/subcommand_handlers.cpp src/preprocessing.cpp src/config/toml-config.cpp)
 set(CLI_SOURCES src/cli.cpp ${COMMON_SOURCES})
 set(TESTS_SOURCES src/test.cpp ${COMMON_SOURCES})
 
 add_executable(${SHABAM_CLI_TARGET} ${CLI_SOURCES})
 add_executable(${SHABAM_TESTS_TARGET} ${TESTS_SOURCES})
+
+# Copy the default config file to the build directory
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/shabam-config.toml ${CMAKE_BINARY_DIR}/shabam-config.toml COPYONLY)
 
 # --- Catch2 installation ---
 # Source: https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md#top
@@ -96,3 +99,9 @@ target_include_directories(${SHABAM_CLI_TARGET} SYSTEM PRIVATE ${LIQUID_DIR}/inc
 
 add_dependencies(${SHABAM_CLI_TARGET} liquid-dsp)
 add_dependencies(${SHABAM_TESTS_TARGET} liquid-dsp)
+
+# --- toml++ installation ---
+add_library(tomlplusplus INTERFACE)
+target_include_directories(tomlplusplus INTERFACE ${EXTERNAL_DIR}/tomlplusplus/include)
+target_link_libraries(${SHABAM_CLI_TARGET} PRIVATE tomlplusplus)
+target_link_libraries(${SHABAM_TESTS_TARGET} PRIVATE tomlplusplus)

@@ -10,3 +10,6 @@
 [submodule "core-lib/external/AudioFile"]
 	path = core-lib/external/AudioFile
 	url = git@github.com:adamstark/AudioFile.git
+[submodule "core-lib/external/tomlplusplus"]
+	path = core-lib/external/tomlplusplus
+	url = git@github.com:marzer/tomlplusplus.git

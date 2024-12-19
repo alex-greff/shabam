@@ -13,7 +13,8 @@
         "wayou.vscode-todo-highlight",
         "ms-vscode.cpptools-extension-pack",
         "jeff-hykin.better-cpp-syntax",
-        "simonsiefke.svg-preview"
+        "simonsiefke.svg-preview",
+        "tamasfe.even-better-toml"
       ]
     }
   },

@@ -1,0 +1,3 @@
+[preprocessing]
+# The sample rate the audio is downsampled to before analysis
+preprocessingSampleRate = 12000

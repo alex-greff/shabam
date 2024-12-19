@@ -1,3 +1,4 @@
+#include "preprocessing.hpp"
 #include "AudioFile.h"
 #include <filesystem>
 #include <liquid.h>
@@ -28,7 +29,7 @@ std::tuple<std::vector<float>, int> load_audio(std::string filepath) {
       for (int c = 0; c < numChannels; c++) {
         avgSample += audioFile.samples[c][i];
       }
-      avgSample = avgSample / (float) numChannels;
+      avgSample = avgSample / (float)numChannels;
       monoSignal[i] = avgSample;
     }
   }
@@ -37,11 +38,12 @@ std::tuple<std::vector<float>, int> load_audio(std::string filepath) {
 }
 
 std::vector<float> downsample_audio(std::vector<float> &samples,
-                                     int original_sr, int target_sr) {
+                                    int original_sr, int target_sr) {
   // Resampling rate (output / input)
   float r = (float)target_sr / (float)original_sr;
   // Resampling filter stop-band attenuation [dB]
-  // Just used value from documentation example: https://liquidsdr.org/doc/msresamp/
+  // Just used value from documentation example:
+  // https://liquidsdr.org/doc/msresamp/
   float As = 60.0f;
   msresamp_rrrf q = msresamp_rrrf_create(r, As);
   msresamp_rrrf_print(q); // TODO: remove
