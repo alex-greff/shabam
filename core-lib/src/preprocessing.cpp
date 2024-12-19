@@ -1,19 +1,20 @@
 #include "preprocessing.hpp"
 #include "AudioFile.h"
+#include <cstdint>
 #include <filesystem>
 #include <liquid.h>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace shabam {
-std::tuple<std::vector<float>, int> load_audio(std::string filepath) {
+std::tuple<std::vector<float>, uint32_t> load_audio(std::string filepath) {
   if (!std::filesystem::exists(filepath)) {
     throw std::invalid_argument("Audio file '" + filepath + "' does not exist");
   }
 
   AudioFile<float> audioFile;
   audioFile.load(filepath);
-  audioFile.printSummary(); // TODO: remove
 
   int numChannels = audioFile.getNumChannels();
   int numSamplesPerChannel = audioFile.getNumSamplesPerChannel();
@@ -37,8 +38,27 @@ std::tuple<std::vector<float>, int> load_audio(std::string filepath) {
   return {monoSignal, audioFile.getSampleRate()};
 }
 
+void save_audio(std::string filepath, std::vector<float> &samples,
+                uint32_t sr) {
+  // Ensure directories exist before saving audio file
+  std::string directories = std::filesystem::path(filepath).parent_path();
+  std::filesystem::create_directories(directories);
+
+  AudioFile<float>::AudioBuffer buffer;
+  buffer.resize(1);
+  buffer[0].resize(samples.size());
+  buffer[0] = samples;
+
+  AudioFile<float> audioFile;
+  audioFile.setBitDepth(16);
+  audioFile.setSampleRate(sr);
+  audioFile.setAudioBuffer(buffer);
+
+  audioFile.save(filepath, AudioFileFormat::Wave);
+}
+
 std::vector<float> downsample_audio(std::vector<float> &samples,
-                                    int original_sr, int target_sr) {
+                                    uint32_t original_sr, uint32_t target_sr) {
   // Resampling rate (output / input)
   float r = (float)target_sr / (float)original_sr;
   // Resampling filter stop-band attenuation [dB]
@@ -46,7 +66,6 @@ std::vector<float> downsample_audio(std::vector<float> &samples,
   // https://liquidsdr.org/doc/msresamp/
   float As = 60.0f;
   msresamp_rrrf q = msresamp_rrrf_create(r, As);
-  msresamp_rrrf_print(q); // TODO: remove
 
   unsigned int nx = samples.size(); // input size
   unsigned int ny = ceilf(nx * r);  // expected output size

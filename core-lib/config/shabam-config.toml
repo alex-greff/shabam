@@ -1,3 +1,7 @@
+[debug]
+# The directory for the debug output files to be saved to
+debugDir = "debug"
+
 [preprocessing]
 # The sample rate the audio is downsampled to before analysis
 preprocessingSampleRate = 12000

@@ -15,12 +15,21 @@ TomlConfig::TomlConfig(std::string config_filepath) {
         std::format("Unable to load config file \"{}\"", config_filepath));
   }
 
+  std::optional<std::string> debug_dir =
+      config["debug"]["debugDir"].value<std::string>();
+  if (debug_dir) {
+    this->debug_dir = debug_dir.value();
+  } else {
+    throw std::invalid_argument("debug.debugDir is required");
+  }
+
   std::optional<int> pre_sr =
       config["preprocessing"]["preprocessingSampleRate"].value<int>();
   if (pre_sr) {
     this->preprocessing_sample_rate = pre_sr.value();
   } else {
-    throw std::invalid_argument("library.preprocessingSampleRate is required");
+    throw std::invalid_argument(
+        "preprocessing.preprocessingSampleRate is required");
   }
 }
 } // namespace shabam

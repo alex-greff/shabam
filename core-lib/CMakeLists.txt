@@ -13,7 +13,10 @@ set(SINGLE_FILE_DIR ${EXTERNAL_DIR}/single-file)
 set(SHABAM_CLI_TARGET shabam-cli)
 set(SHABAM_TESTS_TARGET shabam-tests)
 
-set(COMMON_SOURCES src/subcommand_handlers.cpp src/preprocessing.cpp src/config/toml-config.cpp)
+set(COMMON_SOURCES
+  src/subcommand_handlers.cpp src/preprocessing.cpp src/config/toml-config.cpp
+  src/formatting.cpp src/metrics.cpp
+)
 set(CLI_SOURCES src/cli.cpp ${COMMON_SOURCES})
 set(TESTS_SOURCES src/test.cpp ${COMMON_SOURCES})
 
