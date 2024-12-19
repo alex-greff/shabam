@@ -28,7 +28,8 @@ std::tuple<std::vector<float>, int> load_audio(std::string filepath) {
       for (int c = 0; c < numChannels; c++) {
         avgSample += audioFile.samples[c][i];
       }
-      avgSample = avgSample / 2.0;
+      avgSample = avgSample / (float) numChannels;
+      monoSignal[i] = avgSample;
     }
   }
 
