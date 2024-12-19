@@ -7,3 +7,6 @@
 [submodule "core-lib/external/liquid-dsp"]
 	path = core-lib/external/liquid-dsp
 	url = git@github.com:jgaeddert/liquid-dsp.git
+[submodule "core-lib/external/AudioFile"]
+	path = core-lib/external/AudioFile
+	url = git@github.com:adamstark/AudioFile.git

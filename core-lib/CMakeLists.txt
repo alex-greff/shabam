@@ -13,10 +13,11 @@ set(SINGLE_FILE_DIR ${EXTERNAL_DIR}/single-file)
 set(SHABAM_CLI_TARGET shabam-cli)
 set(SHABAM_TESTS_TARGET shabam-tests)
 
-set(SHABAM_SOURCES src/cli.cpp)
-set(TESTS_SOURCES src/test.cpp)
+set(COMMON_SOURCES src/subcommand_handlers.cpp src/preprocessing.cpp)
+set(CLI_SOURCES src/cli.cpp ${COMMON_SOURCES})
+set(TESTS_SOURCES src/test.cpp ${COMMON_SOURCES})
 
-add_executable(${SHABAM_CLI_TARGET} ${SHABAM_SOURCES})
+add_executable(${SHABAM_CLI_TARGET} ${CLI_SOURCES})
 add_executable(${SHABAM_TESTS_TARGET} ${TESTS_SOURCES})
 
 # --- Catch2 installation ---
@@ -45,6 +46,12 @@ else()
 endif(USE_CLI11_FULL)
 
 unset(USE_CLI11_FULL CACHE)
+
+# --- AudioFile installation ---
+add_library(audio-file INTERFACE)
+target_include_directories(audio-file INTERFACE ${EXTERNAL_DIR}/AudioFile)
+target_link_libraries(${SHABAM_CLI_TARGET} PRIVATE audio-file)
+target_link_libraries(${SHABAM_TESTS_TARGET} PRIVATE audio-file)
 
 # --- liquid-dsp installation ---
 # Sources:
@@ -76,6 +83,9 @@ target_include_directories(liquid-dsp INTERFACE
     $<INSTALL_INTERFACE:${LIQUID_DIR}/include/liquid>
 )
 target_link_libraries(liquid-dsp INTERFACE m)
+# Link to targets
+target_link_libraries(${SHABAM_CLI_TARGET} PRIVATE liquid-dsp)
+target_link_libraries(${SHABAM_TESTS_TARGET} PRIVATE liquid-dsp)
 # Include liquid-dsp headers
 target_include_directories(${SHABAM_CLI_TARGET} PRIVATE ${LIQUID_DIR}/include)
 target_include_directories(${SHABAM_TESTS_TARGET} PRIVATE ${LIQUID_DIR}/include)

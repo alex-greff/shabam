@@ -8,6 +8,7 @@
                 "${workspaceFolder}/external/Catch2/src/catch2",
                 "${workspaceFolder}/external/CLI11/include",
                 "${workspaceFolder}/external/liquid-dsp/include",
+                "${workspaceFolder}/external/AudioFile",
                 "${workspaceFolder}/external/single-file"
             ],
             "defines": [

@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "name": "Debug shabam-cli",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/shabam-cli",
+      "args": [
+        "add",
+        "../audio/self_destruct_clip_1.wav",
+        "foo"
+      ],
+      "cwd": "${workspaceRoot}/build",
+    },
+    {
+      "name": "Debug shabam-tests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/shabam-tests",
+      "args": [],
+      "cwd": "${workspaceRoot}/build",
+    }
+  ]
+}

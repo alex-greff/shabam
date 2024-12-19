@@ -1,28 +1,29 @@
-#if USE_CLI11_FULL==1
+#if USE_CLI11_FULL == 1
 #include <CLI/CLI.hpp>
 #else
 #include <CLI11.hpp>
 #endif
+#include "subcommand_handlers.hpp"
 #include <iostream>
-// #include <liquid/liquid.h>
-#include <liquid.h>
 
-int main(int argc, char** argv) {
-    CLI::App app{"App description"};
-    argv = app.ensure_utf8(argv);
+int main(int argc, char **argv) {
+  CLI::App app{"The Shabam CLI"};
+  argv = app.ensure_utf8(argv);
 
-    std::string filename = "default";
-    app.add_option("-f,--file", filename, "A help string");
+  auto add_sub = app.add_subcommand("add", "Adds a track");
+  std::string addFile;
+  add_sub->add_option("file", addFile, "Filepath to the track to add");
+  std::string name;
+  add_sub->add_option("name", name, "The name of the track");
+  add_sub->callback([&]() { shabam::add_handler(addFile, name); });
 
-    CLI11_PARSE(app, argc, argv);
+  auto search_sub = app.add_subcommand("search", "Searches for a track");
+  std::string searchFile;
+  search_sub->add_option("file", searchFile,
+                        "Filepath to the audio clip to search");
+  search_sub->callback([&]() { shabam::search_handler(searchFile); });
 
-    liquid_iirdes_filtertype ftype  = LIQUID_IIRDES_ELLIP;
+  CLI11_PARSE(app, argc, argv);
 
-#if USE_CLI11_FULL==1
-  std::cout << "hello world (full)! filename: " << filename << " ftype: " << ftype << std::endl;
-#else
-  std::cout << "hello world (single file)! filename: " << filename << " ftype: " << ftype << std::endl;
-#endif
-
-    return 0;
+  return 0;
 }

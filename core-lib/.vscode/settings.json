@@ -75,6 +75,8 @@
     "typeinfo": "cpp",
     "variant": "cpp",
     "complex": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "csignal": "cpp",
+    "unordered_set": "cpp"
   },
 }
